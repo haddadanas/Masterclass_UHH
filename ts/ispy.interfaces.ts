@@ -5,7 +5,7 @@ export interface Ispy {
     event_list: any;
     cleanupData(arg0: any): string;
     ig_data: any;
-    getMetInformation(type: any, arg1: any): any;
+    getMetInformation(type: any, arg1: any): {pt: number, phi: number, [key: string]: number};
     getFourVector(collec: string, type: any, part: any): any;
     event_index: number;
     detector: { Collections: Record<string, unknown> };
@@ -26,17 +26,30 @@ export interface Ispy {
 }
 
 export interface Analysis {
-    file_events_summary: Map<number, Map<string, ParticleCollection>>;
+    file_events_summary: Map<string, Map<string, ParticleCollection>>;
     getSelectionResults?: () => void;
-    getSelectionCuts?: () => Record<string, any>;
-    getPassingEvents?: () => number[];
+    getSelectionCuts: () => Record<string, any>;
+    getPassingEvents: () => number[];
     createCSV?: () => string;
     buildFileSummary?: () => void;
-    checkCurrentSelection?: () => void;
-    getSceneObjects?: () => Record<string, string>;
+    checkCurrentSelection: () => void;
+    getSceneObjects: () => Record<string, string>;
 }
 
-interface ParticleCollection {
+export interface Particle {
+    E: number;
+    px: number;
+    py: number;
+    pz: number;
+    [key: string]: number | string; // get rid of string
+}
+
+interface ParticleCollection extends Particle {
     ptype: string;
-    [key: string]: number | string;
+}
+
+export interface FileSummary {
+    Collections: Record<string, Array<Array<number | number[]>>>,
+    Types: Record<string, [string, string][]>,
+    [key: string]: any
 }

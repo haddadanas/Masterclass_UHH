@@ -1,5 +1,6 @@
 import swal from '../js/lib/sweetalert.min.js';
 import {ispy, analysis} from "./config";
+import {Particle, FileSummary } from "./ispy.interfaces.js";
 
 analysis.checkCurrentSelection = function() {
     let [text, symbol] = getCurrentSelectionMessage();
@@ -36,8 +37,8 @@ analysis.getSelectionResults = function() {
     return;
 }
 
-analysis.getSelectionCuts = function() {
-    var cuts = {};
+analysis.getSelectionCuts = function(): { [key: string]: number } {
+    var cuts: { [key: string]: number } = {};
     ispy.subfoldersReduced["Selection"].forEach(e => {
         if (["function", "string"].includes(typeof(e.getValue()))) return;
         cuts[e.property] = e.getValue();
@@ -46,11 +47,11 @@ analysis.getSelectionCuts = function() {
 }
 
 // Get the passing events in the current file
-analysis.getPassingEvents = function() {
+analysis.getPassingEvents = function(): string[] {
     if (!ispy.current_event) {
         return [];
     }
-    var passing_events = [];
+    var passing_events: number[] = [];
     for (let index of analysis.file_events_summary.keys()) {
         if (checkIfEventPassing(index)) {
             passing_events.push(index);
@@ -119,20 +120,23 @@ analysis.buildFileSummary = function() {
 
 };
 
-function getEventsSummary(event_json) {
+let getEventsSummary = function(
+    event_json: FileSummary,
+): Map<string, Particle[]> {
     let part_names = ["TrackerMuons", "GsfElectrons", "Photons", "METs"];
     let keys = Object.keys(event_json.Collections)
     var map = part_names.map(name => keys.filter(k => k.includes(name)).reduce((x, y) => x > y ? x: y));
-    var summary = new Map();
+
+    var summary = new Map<string, any>();
     map.forEach((collec) => {
 
         let type = event_json.Types[collec];
         let key = collec.replace(/^(?:PAT|PF)?(.*?)_V\d$/, '$1');
         if (collec.includes("MET")) {
-            summary.set(key, ispy.getMetInformation(type, event_json.Collections[collec][0]));
+            summary.set(key, getMetInformation(type, event_json.Collections[collec][0] as number[]));
             return;
         }
-        let tmp = new Array();
+        let tmp = new Array<Particle>();
         event_json.Collections[collec].forEach((part) => {
             tmp.push(ispy.getFourVector(collec, type, part));
         });
@@ -141,15 +145,60 @@ function getEventsSummary(event_json) {
     return summary;
 }
 
+let getMetInformation = function(
+    type: [string, string][],
+    eventObjectData: number[],
+): {pt: number, phi: number, [key: string]: number} {
+    
+    let pt: number, phi: number;
+    let px: number, py: number, pz: number;
+
+    pt = phi = px = py = pz = 0;
+
+    for ( var t in type ) {
+
+    if ( type[t][0] === 'pt' ) {
+
+        pt = eventObjectData[t];
+
+    } else if ( type[t][0] === 'phi' ) {
+
+        phi = eventObjectData[t];  // TODO can be removed
+
+    } else if (type[t][0] === 'px') {
+
+        px = eventObjectData[t];
+
+    } else if (type[t][0] === 'py') {
+
+        py = eventObjectData[t];
+        
+    } else if (type[t][0] === 'pz') {
+
+        pz = eventObjectData[t];
+        
+    }
+
+    }
+
+    return {'pt': pt, 'px': px, 'py': py, 'pz':pz, 'phi': phi};
+
+};
+
 //
 // Helper functions for the selection
 //
 
-function getSelectionParticles(event_index) {
-    var results = {index: event_index};
-    var parts = new Map();
+let getSelectionParticles = function(
+    event_index: number
+): {index: number, parts: Map<string, any>, met: any} {
+    var results = {index: event_index, parts: new Map(), met: {}};
+    var tmp_parts = new Map();
     let summary = analysis.file_events_summary.get(String(event_index));
-    selection = analysis.getSelectionCuts();
+    if (!summary) {
+        return results;
+    }
+    let selection = analysis.getSelectionCuts();
     let pt_cut = selection["pt"];
     selection = Object.keys(selection).filter(sel => {
         if (["charge", "pt"].includes(sel)) return false;
@@ -162,28 +211,34 @@ function getSelectionParticles(event_index) {
             return;
         }
         if (summary.has(key)) {
-            tmp = summary.get(key);
+            let tmp = summary.get(key);
             if (key == "GsfElectrons" || key == "TrackerMuons") {
                 tmp = tmp.filter(part => part["pt"] >= pt_cut);
             }
-            parts.set(key, tmp);
+            tmp_parts.set(key, tmp);
         }
     });
-    results["parts"] = parts;
+    results["parts"] = tmp_parts;
     return results;
 }
 
-function checkIfEventPassing(event_index=-1) {
+let checkIfEventPassing: (event_index: number) => boolean = function(
+    event_index: number=-1
+): boolean {
     if (!ispy.current_event) {
-        return;
+        return false;
     }
     if (event_index == -1) {
         event_index = ispy.event_index;
     }
 
-    var pass = true;
+    var pass: boolean = true;
     var cuts = analysis.getSelectionCuts();
     var particles = analysis.file_events_summary.get(String(event_index));
+
+    if (!particles) {
+        return false;
+    }
 
     for (let [name, part] of particles) {
         if (name == "METs") {
@@ -206,17 +261,26 @@ function checkIfEventPassing(event_index=-1) {
 }
 
 // Helper functions to check the selection
-function checkMinMET(met, cut) {
+let checkMinMET = function(
+    met: {pt: number, [key: string]: any},
+    cut: number,
+): boolean {
     if (cut == -1) return true;
     return met["pt"] >= cut;
 }
 
-function checkMaxMET(met, cut) {
+let checkMaxMET = function(
+    met: {pt: number, [key: string]: any},
+    cut: number,
+): boolean {
     if (cut == -1) return true;
     return met["pt"] <= cut;
 }
 
-function checkCharge(leptons, cut) {
+let checkCharge = function(
+    leptons: {charge: number, [key: string]: any}[],
+    cut: number,
+): boolean {
     if (cut == undefined) return true;
     let chargeSum = 0;
     leptons.forEach(lepton => {
@@ -225,15 +289,20 @@ function checkCharge(leptons, cut) {
     return Math.sign(chargeSum) == cut;
 }
 
-function getPtPassingLeptons(leptons, cut) {
+let getPtPassingLeptons = function(
+    leptons: {pt: number, [key: string]: any}[],
+    cut: number,
+): {pt: number, [key: string]: any}[] {
     return leptons.filter(lepton => lepton["pt"] >= cut)
 }
 
-function sumFourVectors(particles) {
-    if (particles.length < 1) {
+let sumFourVectors = function(
+    particles: Map<string, Particle[]>,
+): Particle {
+    if (particles.size < 1) {
         return -1;
     }
-    let sumPx, sumPy, sumPz, sumE;
+    let sumPx: number, sumPy: number, sumPz: number, sumE: number;
     sumPx = sumPy = sumPz = sumE = 0;
 
     particles.forEach((group, key) => {
@@ -250,10 +319,12 @@ function sumFourVectors(particles) {
 
 
 // Calculate the invariant mass of a list of particles
-function getInvariantMass(sumVector) {
+let getInvariantMass = function(
+    sumVector: Particle,
+): number {
 
     let m = 0;
-    let sumPx, sumPy, sumPz, sumE;
+    let sumPx: number, sumPy: number, sumPz: number, sumE: number;
     sumPx = sumVector.px;
     sumPy = sumVector.py;
     sumPz = sumVector.pz;
@@ -267,7 +338,10 @@ function getInvariantMass(sumVector) {
 }
 
 // Calculate the transverse mass of a list of particles
-function getTransverseMass(sumVector, met) {
+let getTransverseMass = function(
+    sumVector: Particle,
+    met: {px: number, py: number, [key: string]: any},
+): number {
 
     let m = 0;
     let m1 = getInvariantMass(sumVector);
@@ -282,10 +356,15 @@ function getTransverseMass(sumVector, met) {
     return m;
 }
 
-function createHistogram(array, start, end, bins) {
+let createHistogram = function(
+    array: number[],
+    start: number,
+    end: number,
+    bins: number,
+): number[] {
     // Histogram the array to the range `start` to `end` with `bins` bins
-    var hist = new Array(bins).fill(0);
-    var binWidth = (end - start) / bins;
+    var hist: number[] = new Array(bins).fill(0);
+    var binWidth: number = (end - start) / bins;
     array.forEach((val) => {
         if (val <= start) {
             hist[0]++;
@@ -301,7 +380,12 @@ function createHistogram(array, start, end, bins) {
     return hist;    
 }
 
-function createHistogramData(array, start, end, bins) {
+let createHistogramData = function(
+    array: number[],
+    start: number,
+    end: number,
+    bins: number,
+): {x: number[], type: string, nbinsx: number} {
     // Create the data for a histogram of the array
     return {
         x:array,
@@ -310,7 +394,7 @@ function createHistogramData(array, start, end, bins) {
     };
 }
 
-function getMassesArray() {
+let getMassesArray = function(): {m: Map<number, number>, mt: Map<number, number>} {
     var masses = new Map();
     var massesT = new Map();
     let particles = analysis.getPassingEvents().map(i => {
@@ -326,13 +410,13 @@ function getMassesArray() {
     return {m: masses, mt: massesT};
 }
 
-function getCurrentSelectionMessage() {
+let getCurrentSelectionMessage = function(): [string, string] {
     var pass = checkIfEventPassing();
     if (pass == undefined) {
         return ["No event file is loaded!", "warning"];
     }
     var html = "This Event ";
     html += (pass ? "passes" : "does not pass") + " the selection!";
-    symbol = pass ? "success" : "error";
+    let symbol = pass ? "success" : "error";
     return [html, symbol];
 }
