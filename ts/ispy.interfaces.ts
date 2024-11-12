@@ -44,11 +44,11 @@ export interface Particle {
     [key: string]: number | string; // get rid of string
 }
 
-interface ParticleCollection extends Particle {
+export interface ParticleCollection extends Particle {
     ptype: string;
 }
 
-export interface FileSummary {
+export interface EventObject {
     Collections: Record<string, Array<Array<number | number[]>>>,
     Types: Record<string, [string, string][]>,
     [key: string]: any

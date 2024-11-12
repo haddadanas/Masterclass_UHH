@@ -1,6 +1,7 @@
 import swal from '../js/lib/sweetalert.min.js';
 import {ispy, analysis} from "./config";
-import {Particle, FileSummary } from "./ispy.interfaces.js";
+import {Particle, EventObject, ParticleCollection} from "./ispy.interfaces.js";
+import * as utils from "./utils"
 
 analysis.checkCurrentSelection = function() {
     let [text, symbol] = getCurrentSelectionMessage();
@@ -48,7 +49,7 @@ analysis.getSelectionCuts = function(): { [key: string]: number } {
 
 // Get the passing events in the current file
 analysis.getPassingEvents = function(): string[] {
-    if (!ispy.current_event) {
+    if (!utils.getCurrentEvent()) {
         return [];
     }
     var passing_events: number[] = [];
@@ -121,8 +122,8 @@ analysis.buildFileSummary = function() {
 };
 
 let getEventsSummary = function(
-    event_json: FileSummary,
-): Map<string, Particle[]> {
+    event_json: EventObject,
+): Map<string, ParticleCollection[]> {
     let part_names = ["TrackerMuons", "GsfElectrons", "Photons", "METs"];
     let keys = Object.keys(event_json.Collections)
     var map = part_names.map(name => keys.filter(k => k.includes(name)).reduce((x, y) => x > y ? x: y));
@@ -133,57 +134,18 @@ let getEventsSummary = function(
         let type = event_json.Types[collec];
         let key = collec.replace(/^(?:PAT|PF)?(.*?)_V\d$/, '$1');
         if (collec.includes("MET")) {
-            summary.set(key, getMetInformation(type, event_json.Collections[collec][0] as number[]));
+            summary.set(key, utils.getMetInformation(type, event_json.Collections[collec][0] as number[]));
             return;
         }
         let tmp = new Array<Particle>();
         event_json.Collections[collec].forEach((part) => {
-            tmp.push(ispy.getFourVector(collec, type, part));
+            tmp.push(utils.getFourVector(collec, type, part));
         });
         summary.set(key, tmp);
     })
     return summary;
 }
 
-let getMetInformation = function(
-    type: [string, string][],
-    eventObjectData: number[],
-): {pt: number, phi: number, [key: string]: number} {
-    
-    let pt: number, phi: number;
-    let px: number, py: number, pz: number;
-
-    pt = phi = px = py = pz = 0;
-
-    for ( var t in type ) {
-
-    if ( type[t][0] === 'pt' ) {
-
-        pt = eventObjectData[t];
-
-    } else if ( type[t][0] === 'phi' ) {
-
-        phi = eventObjectData[t];  // TODO can be removed
-
-    } else if (type[t][0] === 'px') {
-
-        px = eventObjectData[t];
-
-    } else if (type[t][0] === 'py') {
-
-        py = eventObjectData[t];
-        
-    } else if (type[t][0] === 'pz') {
-
-        pz = eventObjectData[t];
-        
-    }
-
-    }
-
-    return {'pt': pt, 'px': px, 'py': py, 'pz':pz, 'phi': phi};
-
-};
 
 //
 // Helper functions for the selection
@@ -222,14 +184,14 @@ let getSelectionParticles = function(
     return results;
 }
 
-let checkIfEventPassing: (event_index: number) => boolean = function(
+let checkIfEventPassing: (event_index?: number) => boolean = function(
     event_index: number=-1
 ): boolean {
-    if (!ispy.current_event) {
+    if (!utils.getCurrentEvent()) {
         return false;
     }
     if (event_index == -1) {
-        event_index = ispy.event_index;
+        event_index = utils.getCurrentIndex();
     }
 
     var pass: boolean = true;
@@ -300,7 +262,7 @@ let sumFourVectors = function(
     particles: Map<string, Particle[]>,
 ): Particle {
     if (particles.size < 1) {
-        return -1;
+        return {E: 0, px: 0, py: 0, pz: 0};
     }
     let sumPx: number, sumPy: number, sumPz: number, sumE: number;
     sumPx = sumPy = sumPz = sumE = 0;
