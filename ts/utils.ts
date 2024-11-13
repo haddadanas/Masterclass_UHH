@@ -2,6 +2,7 @@
 // Description: This file contains utility functions that are used in the analysis code.
 
 import { ParticleCollection, EventObject } from './ispy.interfaces';
+import JSZip from 'jszip';
 import { ispy } from './config';
 
 export function getCurrentIndex(): number {
@@ -144,3 +145,46 @@ export function getMetInformation(
     return {'pt': pt, 'px': px, 'py': py, 'pz':pz, 'phi': phi};
 
 };
+
+let cleanupData = function(d: string): string {
+
+    // rm non-standard json bits
+    // newer files will not have this problem
+    d = d.replace(/\(/g,'[')
+    .replace(/\)/g,']')
+    .replace(/\'/g, "\"")
+    .replace(/nan/g, "0");
+    
+    return d;
+
+};
+
+export class EventCollection {
+    events: Map<string, Map<string, ParticleCollection>>;
+
+    constructor();
+    constructor(eventList: string[], igData: JSZip);
+
+    constructor(eventList?: string[], igData?: JSZip) {
+        if (eventList === undefined || igData === undefined) {
+            this.events = new Map();
+            return;
+        }
+        // get the event data
+        eventList.forEach((event_path, event_index) => {
+            try {
+                let rawText = igData.file(event_path);
+                if (rawText === null) {
+                    alert("Error encountered reading event " + (event_index + 1) + ": " + event_path + " not found.");
+                    alert("The event will be skipped in the analysis.");
+                    return;
+                }
+                let _event = JSON.parse(cleanupData(rawText.asText()));
+                this.events.set(event_index.toString(), getEventsSummary(_event));
+            } catch(err) {
+                alert("Error encountered parsing event " + (event_index + 1) + ": " + err);
+                alert("The event will be skipped in the analysis.");
+            }
+        });
+    }
+}
