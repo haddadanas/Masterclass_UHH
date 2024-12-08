@@ -1,24 +1,31 @@
 import Plotly from 'plotly.js';
-import {swal} from '../js/lib/sweetalert.min.js';
+import swal from 'sweetalert';
+import { Object3D } from 'three';
 import {ispy, analysis} from "./config";
 import {Particle, Lepton, VisibleParticle, EventObject, EventSummary, FourVector} from "./ispy.interfaces";
 import * as utils from "./utils"
 
 analysis.checkCurrentSelection = function(): void {
     let [text, symbol] = getCurrentSelectionMessage();
-    swal(text, {title: "Selection Results", icon: symbol, buttons: false, timer: 3000});
+    swal({text: text, title: "Selection Results", icon: symbol, buttons: false, timer: 3000} as SweetAlert.Settings);
     if (symbol == "warning") return;
-    ispy.subfoldersReduced["Selection"].find(e => e.property == "nSelected").setValue(analysis.getPassingEvents().length);
-    ispy.subfoldersReduced["Selection"].find(e => e.property == "firstSelected").setValue(
-        analysis.getPassingEvents().map(e => Number(e) + 1).slice(0, 5).join(", ")
-    );
+    const nSelected = ispy.subfoldersReduced["Selection"].find(e => e.property == "nSelected");
+    if (nSelected) {
+        nSelected.setValue(analysis.getPassingEvents().length);
+    }
+    const firstSelected = ispy.subfoldersReduced["Selection"].find(e => e.property == "firstSelected");
+    if (firstSelected) {
+        firstSelected.setValue(
+            analysis.getPassingEvents().map(e => Number(e) + 1).slice(0, 5).join(", ")
+        );
+    }
 }
 
 analysis.getSceneObjects = function(): { [key: string]: string } {
 	return [
-			...ispy.scenes["3D"].getObjectByName('Physics').children.map(o => o.name),
-			...ispy.scenes["3D"].getObjectByName('Tracking').children.map(o => o.name)
-		].reduce((dic, o) => {
+            ...(ispy.scenes?.["3D"]?.getObjectByName('Physics')?.children.map(o => o.name) || []),
+            ...(ispy.scenes?.["3D"]?.getObjectByName('Tracking')?.children.map(o => o.name) || [])
+        ].reduce((dic: { [key: string]: string }, o) => {
 			dic[o.replace(/^(?:PAT|PF)?(.*?)_V\d$/, '$1')] = o;
 			return dic;
 		}, {});
@@ -138,12 +145,12 @@ let getSelectionParticles = function(
     }
     let selection = analysis.getSelectionCuts();
     let pt_cut = selection["pt"];
-    selection = Object.keys(selection).filter(sel => {
+    let filteredSelection = Object.keys(selection).filter(sel => {
         if (["charge", "pt"].includes(sel)) return false;
         if (selection[sel] == 0 || selection[sel] == -1) return false;
         return true;
     });
-    selection.forEach(key => {
+    filteredSelection.forEach(key => {
         if (key == "minMETs" || key == "maxMETs") {
             results["met"] = summary.met;
             return;
