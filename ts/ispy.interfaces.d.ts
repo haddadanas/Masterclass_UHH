@@ -5,48 +5,51 @@ export interface Ispy {
     event_list: any;
     cleanupData(arg0: any): string;
     ig_data: any;
-    getMetInformation(type: any, arg1: any): {pt: number, phi: number, [key: string]: number};
-    getFourVector(collec: string, type: any, part: any): any;
     event_index: number;
     detector: { Collections: Record<string, unknown> };
     version: string;
-    POINT: number;
-    LINE: number;
-    BOX: number;
-    SOLIDBOX: number;
-    SCALEDBOX: number;
-    SCALEDSOLIDBOX: number;
-    SCALEDSOLIDTOWER: number;
-    MODEL: number;
-    ASSOC: number;
-    SHAPE: number;
-    TEXT: number;
-    BUFFERBOX: number;
-    STACKEDTOWER: number;
 }
 
 export interface Analysis {
-    file_events_summary: Map<string, Map<string, ParticleCollection>>;
+    file_events_summary: Map<string, EventSummary>;
     getSelectionResults?: () => void;
     getSelectionCuts: () => Record<string, any>;
-    getPassingEvents: () => number[];
+    getPassingEvents: () => string[];
     createCSV?: () => string;
     buildFileSummary?: () => void;
     checkCurrentSelection: () => void;
     getSceneObjects: () => Record<string, string>;
 }
 
-export interface Particle {
-    E: number;
+interface EventSummary {
+    particles: Map<string, Particle[]>;
+    met: Particle;
+}
+
+export interface FourVector {
     px: number;
     py: number;
     pz: number;
+    E: number;
+}
+
+export interface Particle{
+    px: number;
+    py: number;
+    pz: number;
+    pt:number;
     [key: string]: number | string; // get rid of string
 }
 
-export interface ParticleCollection extends Particle {
-    ptype: string;
+export interface VisibleParticle extends Particle {
+    E: number;
+    dtype: string;
 }
+
+export interface Lepton extends VisibleParticle {
+    charge: number;
+}
+
 
 export interface EventObject {
     Collections: Record<string, Array<Array<number | number[]>>>,
