@@ -40,7 +40,12 @@ analysis.getSelectionResults = function(): void {
         event_stats.innerHTML = "No event file is loaded!";
         return;
     }
-    event_stats.innerHTML = "Something should be here!";
+
+    let passing_events = analysis.getPassingEvents();
+    let stats = "With the chosen selection:<br>";
+    stats += "Number of passing events: " + passing_events.length + "<br>";
+    stats += "This is " + (passing_events.length / analysis.file_events_summary.size * 100).toFixed(2) + "% of the total events.<br>";
+    event_stats.innerHTML = stats;
 
     let masses = getMassesArray();
     var m_hist = createHistogramData([...masses.m.values()], 0, 200, 20);
