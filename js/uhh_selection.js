@@ -1,51 +1,57 @@
-analysis.checkCurrentSelection = function() {
+analysis.checkCurrentSelection = function () {
     let [text, symbol] = getCurrentSelectionMessage();
-    swal(text, {title: "Selection Results", icon: symbol, buttons: false, timer: 3000});
-    if (symbol == "warning") return;
-    ispy.subfoldersReduced["Selection"].find(e => e.property == "nSelected").setValue(analysis.getPassingEvents().length);
-    ispy.subfoldersReduced["Selection"].find(e => e.property == "firstSelected").setValue(
-        analysis.getPassingEvents().map(e => Number(e) + 1).slice(0, 5).join(", ")
-    );
-}
-
-analysis.getSceneObjects = function() {
-	return [
-			...ispy.scenes["3D"].getObjectByName('Physics').children.map(o => o.name),
-			...ispy.scenes["3D"].getObjectByName('Tracking').children.map(o => o.name)
-		].reduce((dic, o) => {
-			dic[o.replace(/^(?:PAT|PF)?(.*?)_V\d$/, '$1')] = o;
-			return dic;
-		}, {});
-}
-
-analysis.getSelectionResults = function() {
-    if (analysis.file_events_summary == undefined) {
-        document.getElementById('event-statistics').innerHTML = "No event file is loaded!";
+    (0, swal)({ text: text, title: "Selection Results", icon: symbol, buttons: false, timer: 3000 });
+    if (symbol == "warning")
+        return;
+    const nSelected = ispy.subfoldersReduced["Selection"].find(e => e.property == "nSelected");
+    if (nSelected) {
+        nSelected.setValue(analysis.getPassingEvents().length);
+    }
+    const firstSelected = ispy.subfoldersReduced["Selection"].find(e => e.property == "firstSelected");
+    if (firstSelected) {
+        firstSelected.setValue(analysis.getPassingEvents().map(e => Number(e) + 1).slice(0, 5).join(", "));
+    }
+};
+analysis.getSceneObjects = function () {
+    var _a, _b, _c, _d, _e, _f;
+    return [
+        ...(((_c = (_b = (_a = ispy.scenes) === null || _a === void 0 ? void 0 : _a["3D"]) === null || _b === void 0 ? void 0 : _b.getObjectByName('Physics')) === null || _c === void 0 ? void 0 : _c.children.map(o => o.name)) || []),
+        ...(((_f = (_e = (_d = ispy.scenes) === null || _d === void 0 ? void 0 : _d["3D"]) === null || _e === void 0 ? void 0 : _e.getObjectByName('Tracking')) === null || _f === void 0 ? void 0 : _f.children.map(o => o.name)) || [])
+    ].reduce((dic, o) => {
+        dic[o.replace(/^(?:PAT|PF)?(.*?)_V\d$/, '$1')] = o;
+        return dic;
+    }, {});
+};
+analysis.getSelectionResults = function () {
+    let event_stats = document.getElementById('event-statistics');
+    if (!event_stats) {
         return;
     }
-    document.getElementById('event-statistics').innerHTML = "Something should be here!";
-
-    masses = getMassesArray();
-    var m_hist = createHistogramData(masses.m.values().toArray(), 0, 200, 20);
-    var mt_hist = createHistogramData(masses.mt.values().toArray(), 0, 200, 20);
+    if (analysis.file_events_summary == undefined) {
+        event_stats.innerHTML = "No event file is loaded!";
+        return;
+    }
+    event_stats.innerHTML = "Something should be here!";
+    let masses = getMassesArray();
+    var m_hist = createHistogramData([...masses.m.values()], 0, 200, 20);
+    var mt_hist = createHistogramData([...masses.mt.values()], 0, 200, 20);
     Plotly.newPlot("m-hist", [m_hist]);
     // Plotly.newPlot("mt-hist", [mt_hist]); // TODO enable this when transverse mass is implemented
     return;
-}
-
-analysis.getSelectionCuts = function() {
+};
+analysis.getSelectionCuts = function () {
     var cuts = {};
     ispy.subfoldersReduced["Selection"].forEach(e => {
-        if (["function", "string"].includes(typeof(e.getValue()))) return;
+        if (["function", "string"].includes(typeof (e.getValue())))
+            return;
         cuts[e.property] = e.getValue();
     });
-    return cuts
-}
-
+    return cuts;
+};
 // Get the passing events in the current file
-analysis.getPassingEvents = function() {
-    if (!ispy.current_event) {
-        return;
+analysis.getPassingEvents = function () {
+    if (!getCurrentEvent()) {
+        return [];
     }
     var passing_events = [];
     for (let index of analysis.file_events_summary.keys()) {
@@ -53,12 +59,10 @@ analysis.getPassingEvents = function() {
             passing_events.push(index);
         }
     }
-
     return passing_events;
-}
-
+};
 // Get CSV of the passing events
-analysis.createCSV = function() { // TODO: enable transverse mass
+analysis.createCSV = function () {
     var masses = getMassesArray();
     //     var csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass,Transverse Mass\r\n";
     var csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass\r\n";
@@ -68,171 +72,139 @@ analysis.createCSV = function() { // TODO: enable transverse mass
     });
     var encodedUri = encodeURI(csv);
     window.open(encodedUri);
-
     return csv;
-}
+};
 //
 // Get the needed information of all events in the current file
 //
-analysis.buildFileSummary = function() {
-
+analysis.buildFileSummary = function () {
     let event;
-    let event_summary = new Map();
-
+    let event_summary;
+    let analysisBtn = document.getElementById("analysis_btn");
+    if (!analysisBtn) {
+        analysisBtn = document.createElement("button");
+    }
     $('#loading').modal('hide');
     $('#building').modal('show');
     try {
-	
-    // get the event data
-    ispy.event_list.forEach((event_path, event_index) => {
-        try {
-        event = JSON.parse(ispy.cleanupData(ispy.ig_data.file(event_path).asText()));
-        event_summary.set(event_index.toString(), getEventsSummary(event));
-    } catch(err) {
-        alert("Error encountered parsing event " + (event_index + 1) + ": " + err);
-        alert("The event will be skipped in the analysis.");
+        // get the event data
+        event_summary = new EventCollection(ispy.event_list, ispy.ig_data);
+        // store the event summary as a global variable
+        analysis.file_events_summary = event_summary.events;
+        // enable the analysis button
+        analysisBtn.disabled = false;
     }
-    });
-
-    // store the event summary as a global variable
-    analysis.file_events_summary = event_summary;
-    
-    // enable the analysis button
-    document.getElementById("analysis_btn").disabled = false;
-
-    } catch(err) {
-    
-    document.getElementById("analysis_btn").disabled = true;
-
-    // create and display an error message
-    let error_msg = "Error encountered building the file summary: \n    " + err;
-    error_msg += "\nThe event display will work however the full analysis will remain disabled.";
-    error_msg += "\nChecking the selection for single events will still work.";
-	alert(error_msg);
+    catch (err) {
+        analysisBtn.disabled = true;
+        // create and display an error message
+        let error_msg = "Error encountered building the file summary: \n    " + err;
+        error_msg += "\nThe event display will work however the full analysis will remain disabled.";
+        error_msg += "\nChecking the selection for single events will still work.";
+        alert(error_msg);
     }
-
     $('#building').modal('hide');
     $('#loading').modal('show');
-
 };
-
-function getEventsSummary(event_json) {
-    let part_names = ["TrackerMuons", "GsfElectrons", "Photons", "METs"];
-    let keys = Object.keys(event_json.Collections)
-    var map = part_names.map(name => keys.filter(k => k.includes(name)).reduce((x, y) => x > y ? x: y));
-    var summary = new Map();
-    map.forEach((collec) => {
-
-        let type = event_json.Types[collec];
-        let key = collec.replace(/^(?:PAT|PF)?(.*?)_V\d$/, '$1');
-        if (collec.includes("MET")) {
-            summary.set(key, ispy.getMetInformation(type, event_json.Collections[collec][0]));
-            return;
-        }
-        let tmp = new Array();
-        event_json.Collections[collec].forEach((part) => {
-            tmp.push(ispy.getFourVector(collec, type, part));
-        });
-        summary.set(key, tmp);
-    })
-    return summary;
-}
-
 //
 // Helper functions for the selection
 //
-
-function getSelectionParticles(event_index) {
-    var results = {index: event_index};
-    var parts = new Map();
-    let summary = analysis.file_events_summary.get(String(event_index));
-    selection = analysis.getSelectionCuts();
+let getSelectionParticles = function (event_index) {
+    var results = { index: event_index.toString(), parts: new Map(), met: {} };
+    var tmp_parts = new Map();
+    let summary = analysis.file_events_summary.get(event_index.toString());
+    if (!summary) {
+        return results;
+    }
+    let selection = analysis.getSelectionCuts();
     let pt_cut = selection["pt"];
-    selection = Object.keys(selection).filter(sel => {
-        if (["charge", "pt"].includes(sel)) return false;
-        if (selection[sel] == 0 || selection[sel] == -1) return false;
+    let filteredSelection = Object.keys(selection).filter(sel => {
+        if (["charge", "pt"].includes(sel))
+            return false;
+        if (selection[sel] == 0 || selection[sel] == -1)
+            return false;
         return true;
     });
-    selection.forEach(key => {
+    filteredSelection.forEach(key => {
         if (key == "minMETs" || key == "maxMETs") {
-            results["met"] = summary.get("METs");
+            results["met"] = summary.met;
             return;
         }
-        if (summary.has(key)) {
-            tmp = summary.get(key);
+        if (summary.particles.has(key)) {
+            let tmp = summary.particles.get(key) || [];
             if (key == "GsfElectrons" || key == "TrackerMuons") {
                 tmp = tmp.filter(part => part["pt"] >= pt_cut);
             }
-            parts.set(key, tmp);
+            tmp_parts.set(key, tmp);
         }
     });
-    results["parts"] = parts;
+    results["parts"] = tmp_parts;
     return results;
-}
-
-function checkIfEventPassing(event_index=-1) {
-    if (!ispy.current_event) {
-        return;
+};
+let checkIfEventPassing = function (event_index = -1) {
+    if (!getCurrentEvent()) {
+        return false;
     }
     if (event_index == -1) {
-        event_index = ispy.event_index;
+        event_index = getCurrentIndex();
     }
-
+    event_index = event_index.toString();
     var pass = true;
     var cuts = analysis.getSelectionCuts();
-    var particles = analysis.file_events_summary.get(String(event_index));
-
-    for (let [name, part] of particles) {
-        if (name == "METs") {
-            pass &&= checkMinMET(part, cuts["minMETs"]);
-            pass &&= checkMaxMET(part, cuts["maxMETs"]);
-            if (!pass) break;
-        }
-        if (cuts[name] == -1) continue;
+    var summary = analysis.file_events_summary.get(event_index);
+    if (!summary) {
+        return false;
+    }
+    // Check the MET cuts
+    pass && (pass = checkMinMET(summary.met, cuts["minMETs"]));
+    pass && (pass = checkMaxMET(summary.met, cuts["maxMETs"]));
+    if (!pass)
+        return pass;
+    for (let [name, part] of summary.particles) {
+        if (cuts[name] == -1)
+            continue;
         if (name == "TrackerMuons" || name == "GsfElectrons") {
-            pass &&= checkCharge(part, cuts["charge"]);
-            if (!pass) break;
+            pass && (pass = checkCharge(part, cuts["charge"]));
+            if (!pass)
+                break;
             part = getPtPassingLeptons(part, cuts["pt"]);
         }
         if (part.length != cuts[name]) {
-            pass &&= false;
+            pass && (pass = false);
             break;
         }
-    };
+    }
+    ;
     return pass;
-}
-
+};
 // Helper functions to check the selection
-function checkMinMET(met, cut) {
-    if (cut == -1) return true;
+let checkMinMET = function (met, cut) {
+    if (cut == -1)
+        return true;
     return met["pt"] >= cut;
-}
-
-function checkMaxMET(met, cut) {
-    if (cut == -1) return true;
+};
+let checkMaxMET = function (met, cut) {
+    if (cut == -1)
+        return true;
     return met["pt"] <= cut;
-}
-
-function checkCharge(leptons, cut) {
-    if (cut == undefined) return true;
+};
+let checkCharge = function (leptons, cut) {
+    if (cut == undefined)
+        return true;
     let chargeSum = 0;
     leptons.forEach(lepton => {
         chargeSum += lepton["charge"];
     });
     return Math.sign(chargeSum) == cut;
-}
-
-function getPtPassingLeptons(leptons, cut) {
-    return leptons.filter(lepton => lepton["pt"] >= cut)
-}
-
-function sumFourVectors(particles) {
-    if (particles.length < 1) {
-        return -1;
+};
+let getPtPassingLeptons = function (leptons, cut) {
+    return leptons.filter(lepton => lepton["pt"] >= cut);
+};
+let sumFourVectors = function (particles) {
+    if (particles.size < 1) {
+        return { E: 0, px: 0, py: 0, pz: 0 };
     }
     let sumPx, sumPy, sumPz, sumE;
     sumPx = sumPy = sumPz = sumE = 0;
-
     particles.forEach((group, key) => {
         group.forEach((val) => {
             sumPx += val.px;
@@ -241,45 +213,33 @@ function sumFourVectors(particles) {
             sumE += val.E;
         });
     });
-
-    return {E: sumE, px: sumPx, py: sumPy, pz: sumPz};
-}
-
-
+    return { E: sumE, px: sumPx, py: sumPy, pz: sumPz };
+};
 // Calculate the invariant mass of a list of particles
-function getInvariantMass(sumVector) {
-
+let getInvariantMass = function (sumVector) {
     let m = 0;
     let sumPx, sumPy, sumPz, sumE;
     sumPx = sumVector.px;
     sumPy = sumVector.py;
     sumPz = sumVector.pz;
     sumE = sumVector.E;
-
-    m = sumE*sumE;
-    m -= (sumPx*sumPx + sumPy*sumPy + sumPz*sumPz);
+    m = sumE * sumE;
+    m -= (sumPx * sumPx + sumPy * sumPy + sumPz * sumPz);
     m = Math.sqrt(m);
-    
     return m;
-}
-
+};
 // Calculate the transverse mass of a list of particles
-function getTransverseMass(sumVector, met) {
-
+let getTransverseMass = function (sumVector, met) {
     let m = 0;
     let m1 = getInvariantMass(sumVector);
-
     let metE2 = met.px * met.px + met.py * met.py;
     let Et2 = sumVector.E * sumVector.E - sumVector.pz * sumVector.pz;
-
     m = m1 * m1;
     m += 2 * (metE2 * Et2 - sumVector.px * met.px - sumVector.py * met.py);
     m = Math.sqrt(m);
-
     return m;
-}
-
-function createHistogram(array, start, end, bins) {
+};
+let createHistogram = function (array, start, end, bins) {
     // Histogram the array to the range `start` to `end` with `bins` bins
     var hist = new Array(bins).fill(0);
     var binWidth = (end - start) / bins;
@@ -289,25 +249,23 @@ function createHistogram(array, start, end, bins) {
             return;
         }
         if (val >= end) {
-            hist[bins-1]++;
+            hist[bins - 1]++;
             return;
         }
-        let bin = Math.floor(val/binWidth);
+        let bin = Math.floor(val / binWidth);
         hist[bin]++;
     });
-    return hist;    
-}
-
-function createHistogramData(array, start, end, bins) {
+    return hist;
+};
+let createHistogramData = function (array, start, end, bins) {
     // Create the data for a histogram of the array
     return {
-        x:array,
-        type:'histogram',
-        nbinsx:bins,
+        x: array,
+        type: 'histogram',
+        nbinsx: bins,
     };
-}
-
-function getMassesArray() {
+};
+let getMassesArray = function () {
     var masses = new Map();
     var massesT = new Map();
     let particles = analysis.getPassingEvents().map(i => {
@@ -320,16 +278,15 @@ function getMassesArray() {
             massesT.set(value.index, getTransverseMass(sumVector, value.met));
         }
     }
-    return {m: masses, mt: massesT};
-}
-
-function getCurrentSelectionMessage() {
+    return { m: masses, mt: massesT };
+};
+let getCurrentSelectionMessage = function () {
     var pass = checkIfEventPassing();
     if (pass == undefined) {
         return ["No event file is loaded!", "warning"];
     }
     var html = "This Event ";
     html += (pass ? "passes" : "does not pass") + " the selection!";
-    symbol = pass ? "success" : "error";
+    let symbol = pass ? "success" : "error";
     return [html, symbol];
-}
+};

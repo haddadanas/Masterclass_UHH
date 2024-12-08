@@ -196,15 +196,15 @@ export class EventCollection {
             return;
         }
         // get the event data
-        eventList.forEach(async (event_path, event_index) => {
+        eventList.forEach((event_path, event_index) => {
             try {
-                let rawText = await igData.files[event_path].async("string");
+                let rawText = igData.files[event_path];
                 if (rawText === null) {
                     alert("Error encountered reading event " + (event_index + 1) + ": " + event_path + " not found.");
                     alert("The event will be skipped in the analysis.");
                     return;
                 }
-                let _event = JSON.parse(cleanupData(rawText));
+                let _event = JSON.parse(cleanupData(rawText.asText()));
                 this.events.set(event_index.toString(), getEventsSummary(_event));
             } catch(err) {
                 alert("Error encountered parsing event " + (event_index + 1) + ": " + err);
