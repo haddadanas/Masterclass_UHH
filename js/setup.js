@@ -536,6 +536,9 @@ ispy.init = function() {
 
     document.getElementById('version').innerHTML = ispy.version;
     document.getElementById('threejs').innerHTML = "r"+THREE.REVISION;
+    document.getElementById('sweetalert').innerHTML = "2.1.0";
+    document.getElementById('plotly').innerHTML = Plotly.version;
+    
     
     window.addEventListener('resize', ispy.onWindowResize, false);
 
@@ -546,6 +549,7 @@ ispy.init = function() {
     ispy.raycaster.layers.set(2);
 
     ispy.intersected = null;
+    ispy.showTrackInfo = false;
     
     ispy.renderer.domElement.addEventListener('pointermove', ispy.onMouseMove, false);
     ispy.renderer.domElement.addEventListener('pointerdown', ispy.onMouseDown, false);
@@ -602,28 +606,76 @@ ispy.initSelectionFields = function() {
 	gui_elem = ispy.guiReduced;
 
     let folder = gui_elem.__folders["Event Selection"];
-	
-	let names = ispy.getSceneObjects();
-	// pt is element 1 in the collection object (inconvinient definition by design)
-	nMuon = 0;
-	nElectron = 0;
-	chargeSign = false;
-	minPt = 0.0;
+	let nMuon, nElectron, nPhoton, chargeSign, minPt;
+
+	nMuon = -1;
+	nElectron = -1;
+    nPhoton = -1;
+	chargeSign = "";
+	minPt = -1.0;
+    test = analysis.checkCurrentSelection;
 
 
     const row_obj = {
-	"# Muons": nMuon,
-	"# Electrons": nElectron,
-	"Charge Sign": chargeSign,
-	"Min Pt": minPt,
+	"TrackerMuons": nMuon,
+	"GsfElectrons": nElectron,
+    "Photons": nPhoton,
+	"charge": chargeSign,
+	"pt": minPt,
+    "minMETs": minPt,
+    "maxMETs": minPt,
+    "check": test,
+    "nSelected": "0",
+    "firstSelected": ""
+    };
+
+    var naming_map = {
+        "TrackerMuons": "# &mu;",
+        "GsfElectrons": "# e",
+        "Photons": "# &gamma;",
+        "charge": "Charge Sign",
+        "pt": "Min p<sub>T,&#8467;</sub>",
+        "minMETs": "Min <span class='strikethrough'>p<sub>T</sub></span> (MET)",
+        "maxMETs": "Max <span class='strikethrough'>p<sub>T</sub></span> (MET)",
+        "check": "Check Selection",
+        "nSelected": "# Passing",
+        "firstSelected": "Passing Events",
     };
 
     Object.keys(row_obj).forEach(function(key) {
+        elem_name = naming_map[key];
+
         // add the controller to the folder
-        var cont = folder.add(row_obj, key)
+        if (key == "charge") {
+            var cont = folder.add(row_obj, key, ["", "positive", "negative", "opposite"]).name(elem_name);
+            cont.getValue = function() {
+                let result = this.object[this.property];
+                let mapping = {
+                    "negative": -1,
+                    "positive": 1,
+                    "opposite": 0,
+                    "": ""
+                };
+                return mapping[result];
+            }
+            cont.domElement.style.color = "blue";
+            return;
+        }
+
+        var cont = folder.add(row_obj, key).name(elem_name);
+
         if (typeof(row_obj[key]) == "boolean") return;
+        if (typeof(row_obj[key]) == "function") {
+            cont.domElement.previousSibling.style.width = "100%";
+            cont.domElement.previousSibling.style.textAlign = "center";
+        }
+        if (typeof(row_obj[key]) == "string") {
+            cont.onFinishChange(function() {
+                this.setValue(this.initialValue);
+            });                
+        }
         cont.onFinishChange(function(value) {
-            if (value < 0) this.setValue(0);
+            if (value < -1) this.setValue(-1);
         });
     });
 

@@ -16,6 +16,8 @@
   <script src="js/lib/bootstrap.min.js"></script>
   <script src="js/lib/stats.min.js"></script>
   <script src="js/lib/dat.gui.min.js"></script>
+  <script src="js/lib/sweetalert.min.js"></script>
+  <script src="js/lib/plotly-2.35.2.min.js"></script>
   
   <script src="js/lib/three.js"></script>
   <script src="js/lib/tween.min.js"></script>
@@ -60,6 +62,7 @@
 
   <script src="js/controls.js"></script>
   <script src="js/tree-view.js"></script>
+  <script src="js/uhh_selection.js"></script>
   <script src="js/display.js"></script>
   <script src="js/ispy.js"></script>
 
@@ -165,13 +168,22 @@
           
 	  <div class="btn-group" role="group">
               <button type="button" class="btn btn-default" data-toggle="modal" data-target="#statistics" onclick="ispy.updateRendererInfo();" title="Stats">
-                <i class="fa fa-chart-bar"></i>
+                <i class="fa fa-heartbeat"></i>
               </button>
           </div>
-          
+    
+    <div class="btn-group" role="group">
+            <button type="button" id="analysis_btn" class="btn btn-default" disabled data-toggle="modal" data-target="#analysis" onclick="analysis.getSelectionResults();" title="Run Analysis">
+              <i class="fa fa-chart-bar"></i>
+            </button>
+        </div>
+
 	  <div class="btn-group" role="group">
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#about" title="About">
               <i class="fa fa-info"></i>
+            </button>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#help" title="Help">
+              <i class="fa fa-question-circle"></i>
             </button>
           </div>
           
@@ -308,7 +320,7 @@ piwikTracker.enableLinkTracking();
         <div class="bordered" id="selected-event"> </div>
         <div id="event-buttons">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" id="load-event" class="btn btn-default disabled" onclick="$('#files').modal('hide'); ispy.loadEvent();">Load</button>
+          <button type="button" id="load-event" class="btn btn-default disabled" onclick="$('#files').modal('hide'); analysis.buildFileSummary(); ispy.loadEvent();">Load</button>
         </div>
       </div>
     </div>
@@ -321,6 +333,18 @@ piwikTracker.enableLinkTracking();
       <div class="modal-header"></div>
       <div class="modal-body">
         <h4><i class="fa fa-spinner fa-spin"></i> Loading...</h4>
+      </div>
+      <div class="modal-footer"></div>
+    </div>
+  </div>
+</div>
+
+<div id="building" role="dialog" class="modal" data-backdrop="static">
+  <div class="modal-dialog">
+    <div class="modal-content bordered black">
+      <div class="modal-header"></div>
+      <div class="modal-body">
+        <h4><i class="fa fa-cog fa-spin" style="font-size:28px"></i> Building File Summary for the Analysis...</h4>
       </div>
       <div class="modal-footer"></div>
     </div>
@@ -418,6 +442,57 @@ piwikTracker.enableLinkTracking();
   </div>
 </div>
 
+<div id="analysis" role="dialog" class="modal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content bordered black">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i><span class="sr-only">Close</span></button>
+        <h4 class="modal-title black">Events Selection</h4>
+      </div>
+      <div class="modal-body">
+        <p>
+          Still in development ...
+        </p>
+
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#statistics-tab" aria-controls="statistics-tab" role="tab" data-toggle="tab">Statistics</a></li>
+            <li role="presentation"><a href="#m-tab" aria-controls="m-tab" role="tab" data-toggle="tab">Invariant Mass (visible)</a></li>
+            <li role="presentation" class="active"><a href="#mt-tab" aria-controls="mt-tab" role="tab" data-toggle="tab">Transverse Mass</a></li>
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="statistics-tab">
+              <p>
+                Show display statistics:
+              </p>
+              <div id="event-statistics"></div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="m-tab">
+              <p>
+                Still in development ...
+              </p>
+              <div id="m-plot"></div>
+              <span id="m-hist" style="display: block; width: 100%; background-image: url('');"></span>
+              <button type="button" class="btn btn-default" onclick="analysis.createCSV();">Export to CSV</button>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="mt-tab">
+              <p>
+                Still in development ...
+              </p>
+              <div id="mt-plot"></div>
+              <span id="mt-hist" style="display: block; width: 100%; background-image: url('');"></span>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="about" role="dialog" class="modal">
   <div class="modal-dialog">
     <div class="modal-content bordered black">
@@ -427,35 +502,81 @@ piwikTracker.enableLinkTracking();
       </div>
       <div class="modal-body">
         <p>
-          <h4>iSpy-WebGL <span id="version"></span></h4>
+          <h4>iSpy WebGL (Masterclasses @ DESY) <span id="version"></span></h4>
         </p>
         <p>
-          A browser-based event display for the <a target="_blank" href="http://cms.cern/">CMS Experiment</a> at the LHC using WebGL
+          This repository contains a modified version of the iSpy WebGL Event Display for the <a href="https://home.cern/science/experiments/cms">CMS Experiment</a>, which has been adapted for the Masterclasses at DESY. The original version of the iSpy WebGL Event Display was developed by <a href="https://github.com/9inpachi">F. Ali</a>, <a href="https://github.com/lukebarnard">L. Barnard</a>, <a href="https://github.com/hategan">M. Hategan</a>, <a href="https://github.com/SeungJunLee0">S. Lee</a>, <a href="https://github.com/carpppa">C. Logrén</a>, <a href="https://github.com/tpmccauley">T. McCauley</a>, <a href="https://github.com/phongn">P. Nguyen</a>, <a href="https://github.com/msaunby">M. Saunby</a>.
         </p>
-        <p>
-          <a href="mailto:ispy-developers@cern.ch">Questions/comments/problems</a>
-	</p>
+
 	<p>
-	  <a target="_blank" href="https://github.com/cms-outreach/ispy-webgl/tree/master#readme">Documentation and FAQ</a>
         <p>
-          <a target="_blank" href="https://github.com/cms-outreach/ispy-webgl">Code</a> and
-          <a target="_blank" href="https://github.com/cms-outreach/ispy-webgl/issues">Issues</a>
+          <a target="_blank" href="https://github.com/haddadanas/ispy-webgl-DESY">Code</a>
         </p>
-        <p>Contributors: 
-	  <a href="https://github.com/9inpachi" target="_blank">F. Ali</a>, 
-	  <a href="https://github.com/lukebarnard1" target="_blank">L. Barnard</a>, 
-	  <a href="https://github.com/hategan" target="_blank">M. Hategan</a>, 
-	  <a href="https://github.com/SeungJunLee0" target="_blank">S. Lee</a>, 
-	  <a href="https://github.com/carpppa" target="_blank">C. Logren</a>, 
-	  <a href="https://github.com/tpmccauley" target="_blank">T. McCauley</a>, 
-	  <a href="https://github.com/phongn" target="_blank"> P. Nguyen</a>, 
-	  <a href="https://github.com/msaunby" target="_blank">M. Saunby</a>
-	</p>
         <p>Reference: <a target="_blank" href="https://doi.org/10.1088/1742-6596/898/7/072030">T McCauley 2017 J. Phys.: Conf. Ser. 898 072030</a></p>
-        <p>This application uses <a target="_blank" href="http://threejs.org/">three.js</a> <span id="threejs"></span></p>
+        <p>This application uses:</p>
+          <ul><a target="_blank" href="http://threejs.org/">three.js</a> <span id="threejs"></span></ul>
+          <ul><a target="_blank" href="https://sweetalert.js.org/">sweetalert.js</a> <span id="sweetalert"></span></ul>
+          <ul><a target="_blank" href="https://plotly.com/javascript/">plotly.js</a> <span id="plotly"></span></ul>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="help" role="dialog" class="modal">
+  <div class="modal-dialog">
+    <div class="modal-content bordered black">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><i class="fa fa-times"></i><span class="sr-only">Close</span></button>
+        <h4 class="modal-title black">Anleitung (currently only available in german)</h4>
+      </div>
+      <div class="modal-body">
+        <h2>Erste Schritte</h2>
+        <h3">Öffnen von Files</h3>
+        <p>Über das Menü &quot;Open File&quot; <i class="fa fa-folder-open" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> können Events geöffnet werden. Es gibt zwei Möglichkeiten, Events zu öffnen:</p>
+        <ol>
+        <li>
+        <p><strong>Open local file(s)</strong>: Hier kann eine Datei aus dem lokalen Dateisystem aus ausgewählt werden. Die Datei muss im <a href="https://github.com/cms-outreach/ispy-analyzers">.ig</a> Format vorliegen.</p>
+        </li>
+        <li>
+        <p><strong>Open file(s) from the Web</strong>: Hier kann aus bereitgestellten Beispielen für verschiedene Prozesse ausgewählt werden.</p>
+        </li>
+        </ol>
+        <h3>Navigation zwischen Events</h3>
+        <p>Nachdem ein file geöffnet wurde, können durch die Events dieses files navigieren, indem die Pfeiltasten Ihres Tastatures <i class="fa fa-arrow-left" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> <i class="fa fa-arrow-right" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> oder die Knöpfe <i class="fa fa-step-backward" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> <i class="fa fa-step-forward" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> aus der oberen Leiste verwenden werden.</p>
+        <h3>Ansichten wechseln</h3>
+        <p>Ein Event kann in verschiedenen Ansichten dargestellt werden. Die Ansichten können über die Knöpfe <span style="border: 1px solid black; padding: 3px; display: inline-block;">3D</span>, <span style="border: 1px solid black; padding: 3px; display: inline-block;">rφ</span> oder <span style="border: 1px solid black; padding: 3px; display: inline-block;">ρz</span> aus der oberen Leiste gewechselt werden. Um auf die Anfangsansicht zurückzukehren, kann auf den Knopf <i class="fa fa-home" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> geklickt werden.</p>
+        <p>In der 3D Ansicht lässt sich das Event auch entlang einer Achse anzeigen. Dazu können die Knöpfe <img src="./graphics/yx_small.png" style="background-color: grey;"/>, <img src="./graphics/xz_small.png" style="background-color: grey;"/>  und <img src="./graphics/yz_small.png" style="background-color: grey;"/> verwenden werden. Dies kann bei der Bestimmun der Teilchenladung und die Beobachtung der Spurkrümmung hilfreich sein.</p>
+        <h3>Detektor Elemente ein- und ausblenden</h3>
+        <p>Unter dem Reiter &quot;Detector&quot; in der Kontrollleiste auf der rechten Seite, können die verschiedenen Detektorelemente (in abstrahierter Form) ein- und ausblenden werden. Die Detektorelemente sind in verschiedene Gruppen unterteilt, die über die Dropdown-Liste auswählen werden können. Dafür muss die Checkbox &quot;show&quot; unter der jeweiligen Gruppe aktiviert werden.</p>
+        <p>Eine &quot;reelle&quot; Ansicht der CMS Detektorteile kann aber auch angezeigt werden. Dafür muss das Modell des jeweiligen Teils über den Knopf &quot;Import 3D Model&quot; <i class="fa fa-download" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> und danach &quot;import file(s) from the Web&quot; importiert werden. Zu Bachten ist jedoch, dass die 3D Modelle in einigen Fällen sehr groß sein können und die Darstellung des Events verlangsamen können.
+        Durch neuladen der Seite, können alle importierten Modelle wieder entfernt werden.</p>
+        <h3>Eventobjecte ein- und ausblenden</h3>
+        <p>Die Teilchenspuren in einem geladenen Event können über die Checkboxen unter dem Reiter &quot;Show/Hide&quot; in der Kontrollleiste auf der rechten Seite ein- und ausgeblendet werden. Um diese Einstellung beim Wechseln zwischen Events beizubehalten, kann die Checkbox &quot;Keep settings&quot; aktiviert werden.</p>
+        <p>Bestimmte Informationen yum Events bzw. zu den Teilchen können über die Checkboxen unter dem Reiter &quot;Event Info&quot; ein- und ausgeblendet werden. Z.B. kann das pT und die Ladung von Elektronen und Muonen durch das Aktivieren der Checkboxen &quot;Track Info&quot; beim rüberfahren über die Spur angezeigt werden.</p>
+        <h3>Anwenden von Schnitten</h3>
+        <p>Aktuell können Schnitte auf das pT und ET angewendet werden und dabei nur die Spuren anzeigen, die diese Schnitte erfüllen. Dazu können die Schieberegler unter dem Reiter &quot;Momentum Cuts&quot; verwenden werden. Die Schieberegler können auch durch das Eingeben von Werten in das Textfeld geändert werden.</p>
+        <p>!!! note
+        Die Schnitte dienen nur der Visualisierung und haben keinen Einfluss auf auf die spätere Selection der Events.</p>
+        <h3>Invariantenmasse berechnen</h3>
+        <p>Spuren von Muonen und Elektronen können durch das Draufklicken selektiert werden und die Invariantenmasse dieser Teilchen kann durch das Drücken von <span style="border: 1px solid black; padding: 3px; display: inline-block;">m</span> auf der Tastatur berechnet werden. Die Invariantenmasse wird in einem Popup-Fenster angezeigt. Die anzahl der Selektierten Spuren, kann unter dem Reiter &quot;Event Info&quot; eingesehen werden.</p>
+        <h2>Die Selektion und Analyse von Events</h2>
+        <h3>Selektionschnitte auf einem bestimmten Event Testen</h3>
+        <p><img src="./graphics/selection_gui.png"></img></p>
+        <p>Unter dem Reiter &quot;Event Selection&quot; können die Schnitte auf die verschiedenen Teilchenvariablen anwenden. Wie im Bild zu sehen, sind 3 unterschiedliche Arten von Schnitten möglich:</p>
+        <ol>
+        <li>
+        <p><strong>Teilchenanzahl</strong>: Die kann auf Muonen, Elektronen und Photonen und Jets angewendet werden. Die Anzahl ist dabei eine positive ganze Zahl, womit nur Events mit exakter Übereinstimmung der Anzahl an Teilchen selektiert werden. Wird im Feld &quot;-1&quot; eingegeben, wird dieser Schnitt ignoriert und diese Teilchen fließen weder in die Selektion noch in der Berechnung der Invariantenmasse ein.</p>
+        </li>
+        <li>
+        <p><strong>Charge Sign</strong>: Hier kann ausgewählt werden, ob bei jeweils einer Teilchengruppe es sich um Teilchen-Antiteilchen Paare handelt (Ladungssumme ergibt dabei 0) oder es sich um Teilchen bzw. Antiteilchen handelt. Die Auswahlmöglichkeiten sind &quot;{leer}&quot;, &quot;Same&quot; und &quot;Opposite&quot;. Bei &quot;&quot; wird dieser Schnitt ignoriert und die Selektion wird nicht auf die Ladung der Teilchen angewendet.</p>
+        </li>
+        <li>
+        <p><strong>Impuls</strong>: Hier kann den Mindestimpuls sowohl für die Leptonen (Muonen und Elektronen) als auch für das MET ausgewählt werden. Die Einheit ist GeV und durch die Eingabe von &quot;-1&quot; wird dieser Schnitt ignoriert.</p>
+        </li>
+        </ol>
       </div>
     </div>
   </div>

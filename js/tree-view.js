@@ -210,11 +210,6 @@ ispy.addSelectionRow = function(group, key, name, objectIds, visible) {
 	
 	sf.domElement.onclick = function(e) {
 	    
-	    // ispy.displayCollection(
-		// key, group, name,
-		// ispy.getObjectIds(ispy.scene.getObjectByName(key))
-	    // );
-	    
 	};
 	
     }
@@ -441,6 +436,9 @@ ispy.addControllers = function(group) {
     const row_obj = {
 	number: nobjects,
 	min_pt: min_pt,
+	Electrons: visible,
+	Muons: visible,
+	Photons: visible,
 	Jets: hidden,
 	MET: hidden,
 	"Jet: min Et": jet_min_et,
@@ -451,10 +449,12 @@ ispy.addControllers = function(group) {
 	
     let folder = gui_elem.__folders[group];
 
-	let names = ispy.getSceneObjects();
+	let names = analysis.getSceneObjects();
 
-	if (group.includes('Momentum Cut')) {
-		folder.add(row_obj, 'min_pt', 0, 100).onChange(function() {
+	if (group.includes('Momentum Cut (GeV)')) {
+		folder.add(row_obj, 'min_pt', 0, 100).name(
+			"min. p<sub>T, visible</sub>"
+		).onChange(function() {
 			
 			ispy.views.forEach(v => {
 	    
@@ -478,11 +478,13 @@ ispy.addControllers = function(group) {
 			
 		});
 		
-		folder.add(row_obj, 'Jet: min Et', 0, 200).onChange(function() {
+		folder.add(row_obj, 'Jet: min Et', 0, 200).name(
+			"min. E<sub>T, Jets</sub>"
+		).onChange(function() {
 
 			ispy.views.forEach(v => {
 	    
-				let physic_objs = ispy.scenes[v].getObjectByName(names['PFJets']).children
+				let physic_objs = ispy.scenes[v].getObjectByName(names['Jets']).children
 
 				if ( ! physic_objs.length )
 					return;
@@ -499,10 +501,40 @@ ispy.addControllers = function(group) {
 	}
 		
 	if (group.includes('Show/Hide')) {
+		folder.add(row_obj, 'Electrons').onChange(function() {
+			let val = this.getValue();
+			ispy.views.forEach(v => {
+				electron_obj = ispy.scenes[v].getObjectByName(names['GsfElectrons']);
+				if (!electron_obj) return;
+				electron_obj.visible = val;
+			});	
+		});
+
+		folder.add(row_obj, 'Muons').onChange(function() {
+			let val = this.getValue();
+			ispy.views.forEach(v => {
+				['GlobalMuons', 'StandaloneMuons', 'TrackerMuons'].forEach(muonType => {
+					let muon_obj = ispy.scenes[v].getObjectByName(names[muonType]);
+					if (muon_obj) {
+						muon_obj.visible = val;
+					}
+				});
+			});	
+		});
+		
+		folder.add(row_obj, 'Photons').onChange(function() {
+			let val = this.getValue();
+			ispy.views.forEach(v => {
+				photon_obj = ispy.scenes[v].getObjectByName(names['Photons']);
+				if (!photon_obj) return;
+				photon_obj.visible = val;
+			});	
+		});
+
 		folder.add(row_obj, 'Jets').onChange(function() {
 			let val = this.getValue();
 			ispy.views.forEach(v => {
-				jet_obj = ispy.scenes[v].getObjectByName(names['PFJets']);
+				jet_obj = ispy.scenes[v].getObjectByName(names['Jets']);
 				if (!jet_obj) return;
 				jet_obj.visible = val;
 			});	
@@ -511,7 +543,7 @@ ispy.addControllers = function(group) {
 		folder.add(row_obj, 'MET').onChange(function() {
 			let val = this.getValue();
 			ispy.views.forEach(v => {
-				met_obj = ispy.scenes[v].getObjectByName(names['PFMETs']);
+				met_obj = ispy.scenes[v].getObjectByName(names['METs']);
 				met_obj.visible = val;
 			});	
 		});
@@ -540,17 +572,32 @@ ispy.addInfo = function(group) {
 	
     let folder = gui_elem.__folders[group];
 	
-	let names = ispy.getSceneObjects();
+	let names = analysis.getSceneObjects();
 	// pt is element 1 in the collection object (inconvinient definition by design)
-	met_pt = ispy.current_event.Collections[names['PFMETs']][0][1];
+	met_pt = ispy.current_event.Collections[names['METs']][0][1];
 
     const row_obj = {
 	MET: met_pt.toFixed(2) + " GeV",
+	Sel: "0",
+	track: false,
     };
 
 	folder.add(row_obj, 'MET').onFinishChange(function() {
 		// reset to original value
 		this.setValue(this.initialValue);
+	});
+
+	folder.add(row_obj, 'Sel').name(
+		"Selected Tracks"
+	).onFinishChange(function() {
+		// reset to original value
+		this.setValue(ispy.selected_objects.size);
+	});
+
+	folder.add(row_obj, 'track').name(
+		"Track Info"
+	).onChange(function() {
+		ispy.showTrackInfo = this.getValue();
 	});
 
 	// add all controllers to the reduced subfolders for convenience
@@ -585,25 +632,3 @@ ispy.applySavedSettings = function(settings) {
 	return {};
 };
 
-ispy.getSceneObjects = function() {
-	// Get all object names in the scene
-	// TODO also get the objects themself to refactor this from addControllers
-	// objects = {};
-	// ispy.views.forEach((v) => {
-	// 	objects[v] = [
-	// 	...ispy.scenes["3D"].getObjectByName('Physics').children,
-	// 	...ispy.scenes["3D"].getObjectByName('Tracking').children
-	// ].reduce((dic, o) => {
-	// 	dic[o.name.replace(/_V\d/g, '')] = o;
-	// 	return dic;
-	// }, {});
-	// });
-	// return objects;
-	return [
-			...ispy.scenes["3D"].getObjectByName('Physics').children,
-			...ispy.scenes["3D"].getObjectByName('Tracking').children
-		].reduce((dic, o) => {
-			dic[o.name.replace(/_V\d/g, '')] = o.name;
-			return dic;
-		}, {});
-}

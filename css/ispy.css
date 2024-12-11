@@ -22,6 +22,25 @@ canvas.hover {
   box-sizing: content-box;                                                             
 }
 
+.strikethrough {
+  position: relative;
+}
+.strikethrough:before {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: 50%;
+  right: 0;
+  border-top: 1px solid;
+  border-color: inherit;
+  
+  -webkit-transform:rotate(-45deg);
+  -moz-transform:rotate(-45deg);
+  -ms-transform:rotate(-45deg);
+  -o-transform:rotate(-45deg);
+  transform:rotate(-45deg);
+}
+
 #stats {
   position: absolute;
   top:0;
@@ -400,6 +419,11 @@ canvas.hover {
   cursor: pointer;
 }
 
+#help .modal-body {
+  max-height: 70vh;
+  overflow-y: scroll;
+}
+
 #geometry-files .modal-body {
   max-height: 300px;
   overflow-y: scroll;
@@ -458,4 +482,15 @@ canvas.hover {
 
 #browser-events td {
   border: 0;
+}
+
+.bubble {
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  pointer-events: none;
+  z-index: 1000;
+  white-space: nowrap;
 }

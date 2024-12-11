@@ -128,8 +128,7 @@ ispy.loadEvent = function() {
 	alert(err);
     
     }
-
-    //document.getElementById('loading').style.display = 'none';
+	//document.getElementById('loading').style.display = 'none';
     $("#loading").modal("hide");
 
     if ( ispy.isGeometry ) {
@@ -301,7 +300,8 @@ ispy.loadDroppedFile = function(file) {
 	ispy.event_index = 0;
 	ispy.updateEventList();
 	ispy.ig_data = zip;
-	
+
+	analysis.buildFileSummary();
 	ispy.loadEvent();
 
 	//document.getElementById('loading').style.display = 'none';

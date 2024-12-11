@@ -555,8 +555,6 @@ ispy.addEvent = function(event) {
     
     ispy.current_event = event;
     // Clear table from last event and show default caption
-    // $('#collection-table').empty();
-    // $('#collection-table').append(ispy.table_caption);
 
     // remove selectors for last event
     $("tr.Event").remove();
@@ -572,12 +570,6 @@ ispy.addEvent = function(event) {
 	ispy.addToScene(event, v);
 
     });
-
-	if ( ispy.current_event.EventInfo ) {
-	
-		ispy.addEventInfo(ispy.current_event.EventInfo);
-	
-	}
 
 	// add the controllers to the reduced GUI
 	ispy.reduced_data_groups.forEach(({name: n, function: addFunc}) => {

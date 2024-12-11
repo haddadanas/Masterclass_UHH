@@ -1,6 +1,6 @@
 var ispy = ispy || {};
 ispy.detector = {"Collections":{}};
-ispy.version = "v1.0.2-rc";
+ispy.version = "v1.0.0-UHH (dev)";
 
 // These need to be defined before adding objects:
 ispy.POINT = 0;
@@ -21,3 +21,7 @@ ispy.SHAPE = 9;
 ispy.TEXT = 10;
 ispy.BUFFERBOX = 11;
 ispy.STACKEDTOWER = 12;
+
+// Define some collection for the event data analysis
+var analysis = analysis || {};
+analysis.file_events_summary = null;
