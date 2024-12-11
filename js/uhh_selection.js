@@ -167,10 +167,10 @@ let checkIfEventPassing = function (event_index = -1) {
         if (cuts[name] == -1)
             continue;
         if (name == "TrackerMuons" || name == "GsfElectrons") {
+            part = getPtPassingLeptons(part, cuts["pt"]);
             pass && (pass = checkCharge(part, cuts["charge"]));
             if (!pass)
                 break;
-            part = getPtPassingLeptons(part, cuts["pt"]);
         }
         if (part.length != cuts[name]) {
             pass && (pass = false);
