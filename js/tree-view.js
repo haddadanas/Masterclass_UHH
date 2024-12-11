@@ -598,6 +598,7 @@ ispy.addInfo = function(group) {
 		"Track Info"
 	).onChange(function() {
 		ispy.showTrackInfo = this.getValue();
+		ispy.clearTrackInfo();
 	});
 
 	// add all controllers to the reduced subfolders for convenience
