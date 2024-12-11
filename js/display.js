@@ -169,6 +169,13 @@ ispy.getObjectIds = function(obj) {
 
 };
 
+ispy.clearTrackInfo = function() {
+    const existingBubble = document.querySelector('.bubble');
+    if (existingBubble) {
+        existingBubble.remove();
+    }
+};
+
 ispy.onMouseMove = function(e) {
 
     e.preventDefault();
@@ -219,6 +226,9 @@ ispy.onMouseMove = function(e) {
 	ispy.intersected = null;
 
     }
+    else {
+        ispy.clearTrackInfo();
+    }
 
     if ( intersects.length > 0 ) {
 
@@ -248,10 +258,7 @@ ispy.onMouseMove = function(e) {
             const bubbleText = `Charge: ${matchingTrack[chargeIndex]}` + '\n' + `Pt: ${intersectedObject.userData.pt.toFixed(2)}`;
 
             // Remove existing bubble if any
-            const existingBubble = document.querySelector('.bubble');
-            if (existingBubble) {
-                existingBubble.remove();
-            }
+            ispy.clearTrackInfo();
 
             // Create a new bubble
             const bubble = document.createElement('div');
@@ -265,10 +272,7 @@ ispy.onMouseMove = function(e) {
         }
         else {
             // Remove existing bubble if any
-            const existingBubble = document.querySelector('.bubble');
-            if (existingBubble) {
-                existingBubble.remove();
-            }
+            ispy.clearTrackInfo();
         }
     }
     }
@@ -470,131 +474,12 @@ ispy.showMass = function() {
 
 };
 
-ispy.getMetInformation = function(type, eventObjectData) {
-    
-        let pt, phi;
-        let px, py, pz;
-    
-        for ( var t in type ) {
-    
-        if ( type[t][0] === 'pt' ) {
-    
-            pt = eventObjectData[t];
-    
-        } else if ( type[t][0] === 'phi' ) {
-    
-            phi = eventObjectData[t];  // TODO can be removed
-    
-        } else if (type[t][0] === 'px') {
-
-            px = eventObjectData[t];
-
-        } else if (type[t][0] === 'py') {
-
-            py = eventObjectData[t];
-            
-        } else if (type[t][0] === 'pz') {
-
-            pz = eventObjectData[t];
-            
-        }
-    
-        }
-    
-        return {'pt': pt, 'px': px, 'py': py, 'pz':pz, 'phi': phi};
-    
-    }
-
-ispy.getFourVector = function(key, type, eventObjectData) {
-    const isMuon = key.includes('Muon');
-    const isElectron = key.includes('Electron');
-    const isPhoton = key.includes('Photon');
-
-    if ( ! ( isMuon || isElectron || isPhoton ) ) {
-
-	return;
-
-    }
-
-    let pt, eta, phi, charge;
-    let E, px, py, pz;
-
-    for ( var t in type ) {
-
-	if ( type[t][0] === 'pt' ) {
-
-	    pt = eventObjectData[t];
-
-	} else if ( type[t][0] === 'energy' ) {
-
-        E = eventObjectData[t];
-    
-    } else if ( type[t][0] === 'eta' ) {
-
-	    eta = eventObjectData[t];
-
-	} else if ( type[t][0] === 'phi' ) {
-
-	    phi = eventObjectData[t];
-
-	} else if ( type[t][0] === 'charge' ) {
-
-        charge = eventObjectData[t];
-
-    }
-    }
-
-    if (!pt) {
-        pt = E / Math.cosh(eta);
-    }
-    let ptype;
-
-    px = pt*Math.cos(phi);
-    py = pt*Math.sin(phi);
-    pz = pt*Math.sinh(eta);
-
-    if (isPhoton) {
-        return {'E':E, 'px':px, 'py':py, 'pz':pz, 'pt': pt, 'ptype': ptype};
-    }
-
-        E = 0;
-
-        if ( isMuon ) {
-
-        E += mMuon2;
-        ptype = 'Muon';
-
-        }
-
-        if ( isElectron ) {
-
-        E += mElectron2;
-        ptype = 'Electron';
-
-        }
-
-        E += pt*pt*Math.cosh(eta)*Math.cosh(eta);
-        E = Math.sqrt(E);
-
-    return {'E':E, 'px':px, 'py':py, 'pz':pz, 'pt': pt, 'charge': charge, 'ptype': ptype};
-}
-
-ispy.getFourVectorByObjectIndex = function(key, objectUserData) {
-    const type = ispy.current_event.Types[key];
-    const eventObjectData = ispy.current_event.Collections[key][objectUserData.originalIndex];
-    
-    let result = ispy.getFourVector(key, type, eventObjectData);
-    result['index'] = objectUserData.originalIndex;
-
-    return result;
-}
-
 ispy.displayEventObjectData = function() {
 
     const key = ispy.intersected.name;
     const objectUserData = ispy.intersected.userData;
 
-    let fourVector = ispy.getFourVectorByObjectIndex(key, objectUserData);
+    let fourVector = getFourVectorByObjectIndex(key, objectUserData);
     let ptype = fourVector.ptype;
 
     ispy.intersected.four_vector = fourVector;
