@@ -434,15 +434,15 @@ ispy.addControllers = function(group) {
 	let visible = true;
 
     const row_obj = {
-	number: nobjects,
-	min_pt: min_pt,
-	Electrons: visible,
-	Muons: visible,
-	Photons: visible,
-	Jets: hidden,
-	MET: hidden,
-	"Jet: min Et": jet_min_et,
-	"Additional Tracks": visible
+		number: nobjects,
+		min_pt: min_pt,
+		Electrons: visible,
+		Muons: visible,
+		Photons: visible,
+		Jets: hidden,
+		MET: hidden,
+		"Jet: min Et": jet_min_et,
+		"Additional Tracks": visible
     };
 
 	gui_elem = ispy.guiReduced;

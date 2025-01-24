@@ -169,13 +169,6 @@ ispy.getObjectIds = function(obj) {
 
 };
 
-ispy.clearTrackInfo = function() {
-    const existingBubble = document.querySelector('.bubble');
-    if (existingBubble) {
-        existingBubble.remove();
-    }
-};
-
 ispy.onMouseMove = function(e) {
 
     e.preventDefault();
@@ -226,9 +219,6 @@ ispy.onMouseMove = function(e) {
 	ispy.intersected = null;
 
     }
-    else {
-        ispy.clearTrackInfo();
-    }
 
     if ( intersects.length > 0 ) {
 
@@ -258,7 +248,10 @@ ispy.onMouseMove = function(e) {
             const bubbleText = `Charge: ${matchingTrack[chargeIndex]}` + '\n' + `Pt: ${intersectedObject.userData.pt.toFixed(2)}`;
 
             // Remove existing bubble if any
-            ispy.clearTrackInfo();
+            const existingBubble = document.querySelector('.bubble');
+            if (existingBubble) {
+                existingBubble.remove();
+            }
 
             // Create a new bubble
             const bubble = document.createElement('div');
@@ -272,7 +265,10 @@ ispy.onMouseMove = function(e) {
         }
         else {
             // Remove existing bubble if any
-            ispy.clearTrackInfo();
+            const existingBubble = document.querySelector('.bubble');
+            if (existingBubble) {
+                existingBubble.remove();
+            }
         }
     }
     }
@@ -471,6 +467,7 @@ ispy.showMass = function() {
     $('#invariant-mass-modal').modal('show');
 
     ispy.selected_objects.clear();
+    ispy.subfoldersReduced['Info'][1].setValue(0);
 
 };
 

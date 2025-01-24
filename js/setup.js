@@ -617,16 +617,16 @@ ispy.initSelectionFields = function() {
 
 
     const row_obj = {
-	"TrackerMuons": nMuon,
-	"GsfElectrons": nElectron,
-    "Photons": nPhoton,
-	"charge": chargeSign,
-	"pt": minPt,
-    "minMETs": minPt,
-    "maxMETs": minPt,
-    "check": test,
-    "nSelected": "0",
-    "firstSelected": ""
+        "TrackerMuons": nMuon,
+        "GsfElectrons": nElectron,
+        "Photons": nPhoton,
+        "charge": chargeSign,
+        "pt": minPt,
+        "minMETs": minPt,
+        "maxMETs": minPt,
+        "check": test,
+        "nSelected": "0",
+        "firstSelected": ""
     };
 
     var naming_map = {
@@ -667,7 +667,8 @@ ispy.initSelectionFields = function() {
         if (typeof(row_obj[key]) == "boolean") return;
         if (typeof(row_obj[key]) == "function") {
             cont.domElement.previousSibling.style.width = "100%";
-            cont.domElement.previousSibling.style.textAlign = "center";
+            cont.domElement.previousSibling.style.height = "auto";
+            cont.domElement.previousSibling.id = "clickable-button";
         }
         if (typeof(row_obj[key]) == "string") {
             cont.onFinishChange(function() {

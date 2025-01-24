@@ -1,8 +1,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-# iSpy WebGL (Masterclasses @ DESY)
+# iSpy WebGL (Masterclasses @ UHH)
 
-Dieses Repository enthält eine modifizierte Version des iSpy WebGL Event Displays, welches für die Masterclasses am DESY angepasst wurde. Die ursprüngliche Version des iSpy WebGL Event Displays wurde von der CMS Kollaboration (Mitwirkende: [F. Ali](https://github.com/9inpachi), [L. Barnard](https://github.com/lukebarnard), [M. Hategan](https://github.com/hategan), [S. Lee](https://github.com/SeungJunLee0), [C. Logrén](https://github.com/carpppa), [T. McCauley](https://github.com/tpmccauley), [P. Nguyen](https://github.com/phongn), [M. Saunby](https://github.com/msaunby)) entwickelt und ist unter folgende Links verfügbar:
+Dieses Repository enthält eine modifizierte Version des iSpy WebGL Event Displays, welches für die Masterclasses an der Universität Hamburg angepasst wurde. Die ursprüngliche Version des iSpy WebGL Event Displays wurde von der CMS Kollaboration (Mitwirkende: [F. Ali](https://github.com/9inpachi), [L. Barnard](https://github.com/lukebarnard), [M. Hategan](https://github.com/hategan), [S. Lee](https://github.com/SeungJunLee0), [C. Logrén](https://github.com/carpppa), [T. McCauley](https://github.com/tpmccauley), [P. Nguyen](https://github.com/phongn), [M. Saunby](https://github.com/msaunby)) entwickelt und ist unter folgende Links verfügbar:
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8043417.svg)](https://doi.org/10.5281/zenodo.8043417)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/cms-outreach/ispy-webgl)
