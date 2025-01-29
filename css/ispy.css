@@ -175,6 +175,39 @@ canvas.hover {
   font-size: 14px;
 }   
 
+.cr.number {
+  width: 90%;
+}
+
+.cr.function {
+  height: auto;
+}
+
+#clickable-button {
+  display: inline-block;
+  margin: 1px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#clickable-button:hover {
+  background-color: #0056b3;
+}
+
+#clickable-button:active {
+  background-color: #004085;
+}
+
 #toolbar {
   float: left;
 }
