@@ -226,8 +226,18 @@ ispy.event_description = {
 	    type: ispy.SCALEDSOLIDTOWER, on: true, group: "ECAL", name: "Barrel Rec. Hits",
 	    fn: ispy.makeERecHit_V2, style: {color: "rgb(10%, 100%, 10%)", opacity: 0.5, linewidth: 0.5},
 	    scale: 0.1, selection: {"min_energy": 0.25}
-    },
-    "HGCEERecHits_V1": {
+	},
+	"EcalTowers_V1": {
+	    type: ispy.SCALEDSOLIDTOWER, on: false, group: "ECAL", name: "EcalTowers",
+	    fn: ispy.makeEcalPFCandidateTowers, style: {color: "rgb(10%, 100%, 10%)", opacity: 0.5, scale: 0.1},
+	    selection: {"min_energy": 1.5}
+	},
+	"HcalTowers_V1": {
+            type: ispy.SCALEDSOLIDTOWER, on: false, group: "HCAL", name: "HcalTowers",
+	    fn: ispy.makeHcalPFCandidateTowers, style: {color: "rgb(20%, 70%, 100%)", opacity: 0.5, scale: 0.1},
+	    selection: {"min_energy":1.5}
+        },
+	"HGCEERecHits_V1": {
 	    type: ispy.SCALEDSOLIDBOX, on: true, group: "ECAL", name: "HGC EE Rec. Hits",
 	    fn: ispy.makeHGCRecHit, style: {color: "rgb(10%, 100%, 10%)", opacity: 0.5, linewidth: 0.25},
 	    selection: {"min_energy": 0.01}
@@ -405,8 +415,13 @@ ispy.event_description = {
 	    type: ispy.STACKEDTOWER, on: false, group: "Physics", name: "Calo Towers",
 	    fn: ispy.makeCaloTower, style: {ecolor: "rgb(100%, 0%, 0%)", hcolor: "rgb(0%, 0%, 100%)", opacity: 0.5, linewidth: 1.0}, 
 	    scale: 0.1, selection: {"min_energy": 0.1}
-    },
-    "METs_V1": {
+	},
+	"CaloTowers_V3":{
+	    type: ispy.STACKEDTOWER, on: false, group: "Physics", name: "Calo Towers",
+	    fn: ispy.makeCaloTower_V3, style: {ecolor: "rgb(100%, 0%, 0%)", hcolor: "rgb(0%, 0%, 100%)", opacity: 0.5, linewidth: 1.0}, 
+	    scale: 0.1, selection: {"min_energy": 1.0}
+	},
+	"METs_V1": {
 	    type: ispy.SHAPE, on: false, group: "Physics", name: "Missing Et (Reco)",
 	    fn: ispy.makeMET, style: {color: "rgb(100%, 50%, 100%)", linewidth:2, scale: 0.025}, selection: {"min_pt": 0.0}
     },
@@ -750,8 +765,13 @@ ispy.event_description = {
 	    type: ispy.STACKEDTOWER, on: false, group: "Physics", name: "Calo Towers",
 	    fn: ispy.makeCaloTower, style: {ecolor: "rgb(100%, 0%, 0%)", hcolor: "rgb(0%, 0%, 100%)", opacity: 0.5, linewidth: 1.0}, 
 	    scale: 0.1, selection: {"min_energy": 0.1}
-    },
-    "METs_V1": {
+	},
+	"CaloTowers_V3":{
+	    type: ispy.STACKEDTOWER, on: false, group: "Physics", name: "Calo Towers",
+	    fn: ispy.makeCaloTower_V3, style: {ecolor: "rgb(100%, 0%, 0%)", hcolor: "rgb(0%, 0%, 100%)", opacity: 0.5, linewidth: 1.0}, 
+	    scale: 0.1, selection: {"min_energy": 1.0}
+	},
+	"METs_V1": {
 	    type: ispy.SHAPE, on: false, group: "Physics", name: "Missing Et (Reco)",
 	    fn: ispy.makeMET, style: {color: "rgb(100%, 50%, 100%)", linewidth:2, scale: 0.025}, selection: {"min_pt": 0.0}
     },
@@ -926,8 +946,18 @@ ispy.event_description = {
 	    type: ispy.SCALEDSOLIDTOWER, on: true, group: "ECAL", name: "Barrel Rec. Hits",
 	    fn: ispy.makeERecHit_RZ, style: {color: "rgb(10%, 100%, 10%)", opacity: 0.5, linewidth: 0.5},
 	    scale: 0.1, selection: {"min_energy": 0.25}
-    },
-    "HGCEERecHits_V1": {
+	},
+	"EcalTowers_V1": {
+            type: ispy.SCALEDSOLIDTOWER, on: false, group: "ECAL", name: "EcalTowers",
+            fn: ispy.makeEcalPFCandidateTowersRZ, style: {color: "rgb(10%, 100%, 10%)", opacity: 0.5, scale: 0.1},
+            selection: {"min_energy": 1.5}
+        },
+        "HcalTowers_V1": {
+            type: ispy.SCALEDSOLIDTOWER, on: false, group: "HCAL", name: "HcalTowers",
+            fn: ispy.makeHcalPFCandidateTowersRZ, style: {color: "rgb(20%, 70%, 100%)", opacity: 0.5, scale: 0.1},
+            selection: {"min_energy":1.5}
+        },
+	"HGCEERecHits_V1": {
 	    type: ispy.SCALEDSOLIDBOX, on: true, group: "ECAL", name: "HGC EE Rec. Hits",
 	    fn: ispy.makeHGCRecHit, style: {color: "rgb(10%, 100%, 10%)", opacity: 0.5, linewidth: 0.25},
 	    selection: {"min_energy": 0.01}
@@ -1097,8 +1127,13 @@ ispy.event_description = {
 	    type: ispy.STACKEDTOWER, on: false, group: "Physics", name: "Calo Towers",
 	    fn: ispy.makeCaloTower, style: {ecolor: "rgb(100%, 0%, 0%)", hcolor: "rgb(0%, 0%, 100%)", opacity: 0.5, linewidth: 1.0}, 
 	    scale: 0.1, selection: {"min_energy": 0.1}
-    },
-    "METs_V1": {
+	},
+	"CaloTowers_V3":{
+	    type: ispy.STACKEDTOWER, on: false, group: "Physics", name: "Calo Towers",
+	    fn: ispy.makeCaloTower_V3, style: {ecolor: "rgb(100%, 0%, 0%)", hcolor: "rgb(0%, 0%, 100%)", opacity: 0.5, linewidth: 1.0}, 
+	    scale: 0.1, selection: {"min_energy": 1.0}
+	},
+	"METs_V1": {
 	    type: ispy.SHAPE, on: false, group: "Physics", name: "Missing Et (Reco)",
 	    fn: ispy.makeMET, style: {color: "rgb(100%, 50%, 100%)", linewidth:2, scale: 0.025}, selection: {"min_pt": 0.0}
     },
