@@ -51,6 +51,7 @@
   <script src="js/lib/LineGeometry.js"></script>
 
   <script src="js/config.js"></script>
+  <script src="js/analysis_config.js"></script>
   <script src="js/setup.js"></script>
   <script src="js/animate.js"></script>
   <script src="js/utils.js"></script>
@@ -176,6 +177,12 @@
     <div class="btn-group" role="group">
             <button type="button" id="analysis_btn" class="btn btn-default" disabled data-toggle="modal" data-target="#analysis" onclick="analysis.getSelectionResults();" title="Run Analysis">
               <i class="fa fa-chart-bar"></i>
+            </button>
+            <button id="prev-sel-event" class="btn btn-default disabled" type="button" title="Previous Selected Event" onclick="analysis.prevSelectedEvent();">
+              <i class="fa fa-angle-double-left"></i>
+            </button>
+            <button id="next-sel-event" class="btn btn-default disabled" type="button" title="Next Selected Event" onclick="analysis.nextSelectedEvent();">
+              <i class="fa fa-angle-double-right"></i>
             </button>
         </div>
 
@@ -459,7 +466,6 @@ piwikTracker.enableLinkTracking();
           <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#statistics-tab" aria-controls="statistics-tab" role="tab" data-toggle="tab">Statistics</a></li>
             <li role="presentation"><a href="#m-tab" aria-controls="m-tab" role="tab" data-toggle="tab">Invariant Mass (visible)</a></li>
-            <li role="presentation" class="active"><a href="#mt-tab" aria-controls="mt-tab" role="tab" data-toggle="tab">Transverse Mass</a></li>
           </ul>
 
           <!-- Tab panes -->
@@ -471,19 +477,19 @@ piwikTracker.enableLinkTracking();
               <div id="event-statistics"></div>
             </div>
             <div role="tabpanel" class="tab-pane" id="m-tab">
-              <p>
-                Still in development ...
-              </p>
               <div id="m-plot"></div>
               <span id="m-hist" style="display: block; width: 100%; background-image: url('');"></span>
-              <button type="button" class="btn btn-default" onclick="analysis.createCSV();">Export to CSV</button>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="mt-tab">
-              <p>
-                Still in development ...
-              </p>
-              <div id="mt-plot"></div>
-              <span id="mt-hist" style="display: block; width: 100%; background-image: url('');"></span>
+              <div class="dropdown"></div>
+              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Export to CSV
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="#" onclick="analysis.createCSV('Higgs');">Higgs</a></li>
+                <li><a href="#" onclick="analysis.createCSV('W-Boson');">W-Boson</a></li>
+                <li><a href="#" onclick="analysis.createCSV('Z-Boson');">Z-Boson</a></li>
+                <li><a href="#" onclick="analysis.createCSV('Zoo');">Zoo</a></li>
+              </ul>
             </div>
           </div>
       </div>

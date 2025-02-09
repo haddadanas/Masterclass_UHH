@@ -43,7 +43,7 @@ export interface Analysis {
     getSelectionResults: () => void;
     getSelectionCuts: () => Record<string, number>;
     getPassingEvents: () => string[];
-    createCSV?: () => string;
+    createCSV?: (category: string) => string;
     buildFileSummary: () => void;
     checkCurrentSelection: () => void;
     getSceneObjects: () => Record<string, string>;

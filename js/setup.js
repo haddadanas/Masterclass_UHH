@@ -629,21 +629,12 @@ ispy.initSelectionFields = function() {
         "firstSelected": ""
     };
 
-    var naming_map = {
-        "TrackerMuons": "# &mu;",
-        "GsfElectrons": "# e",
-        "Photons": "# &gamma;",
-        "charge": "Charge Sign",
-        "pt": "Min p<sub>T,&#8467;</sub>",
-        "minMETs": "Min <span class='strikethrough'>p<sub>T</sub></span> (MET)",
-        "maxMETs": "Max <span class='strikethrough'>p<sub>T</sub></span> (MET)",
-        "check": "Check Selection",
-        "nSelected": "# Passing",
-        "firstSelected": "Passing Events",
-    };
+    var naming_map = analysis.selection_naming_map;
+    var help_map = analysis.selection_fields_help;
 
     Object.keys(row_obj).forEach(function(key) {
         elem_name = naming_map[key];
+        help_info = help_map[key] || false;
 
         // add the controller to the folder
         if (key == "charge") {
@@ -659,16 +650,21 @@ ispy.initSelectionFields = function() {
                 return mapping[result];
             }
             cont.domElement.style.color = "blue";
+            // cont.help(help_info);
             return;
         }
 
         var cont = folder.add(row_obj, key).name(elem_name);
+        // if (help_info) {
+        //     cont.help(help_info);
+        // }
 
         if (typeof(row_obj[key]) == "boolean") return;
         if (typeof(row_obj[key]) == "function") {
             cont.domElement.previousSibling.style.width = "100%";
             cont.domElement.previousSibling.style.height = "auto";
             cont.domElement.previousSibling.id = "clickable-button";
+            return;
         }
         if (typeof(row_obj[key]) == "string") {
             cont.onFinishChange(function() {

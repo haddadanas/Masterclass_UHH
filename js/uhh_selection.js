@@ -66,7 +66,7 @@ analysis.getPassingEvents = function () {
     return passing_events;
 };
 // Get CSV of the passing events
-analysis.createCSV = function () {
+analysis.createCSV = function(category) {
     var masses = getMassesArray();
     //     var csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass,Transverse Mass\r\n";
     var csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass\r\n";
@@ -75,7 +75,13 @@ analysis.createCSV = function () {
         csv += index + "," + m + "\r\n";
     });
     var encodedUri = encodeURI(csv);
-    window.open(encodedUri);
+    var link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", category + "_results.csv");
+    document.body.appendChild(link); // Required for FF
+    link.click();
+    document.body.removeChild(link);
+
     return csv;
 };
 //
