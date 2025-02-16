@@ -101,6 +101,31 @@ ispy.enableNextPrev = function() {
 
 };
 
+ispy.enableNextPrevSelected = function() {
+	selectedEvents = analysis.getPassingEvents() || [];
+
+    if ( selectedEvents.length > 0 && ispy.event_index > selectedEvents[0] ) {
+
+	document.getElementById('prev-sel-event').classList.remove('disabled');
+    
+    } else {
+
+	document.getElementById('prev-sel-event').classList.add('disabled');
+  
+    }
+
+    if ( selectedEvents.length > 0 && ispy.event_index < selectedEvents[selectedEvents.length-1] ) {
+
+	document.getElementById('next-sel-event').classList.remove('disabled');
+    
+    } else {
+
+	document.getElementById('next-sel-event').classList.add('disabled');
+    
+    }
+
+};
+
 ispy.loadEvent = function() {
 
     document.getElementById('event-loaded').innerHTML = '';
@@ -141,6 +166,7 @@ ispy.loadEvent = function() {
 
 	ispy.addEvent(event);
 	ispy.enableNextPrev();
+	ispy.enableNextPrevSelected();
 	
 	let ievent = +ispy.event_index + 1; // JavaScript!
 
@@ -174,6 +200,53 @@ ispy.prevEvent = function() {
   
     }
 
+};
+
+ispy.nextSelectedEvent = function() {
+	let selectedEvents = analysis.getPassingEvents();
+	if (selectedEvents.length === 0) {
+		return;
+	}
+
+	let currentEvent = ispy.event_index;
+	let currentIndex = selectedEvents.indexOf(currentEvent.toString());
+	let nextIndex;
+	if (currentIndex === -1) {
+		nextIndex = selectedEvents.reduce((nearestIndex, currentValue, currentIndex) => {
+			return (Math.abs(currentValue - currentIndex) < Math.abs(selectedEvents[nearestIndex] - currentIndex) ? currentIndex : nearestIndex);
+	  	}, 0);
+	} else {
+		nextIndex = (currentIndex + 1);
+	}
+    if ( selectedEvents ) {
+		nextIndex = selectedEvents[nextIndex % selectedEvents.length];
+		ispy.event_index = Number(nextIndex);
+		ispy.loadEvent();
+    }
+};
+
+ispy.prevSelectedEvent = function() {
+	let selectedEvents = analysis.getPassingEvents();
+	if (selectedEvents.length === 0) {
+		return;
+	}
+
+	let currentEvent = ispy.event_index;
+	let currentIndex = selectedEvents.indexOf(currentEvent.toString());
+	let nextIndex;
+	if (currentIndex === -1) {
+		nextIndex = selectedEvents.reduce((nearestIndex, currentValue, currentIndex) => {
+			return (Math.abs(currentValue - currentIndex) < Math.abs(selectedEvents[nearestIndex] - currentIndex) ? currentIndex : nearestIndex);
+	  	}, 0);
+	} else {
+		nextIndex = (currentIndex - 1);
+	}
+	nextIndex = Math.max(0, nextIndex);
+    if ( selectedEvents ) {
+		nextIndex = selectedEvents[nextIndex % selectedEvents.length];
+		ispy.event_index = Number(nextIndex);
+		ispy.loadEvent();
+    }
 };
 
 ispy.selectLocalFile = function(index) {

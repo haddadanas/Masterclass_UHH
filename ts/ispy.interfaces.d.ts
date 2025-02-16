@@ -1,5 +1,5 @@
 import {GUIController} from 'dat.gui';
-import { Group, Scene } from 'three';
+import { Scene } from 'three';
 
 interface SubFolderReduced {
     "Selection": Array<GUIController>;

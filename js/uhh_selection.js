@@ -38,7 +38,7 @@ analysis.getSelectionResults = function () {
     event_stats.innerHTML = stats;
     let masses = getMassesArray();
     var m_hist = createHistogramData([...masses.m.values()], 0, 200, 20);
-    var mt_hist = createHistogramData([...masses.mt.values()], 0, 200, 20);
+    // var mt_hist = createHistogramData([...masses.mt.values()], 0, 200, 20);
     Plotly.newPlot("m-hist", [m_hist]);
     // Plotly.newPlot("mt-hist", [mt_hist]); // TODO enable this when transverse mass is implemented
     return;
@@ -66,7 +66,7 @@ analysis.getPassingEvents = function () {
     return passing_events;
 };
 // Get CSV of the passing events
-analysis.createCSV = function(category) {
+analysis.createCSV = function (category) {
     var masses = getMassesArray();
     //     var csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass,Transverse Mass\r\n";
     var csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass\r\n";
@@ -81,14 +81,12 @@ analysis.createCSV = function(category) {
     document.body.appendChild(link); // Required for FF
     link.click();
     document.body.removeChild(link);
-
     return csv;
 };
 //
 // Get the needed information of all events in the current file
 //
 analysis.buildFileSummary = function () {
-    let event;
     let event_summary;
     let analysisBtn = document.getElementById("analysis_btn");
     if (!analysisBtn) {
@@ -158,28 +156,26 @@ let checkIfEventPassing = function (event_index = -1) {
         event_index = getCurrentIndex();
     }
     event_index = event_index.toString();
-    var pass = true;
     var cuts = analysis.getSelectionCuts();
     var summary = analysis.file_events_summary.get(event_index);
     if (!summary) {
         return false;
     }
     // Check the MET cuts
-    pass && (pass = checkMinMET(summary.met, cuts["minMETs"]));
-    pass && (pass = checkMaxMET(summary.met, cuts["maxMETs"]));
+    var pass = checkMinMET(summary.met, cuts["minMETs"]) && checkMaxMET(summary.met, cuts["maxMETs"]);
     if (!pass)
-        return pass;
+        return false;
     for (let [name, part] of summary.particles) {
         if (cuts[name] == -1)
             continue;
         if (name == "TrackerMuons" || name == "GsfElectrons") {
-            part = getPtPassingLeptons(part, cuts["pt"]);
-            pass && (pass = checkCharge(part, cuts["charge"]));
+            pass = checkCharge(part, cuts["charge"]);
             if (!pass)
                 break;
+            part = getPtPassingLeptons(part, cuts["pt"]);
         }
         if (part.length != cuts[name]) {
-            pass && (pass = false);
+            pass = false;
             break;
         }
     }
@@ -215,7 +211,7 @@ let sumFourVectors = function (particles) {
     }
     let sumPx, sumPy, sumPz, sumE;
     sumPx = sumPy = sumPz = sumE = 0;
-    particles.forEach((group, key) => {
+    particles.forEach((group, _key) => {
         group.forEach((val) => {
             sumPx += val.px;
             sumPy += val.py;
@@ -249,7 +245,7 @@ let getTransverseMass = function (sumVector, met) {
     m = Math.sqrt(m);
     return m;
 };
-let createHistogram = function (array, start, end, bins) {
+let _createHistogram = function (array, start, end, bins) {
     // Histogram the array to the range `start` to `end` with `bins` bins
     var hist = new Array(bins).fill(0);
     var binWidth = (end - start) / bins;
@@ -267,7 +263,7 @@ let createHistogram = function (array, start, end, bins) {
     });
     return hist;
 };
-let createHistogramData = function (array, start, end, bins) {
+let createHistogramData = function (array, _start, _end, bins) {
     // Create the data for a histogram of the array
     return {
         x: array,

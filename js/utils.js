@@ -16,21 +16,21 @@ function getFourVector(key, type, eventObjectData) {
     let E, px, py, pz;
     pt = eta = phi = charge = E = 0;
     ptype = '';
-    for (var t in type) {
-        if (type[t][0] === 'pt') {
-            pt = eventObjectData[t];
+    for (const [index, t] of type.entries()) {
+        if (t[0] === 'pt') {
+            pt = eventObjectData[index];
         }
-        else if (type[t][0] === 'energy') {
-            E = eventObjectData[t];
+        else if (t[0] === 'energy') {
+            E = eventObjectData[index];
         }
-        else if (type[t][0] === 'eta') {
-            eta = eventObjectData[t];
+        else if (t[0] === 'eta') {
+            eta = eventObjectData[index];
         }
-        else if (type[t][0] === 'phi') {
-            phi = eventObjectData[t];
+        else if (t[0] === 'phi') {
+            phi = eventObjectData[index];
         }
-        else if (type[t][0] === 'charge') {
-            charge = eventObjectData[t];
+        else if (t[0] === 'charge') {
+            charge = eventObjectData[index];
         }
     }
     if (!pt) {
@@ -65,18 +65,18 @@ function getFourVectorByObjectIndex(key, objectUserData) {
 function getMetInformation(type, eventObjectData) {
     let pt, px, py, pz;
     pt = px = py = pz = 0;
-    for (var t in type) {
-        if (type[t][0] === 'pt') {
-            pt = eventObjectData[t];
+    for (const [index, t] of type.entries()) {
+        if (t[0] === 'pt') {
+            pt = eventObjectData[index];
         }
-        else if (type[t][0] === 'px') {
-            px = eventObjectData[t];
+        else if (t[0] === 'px') {
+            px = eventObjectData[index];
         }
-        else if (type[t][0] === 'py') {
-            py = eventObjectData[t];
+        else if (t[0] === 'py') {
+            py = eventObjectData[index];
         }
-        else if (type[t][0] === 'pz') {
-            pz = eventObjectData[t];
+        else if (t[0] === 'pz') {
+            pz = eventObjectData[index];
         }
     }
     return { 'pt': pt, 'px': px, 'py': py, 'pz': pz };

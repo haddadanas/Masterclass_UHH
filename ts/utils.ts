@@ -37,29 +37,29 @@ export function getFourVector(
     pt = eta = phi = charge = E = 0;
     ptype = '';
 
-    for ( var t in type ) {
+    for (const [index, t] of type.entries()) {
 
-	if ( type[t][0] === 'pt' ) {
+        if ( t[0] === 'pt' ) {
 
-	    pt = eventObjectData[t];
+            pt = eventObjectData[index];
 
-	} else if ( type[t][0] === 'energy' ) {
+        } else if ( t[0] === 'energy' ) {
 
-        E = eventObjectData[t];
-    
-    } else if ( type[t][0] === 'eta' ) {
+            E = eventObjectData[index];
+        
+        } else if ( t[0] === 'eta' ) {
 
-	    eta = eventObjectData[t];
+            eta = eventObjectData[index];
 
-	} else if ( type[t][0] === 'phi' ) {
+        } else if ( t[0] === 'phi' ) {
 
-	    phi = eventObjectData[t];
+            phi = eventObjectData[index];
 
-	} else if ( type[t][0] === 'charge' ) {
+        } else if ( t[0] === 'charge' ) {
 
-        charge = eventObjectData[t];
+            charge = eventObjectData[index];
 
-    }
+        }
     }
 
     if (!pt) {
@@ -118,30 +118,26 @@ export function getMetInformation(
 
     pt = px = py = pz = 0;
 
-    for ( var t in type ) {
+    for ( const [index, t] of type.entries() ) {
 
-    if ( type[t][0] === 'pt' ) {
+        if ( t[0] === 'pt' ) {
 
-        pt = eventObjectData[t];
+            pt = eventObjectData[index];
 
-    } else if (type[t][0] === 'px') {
+        } else if (t[0] === 'px') {
+            px = eventObjectData[index];
 
-        px = eventObjectData[t];
-
-    } else if (type[t][0] === 'py') {
-
-        py = eventObjectData[t];
-        
-    } else if (type[t][0] === 'pz') {
-
-        pz = eventObjectData[t];
+        } else if (t[0] === 'py') {
+            py = eventObjectData[index];
+            
+        } else if (t[0] === 'pz') {
+            pz = eventObjectData[index];
+            
+        }
         
     }
 
-    }
-
-    return {'pt': pt, 'px': px, 'py': py, 'pz':pz};
-
+    return {'pt': pt, 'px': px, 'py': py, 'pz': pz};
 };
 
 let cleanupData = function(d: string): string {

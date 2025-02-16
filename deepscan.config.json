@@ -1,0 +1,19 @@
+{
+  "project": {
+    "name": "Your Project Name",
+    "path": "./"
+  },
+  "rules": {
+    "enabled": true,
+    "severity": {
+      "error": true,
+      "warning": true,
+      "info": true
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
+  ]
+}
