@@ -32,11 +32,12 @@ export default [{
 
     rules: {
         semi: ["error", "always"],
-        quotes: ["error", "single"],
+        quotes: ["error", "double"],
         indent: ["error", 2],
+        "no-undef": "warn",
         "no-unused-vars": "warn",
         "no-console": "off",
-        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/explicit-function-return-type": "off",
     },
 }];

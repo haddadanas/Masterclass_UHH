@@ -3,7 +3,7 @@
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
     /* Language and Environment */
-    "target": "ES2016",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "target": "ES2022",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
     "module": "commonjs",                                /* Specify what module code is generated. */
     "rootDir": "./ts",                                   /* Specify the root folder within your source files. */
     "outDir": "./dist",                                  /* Specify an output folder for all emitted files. */
@@ -13,7 +13,8 @@
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
   "include": [
-    "ts/**/*.ts"
+    "ts/**/*.ts",
+    "js/*.js"
   ],
   "exclude": [
     "node_modules"
