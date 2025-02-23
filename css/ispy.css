@@ -176,7 +176,7 @@ canvas.hover {
 }   
 
 .cr.number {
-  width: 90%;
+  width: auto;
 }
 
 .cr.function {

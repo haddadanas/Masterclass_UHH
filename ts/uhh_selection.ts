@@ -7,12 +7,12 @@ import * as utils from "./utils";
 analysis.checkCurrentSelection = function(): void {
   const [text, symbol] = getCurrentSelectionMessage();
   swal({text: text, title: "Selection Results", icon: symbol, buttons: false, timer: 3000} as SweetAlert.Settings);
-  if (symbol == "warning") return;
-  const nSelected = ispy.subfoldersReduced["Selection"].find(e => e.property == "nSelected");
+  if (symbol === "warning") return;
+  const nSelected = ispy.subfoldersReduced["Selection"].find(e => e.property === "nSelected");
   if (nSelected) {
     nSelected.setValue(analysis.getPassingEvents().length);
   }
-  const firstSelected = ispy.subfoldersReduced["Selection"].find(e => e.property == "firstSelected");
+  const firstSelected = ispy.subfoldersReduced["Selection"].find(e => e.property === "firstSelected");
   if (firstSelected) {
     firstSelected.setValue(
       analysis.getPassingEvents().map(e => Number(e) + 1).slice(0, 5).join(", ")
@@ -58,6 +58,10 @@ analysis.getSelectionCuts = function(): { [key: string]: number } {
   const cuts: { [key: string]: number } = {};
   ispy.subfoldersReduced["Selection"].forEach(e => {
     if (["function", "string"].includes(typeof(e.getValue()))) return;
+    if ("checkbox" in e && !e.checkbox) {
+      cuts[e.property] = -1;
+      return;
+    }
     cuts[e.property] = e.getValue();
   });
   return cuts;
@@ -182,7 +186,7 @@ const checkIfEventPassing: (event_index?: number | string) => boolean = function
   if (!utils.getCurrentEvent()) {
     return false;
   }
-  if (event_index == -1) {
+  if (event_index === -1) {
     event_index = utils.getCurrentIndex();
   }
   event_index = event_index.toString();
@@ -363,7 +367,7 @@ const getMassesArray = function(): {m: Map<number, number>, mt: Map<number, numb
 
 const getCurrentSelectionMessage = function(): [string, string] {
   const pass = checkIfEventPassing();
-  if (pass == undefined) {
+  if (pass === undefined) {
     return ["No event file is loaded!", "warning"];
   }
   let html = "This Event ";

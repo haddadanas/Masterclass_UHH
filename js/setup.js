@@ -594,19 +594,41 @@ ispy.initControlPanel = function() {
     
 };
 
+function createCheckboxContainer(cont) {
+
+  const inputField = cont.__input;
+
+  // Create a checkbox element
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+
+  // Add the checkbox to the DOM
+  cont.domElement.appendChild(checkbox);
+  cont.domElement.style.display = "flex";
+
+  // Add the checkbox to the controller
+  cont.checkbox = false;
+
+  // Disable the input field initially
+  inputField.disabled = true;
+  inputField.style.backgroundColor = "#e0e0e0";
+  inputField.style.cursor = "not-allowed";
+  inputField.value = "";
+
+  checkbox.addEventListener("change", function() {
+    inputField.disabled = !this.checked;
+    inputField.style.backgroundColor = this.checked ? "" : "#e0e0e0";
+    inputField.style.cursor = this.checked ? "" : "not-allowed";
+    inputField.value = this.checked ? cont.initialValue : "";
+    cont.checkbox = this.checked;
+  });
+}
+
 ispy.initSelectionFields = function() {
   const gui_elem = ispy.guiReduced;
 
-  let folder = gui_elem.__folders["Event Selection"];
-  let nMuon, nElectron, nPhoton, chargeSign, minPt, test;
-
-  nMuon = -1;
-  nElectron = -1;
-  nPhoton = -1;
-  chargeSign = "";
-  minPt = -1.0;
-  test = analysis.checkCurrentSelection;
-
+  const folder = gui_elem.__folders["Event Selection"];
+  const nMuon = 0, nElectron = 0, nPhoton = 0, chargeSign = "", minPt = 0, maxPt = Infinity, test = analysis.checkCurrentSelection;
 
   const row_obj = {
     "TrackerMuons": nMuon,
@@ -615,25 +637,25 @@ ispy.initSelectionFields = function() {
     "charge": chargeSign,
     "pt": minPt,
     "minMETs": minPt,
-    "maxMETs": minPt,
+    "maxMETs": maxPt,
     "check": test,
     "nSelected": "0",
     "firstSelected": ""
   };
 
-  var naming_map = analysis.selection_naming_map;
+  const naming_map = analysis.selection_naming_map;
   //   var help_map = analysis.selection_fields_help;
-  var cont = null;
-  Object.keys(row_obj).forEach(function(key) {
-    let elem_name = naming_map[key];
+  let cont = null;
+  Object.keys(row_obj).forEach(key => {
+    const elem_name = naming_map[key];
     // let help_info = help_map[key] || false;
 
     // add the controller to the folder
-    if (key == "charge") {
+    if (key === "charge") {
       cont = folder.add(row_obj, key, ["", "positive", "negative", "opposite"]).name(elem_name);
       cont.getValue = function() {
-        let result = this.object[this.property];
-        let mapping = {
+        const result = this.object[this.property];
+        const mapping = {
           "negative": -1,
           "positive": 1,
           "opposite": 0,
@@ -664,13 +686,16 @@ ispy.initSelectionFields = function() {
       });                
     }
     cont.onFinishChange(function(value) {
-      if (value < -1) this.setValue(-1);
+      if (value < 0) this.setValue(0);
     });
+    if (["TrackerMuons", "GsfElectrons", "Photons", "maxMETs"].includes(key)) {
+      createCheckboxContainer(cont);
+    }
   });
 
   // add all controllers to the reduced subfolders for convenience
-  folder.__controllers.forEach(function(c) {
-    ispy.subfoldersReduced["Selection"].push(c);
+  folder.__controllers.forEach(c => {
+    ispy.subfoldersReduced.Selection.push(c);
   });
 
 };

@@ -47,6 +47,10 @@ analysis.getSelectionCuts = function () {
   ispy.subfoldersReduced["Selection"].forEach(e => {
     if (["function", "string"].includes(typeof (e.getValue())))
       return;
+    if ("checkbox" in e && !e.checkbox) {
+      cuts[e.property] = -1;
+      return;
+    }
     cuts[e.property] = e.getValue();
   });
   return cuts;
@@ -188,13 +192,11 @@ const checkMinMET = function (met, cut) {
   return met["pt"] >= cut;
 };
 const checkMaxMET = function (met, cut) {
-  if (cut == -1)
-    return true;
+  if (cut === -1) return true;
   return met["pt"] <= cut;
 };
 const checkCharge = function (leptons, cut) {
-  if (cut == undefined)
-    return true;
+  if (cut === undefined) return true;
   let chargeSum = 0;
   leptons.forEach(lepton => {
     chargeSum += lepton["charge"];
