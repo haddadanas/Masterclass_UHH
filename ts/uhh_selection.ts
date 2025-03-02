@@ -85,11 +85,10 @@ analysis.getPassingEvents = function(): string[] {
 // Get CSV of the passing events
 analysis.createCSV = function(category: string) { // TODO: enable transverse mass
   const masses = getMassesArray();
-  //     var csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass,Transverse Mass\r\n";
-  let csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass\r\n";
+  let csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass,Transverse Mass\r\n";
   masses.m.forEach((m, index) => {
-    // csv += index + "," + m + "," + masses.mt.get(index) + "\r\n";
-    csv += index + "," + m + "\r\n";
+    const mt = masses.mt.get(index) || "";
+    csv += `${index},${m},${mt}\r\n`;
   });
   const encodedUri = encodeURI(csv);
   const link = document.createElement("a");
@@ -159,19 +158,15 @@ const getSelectionParticles = function(
   }
   const selection = analysis.getSelectionCuts();
   const pt_cut = selection["pt"];
-  const filteredSelection = Object.keys(selection).filter(sel => {
-    if (["charge", "pt"].includes(sel)) return false;
-    if (selection[sel] == 0 || selection[sel] == -1) return false;
-    return true;
-  });
+  const filteredSelection = ["TrackerMuons", "GsfElectrons", "Photons"].filter(
+    (sel) => {
+      return !(selection[sel] === 0 || selection[sel] === -1);
+    });
+  results["met"] = summary.met;
   filteredSelection.forEach(key => {
-    if (key == "minMETs" || key == "maxMETs") {
-      results["met"] = summary.met;
-      return;
-    }
     if (summary.particles.has(key)) {
       let tmp = summary.particles.get(key) || [];
-      if (key == "GsfElectrons" || key == "TrackerMuons") {
+      if (key === "GsfElectrons" || key === "TrackerMuons") {
         tmp = tmp.filter(part => part["pt"] >= pt_cut);
       }
       tmp_parts.set(key, tmp);
@@ -298,19 +293,19 @@ const getInvariantMass = function(
 const getTransverseMass = function(
   sumVector: FourVector,
   met: {px: number, py: number, [key: string]: any},
-): number {
+): number { 
 
-  let m = 0;
-  const m1 = getInvariantMass(sumVector);
+  let transversemass = 0;
+  const invariantmass = getInvariantMass(sumVector);
 
-  const metE2 = met.px * met.px + met.py * met.py;
-  const Et2 = sumVector.E * sumVector.E - sumVector.pz * sumVector.pz;
+  const metE = Math.sqrt(met.px * met.px + met.py * met.py);
+  const Et = Math.sqrt(sumVector.E * sumVector.E - sumVector.pz * sumVector.pz);
 
-  m = m1 * m1;
-  m += 2 * (metE2 * Et2 - sumVector.px * met.px - sumVector.py * met.py);
-  m = Math.sqrt(m);
+  transversemass = invariantmass * invariantmass;
+  transversemass += 2 * (Et * metE - sumVector.px * met.px - sumVector.py * met.py);
+  transversemass = Math.sqrt(transversemass);
 
-  return m;
+  return transversemass;
 };
 
 const _createHistogram = function(

@@ -71,11 +71,11 @@ analysis.getPassingEvents = function () {
 // Get CSV of the passing events
 analysis.createCSV = function (category) {
   const masses = getMassesArray();
-  //     var csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass,Transverse Mass\r\n";
-  let csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass\r\n";
+  let csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass,Transverse Mass\r\n";
+  // let csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass\r\n";
   masses.m.forEach((m, index) => {
-    // csv += index + "," + m + "," + masses.mt.get(index) + "\r\n";
-    csv += index + "," + m + "\r\n";
+    const mt = masses.mt.get(index) || "";
+    csv += `${index},${m},${mt}\r\n`;
   });
   const encodedUri = encodeURI(csv);
   const link = document.createElement("a");
@@ -129,21 +129,14 @@ const getSelectionParticles = function (event_index) {
   }
   const selection = analysis.getSelectionCuts();
   const pt_cut = selection["pt"];
-  const filteredSelection = Object.keys(selection).filter(sel => {
-    if (["charge", "pt"].includes(sel))
-      return false;
-    if (selection[sel] == 0 || selection[sel] == -1)
-      return false;
-    return true;
+  const filteredSelection = ["TrackerMuons", "GsfElectrons", "Photons"].filter(sel => {
+    return !(selection[sel] === 0 || selection[sel] === -1);
   });
+  results["met"] = summary.met;
   filteredSelection.forEach(key => {
-    if (key == "minMETs" || key == "maxMETs") {
-      results["met"] = summary.met;
-      return;
-    }
     if (summary.particles.has(key)) {
       let tmp = summary.particles.get(key) || [];
-      if (key == "GsfElectrons" || key == "TrackerMuons") {
+      if (key === "GsfElectrons" || key === "TrackerMuons") {
         tmp = tmp.filter(part => part["pt"] >= pt_cut);
       }
       tmp_parts.set(key, tmp);
@@ -238,14 +231,14 @@ const getInvariantMass = function (sumVector) {
 };
 // Calculate the transverse mass of a list of particles
 const getTransverseMass = function (sumVector, met) {
-  let m = 0;
-  const m1 = getInvariantMass(sumVector);
-  const metE2 = met.px * met.px + met.py * met.py;
-  const Et2 = sumVector.E * sumVector.E - sumVector.pz * sumVector.pz;
-  m = m1 * m1;
-  m += 2 * (metE2 * Et2 - sumVector.px * met.px - sumVector.py * met.py);
-  m = Math.sqrt(m);
-  return m;
+  let transverseMass = 0;
+  const invariantMass = getInvariantMass(sumVector);
+  const metE = Math.sqrt(met.px * met.px + met.py * met.py);
+  const Et = Math.sqrt(sumVector.E * sumVector.E - sumVector.pz * sumVector.pz);
+  transverseMass = invariantMass * invariantMass;
+  transverseMass += 2 * (Et * metE - sumVector.px * met.px - sumVector.py * met.py);
+  transverseMass = Math.sqrt(transverseMass);
+  return transverseMass;
 };
 const _createHistogram = function (array, start, end, bins) {
   // Histogram the array to the range `start` to `end` with `bins` bins
