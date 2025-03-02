@@ -94,7 +94,8 @@ analysis.createCSV = function(category: string) { // TODO: enable transverse mas
   const encodedUri = encodeURI(csv);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
-  link.setAttribute("download", category + "_results.csv");
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "");
+  link.setAttribute("download", `${category}_results_${timestamp}.csv`);
   document.body.appendChild(link); // Required for FF
   link.click();
   document.body.removeChild(link);
@@ -204,9 +205,9 @@ const checkIfEventPassing: (event_index?: number | string) => boolean = function
   for (let [name, part] of summary.particles) {
     if (cuts[name] == -1) continue;
     if (name == "TrackerMuons" || name == "GsfElectrons") {
+      part = getPtPassingLeptons(part as Lepton[], cuts["pt"]);
       pass = checkCharge(part as Lepton[], cuts["charge"]);
       if (!pass) break;
-      part = getPtPassingLeptons(part as Lepton[], cuts["pt"]);
     }
     if (part.length != cuts[name]) {
       pass = false;
@@ -237,12 +238,13 @@ const checkCharge = function(
   leptons: Lepton[],
   cut: number,
 ): boolean {
-  if (cut == undefined) return true;
+  if (cut === undefined) return true;
+  if (leptons.length === 0) return true;
   let chargeSum = 0;
   leptons.forEach(lepton => {
     chargeSum += lepton["charge"];
   });
-  return Math.sign(chargeSum) == cut;
+  return Math.sign(chargeSum) === cut;
 };
 
 const getPtPassingLeptons = function(
