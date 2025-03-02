@@ -1,5 +1,4 @@
-/* eslint-disable quotes */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function() {
 
   ispy.init();
   ispy.addGroups();
