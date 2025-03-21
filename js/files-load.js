@@ -1088,21 +1088,29 @@ ispy.importDetector = function() {
 	    name: "Gas Electron Multipliers (-)",
 	    group: "Detector",
 	    show: false,
-	    view: "3D",
-	    file: "./geometry/gltf/GEMMinus3D_V1.glb"
-    },
-    {
-	    id: "CSC3D_V1",
-	    name: "Cathode Strip Chambers",
-	    group: "Detector",
+	    view: '3D',
+	    file: './geometry/gltf/GEMMinus3D_V1.glb'
+	},
+	{
+	    id: 'CSCPlus3D_V1',
+	    name: 'Cathode Strip Chambers (+)',
+	    group: 'Detector',
 	    show: false,
-	    view: "3D",
-	    file: "./geometry/gltf/CSC3D_V1.glb"
-    },
-    {
-	    id: "DTs3D_V1",
-	    name: "Drift Tubes",
-	    group: "Detector",
+	    view: '3D',
+	    file: './geometry/gltf/CSCPlus3D_V1.glb'
+	},
+	{
+	    id: 'CSCMinus3D_V1',
+	    name: 'Cathode Strip Chambers (-)',
+	    group: 'Detector',
+	    show: false,
+	    view: '3D',
+	    file: './geometry/gltf/CSCMinus3D_V1.glb'
+	},
+	{
+	    id: 'DTs3D_V1',
+	    name: 'Drift Tubes',
+	    group: 'Detector',
 	    show: false,
 	    view: "3D",
 	    file: "./geometry/gltf/DTs3D_V1.glb"
