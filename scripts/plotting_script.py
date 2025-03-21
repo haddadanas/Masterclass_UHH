@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 from glob import glob
 from collections import defaultdict
@@ -7,20 +9,25 @@ import mplhep as hep  # type: ignore
 
 
 def parser_setup():
-    parser = argparse.ArgumentParser(description="Plotting script")
-    parser.add_argument("--input", "-i", type=str, help="Input Folder", default="./")
-    parser.add_argument("--output", "-o", type=str, help="Output file", default="./output.pdf")
+    parser = argparse.ArgumentParser(prog="plotting_script.py", description="Plotting script")
+    parser.add_argument("--input", "-i", type=str, help="Input Folder; defaults to './'", default="./")
+    parser.add_argument("--output", "-o", type=str, help="Output file with extension; defaults to './output.png'", default="./output.png")
     parser.add_argument(
-        "--channel", "-c", type=str, choices=["all", "Higgs", "W-Boson", "Z-Boson", "Zoo"], default="all",
+        "--channel", "-c", type=str, nargs="*", choices=["Higgs", "W", "Z"], default="all",
+        help="Channel to plot; default plots all channels.",
     )
-    parser.add_argument("--stack", "-s", action='store_true', default=False, help="Stack the histograms")
-    parser.add_argument("--transverse-mass", "-t", action='store_true', default=False, help="Plot Transverse Mass")
-    parser.add_argument("--n-bins", "-n", type=int, default=20, help="Number of Bins")
+    parser.add_argument("--min", "-m", type=float, default=10.0, help="minimum value for the histogram; default is 10.0")
+    parser.add_argument("--unstack", "-u", action='store_true', default=False, help="Unstack the histograms; default is stacked")
+    parser.add_argument("--transverse-mass", "-t", action='store_true', default=False, help="Plot Transverse Mass; default is Invariant Mass")
+    parser.add_argument("--n-bins", "-n", type=int, default=20, help="Number of Bins; default is 20")
     return parser
 
 
 def get_files_by_channel(channel: str, input_folder: str) -> dict[str, list[str]]:
-    channels = ["Higgs", "W-Boson", "Z-Boson", "Zoo"] if channel == "all" else [channel]
+    channels = ["Higgs", "W", "Z"] if channel == "all" else [channel]
+    if "W" in channels:
+        channels.extend(["Wp", "Wm"])
+        channels.remove("W")
     files = {}
     for ch in channels:
         ch_files = glob(f"{input_folder}/{ch}*.csv")
@@ -32,7 +39,7 @@ def get_files_by_channel(channel: str, input_folder: str) -> dict[str, list[str]
 
 
 class MassReader:
-    def __init__(self, files: dict[str, list[str]], n_bins: int, transverse_mass: bool = False):
+    def __init__(self, files: dict[str, list[str]], n_bins: int, x_min: float, transverse_mass: bool = False):
         """ Reads the mass data from the files and stores it in a dictionary.
         Args:
             files (dict[str, list[str]]): A dictionary where the keys are the channel names and the values are lists of
@@ -56,7 +63,7 @@ class MassReader:
             self.data[channel] = sum(self.data[channel], [])
 
         # Define the histogram bins
-        minimum = min(min(data_array) for data_array in self.data.values())
+        minimum = max(x_min, min(min(data_array) for data_array in self.data.values()))
         maximum = max(max(data_array) for data_array in self.data.values())
         self.bins = [minimum + i * (maximum - minimum) / n_bins for i in range(n_bins + 1)]
 
@@ -75,39 +82,57 @@ class MassReader:
 
         # check if data is empty
         if not data:
-            raise ValueError(f"No data found in file '{file}'")
+            print(f"Skipping '{file}'... No data found in file.")
         return data
 
+    def w_ratio(self) -> None:
+        """ Calculates the ratio of W+ to W- events.
+        """
+        wp = self.data["Wp"]
+        wm = self.data["Wm"]
+        
+        print(40 * "*")
+        print("***\tCalculating W+ to W- ratio...")
+        if len(wm) == 0:
+            print("!!!\tNo W- events found. Skipping W+ to W- ratio calculation.")
+        else:
+            print(f"***\tFound: {len(wp)} W+ events and {len(wm)} W- events.")
+            print(f"***\tW+ to W- ratio: {len(wp) / len(wm)}")
+        print(40 * "*")
+
     def items(self) -> tuple[list[str], list[list[float]]]:
-        """ Returns the keys and values of the data dictionary as separate lists.
+        """ Returns the keys and values of the data dictionary as separate lists. The keys are modified to match the
+        expected channel names.
         Returns:
             tuple: A tuple containing two lists:
                 - The first list contains the keys of the data dictionary.
                 - The second list contains the values of the data dictionary.
         """
-        return list(self.data.keys()), list(self.data.values())
+        key_mapping = {"Wp": "W+", "Wm": "W-"}
+        keys = list(map(lambda x: key_mapping.get(x, x), self.data.keys()))
+        return keys, list(self.data.values())
 
 
-def plot_masses(reader: MassReader, stack: bool, output: str, **kwargs):
+def plot_masses(reader: MassReader, unstack: bool, output: str, **kwargs):
     """ Plots the masses from the MassReader object.
     Args:
         reader (MassReader): The MassReader object containing the mass data.
-        stack (bool): Whether to stack the histograms.
+        unstack (bool): Whether to unstack the histograms.
         output (str): The output file path.
         **kwargs: Additional keyword arguments.
     """
     # Set the style
     plt.style.use(hep.style.CMS)
     # initialize the figure and setup axis
-    _, ax = plt.subplots(dpi=300, figsize=(10, 10))
+    _, ax = plt.subplots(dpi=100, figsize=(8, 8))
     hep.cms.label(data=False, rlabel="Masterclass", ax=ax)
     ax.set_xlabel("Transverse Mass [GeV]" if reader.transverse_mass else "Invariant Mass [GeV]")
     ax.set_ylabel("Events")
     # create a config dict
     hist_kwargs = {
         "bins": reader.bins,
-        "stacked": stack,
-        "histtype": "stepfilled" if stack else "step",
+        "stacked": not unstack,
+        "histtype": "stepfilled" if not unstack else "step",
     }
     # plot the data
     channels, masses = reader.items()
@@ -129,7 +154,9 @@ def main():
     if not files:
         raise Exception(f"No files found for channel '{args.channel}' in folder '{args.input}'")
 
-    reader = MassReader(files, args.n_bins, args.transverse_mass)
+    reader = MassReader(files=files, n_bins=args.n_bins, x_min=args.min, transverse_mass=args.transverse_mass)
+    reader.w_ratio()
+    input("Press Enter to continue to the plot...")
     plot_masses(reader, **args.__dict__)
 
 
