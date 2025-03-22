@@ -70,6 +70,7 @@ analysis.getPassingEvents = function () {
 };
 // Get CSV of the passing events
 analysis.createCSV = function (category) {
+  const file_name = ispy.file_name.replace(/\.ig$/, "");
   const masses = getMassesArray();
   let csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass,Transverse Mass\r\n";
   // let csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass\r\n";
@@ -81,7 +82,7 @@ analysis.createCSV = function (category) {
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
   const timestamp = new Date().toISOString().replace(/[:.]/g, "");
-  link.setAttribute("download", `${category}_results_${timestamp}.csv`);
+  link.setAttribute("download", `${category}_results_${file_name}_${timestamp}.csv`);
   document.body.appendChild(link); // Required for FF
   link.click();
   document.body.removeChild(link);

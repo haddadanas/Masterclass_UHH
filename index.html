@@ -134,13 +134,13 @@
 
           <div class="btn-group" role="group">
             <button type="button" id="xy" class="btn btn-default" onclick="ispy.setXY();" title="YX Plane">
-              <img src="./graphics/yx_small.png" class="img-responsive"/>
+              <img src="./graphics/yx_small.png" class="img-responsive" alt="yx-view"/>
             </button>
             <button type="button" id="yz" class="btn btn-default" onclick="ispy.setYZ();" title="YZ plane">
-              <img src="./graphics/yz_small.png" class="img-responsive"/>
+              <img src="./graphics/yz_small.png" class="img-responsive" alt="yz-view"/>
             </button>
             <button type="button" id="xz" class="btn btn-default" onclick="ispy.setZX();" title="XZ plane">
-              <img src="./graphics/xz_small.png" class="img-responsive" title=""/>
+              <img src="./graphics/xz_small.png" class="img-responsive" alt="xz-view"/>
             </button>
           </div>
 
@@ -273,7 +273,7 @@ piwikTracker.enableLinkTracking();
 <div id="event-info" class="black">
 <table>
   <tr>
-    <td id="cms-logo"><img src='./graphics/cms-color-medium.png'></img></td>
+    <td id="cms-logo"><img src='./graphics/cms-color-medium.png' alt="CMS Logo"></td>
     <td id="event-text"></td>
   </tr>
 </table>
@@ -365,7 +365,7 @@ piwikTracker.enableLinkTracking();
       <div class="modal-header"></div>
       <div class="modal-body">
         <div class="progress">
-          <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
+          <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0;"></div>
         </div>
       </div>
       <div class="modal-footer"></div>
@@ -458,10 +458,6 @@ piwikTracker.enableLinkTracking();
         <h4 class="modal-title black">Events Selection</h4>
       </div>
       <div class="modal-body">
-        <p>
-          Still in development ...
-        </p>
-
           <!-- Nav tabs -->
           <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#statistics-tab" aria-controls="statistics-tab" role="tab" data-toggle="tab">Statistics</a></li>
@@ -471,25 +467,23 @@ piwikTracker.enableLinkTracking();
           <!-- Tab panes -->
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="statistics-tab">
-              <p>
-                Show display statistics:
-              </p>
               <div id="event-statistics"></div>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="m-tab">
-              <div id="m-plot"></div>
-              <span id="m-hist" style="display: block; width: 100%; background-image: url('');"></span>
+
               <div class="dropdown"></div>
-              <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                 Export to CSV
                 <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                 <li><a href="#" onclick="analysis.createCSV('Higgs');">Higgs</a></li>
-                <li><a href="#" onclick="analysis.createCSV('W-Boson');">W-Boson</a></li>
-                <li><a href="#" onclick="analysis.createCSV('Z-Boson');">Z-Boson</a></li>
-                <li><a href="#" onclick="analysis.createCSV('Zoo');">Zoo</a></li>
+                <li><a href="#" onclick="analysis.createCSV('Wp');">W+ Boson</a></li>
+                <li><a href="#" onclick="analysis.createCSV('Wm');">W- Boson</a></li>
+                <li><a href="#" onclick="analysis.createCSV('Z');">Z Boson</a></li>
               </ul>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="m-tab">
+              <div id="m-plot"></div>
+              <span id="m-hist" style="display: block; width: 100%;"></span>
             </div>
           </div>
       </div>
@@ -508,9 +502,7 @@ piwikTracker.enableLinkTracking();
         <h4 class="modal-title black">About</h4>
       </div>
       <div class="modal-body">
-        <p>
-          <h4>Masterclasses @ UHH (iSpy WebGL) <span id="version"></span></h4>
-        </p>
+        <h4>Masterclasses @ UHH (iSpy WebGL) <span id="version"></span></h4>
         <p>
           This repository contains a modified version of the iSpy WebGL Event Display for the <a href="https://home.cern/science/experiments/cms">CMS Experiment</a>, which has been adapted for the Masterclasses at the University of Hamburg. The original version of the iSpy WebGL Event Display was developed by <a href="https://github.com/9inpachi">F. Ali</a>, <a href="https://github.com/lukebarnard">L. Barnard</a>, <a href="https://github.com/hategan">M. Hategan</a>, <a href="https://github.com/SeungJunLee0">S. Lee</a>, <a href="https://github.com/carpppa">C. Logrén</a>, <a href="https://github.com/tpmccauley">T. McCauley</a>, <a href="https://github.com/phongn">P. Nguyen</a>, <a href="https://github.com/msaunby">M. Saunby</a>.
         </p>
@@ -541,7 +533,7 @@ piwikTracker.enableLinkTracking();
       </div>
       <div class="modal-body">
         <h2>Erste Schritte</h2>
-        <h3">Öffnen von Files</h3>
+        <h3>Öffnen von Files</h3>
         <p>Über das Menü &quot;Open File&quot; <i class="fa fa-folder-open" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> können Events geöffnet werden. Es gibt zwei Möglichkeiten, Events zu öffnen:</p>
         <ol>
         <li>
@@ -552,10 +544,10 @@ piwikTracker.enableLinkTracking();
         </li>
         </ol>
         <h3>Navigation zwischen Events</h3>
-        <p>Nachdem ein file geöffnet wurde, können durch die Events dieses files navigieren, indem die Pfeiltasten Ihres Tastatures <i class="fa fa-arrow-left" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> <i class="fa fa-arrow-right" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> oder die Knöpfe <i class="fa fa-step-backward" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> <i class="fa fa-step-forward" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> aus der oberen Leiste verwenden werden.</p>
+        <p>Nachdem ein file geöffnet wurde, können durch die Events dieses files navigieren, indem die Pfeiltasten Ihres Tastatures<i class="fa fa-arrow-left" style="border: 1px solid black; padding: 6px; display: inline-block;"></i><i class="fa fa-arrow-right" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> oder die Knöpfe<i class="fa fa-step-backward" style="border: 1px solid black; padding: 6px; display: inline-block;"></i><i class="fa fa-step-forward" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> aus der oberen Leiste verwenden werden.</p>
         <h3>Ansichten wechseln</h3>
-        <p>Ein Event kann in verschiedenen Ansichten dargestellt werden. Die Ansichten können über die Knöpfe <span style="border: 1px solid black; padding: 3px; display: inline-block;">3D</span>, <span style="border: 1px solid black; padding: 3px; display: inline-block;">rφ</span> oder <span style="border: 1px solid black; padding: 3px; display: inline-block;">ρz</span> aus der oberen Leiste gewechselt werden. Um auf die Anfangsansicht zurückzukehren, kann auf den Knopf <i class="fa fa-home" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> geklickt werden.</p>
-        <p>In der 3D Ansicht lässt sich das Event auch entlang einer Achse anzeigen. Dazu können die Knöpfe <img src="./graphics/yx_small.png" style="background-color: grey;"/>, <img src="./graphics/xz_small.png" style="background-color: grey;"/>  und <img src="./graphics/yz_small.png" style="background-color: grey;"/> verwenden werden. Dies kann bei der Bestimmun der Teilchenladung und die Beobachtung der Spurkrümmung hilfreich sein.</p>
+        <p>Ein Event kann in verschiedenen Ansichten dargestellt werden. Die Ansichten können über die Knöpfe <span style="border: 1px solid black; padding: 3px; display: inline-block;">3D</span>, <span style="border: 1px solid black; padding: 3px; display: inline-block;">rφ</span> oder <span style="border: 1px solid black; padding: 3px; display: inline-block;">ρz</span> aus der oberen Leiste gewechselt werden. Um auf die Anfangsansicht zurückzukehren, kann auf den Knopf<i class="fa fa-home" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> geklickt werden.</p>
+        <p>In der 3D-Ansicht lässt sich das Event auch entlang einer Achse anzeigen. Dazu können die Knöpfe<img src="./graphics/yx_small.png" style="background-color: grey;"/>,<img src="./graphics/xz_small.png" style="background-color: grey;"/> und <img src="./graphics/yz_small.png" style="background-color: grey;"/> verwenden werden. Dies kann bei der Bestimmun der Teilchenladung und die Beobachtung der Spurkrümmung hilfreich sein.</p>
         <h3>Detektor Elemente ein- und ausblenden</h3>
         <p>Unter dem Reiter &quot;Detector&quot; in der Kontrollleiste auf der rechten Seite, können die verschiedenen Detektorelemente (in abstrahierter Form) ein- und ausblenden werden. Die Detektorelemente sind in verschiedene Gruppen unterteilt, die über die Dropdown-Liste auswählen werden können. Dafür muss die Checkbox &quot;show&quot; unter der jeweiligen Gruppe aktiviert werden.</p>
         <p>Eine &quot;reelle&quot; Ansicht der CMS Detektorteile kann aber auch angezeigt werden. Dafür muss das Modell des jeweiligen Teils über den Knopf &quot;Import 3D Model&quot; <i class="fa fa-download" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> und danach &quot;import file(s) from the Web&quot; importiert werden. Zu Bachten ist jedoch, dass die 3D Modelle in einigen Fällen sehr groß sein können und die Darstellung des Events verlangsamen können.
@@ -567,15 +559,15 @@ piwikTracker.enableLinkTracking();
         <p>Aktuell können Schnitte auf das pT und ET angewendet werden und dabei nur die Spuren anzeigen, die diese Schnitte erfüllen. Dazu können die Schieberegler unter dem Reiter &quot;Momentum Cuts&quot; verwenden werden. Die Schieberegler können auch durch das Eingeben von Werten in das Textfeld geändert werden.</p>
         <p>!!! note
         Die Schnitte dienen nur der Visualisierung und haben keinen Einfluss auf auf die spätere Selection der Events.</p>
-        <h3>Invariantenmasse berechnen</h3>
-        <p>Spuren von Muonen und Elektronen können durch das Draufklicken selektiert werden und die Invariantenmasse dieser Teilchen kann durch das Drücken von <span style="border: 1px solid black; padding: 3px; display: inline-block;">m</span> auf der Tastatur berechnet werden. Die Invariantenmasse wird in einem Popup-Fenster angezeigt. Die anzahl der Selektierten Spuren, kann unter dem Reiter &quot;Event Info&quot; eingesehen werden.</p>
+        <h3>invarianten Masse berechnen</h3>
+        <p>Spuren von Muonen und Elektronen können durch das Draufklicken selektiert werden und die invarianten Masse dieser Teilchen kann durch das Drücken von <span style="border: 1px solid black; padding: 3px; display: inline-block;">m</span> auf der Tastatur berechnet werden. Die invarianten Masse wird in einem Popup-Fenster angezeigt. Die anzahl der Selektierten Spuren, kann unter dem Reiter &quot;Event Info&quot; eingesehen werden.</p>
         <h2>Die Selektion und Analyse von Events</h2>
         <h3>Selektionschnitte auf einem bestimmten Event Testen</h3>
-        <p><img src="./graphics/selection_gui.png"></img></p>
+        <p><img src="./graphics/selection_gui.png"></p>
         <p>Unter dem Reiter &quot;Event Selection&quot; können die Schnitte auf die verschiedenen Teilchenvariablen anwenden. Wie im Bild zu sehen, sind 3 unterschiedliche Arten von Schnitten möglich:</p>
         <ol>
         <li>
-        <p><strong>Teilchenanzahl</strong>: Die kann auf Muonen, Elektronen und Photonen und Jets angewendet werden. Die Anzahl ist dabei eine positive ganze Zahl, womit nur Events mit exakter Übereinstimmung der Anzahl an Teilchen selektiert werden. Wird im Feld &quot;-1&quot; eingegeben, wird dieser Schnitt ignoriert und diese Teilchen fließen weder in die Selektion noch in der Berechnung der Invariantenmasse ein.</p>
+        <p><strong>Teilchenanzahl</strong>: Die kann auf Muonen, Elektronen und Photonen und Jets angewendet werden. Die Anzahl ist dabei eine positive ganze Zahl, womit nur Events mit exakter Übereinstimmung der Anzahl an Teilchen selektiert werden. Wird im Feld &quot;-1&quot; eingegeben, wird dieser Schnitt ignoriert und diese Teilchen fließen weder in die Selektion noch in der Berechnung der invarianten Masse ein.</p>
         </li>
         <li>
         <p><strong>Charge Sign</strong>: Hier kann ausgewählt werden, ob bei jeweils einer Teilchengruppe es sich um Teilchen-Antiteilchen Paare handelt (Ladungssumme ergibt dabei 0) oder es sich um Teilchen bzw. Antiteilchen handelt. Die Auswahlmöglichkeiten sind &quot;{leer}&quot;, &quot;Same&quot; und &quot;Opposite&quot;. Bei &quot;&quot; wird dieser Schnitt ignoriert und die Selektion wird nicht auf die Ladung der Teilchen angewendet.</p>
@@ -665,7 +657,6 @@ piwikTracker.enableLinkTracking();
         <p>
           Files available via the web have been created from <a href="http://www.sketchup.com">SketchUp</a>
           models created by <a href="https://twiki.cern.ch/twiki/bin/view/CMSPublic/SketchUpCMS">T. Sakuma.</a>
-        </p>
         </p>
         <table>
           <p><button type="button" class="btn btn-default" onclick="ispy.openDialog('#geometry-files'); ispy.loadObjFiles(); $('#import-model').modal('hide');">Open file(s) from the Web</button></p>
