@@ -503,64 +503,58 @@ ispy.addControllers = function(group) {
 			
     });
   }
-		
+
   if (group.includes("Show/Hide")) {
-    folder.add(row_obj, "Electrons").onChange(function() {
-      let val = this.getValue();
-      ispy.views.forEach(v => {
-        electron_obj = ispy.scenes[v].getObjectByName(names["GsfElectrons"]);
-        if (!electron_obj) return;
-        electron_obj.visible = val;
-      });	
-    });
 
-    folder.add(row_obj, "Muons").onChange(function() {
-      let val = this.getValue();
-      ispy.views.forEach(v => {
-        ["GlobalMuons", "StandaloneMuons", "TrackerMuons"].forEach(muonType => {
-          let muon_obj = ispy.scenes[v].getObjectByName(names[muonType]);
-          if (muon_obj) {
-            muon_obj.visible = val;
-          }
+    // Helper function to toggle physics objects
+    let togglePhysicsObjects = function (leptongroup, visibility) {
+      ispy.views.forEach((v) => {
+        leptongroup.forEach((lepton) => {
+          let obj = ispy.scenes[v].getObjectByName(names[lepton]);
+          if (!obj) return;
+          obj.visible = visibility;
         });
-      });	
-    });
-		
-    folder.add(row_obj, "Photons").onChange(function() {
+      });
+    };
+
+    pt_controller = ispy.subfoldersReduced.Controllers.filter(o => o.property == "min_pt")[0];
+    jet_controller = ispy.subfoldersReduced.Controllers.filter(o => o.property == "Jet: min Et")[0];
+
+    folder.add(row_obj, "Electrons").onChange(function () {
       let val = this.getValue();
-      ispy.views.forEach(v => {
-        photon_obj = ispy.scenes[v].getObjectByName(names["Photons"]);
-        if (!photon_obj) return;
-        photon_obj.visible = val;
-      });	
+      togglePhysicsObjects(["GsfElectrons"], val);
+      // retoggle the pt controller to update the visibility
+      pt_controller.setValue(pt_controller.getValue());
     });
 
-    folder.add(row_obj, "Jets").onChange(function() {
+    folder.add(row_obj, "Muons").onChange(function () {
       let val = this.getValue();
-      ispy.views.forEach(v => {
-        jet_obj = ispy.scenes[v].getObjectByName(names["Jets"]);
-        if (!jet_obj) return;
-        jet_obj.visible = val;
-      });	
+      togglePhysicsObjects(["GlobalMuons", "TrackerMuons"], val);
+      // retoggle the pt controller to update the visibility
+      pt_controller.setValue(pt_controller.getValue());
     });
 
-    folder.add(row_obj, "MET").onChange(function() {
+    folder.add(row_obj, "Photons").onChange(function () {
       let val = this.getValue();
-      ispy.views.forEach(v => {
-        met_obj = ispy.scenes[v].getObjectByName(names["METs"]);
-        met_obj.visible = val;
-      });	
+      togglePhysicsObjects(["Photons"], val);
     });
 
-    folder.add(row_obj, "Additional Tracks").onChange(function() {
+    folder.add(row_obj, "Jets").onChange(function () {
       let val = this.getValue();
-      ispy.views.forEach(v => {
-        tracks = ispy.scenes[v].getObjectByName(names["Tracks"]);
-        if (!tracks) return;
-        tracks.visible = val;
-      });	
+      togglePhysicsObjects(["Jets"], val);
+      // retoggle the jet controller to update the visibility
+      jet_controller.setValue(jet_controller.getValue());
     });
 
+    folder.add(row_obj, "MET").onChange(function () {
+      let val = this.getValue();
+      togglePhysicsObjects(["METs"], val);
+    });
+
+    folder.add(row_obj, "Additional Tracks").onChange(function () {
+      let val = this.getValue();
+      togglePhysicsObjects(["Tracks"], val);
+    });
   }
 
   // add all controllers to the reduced subfolders for convenience
