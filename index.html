@@ -320,7 +320,7 @@ piwikTracker.enableLinkTracking();
         <h4 class="modal-title black">Open Event</h4>
       </div>
       <div class="modal-body">
-        <table class="table black" width="100%" id="browser-table">
+        <table class="table black" id="browser-table">
           <tr>
             <th class="browser-header bordered black" width="50%">Files</th>
             <th class="browser-header bordered black">Events</th>
@@ -393,34 +393,41 @@ piwikTracker.enableLinkTracking();
       </div>
       <div class="modal-body">
         <p>
-          Invert colors: <input id='invert-colors' type='checkbox' onchange='ispy.invertColors();'>
+          <label for='invert-colors'>Invert colors:</label>
+          <input id='invert-colors' type='checkbox' onchange='ispy.invertColors();'>
         </p>
 	<p>
-	  Show clipping plane controls: <input id='clipping' type='checkbox'>
+	  <label for='clipping'>Show clipping plane controls:</label>
+      <input id='clipping' type='checkbox'>
 	</p>
         <p>
-          Hide axes: <input id='show-axes' type='checkbox'>
+          <label for="show-axes">Hide axes:</label>
+          <input id='show-axes' type='checkbox'>
         </p>
 	<p>
-	  Thicker Track lines: <input id='pickable_lines' type='checkbox'>
+      <label for='pickable_lines'>Thicker Track lines:</label>
+      <input id='pickable_lines' type='checkbox'>
+    </p>
+    <p>
+      <label for='show-info'>Show information dialogs:</label>
+      <input id='show-info' type='checkbox'>
+    </p>
+    <p>
+      <label for='show-logo'>Show experiment logo:</label>
+      <input id='show-logo' type='checkbox'>
         </p>
-	<p>
-          Show information dialogs: <input id='show-info' type='checkbox'>
-        </p>
-        <p>
-          Show experiment logo: <input id='show-logo' type='checkbox'>
-        </p>
-	<p>
-	  Set vertical extent of display: <span id='vh'></span> %
-	  <input type='range' min='75' max='100' value='90' id='vh-slider' step='1' oninput='ispy.setDisplayVerticalHeight(value);'>
-	</p>
-        <p>
-          Set maximum frame rate: <span id='fr'></span> fps
-          <input type='range' min='1' max='60' value='30' id='fps-slider' step='1' oninput='ispy.setFramerate(value);'>
-        </p>
-        <p>
-          Set imported geometry transparency: <span id='trspy'></span>
-          <input type='range' min='0.0' max='1.0' value='1.0' id='transparency-slider' step='0.05' oninput='ispy.setTransparency(value);'>
+  <p>
+    <label for='vh-slider'>Set vertical extent of display:</label> <span id='vh'></span> %
+    <input type='range' min='75' max='100' value='90' id='vh-slider' step='1' oninput='ispy.setDisplayVerticalHeight(value);'>
+  </p>
+  <p>
+    <label for='fps-slider'>Set maximum frame rate:</label> <span id='fr'></span> fps
+    <input type='range' min='1' max='60' value='30' id='fps-slider' step='1' oninput='ispy.setFramerate(value);'>
+  </p>
+  <p>
+    <label for='transparency-slider'>Set imported geometry transparency:</label> <span id='trspy'></span>
+    <input type='range' min='0.0' max='1.0' value='1.0' id='transparency-slider' step='0.05' oninput='ispy.setTransparency(value);'>
+  </p>
         </p>
         <p>
           <div class="btn-group">
@@ -450,7 +457,8 @@ piwikTracker.enableLinkTracking();
       </div>
       <div class="modal-body">
         <p>
-          Show display statistics: <input id='show-stats' type='checkbox'>
+          <label for='show-stats'>Show display statistics:</label>
+          <input id='show-stats' type='checkbox'>
         </p>
         <div id="renderer-info"></div>
       </div>
@@ -524,7 +532,7 @@ piwikTracker.enableLinkTracking();
         </p>
         <p>Reference: <a target="_blank" href="https://doi.org/10.1088/1742-6596/898/7/072030">T McCauley 2017 J. Phys.: Conf. Ser. 898 072030</a></p>
         <p>This application uses:</p>
-          <ul><a target="_blank" href="http://threejs.org/">three.js</a> <span id="threejs"></span></ul>
+          <ul><a target="_blank" href="https://threejs.org">three.js</a> <span id="threejs"></span></ul>
           <ul><a target="_blank" href="https://sweetalert.js.org/">sweetalert.js</a> <span id="sweetalert"></span></ul>
           <ul><a target="_blank" href="https://plotly.com/javascript/">plotly.js</a> <span id="plotly"></span></ul>
       </div>
@@ -555,36 +563,36 @@ piwikTracker.enableLinkTracking();
         </li>
         </ol>
         <h3>Navigation zwischen Events</h3>
-        <p>Nachdem ein file geöffnet wurde, können durch die Events dieses files navigieren, indem die Pfeiltasten Ihres Tastatures<i class="fa fa-arrow-left" style="border: 1px solid black; padding: 6px; display: inline-block;"></i><i class="fa fa-arrow-right" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> oder die Knöpfe<i class="fa fa-step-backward" style="border: 1px solid black; padding: 6px; display: inline-block;"></i><i class="fa fa-step-forward" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> aus der oberen Leiste verwenden werden.</p>
+        <p>Nachdem ein file geöffnet wurde, können durch die Events dieses files navigieren, indem die Pfeiltasten Ihrer Tastatur<i class="fa fa-arrow-left" style="border: 1px solid black; padding: 6px; display: inline-block;"></i><i class="fa fa-arrow-right" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> oder die Knöpfe<i class="fa fa-step-backward" style="border: 1px solid black; padding: 6px; display: inline-block;"></i><i class="fa fa-step-forward" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> aus der oberen Leiste verwenden werden.</p>
         <h3>Ansichten wechseln</h3>
         <p>Ein Event kann in verschiedenen Ansichten dargestellt werden. Die Ansichten können über die Knöpfe <span style="border: 1px solid black; padding: 3px; display: inline-block;">3D</span>, <span style="border: 1px solid black; padding: 3px; display: inline-block;">rφ</span> oder <span style="border: 1px solid black; padding: 3px; display: inline-block;">ρz</span> aus der oberen Leiste gewechselt werden. Um auf die Anfangsansicht zurückzukehren, kann auf den Knopf<i class="fa fa-home" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> geklickt werden.</p>
-        <p>In der 3D-Ansicht lässt sich das Event auch entlang einer Achse anzeigen. Dazu können die Knöpfe<img src="./graphics/yx_small.png" style="background-color: grey;"/>,<img src="./graphics/xz_small.png" style="background-color: grey;"/> und <img src="./graphics/yz_small.png" style="background-color: grey;"/> verwenden werden. Dies kann bei der Bestimmun der Teilchenladung und die Beobachtung der Spurkrümmung hilfreich sein.</p>
+        <p>In der 3D-Ansicht lässt sich das Event auch entlang einer Achse anzeigen. Dazu können die Knöpfe<img src="./graphics/yx_small.png" style="background-color: grey;" alt="yx-axis-logo"/>,<img src="./graphics/xz_small.png" style="background-color: grey;" alt="xz-axis logo"/> und <img src="./graphics/yz_small.png" style="background-color: grey;" alt="yz-axis logo"/>verwenden werden. Dies kann bei der Bestimmung der Teilchenladung und die Beobachtung der Spurkrümmung hilfreich sein.</p>
         <h3>Detektor Elemente ein- und ausblenden</h3>
         <p>Unter dem Reiter &quot;Detector&quot; in der Kontrollleiste auf der rechten Seite, können die verschiedenen Detektorelemente (in abstrahierter Form) ein- und ausblenden werden. Die Detektorelemente sind in verschiedene Gruppen unterteilt, die über die Dropdown-Liste auswählen werden können. Dafür muss die Checkbox &quot;show&quot; unter der jeweiligen Gruppe aktiviert werden.</p>
-        <p>Eine &quot;reelle&quot; Ansicht der CMS Detektorteile kann aber auch angezeigt werden. Dafür muss das Modell des jeweiligen Teils über den Knopf &quot;Import 3D Model&quot; <i class="fa fa-download" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> und danach &quot;import file(s) from the Web&quot; importiert werden. Zu Bachten ist jedoch, dass die 3D Modelle in einigen Fällen sehr groß sein können und die Darstellung des Events verlangsamen können.
-        Durch neuladen der Seite, können alle importierten Modelle wieder entfernt werden.</p>
-        <h3>Eventobjecte ein- und ausblenden</h3>
+        <p>Eine &quot;reelle&quot; Ansicht der CMS Detektorteile kann aber auch angezeigt werden. Dafür muss das Modell des jeweiligen Teils über den Knopf &quot;Import 3D Model&quot; <i class="fa fa-download" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> und danach &quot;import file(s) from the Web&quot; importiert werden. Zu Beachten ist jedoch, dass die 3D-Modelle in einigen Fällen sehr groß sein können und die Darstellung des Events verlangsamen können.
+        Durch das Neuladen der Seite können alle importierten Modelle wieder entfernt werden.</p>
+        <h3>Eventobjekte ein- und ausblenden</h3>
         <p>Die Teilchenspuren in einem geladenen Event können über die Checkboxen unter dem Reiter &quot;Show/Hide&quot; in der Kontrollleiste auf der rechten Seite ein- und ausgeblendet werden. Um diese Einstellung beim Wechseln zwischen Events beizubehalten, kann die Checkbox &quot;Keep settings&quot; aktiviert werden.</p>
-        <p>Bestimmte Informationen yum Events bzw. zu den Teilchen können über die Checkboxen unter dem Reiter &quot;Event Info&quot; ein- und ausgeblendet werden. Z.B. kann das pT und die Ladung von Elektronen und Muonen durch das Aktivieren der Checkboxen &quot;Track Info&quot; beim rüberfahren über die Spur angezeigt werden.</p>
+        <p>Bestimmte Informationen yum Events bzw. zu den Teilchen können über die Checkboxen unter dem Reiter &quot;Event Info&quot; ein- und ausgeblendet werden. Z.B. kann das pT und die Ladung von Elektronen und Myonen durch das Aktivieren der Checkboxen &quot;Track Info&quot; beim Herüberfahren über die Spur angezeigt werden.</p>
         <h3>Anwenden von Schnitten</h3>
         <p>Aktuell können Schnitte auf das pT und ET angewendet werden und dabei nur die Spuren anzeigen, die diese Schnitte erfüllen. Dazu können die Schieberegler unter dem Reiter &quot;Momentum Cuts&quot; verwenden werden. Die Schieberegler können auch durch das Eingeben von Werten in das Textfeld geändert werden.</p>
-        <p>!!! note
-        Die Schnitte dienen nur der Visualisierung und haben keinen Einfluss auf auf die spätere Selection der Events.</p>
+        <p>!!! note:
+        Die Schnitte dienen nur der Visualisierung und haben keinen Einfluss auf die spätere Selection der Events.</p>
         <h3>invarianten Masse berechnen</h3>
-        <p>Spuren von Muonen und Elektronen können durch das Draufklicken selektiert werden und die invarianten Masse dieser Teilchen kann durch das Drücken von <span style="border: 1px solid black; padding: 3px; display: inline-block;">m</span> auf der Tastatur berechnet werden. Die invarianten Masse wird in einem Popup-Fenster angezeigt. Die anzahl der Selektierten Spuren, kann unter dem Reiter &quot;Event Info&quot; eingesehen werden.</p>
+        <p>Spuren von Myonen und Elektronen können durch das Draufklicken selektiert werden und die invarianten Masse dieser Teilchen kann durch das Drücken von <span style="border: 1px solid black; padding: 3px; display: inline-block;">m</span> auf der Tastatur berechnet werden. Die invarianten Masse wird in einem Pop-up-Fenster angezeigt. Die Anzahl der selektierten Spuren kann unter dem Reiter &quot;Event Info&quot; eingesehen werden.</p>
         <h2>Die Selektion und Analyse von Events</h2>
-        <h3>Selektionschnitte auf einem bestimmten Event Testen</h3>
-        <p><img src="./graphics/selection_gui.png"></p>
+        <h3>Selektionsschnitte auf einem bestimmten Event Testen</h3>
+        <p><img src="./graphics/selection_gui.png" alt="selection gui"></p>
         <p>Unter dem Reiter &quot;Event Selection&quot; können die Schnitte auf die verschiedenen Teilchenvariablen anwenden. Wie im Bild zu sehen, sind 3 unterschiedliche Arten von Schnitten möglich:</p>
         <ol>
         <li>
-        <p><strong>Teilchenanzahl</strong>: Die kann auf Muonen, Elektronen und Photonen und Jets angewendet werden. Die Anzahl ist dabei eine positive ganze Zahl, womit nur Events mit exakter Übereinstimmung der Anzahl an Teilchen selektiert werden. Wird im Feld &quot;-1&quot; eingegeben, wird dieser Schnitt ignoriert und diese Teilchen fließen weder in die Selektion noch in der Berechnung der invarianten Masse ein.</p>
+        <p><strong>Teilchenanzahl</strong>: Die kann auf Myonen, Elektronen und Photonen und Jets angewendet werden. Die Anzahl ist dabei eine positive ganze Zahl, womit nur Events mit exakter Übereinstimmung der Anzahl an Teilchen selektiert werden. Wird im Feld &quot;-1&quot; eingegeben, wird dieser Schnitt ignoriert und diese Teilchen fließen weder in die Selektion noch in der Berechnung der invarianten Masse ein.</p>
         </li>
         <li>
         <p><strong>Charge Sign</strong>: Hier kann ausgewählt werden, ob bei jeweils einer Teilchengruppe es sich um Teilchen-Antiteilchen Paare handelt (Ladungssumme ergibt dabei 0) oder es sich um Teilchen bzw. Antiteilchen handelt. Die Auswahlmöglichkeiten sind &quot;{leer}&quot;, &quot;Same&quot; und &quot;Opposite&quot;. Bei &quot;&quot; wird dieser Schnitt ignoriert und die Selektion wird nicht auf die Ladung der Teilchen angewendet.</p>
         </li>
         <li>
-        <p><strong>Impuls</strong>: Hier kann den Mindestimpuls sowohl für die Leptonen (Muonen und Elektronen) als auch für das MET ausgewählt werden. Die Einheit ist GeV und durch die Eingabe von &quot;-1&quot; wird dieser Schnitt ignoriert.</p>
+        <p><strong>Impuls</strong>: Hier kann den Mindestimpuls sowohl für die Leptonen (Myonen und Elektronen) als auch für das MET ausgewählt werden. Die Einheit ist GeV und durch die Eingabe von &quot;-1&quot; wird dieser Schnitt ignoriert.</p>
         </li>
         </ol>
       </div>
@@ -592,7 +600,7 @@ piwikTracker.enableLinkTracking();
   </div>
 </div>
 
-<div id="stereo-modal" role="dialog" class="modal">
+<!-- <div id="stereo-modal" role="dialog" class="modal">
   <div class="modal-dialog modal-sm">
     <div class="modal-content bordered black">
       <div class="modal-header">
@@ -616,7 +624,7 @@ piwikTracker.enableLinkTracking();
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 <div id="export-model" role="dialog" class="modal">
   <div class="modal-dialog modal-sm">
@@ -638,7 +646,6 @@ piwikTracker.enableLinkTracking();
             </ul>
           </div>
         </p>
-        <div id="renderer-info"></div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -666,7 +673,7 @@ piwikTracker.enableLinkTracking();
           <i>Nota bene</i>: a large complicated 3D model may take minutes to load.
         </p>
         <p>
-          Files available via the web have been created from <a href="http://www.sketchup.com">SketchUp</a>
+          Files available via the web have been created from <a href="https://www.sketchup.com/">SketchUp</a>
           models created by <a href="https://twiki.cern.ch/twiki/bin/view/CMSPublic/SketchUpCMS">T. Sakuma.</a>
         </p>
         <table>
