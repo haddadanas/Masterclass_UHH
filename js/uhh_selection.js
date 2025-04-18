@@ -94,6 +94,7 @@ analysis.createCSV = function (category) {
 analysis.buildFileSummary = function () {
   let event_summary;
   let analysisBtn = document.getElementById("analysis_btn");
+  let downloadBtn = document.getElementById("save-csv-btn");
   if (!analysisBtn) {
     analysisBtn = document.createElement("button");
   }
@@ -106,9 +107,12 @@ analysis.buildFileSummary = function () {
     analysis.file_events_summary = event_summary.events;
     // enable the analysis button
     analysisBtn.disabled = false;
+    // enable the download button
+    downloadBtn.disabled = false;
   }
   catch (err) {
     analysisBtn.disabled = true;
+    downloadBtn.disabled = true;
     // create and display an error message
     let error_msg = "Error encountered building the file summary: \n    " + err;
     error_msg += "\nThe event display will work however the full analysis will remain disabled.";
