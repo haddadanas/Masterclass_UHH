@@ -188,13 +188,13 @@ ispy.addSelectionRow = function(group, key, name, objectIds, visible) {
   }
   guis.forEach(function(gui_elem) {
     let folder = gui_elem.__folders[group];
-    let sf = folder.__folders[name];
+    // let sf = folder.__folders[name];
 
     subfolders.forEach(function(subfolder) {
       subfolder[group].push(name);
     });
     
-    sf = folder.addFolder(name);
+    let sf = folder.addFolder(name);
 
     if ( ! ( group.includes("Detector") ||
 	     group.includes("Imported") ||
