@@ -193,13 +193,11 @@
 
           <div class="btn-group" role="group">
             <button type="button" id="save-csv-btn" class="btn btn-default" disabled
-              title="Save Selected Events to CSV">
+              title="Save Selected Events to CSV" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <i class="fa fa-file-csv"></i>
             </button>
             <ul class="dropdown-menu">
-              <li>
-                <a href="#" onclick="analysis.createCSV('Higgs');">Higgs</a>
-              </li>
+              <li><a href="#" onclick="analysis.createCSV('Higgs');">Higgs</a></li>
               <li><a href="#" onclick="analysis.createCSV('Z');">Z</a></li>
               <li><a href="#" onclick="analysis.createCSV('Wp');">W+</a></li>
               <li><a href="#" onclick="analysis.createCSV('Wm');">W-</a></li>
