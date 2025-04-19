@@ -386,11 +386,11 @@ ispy.handleToggles = function() {
 	
   });
 
-  ispy.use_line2 = true;
+  ispy.use_line2 = false;
 
   let pickable_lines = document.getElementById("pickable_lines");
 
-  pickable_lines.checked = true;
+  pickable_lines.checked = false;
 
   pickable_lines.addEventListener("change", (event) => {
 
