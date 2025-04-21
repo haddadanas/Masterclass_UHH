@@ -6,7 +6,7 @@ interface SubFolderReduced {
     [key: string]: Array<GUIController>;
 }
 
-export interface Ispy {
+interface Ispy {
     subfoldersReduced: SubFolderReduced;
     scenes: Record<string, Scene> | undefined;
     current_event: any;
@@ -38,7 +38,7 @@ export interface Ispy {
     STACKEDTOWER: number;
 }
 
-export interface Analysis {
+interface Analysis {
     file_events_summary: Map<string, EventSummary>;
     getSelectionResults: () => void;
     getSelectionCuts: () => Record<string, number>;
@@ -54,14 +54,14 @@ interface EventSummary {
     met: Particle;
 }
 
-export interface FourVector {
+interface FourVector {
     px: number;
     py: number;
     pz: number;
     E: number;
 }
 
-export interface Particle {
+interface Particle {
     px: number;
     py: number;
     pz: number;
@@ -69,17 +69,19 @@ export interface Particle {
     [key: string]: number | string;
 }
 
-export interface VisibleParticle extends Particle {
+interface VisibleParticle extends Particle {
     E: number;
     dtype: string;
 }
 
-export interface Lepton extends VisibleParticle {
+interface Lepton extends VisibleParticle {
     charge: number;
 }
 
-export interface EventObject {
+interface EventObject {
     Collections: Record<string, Array<Array<number | number[]>>>;
     Types: Record<string, [string, string][]>;
     [key: string]: any;
 }
+
+export {EventObject, Particle, Lepton, VisibleParticle, FourVector, Ispy, Analysis, EventSummary};
