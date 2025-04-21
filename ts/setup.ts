@@ -1,0 +1,800 @@
+import {
+  WebGLRenderer,
+  Vector3,
+  Plane,
+  Scene,
+  Group,
+  PerspectiveCamera,
+  OrthographicCamera,
+  ArrowHelper,
+  MeshBasicMaterial,
+  Mesh,
+  REVISION,
+  Raycaster,
+  Object3D,
+  DirectionalLight,
+} from "three";
+import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
+import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
+import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
+import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+
+import * as TWEEN from "@tweenjs/tween.js";
+import { getHTMLObject } from "./utils";
+import { get } from "jquery";
+
+function lookAtOrigin() {
+  ispy.camera.lookAt(new Vector3(0, 0, 0));
+}
+
+function setDisplayVerticalHeight(vh: number) {
+  ispy.vh = vh;
+
+  document.getElementById("vh").innerHTML = vh.toString();
+  let display = getHTMLObject("display");
+  display.style.setProperty("height", vh + "vh");
+
+  let w = display.clientWidth;
+  let h = display.clientHeight;
+
+  if (ispy.is_perspective) {
+    ispy.camera.aspect = w / h;
+  } else {
+    ispy.camera.left = -w / 2;
+    ispy.camera.right = w / 2;
+    ispy.camera.top = h / 2;
+    ispy.camera.bottom = -h / 2;
+  }
+
+  ispy.camera.updateProjectionMatrix();
+  ispy.renderer.setSize(w, h);
+}
+
+function setFramerate(fr: number) {
+  ispy.framerate = fr;
+  document.getElementById("fr").innerHTML = fr.toString();
+}
+
+function initCamera() {
+  ispy.camera.position.x = 9.5;
+  ispy.camera.position.y = 9.5;
+  ispy.camera.position.z = 13.0;
+
+  ispy.camera.zoom = 2.0;
+  ispy.camera.up = new Vector3(0, 1, 0);
+
+  ispy.camera.updateProjectionMatrix();
+  lookAtOrigin();
+}
+
+function useRenderer(type: string) {
+  const display = document.getElementById("display");
+  if (!display) {
+    console.error("Display element not found");
+    return;
+  }
+  const width = display.clientWidth;
+  const height = display.clientHeight;
+
+  const rendererTypes = {
+    WebGLRenderer: WebGLRenderer,
+    SVGRenderer: SVGRenderer,
+  };
+
+  const renderer = new rendererTypes[type]({ antialias: true, alpha: true });
+  const inset_renderer = new rendererTypes[type]({ antialias: true, alpha: true });
+
+  renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
+  inset_renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
+
+  renderer.setClearColor(0x232323, 1);
+  inset_renderer.setClearColor(0x232323, 0);
+
+  renderer.setSize(width, height);
+  inset_renderer.setSize(height / 5, height / 5);
+
+  ispy.renderer = renderer;
+  ispy.renderer_name = type;
+  ispy.inset_renderer = inset_renderer;
+
+  display.appendChild(ispy.renderer.domElement);
+  document.getElementById("axes").appendChild(ispy.inset_renderer.domElement);
+
+  document.getElementById("settings").style.display = "none";
+}
+
+function setupClipping() {
+    
+  ispy.clipgui = new dat.GUI({
+    name: "Clipping Controls",
+    hideable: false,
+    autoPlace: false
+  });
+
+  ispy.clipgui.domElement.id = "clipgui";
+  document.getElementById("titlebar").appendChild(ispy.clipgui.domElement);
+
+  const localFolder = ispy.clipgui.addFolder("Local Clipping");
+  const globalFolder = ispy.clipgui.addFolder("Global Clipping");
+
+  const local_planeX = localFolder.addFolder("planeX");
+  const local_planeY = localFolder.addFolder("planeY");
+  const local_planeZ = localFolder.addFolder("planeZ");
+    
+  const global_planeX = globalFolder.addFolder("planeX");
+  const global_planeY = globalFolder.addFolder("planeY");
+  const global_planeZ = globalFolder.addFolder("planeZ");
+
+  const local_params = {
+	
+    planeX: {
+	    constant: 10,
+	    negated: false 
+    },
+    
+    planeY: {
+	    constant: 10,
+	    negated: false
+    },
+    
+    planeZ: {
+	    constant: 30,
+	    negated: false
+    }
+
+  };
+    
+  const global_params = {
+    
+    planeX: {
+	    constant: 10,
+	    negated: false 
+    },
+    
+    planeY: {
+	    constant: 10,
+	    negated: false
+    },
+    
+    planeZ: {
+	    constant: 30,
+	    negated: false
+    }
+	
+  };
+
+  ispy.local_planes = [
+    new Plane(new Vector3(-1,0,0), local_params.planeX.constant),
+    new Plane(new Vector3(0,-1,0), local_params.planeY.constant),
+    new Plane(new Vector3(0,0,-1), local_params.planeZ.constant)
+  ];
+    
+  ispy.global_planes = [
+    new Plane(new Vector3(-1,0,0), global_params.planeX.constant),
+    new Plane(new Vector3(0,-1,0), global_params.planeY.constant),
+    new Plane(new Vector3(0,0,-1), global_params.planeZ.constant)
+  ];
+    
+  ispy.renderer.clippingPlanes = ispy.global_planes;
+  ispy.renderer.localClippingEnabled = true;
+
+  local_planeX.add(local_params.planeX, "constant").min(-10).max(10).onChange(
+    d => ispy.local_planes[0].constant = d
+  );
+    
+  local_planeX.add(local_params.planeX, "negated").onChange(() => {
+    ispy.local_planes[0].negate();
+    local_params.planeX.constant = ispy.local_planes[0].constant;
+  });
+    
+  local_planeX.open();
+    
+  global_planeX.add(global_params.planeX, "constant").min(-10).max(10).onChange(
+    d => ispy.global_planes[0].constant = d
+  );
+
+  global_planeX.add(global_params.planeX, "negated").onChange(() => {
+    ispy.global_planes[0].negate();
+    global_params.planeX.constant = ispy.global_planes[0].constant;
+  });
+
+  global_planeX.open();
+    
+  local_planeY.add(local_params.planeY, "constant").min(-10).max(10).onChange(
+    d => ispy.local_planes[1].constant = d
+  );
+
+  local_planeY.add(local_params.planeY, "negated").onChange(() => {
+    ispy.local_planes[1].negate();
+    local_params.planeY.constant = ispy.local_planes[1].constant;
+  });
+        
+  local_planeY.open();
+    
+  global_planeY.add(global_params.planeY, "constant").min(-10).max(10).onChange(
+    d => ispy.global_planes[1].constant = d
+  );
+
+  global_planeY.add(global_params.planeY, "negated").onChange(() => {
+    ispy.global_planes[1].negate();
+    global_params.planeY.constant = ispy.global_planes[1].constant;
+  });
+
+  global_planeY.open();
+    
+  local_planeZ.add(local_params.planeZ, "constant").min(-30).max(30).onChange(
+    d => ispy.local_planes[2].constant = d
+  );
+
+  local_planeZ.add(local_params.planeZ, "negated").onChange(() => {
+    ispy.local_planes[2].negate();
+    local_params.planeZ.constant = ispy.local_planes[2].constant;
+  });
+    
+  local_planeZ.open();
+    
+  global_planeZ.add(global_params.planeZ, "constant").min(-30).max(30).onChange(
+    d => ispy.global_planes[2].constant = d
+  );
+
+  global_planeZ.add(global_params.planeZ, "negated").onChange(() => {
+    ispy.global_planes[2].negate();
+    global_params.planeZ.constant = ispy.global_planes[2].constant;
+  });
+
+  global_planeZ.open();
+
+}
+
+function setupGUIs() {
+    
+  ispy.gui = new dat.GUI({
+    name: "Controls",
+    hideable: false,
+    autoPlace: false
+  });
+
+  ispy.guiReduced = new dat.GUI({
+    name: "Controls Reduced",
+    hideable: false,
+    autoPlace: false
+  });
+
+  ispy.gui.domElement.id = "treegui";
+  ispy.guiReduced.domElement.id = "treegui-reduced";
+  // document.getElementById('titlebar').appendChild(ispy.gui.domElement);
+  document.getElementById("titlebar").appendChild(ispy.guiReduced.domElement);
+    
+  // It seems currently impossible with dat.gui
+  // to fetch the folders as an array and remove them
+  // (without knowing the name beforehand).
+  // Therefore we have to keep track of them by-hand.
+  ispy.subfolders = {};
+  ispy.subfoldersReduced = {};
+
+}
+
+function setupInset(height: number) {
+    
+  const inset_scene = new Scene();
+  ispy.inset_scene = inset_scene;
+
+  // fov, aspect, near, far
+  const inset_width = height/5;
+  const inset_height = height/5;
+  const inset_camera = new PerspectiveCamera(70, inset_width / inset_height, 1, 100);
+  ispy.inset_camera = inset_camera;
+  ispy.inset_camera.up = ispy.camera.up;
+    
+  const origin = new Vector3(0,0,0);
+
+  // dir, origin, length, hex, headLength, headWidth
+  const length = 3.5;
+  const headLength = 1;
+  const headWidth = 1;
+    
+  const rx = new ArrowHelper(
+    new Vector3(4,0,0),
+    origin,
+    length,
+    0xff0000,
+    headLength,
+    headWidth
+  );
+
+  const gy = new ArrowHelper(
+    new Vector3(0,4,0),
+    origin,
+    length,
+    0x00ff00,
+    headLength,
+    headWidth
+  );
+
+  const bz = new ArrowHelper(
+    new Vector3(0,0,4),
+    origin,
+    length,
+    0x0000ff,
+    headLength,
+    headWidth
+  );
+
+  rx.line.material.linewidth = 2.5;
+  gy.line.material.linewidth = 2.5;
+  bz.line.material.linewidth = 2.5;
+
+  ispy.inset_scene.add(rx);
+  ispy.inset_scene.add(gy);
+  ispy.inset_scene.add(bz);
+				
+  const font_loader = new FontLoader();
+    
+  font_loader.load("./fonts/helvetiker_regular.typeface.json", function(font) {
+
+    const tps = {size:0.75, height:0.1, font:font};
+	
+    const x_geo = new TextGeometry("X", tps);
+    const y_geo = new TextGeometry("Y", tps);
+    const z_geo = new TextGeometry("Z", tps);
+
+    const x_material = new MeshBasicMaterial({ color: 0xff0000 });
+    const x_text = new Mesh(x_geo, x_material);
+    x_text.position.x = length+headLength;
+    x_text.name = "xtext";
+
+    const y_material = new MeshBasicMaterial({ color: 0x00ff00});
+    const y_text = new Mesh(y_geo, y_material);
+    y_text.position.y = length+headLength;
+    y_text.name = "ytext";
+	    
+    const z_material = new MeshBasicMaterial({ color: 0x0000ff});
+    const z_text = new Mesh(z_geo, z_material);
+    z_text.position.z = length+headLength;
+    z_text.name = "ztext";
+
+    ispy.inset_scene.add(x_text);
+    ispy.inset_scene.add(y_text);
+    ispy.inset_scene.add(z_text);
+
+  });
+    
+}
+
+function handleToggles() {
+
+  // On page load hide the stats
+  let stats = document.getElementById("stats");
+  stats.style.display = "none";
+
+  let show_stats = document.getElementById("show-stats");
+    
+  // FF keeps the check state on reload so force an "uncheck"
+  show_stats.checked = false;
+    
+  show_stats.addEventListener("change", () => show_stats.checked == true ? stats.style.display = "block" : stats.style.display = "none");
+    
+
+  let show_logo = document.getElementById("show-logo");
+  show_logo.checked = true;
+
+  show_logo.addEventListener("change", (event) => {
+
+    let cms_logo = document.getElementById("cms-logo");
+    return event.target.checked ? cms_logo.style.display = "block" : cms_logo.style.display = "none";
+	   
+  });
+    
+  ispy.inverted_colors = false;
+  document.getElementById("invert-colors").checked = false;
+
+  let show_axes = document.getElementById("show-axes");
+    
+  // FF keeps the state after a page refresh. Therefore force uncheck.
+  show_axes.checked = false;
+
+  show_axes.addEventListener("change", (event) => {
+
+    let axes = document.getElementById("axes");
+    return event.target.checked ? axes.style.display = "none" : axes.style.display = "block";
+	
+  });
+
+  ispy.use_line2 = false;
+
+  let pickable_lines = document.getElementById("pickable_lines");
+
+  pickable_lines.checked = false;
+
+  pickable_lines.addEventListener("change", (event) => {
+
+    ispy.use_line2 = event.target.checked ? true : false;
+	
+  });
+
+  let clipgui = document.getElementById("clipgui");
+  clipgui.style.display = "none";
+
+  let clipping = document.getElementById("clipping");
+  clipping.checked = false;
+
+  clipping.addEventListener("change", (event) => event.target.checked ? clipgui.style.display = "block" : clipgui.style.display = "none");
+
+}
+
+function handleDragAndDrop() {
+    
+  const canvas = ispy.renderer.domElement;
+
+  canvas.ondragover = function() {
+
+    this.classList.add("hover");
+    return false;
+
+  };
+
+  canvas.ondrop = function(e) {
+
+    e.preventDefault();
+    this.classList.remove("hover");
+	
+    var file = e.dataTransfer.files[0];
+    ispy.loadDroppedFile(file);
+
+    return false;
+
+  };
+
+  canvas.addEventListener("ondragover", canvas.ondragover);
+  canvas.addEventListener("ondrop", canvas.ondrop);
+
+}
+
+function init() {
+
+  const display = document.getElementById("display");
+  //   const inset = document.getElementById("axes");
+
+  ispy.scenes = {
+    "3D": new Scene(),
+    "RPhi": new Scene(),
+    "RhoZ": new Scene()
+  };
+
+  ispy.views = ["3D", "RPhi", "RhoZ"];
+    
+  for ( const key in ispy.scenes ) {
+
+    ispy.scenes[key].name = key;
+
+  }
+    
+  ispy.current_view = "3D";
+  ispy.scene = ispy.scenes[ispy.current_view];
+    
+  const width = display.clientWidth;
+  const height = display.clientHeight;
+    
+  ispy.p_camera = new PerspectiveCamera(
+    75,
+    width/height,
+    0.1,
+    100
+  );
+
+  ispy.p_camera.name = "PerspectiveCamera";
+
+  ispy.o_camera = new OrthographicCamera(
+    width / -2,
+    width / 2,
+    height / 2,
+    height / -2,
+    0.1,
+    100
+  );
+ 
+  ispy.o_camera.name = "OrthographicCamera";
+    
+  ispy.is_perspective = true; 
+  ispy.camera = ispy.is_perspective ? ispy.p_camera : ispy.o_camera;
+  initCamera();
+    
+  ispy.velocity = new Vector3(0, 0, 0);
+  ispy.acceleration = new Vector3(0, 0, 0);
+
+  setupInset(height);
+    
+  useRenderer("WebGLRenderer", width, height);
+  
+  ispy.stats = new Stats();
+  display.appendChild(ispy.stats.domElement);
+
+  setupGUIs();    
+  setupClipping();
+  handleToggles();
+  handleDragAndDrop();
+
+  // The second argument is necessary to make sure that mouse events are
+  // handled only when in the canvas
+  ispy.tcontrols = new TrackballControls(ispy.camera, ispy.renderer.domElement);
+  ispy.tcontrols.rotateSpeed = 3.0;
+  ispy.tcontrols.zoomSpeed = 0.5;
+  ispy.tcontrols.dynamicDampingFactor = 1.0;
+  ispy.tcontrols.noRotate = false;
+  ispy.tcontrols.noPan = false;
+    
+  ispy.ocontrols = new OrbitControls(ispy.camera, ispy.renderer.domElement);
+  ispy.ocontrols.enableRotate = true;
+
+  ispy.controls = ispy.ocontrols;
+
+  ispy.views.forEach(v => {
+
+    ["Detector", "Imported"].concat(ispy.data_groups).forEach(g => {
+
+	    let obj_group = new Group();
+	    obj_group.name = g;
+	    ispy.scenes[v].add(obj_group);
+	   
+    });
+
+  });
+
+  document.getElementById("version").innerHTML = ispy.version;
+  document.getElementById("threejs").innerHTML = "r"+REVISION;
+  document.getElementById("sweetalert").innerHTML = "2.1.0";
+  document.getElementById("plotly").innerHTML = Plotly.version;
+    
+    
+  window.addEventListener("resize", ispy.onWindowResize, false);
+
+  ispy.get_image_data = false;
+  ispy.image_data = null;
+    
+  ispy.raycaster = new Raycaster();
+  ispy.raycaster.layers.set(2);
+
+  ispy.intersected = null;
+  ispy.showTrackInfo = false;
+    
+  ispy.renderer.domElement.addEventListener("pointermove", ispy.onMouseMove, false);
+  ispy.renderer.domElement.addEventListener("pointerdown", ispy.onMouseDown, false);
+    
+  // Are we running an animation?
+  ispy.animating = false;
+
+  setDisplayVerticalHeight(90);
+  document.getElementById("vh-slider").value = ispy.vh;
+    
+  setFramerate(30);
+  document.getElementById("fps-slider").value = ispy.framerate;
+
+  ispy.importTransparency = 0.75;
+  document.getElementById("transparency-slider").value = ispy.importTransparency;
+   
+  document.getElementById("trspy").innerHTML = ispy.importTransparency;
+    
+  document.getElementById("display").appendChild(document.getElementById("event-info"));
+    
+  ispy.autoRotating = false;
+
+}
+
+function initLight() {
+
+  const intensity = 1.0;
+  const length = 15.0;
+    
+  const lights = new Object3D();
+  lights.name = "Lights";
+  ispy.scene.add(lights);
+    
+  ispy.light1 = new DirectionalLight(0xffffff, intensity);
+  ispy.light1.name = "Light1";
+  ispy.light1.position.set(-length, length, length);
+  ispy.scene.getObjectByName("Lights").add(ispy.light1);
+    
+  ispy.light2 = new DirectionalLight(0xffffff, intensity);
+  ispy.light2.name = "Light2";
+  ispy.light2.position.set(length, -length, -length);
+  ispy.scene.getObjectByName("Lights").add(ispy.light2);
+
+}
+
+function initControlPanel() {
+
+  ispy.importDetector();
+  ispy.initSelectionFields();
+    
+}
+
+function createCheckboxContainer(cont) {
+
+  const inputField = cont.__input;
+
+  // Create a checkbox element
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+
+  // Add the checkbox to the DOM
+  cont.domElement.appendChild(checkbox);
+  cont.domElement.style.display = "flex";
+
+  // Add the checkbox to the controller
+  cont.checkbox = false;
+
+  // Disable the input field initially
+  inputField.disabled = true;
+  inputField.style.backgroundColor = "#e0e0e0";
+  inputField.style.cursor = "not-allowed";
+  inputField.value = "";
+
+  checkbox.addEventListener("change", function() {
+    inputField.disabled = !this.checked;
+    inputField.style.backgroundColor = this.checked ? "" : "#e0e0e0";
+    inputField.style.cursor = this.checked ? "" : "not-allowed";
+    inputField.value = this.checked ? cont.initialValue : "";
+    cont.checkbox = this.checked;
+  });
+}
+
+function initSelectionFields() {
+  const gui_elem = ispy.guiReduced;
+
+  const folder = gui_elem.__folders["Event Selection"];
+  const nMuon = 0, nElectron = 0, nPhoton = 0, chargeSign = "", minPt = 0, maxPt = Infinity, test = analysis.checkCurrentSelection;
+
+  const row_obj = {
+    "TrackerMuons": nMuon,
+    "GsfElectrons": nElectron,
+    "Photons": nPhoton,
+    "charge": chargeSign,
+    "pt": minPt,
+    "minMETs": minPt,
+    "maxMETs": maxPt,
+    "check": test,
+    "nSelected": "0",
+    "firstSelected": ""
+  };
+
+  const naming_map = analysis.selection_naming_map;
+  //   var help_map = analysis.selection_fields_help;
+  let cont = null;
+  Object.keys(row_obj).forEach(key => {
+    const elem_name = naming_map[key];
+    // let help_info = help_map[key] || false;
+
+    // add the controller to the folder
+    if (key === "charge") {
+      cont = folder.add(row_obj, key, ["", "positive", "negative", "opposite"]).name(elem_name);
+      cont.getValue = function() {
+        const result = this.object[this.property];
+        const mapping = {
+          "negative": -1,
+          "positive": 1,
+          "opposite": 0,
+          "": ""
+        };
+        return mapping[result];
+      };
+      cont.domElement.style.color = "blue";
+      // cont.help(help_info);
+      return;
+    }
+
+    cont = folder.add(row_obj, key).name(elem_name);
+    // if (help_info) {
+    //     cont.help(help_info);
+    // }
+
+    if (typeof(row_obj[key]) == "boolean") return;
+    if (typeof(row_obj[key]) == "function") {
+      cont.domElement.previousSibling.style.width = "100%";
+      cont.domElement.previousSibling.style.height = "auto";
+      cont.domElement.previousSibling.id = "clickable-button";
+      return;
+    }
+    if (typeof(row_obj[key]) == "string") {
+      cont.onFinishChange(function() {
+        this.setValue(this.initialValue);
+      });                
+    }
+    cont.onFinishChange(function(value) {
+      if (value < 0) this.setValue(0);
+    });
+    if (["TrackerMuons", "GsfElectrons", "Photons", "maxMETs"].includes(key)) {
+      createCheckboxContainer(cont);
+    }
+  });
+
+  // add all controllers to the reduced subfolders for convenience
+  folder.__controllers.forEach(c => {
+    ispy.subfoldersReduced.Selection.push(c);
+  });
+
+}
+
+function render() {
+
+  if ( ispy.renderer !== null ) {
+	    
+    ispy.renderer.render(ispy.scene, ispy.camera);
+    
+    if ( ispy.get_image_data ){
+      
+	    ispy.image_data = ispy.renderer.domElement.toDataURL();
+	    ispy.get_image_data = false;
+
+    }
+
+  }
+
+  if ( ispy.inset_renderer !== null ) {
+
+    ispy.inset_renderer.render(ispy.inset_scene, ispy.inset_camera);
+
+  }
+
+}
+
+function run() {
+
+  setTimeout( function() {
+  
+    requestAnimationFrame(run);
+  
+  }, 1000/ispy.framerate );
+
+  ispy.stats.update();
+
+  ispy.controls.update();
+  ispy.inset_camera.position.subVectors(ispy.camera.position, ispy.controls.target);
+	
+  ispy.inset_camera.up = ispy.camera.up;
+  ispy.inset_camera.quarternion = ispy.camera.quaternion;
+  ispy.inset_camera.position.setLength(10);
+  ispy.inset_camera.lookAt(ispy.inset_scene.position);
+
+  if ( ispy.inset_scene.getObjectByName("xtext") ) {
+    
+    ispy.inset_scene.getObjectByName("xtext").quaternion.copy(ispy.inset_camera.quaternion);
+    ispy.inset_scene.getObjectByName("ytext").quaternion.copy(ispy.inset_camera.quaternion);
+    ispy.inset_scene.getObjectByName("ztext").quaternion.copy(ispy.inset_camera.quaternion);
+
+  }
+	
+  render();
+
+  if ( ispy.animating ) {
+
+    TWEEN.update();
+	
+  }
+
+  if ( ispy.autoRotating ) {
+	
+    var speed = Date.now()*0.0005;
+    ispy.camera.position.x = Math.cos(speed)*10;
+    ispy.camera.position.z = Math.sin(speed)*10;
+    
+  }
+
+}
+
+export {
+  init,
+  initLight,
+  initControlPanel,
+  setDisplayVerticalHeight,
+  setFramerate,
+  useRenderer,
+  setupGUIs,
+  setupInset,
+  handleToggles,
+  handleDragAndDrop,
+  lookAtOrigin,
+  createCheckboxContainer,
+  run,
+  initSelectionFields,
+};

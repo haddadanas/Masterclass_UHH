@@ -4,7 +4,7 @@ import {Ispy, Analysis, EventSummary} from "./ispy.interfaces";
 export const ispy: Ispy = {
   detector: { Collections: {} },
   version: "v1.0.0-UHH (dev)",
-  subfoldersReduced: {Selection: []},
+  subfoldersReduced: { Selection: [] },
   scenes: undefined,
   current_event: undefined,
   event_list: undefined,
@@ -13,6 +13,7 @@ export const ispy: Ispy = {
   },
   ig_data: undefined,
   event_index: 0,
+  animating: false,
   // These need to be defined before adding objects:
   POINT: 0,
   LINE: 1,

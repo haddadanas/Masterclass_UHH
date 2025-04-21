@@ -231,3 +231,11 @@ export function removeExistingBubble(): void {
     existingBubble.remove();
   }
 }
+
+export function getHTMLObject(id: string): HTMLElement {
+  const obj = document.getElementById(id);
+  if (obj === null) {
+    throw new Error("Object with id " + id + " not found.");
+  }
+  return obj;
+}

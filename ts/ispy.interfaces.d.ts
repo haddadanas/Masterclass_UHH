@@ -7,35 +7,36 @@ interface SubFolderReduced {
 }
 
 interface Ispy {
-    subfoldersReduced: SubFolderReduced;
-    scenes: Record<string, Scene> | undefined;
-    current_event: any;
-    event_list: any;
-    cleanupData(arg0: any): string;
-    ig_data: any;
-    event_index: number;
-    detector: { Collections: Record<string, any> };
-    version: string;
-    
-    // These need to be defined before adding objects:
-    POINT: number;
-    LINE: number;
-    BOX: number;
-    SOLIDBOX: number;
-    SCALEDBOX: number;
-    SCALEDSOLIDBOX: number;
-    SCALEDSOLIDTOWER: number;
-    MODEL: number;
-    
-    // This is something with an associated collection (the extras) and the relationship
-    // with it and the primary collection is given by association set.
-    // The materials and shapes have to be specified in the drawing method.
-    ASSOC: number;
-    
-    SHAPE: number;
-    TEXT: number;
-    BUFFERBOX: number;
-    STACKEDTOWER: number;
+  subfoldersReduced: SubFolderReduced;
+  scenes: Record<string, Scene> | undefined;
+  current_event: any;
+  event_list: any;
+  cleanupData(arg0: any): string;
+  ig_data: any;
+  event_index: number;
+  detector: { Collections: Record<string, any> };
+  version: string;
+  animating: boolean;
+
+  // These need to be defined before adding objects:
+  POINT: number;
+  LINE: number;
+  BOX: number;
+  SOLIDBOX: number;
+  SCALEDBOX: number;
+  SCALEDSOLIDBOX: number;
+  SCALEDSOLIDTOWER: number;
+  MODEL: number;
+
+  // This is something with an associated collection (the extras) and the relationship
+  // with it and the primary collection is given by association set.
+  // The materials and shapes have to be specified in the drawing method.
+  ASSOC: number;
+
+  SHAPE: number;
+  TEXT: number;
+  BUFFERBOX: number;
+  STACKEDTOWER: number;
 }
 
 interface Analysis {
