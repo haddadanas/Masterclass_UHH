@@ -271,7 +271,7 @@ ispy.hidden_objects = [];
 
 ispy.onMouseDown = function(e) {
 
-  if ( ispy.intersected ) {
+  if ( ispy.intersected && ispy.intersected.visible ) {
 
     // We only want to do this for muons and electrons since
     // it's only to show what objects are selected for invariant mass.
