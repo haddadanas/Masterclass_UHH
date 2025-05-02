@@ -9,39 +9,59 @@ import {
   Mesh,
   Points,
   PointsMaterial,
+  BufferGeometry,
 } from "three";
 
-import { Line2 } from "three/addons/lines/Line2.js";
-import { LineMaterial } from "three/addons/lines/LineMaterial.js";
+import { Line2 } from "three/examples/jsm/lines/Line2.js";
+import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { mergeBufferGeometries } from "three/addons/utils/BufferGeometryUtils.js";
 
+import { POINT, LINE, BOX, SOLIDBOX, SCALEDSOLIDBOX, SCALEDSOLIDTOWER, ASSOC, SHAPE, TEXT, STACKEDTOWER, ispy} from "./config";
+import { data_groups, detector_description, disabled, event_description, reduced_data_groups } from "./objects-config";
+import { addSelectionRow, applySavedSettings, clearSubfolders, saveCutSettings } from "./tree-view";
+import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
+import { showView } from "./controls";
+
+// helper function
+function addToSceneObject(key: string, obj: any): void {
+  const groupObject = ispy.scene?.getObjectByName(key);
+  if (groupObject) {
+    groupObject.add(obj);
+  } else {
+    console.warn(`Group object '${key}' not found in the scene.`);
+  }
+}
+
 function addDetector() {
-  for (let key in ispy.detector_description) {
+  for (let key in detector_description) {
     const data = ispy.detector.Collections[key];
 
     if (!data || data.length === 0) {
       continue;
     }
 
-    const descr = ispy.detector_description[key];
+    const descr = detector_description[key];
 
     // If something is already disabled via the toggle then this
     // should override what comes from the description
     // -- However it is not used in addSelectionRow()? - C
-    const visible = ! ispy.disabled[key] ? descr.on = true : descr.on = false;
-    ispy.addSelectionRow(descr.group, key, descr.name, [], visible);
+    const visible = ! disabled[key] ? descr.on = true : descr.on = false;
+    addSelectionRow(descr.group, key, descr.name, [], visible);
 
     const obj = new Object3D();
     obj.name = key;
     obj.visible = visible;
-
-    ispy.scene.getObjectByName(descr.group).add(obj);
+    if (!ispy.scene) {
+      console.error("No scene found");
+      return;
+    }
+    addToSceneObject(descr.group, obj);
 
     const ocolor = new Color(descr.style.color);
     const transp = true;
 
     switch (descr.type) {
-      case ispy.BOX: {
+      case BOX: {
 
         let box_material = new LineBasicMaterial({
           color: ocolor,
@@ -67,11 +87,11 @@ function addDetector() {
 
         box.name = key;
         box.renderOrder = 1;
-        ispy.scene.getObjectByName(key).add(box);
+        addToSceneObject(key, box);
 
         break;
       }
-      case ispy.SOLIDBOX: {
+      case SOLIDBOX: {
 
         let solidbox_material = new MeshBasicMaterial({
           color: ocolor,
@@ -105,7 +125,7 @@ function addDetector() {
 
         meshes.name = key;
         meshes.renderOrder = 1;
-        ispy.scene.getObjectByName(key).add(meshes);
+        addToSceneObject(key, meshes);
 
         let line_material = new LineBasicMaterial({
           color: 0x000000,
@@ -120,7 +140,7 @@ function addDetector() {
         );
 
         line_mesh.name = key;
-        ispy.scene.getObjectByName(key).add(line_mesh);
+        addToSceneObject(key, line_mesh);
 
         break;
 
@@ -130,18 +150,27 @@ function addDetector() {
 }
 
 function addToScene(event: any, view: string) {
+  if (ispy.scenes === undefined) {
+    console.error("No scenes found");
+    return;
+  }
   ispy.scene = ispy.scenes[view];
 
-  ispy.data_groups.forEach((g) => {
-    ispy.scene.getObjectByName(g).children.length = 0;
+  data_groups.forEach((g) => {
+    let dataGroupObj = ispy.scene?.getObjectByName(g);
+    if (!dataGroupObj) {
+      console.error(`Group object '${g}' not found in the scene.`);
+      return;
+    }
+    dataGroupObj.children.length = 0;
   });
 
-  for (let key in ispy.event_description[view]) {
+  for (let key in event_description[view]) {
     const data = event.Collections[key];
 
     if (!data || data.length === 0) continue;
 
-    const descr = ispy.event_description[view][key];
+    const descr = event_description[view][key];
 
     let extra = null;
     let assoc = null;
@@ -156,13 +185,13 @@ function addToScene(event: any, view: string) {
     }
 
     const objectIds = [];
-    const visible = !ispy.disabled[key] ? (descr.on = true) : (descr.on = false);
+    const visible = !disabled[key] ? (descr.on = true) : (descr.on = false);
 
     const obj = new Object3D();
     obj.name = key;
     obj.visible = visible;
 
-    ispy.scene.getObjectByName(descr.group).add(obj);
+    addToSceneObject(descr.group, obj);
 
     let ocolor = null;
     const transp = true;
@@ -170,12 +199,14 @@ function addToScene(event: any, view: string) {
     if (descr.style.color !== undefined) {
       ocolor = new Color();
       ocolor.setStyle(descr.style.color);
+    } else {
+      ocolor = new Color(0xffffff)
     }
 
     const is_physics_obj = descr.group === "Physics";
 
     switch (descr.type) {
-      case ispy.BOX: {
+      case BOX: {
 
         const boxes = [];
 
@@ -196,11 +227,11 @@ function addToScene(event: any, view: string) {
         );
 
         line.name = key;
-        ispy.scene.getObjectByName(key).add(line);
+        addToSceneObject(key, line);
 
         break;
       }
-      case ispy.SOLIDBOX: {
+      case SOLIDBOX: {
 
         const sboxes = [];
         const slines = [];
@@ -236,7 +267,7 @@ function addToScene(event: any, view: string) {
         );
 
         smeshes.name = key;
-        ispy.scene.getObjectByName(key).add(smeshes);
+        addToSceneObject(key, smeshes);
 
         if (slines.length > 0) {
 
@@ -253,15 +284,15 @@ function addToScene(event: any, view: string) {
           );
 
           sline_mesh.name = key;
-          ispy.scene.getObjectByName(key).add(sline_mesh);
+          addToSceneObject(key, sline_mesh);
 
         }
 
         break;
       }
-      case ispy.SCALEDSOLIDBOX: {
+      case SCALEDSOLIDBOX: {
 
-        const ss_boxes = [];
+        const ss_boxes: BufferGeometry[] = [];
         let maxEnergy = 0.0;
 
         for (let k = 0; k < data.length; k++) {
@@ -295,15 +326,15 @@ function addToScene(event: any, view: string) {
           );
 
           ssb_meshes.name = key;
-          ispy.scene.getObjectByName(key).add(ssb_meshes);
+          addToSceneObject(key, ssb_meshes);
 
         }
 
         break;
       }
-      case ispy.SCALEDSOLIDTOWER: {
+      case SCALEDSOLIDTOWER: {
 
-        const sst_boxes = [];
+        const sst_boxes: BufferGeometry[] = [];
         let maxE = 0.0;
 
         for (let ee = 0; ee < data.length; ee++) {
@@ -337,16 +368,16 @@ function addToScene(event: any, view: string) {
           );
 
           sst_meshes.name = key;
-          ispy.scene.getObjectByName(key).add(sst_meshes);
+          addToSceneObject(key, sst_meshes);
 
         }
 
         break;
       }
-      case ispy.STACKEDTOWER: {
+      case STACKEDTOWER: {
 
-        const eboxes = [];
-        const hboxes = [];
+        const eboxes: BufferGeometry[] = [];
+        const hboxes: BufferGeometry[] = [];
 
         for (let n = 0; n < data.length; n++) {
 
@@ -389,18 +420,18 @@ function addToScene(event: any, view: string) {
 
         }
 
-        ispy.scene.getObjectByName(key).add(emeshes);
-        ispy.scene.getObjectByName(key).add(hmeshes);
+        addToSceneObject(key, emeshes);
+        addToSceneObject(key, hmeshes);
 
         break;
       }
-      case ispy.ASSOC: {
+      case ASSOC: {
 
         const objs = descr.fn(data, extra, assoc, descr.style, descr.selection);
 
         if (objs !== undefined) {
 
-          objs.forEach(function (obj, index) {
+          objs.forEach(function (obj: Object3D, index: number) {
 
             obj.name = key;
 
@@ -412,15 +443,14 @@ function addToScene(event: any, view: string) {
 
             obj.userData.originalIndex = index;
             objectIds.push(obj.id);
-            ispy.scene.getObjectByName(key).add(obj);
-
+            addToSceneObject(key, obj);
           });
 
         }
 
         break;
       }
-      case ispy.POINT: {
+      case POINT: {
 
         const points = new Points(
           descr.fn(data),
@@ -430,11 +460,10 @@ function addToScene(event: any, view: string) {
           }));
 
         points.name = key;
-        ispy.scene.getObjectByName(key).add(points);
-
+        addToSceneObject(key, points);
         break;
       }
-      case ispy.SHAPE: {
+      case SHAPE: {
 
         for (let si = 0; si < data.length; si++) {
 
@@ -444,7 +473,7 @@ function addToScene(event: any, view: string) {
 
             shape.name = key;
 
-            shape.traverse(function (s) {
+            shape.traverse(function (s: Object3D) {
 
               s.name = key;
 
@@ -458,19 +487,18 @@ function addToScene(event: any, view: string) {
 
             shape.userData.originalIndex = si;
             objectIds.push(shape.id);
-            ispy.scene.getObjectByName(key).add(shape);
-
+            addToSceneObject(key, shape);
           }
 
         }
 
         break;
       }
-      case ispy.LINE: {
+      case LINE: {
 
         for (let li = 0; li < data.length; li++) {
 
-          descr.fn(data[li]).forEach(function (g) {
+          descr.fn(data[li]).forEach(function (g: LineGeometry) {
 
             if (ispy.use_line2) {
 
@@ -486,8 +514,7 @@ function addToScene(event: any, view: string) {
 
               line2.userData.originalIndex = li;
               objectIds.push(line2.id);
-              ispy.scene.getObjectByName(key).add(line2);
-
+              addToSceneObject(key, line2);
             } else {
 
               const line = new Line(g, new LineBasicMaterial({
@@ -500,8 +527,7 @@ function addToScene(event: any, view: string) {
 
               line.userData.originalIndex = li;
               objectIds.push(line.id);
-              ispy.scene.getObjectByName(key).add(line);
-
+              addToSceneObject(key, line);
             }
 
           });
@@ -510,7 +536,7 @@ function addToScene(event: any, view: string) {
 
         break;
       }
-      case ispy.TEXT: {
+      case TEXT: {
 
         descr.fn(data);
 
@@ -519,7 +545,7 @@ function addToScene(event: any, view: string) {
     }
 
     if (view === "3D") {
-      ispy.addSelectionRow(descr.group, key, descr.name, objectIds, visible);
+      addSelectionRow(descr.group, key, descr.name, objectIds, visible);
     }
   }
 }
@@ -532,23 +558,23 @@ function addEvent(event: any) {
   $("tr.Event").remove();
 
   // If saveSetting is active, save the current event preferences
-  let currentSetting = ispy.saveCutSettings();
+  let currentSetting = saveCutSettings();
 
   // Clear the subfolders for event information in the treegui
-  ispy.clearSubfolders();
+  clearSubfolders();
 
   ispy.views.forEach((v) => {
     addToScene(event, v);
   });
 
-  ispy.reduced_data_groups.forEach(({ name: n, function: addFunc }) => {
+  reduced_data_groups.forEach(({ name: n, function: addFunc }) => {
     addFunc(n);
   });
 
   // Load the saved event preferences if currentSetting is active
-  ispy.applySavedSettings(currentSetting);
+  applySavedSettings(currentSetting);
 
-  ispy.showView(ispy.current_view);
+  showView(ispy.current_view || "3D");
 }
 
 // export all functions

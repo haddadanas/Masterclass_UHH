@@ -496,3 +496,4 @@ function applySavedSettings(settings: any) {
   return {};
 }
 
+export { addGroups, clearSubfolders, toggle, showObject, addSelectionRow, addControllers, addInfo, saveCutSettings, applySavedSettings };

@@ -1,12 +1,17 @@
+import { loadWebFiles } from "./files-load";
+import { event_description } from "./objects-config";
+import { init, initLight, initControlPanel, run } from "./setup";
+import { addGroups } from "./tree-view";
+
 document.addEventListener("DOMContentLoaded", function() {
 
-  ispy.init();
-  ispy.addGroups();
-  ispy.initLight();
-  ispy.initControlPanel();
-  ispy.loadWebFiles();
-  ispy.run();
+  init();
+  addGroups();
+  initLight();
+  initControlPanel();
+  loadWebFiles();
+  run();
 
-  console.log(ispy.event_description);
+  console.log(event_description);
 
 });
