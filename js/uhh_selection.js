@@ -1,7 +1,7 @@
 analysis.checkCurrentSelection = function () {
   const [text, symbol] = getCurrentSelectionMessage();
   (0, swal)({ text: text, title: "Selection Results", icon: symbol, buttons: false, timer: 3000 });
-  if (symbol == "warning")
+  if (symbol == "error")
     return;
   const nSelected = ispy.subfoldersReduced["Selection"].find(e => e.property == "nSelected");
   if (nSelected) {
@@ -94,6 +94,7 @@ analysis.createCSV = function (category) {
 analysis.buildFileSummary = function () {
   let event_summary;
   let analysisBtn = document.getElementById("analysis_btn");
+  let downloadBtn = document.getElementById("save-csv-btn");
   if (!analysisBtn) {
     analysisBtn = document.createElement("button");
   }
@@ -106,9 +107,12 @@ analysis.buildFileSummary = function () {
     analysis.file_events_summary = event_summary.events;
     // enable the analysis button
     analysisBtn.disabled = false;
+    // enable the download button
+    downloadBtn.disabled = false;
   }
   catch (err) {
     analysisBtn.disabled = true;
+    downloadBtn.disabled = true;
     // create and display an error message
     let error_msg = "Error encountered building the file summary: \n    " + err;
     error_msg += "\nThe event display will work however the full analysis will remain disabled.";
@@ -285,10 +289,10 @@ const getMassesArray = function () {
 const getCurrentSelectionMessage = function () {
   const pass = checkIfEventPassing();
   if (!getCurrentEvent()) {
-    return ["No event file is loaded!", "warning"];
+    return ["No event file is loaded!", "error"];
   }
   let html = "This Event ";
   html += (pass ? "passes" : "does not pass") + " the selection!";
-  const symbol = pass ? "success" : "error";
+  const symbol = pass ? "success" : "warning";
   return [html, symbol];
 };

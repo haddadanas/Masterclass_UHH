@@ -84,6 +84,7 @@ analysis.getPassingEvents = function(): string[] {
 
 // Get CSV of the passing events
 analysis.createCSV = function(category: string) { // TODO: enable transverse mass
+  const file_name = ispy.file_name.replace(/\.ig$/, "");
   const masses = getMassesArray();
   let csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass,Transverse Mass\r\n";
   masses.m.forEach((m, index) => {
@@ -94,7 +95,7 @@ analysis.createCSV = function(category: string) { // TODO: enable transverse mas
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
   const timestamp = new Date().toISOString().replace(/[:.]/g, "");
-  link.setAttribute("download", `${category}_results_${timestamp}.csv`);
+  link.setAttribute("download", `${category}_results_${file_name}_${timestamp}.csv`);
   document.body.appendChild(link); // Required for FF
   link.click();
   document.body.removeChild(link);
@@ -109,6 +110,7 @@ analysis.buildFileSummary = function() {
 
   let event_summary: utils.EventCollection;
   let analysisBtn = document.getElementById("analysis_btn");
+  let downloadBtn = document.getElementById("save-csv-btn");
   if (!analysisBtn) {
     analysisBtn = document.createElement("button");
   }
@@ -125,10 +127,12 @@ analysis.buildFileSummary = function() {
     
     // enable the analysis button
     (analysisBtn as HTMLButtonElement).disabled = false;
+    (downloadBtn as HTMLButtonElement).disabled = false;
 
   } catch(err) {
     
     (analysisBtn as HTMLButtonElement).disabled = true;
+    (downloadBtn as HTMLButtonElement).disabled = true;
 
     // create and display an error message
     let error_msg = "Error encountered building the file summary: \n    " + err;

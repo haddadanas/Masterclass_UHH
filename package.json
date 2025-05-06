@@ -28,6 +28,7 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "jszip": "^2.7.0"
+    "jszip": "^2.7.0",
+    "plotly.js-dist-min": "^3.0.1"
   }
 }

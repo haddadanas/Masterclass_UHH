@@ -218,7 +218,7 @@ ispy.nextSelectedEvent = function() {
   } else {
     nextIndex = (currentIndex + 1);
   }
-  if ( selectedEvents ) {
+  if ( selectedEvents.length !== 0 ) {
     nextIndex = selectedEvents[nextIndex % selectedEvents.length];
     ispy.event_index = Number(nextIndex);
     ispy.loadEvent();
@@ -242,7 +242,7 @@ ispy.prevSelectedEvent = function() {
     nextIndex = (currentIndex - 1);
   }
   nextIndex = Math.max(0, nextIndex);
-  if ( selectedEvents ) {
+  if ( selectedEvents.length !== 0 ) {
     nextIndex = selectedEvents[nextIndex % selectedEvents.length];
     ispy.event_index = Number(nextIndex);
     ispy.loadEvent();
