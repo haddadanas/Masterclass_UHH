@@ -8,12 +8,12 @@ import matplotlib.pyplot as plt
 import mplhep as hep  # type: ignore
 
 
-def parser_setup():
+def parser_setup() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="plotting_script.py", description="Plotting script")
     parser.add_argument("--input", "-i", type=str, help="Input Folder; defaults to './'", default="./")
     parser.add_argument("--output", "-o", type=str, help="Output file with extension; defaults to './output.png'", default="./output.png")
     parser.add_argument(
-        "--channel", "-c", type=str, nargs="*", choices=["Higgs", "W", "Z"], default="all",
+        "--channel", "-c", type=str, nargs="*", choices=["Higgs", "W", "Z", "all"], default=["Higgs", "Z"],
         help="Channel to plot; default plots all channels.",
     )
     parser.add_argument("--min", "-m", type=float, default=10.0, help="minimum value for the histogram; default is 10.0")
@@ -45,14 +45,15 @@ class MassReader:
             files (dict[str, list[str]]): A dictionary where the keys are the channel names and the values are lists of
                 csv file paths containing the mass data.
             n_bins (int): The number of bins to use for the histogram.
+            x_min (float): The minimum value for the histogram.
             transverse_mass (bool): Whether to read the transverse mass or the invariant mass. Default is False.
 
         Raises:
             ValueError: If the file format is invalid or if no data is found in the file.
         """
         # instance variables
-        self.data = defaultdict(list)
-        self.transverse_mass = transverse_mass
+        self.data: dict[str, list[float]] = defaultdict(list)
+        self.transverse_mass: bool = transverse_mass
 
         # Read the data from the files
         for channel, file_list in files.items():
@@ -65,7 +66,7 @@ class MassReader:
         # Define the histogram bins
         minimum = max(x_min, min(min(data_array) for data_array in self.data.values()))
         maximum = max(max(data_array) for data_array in self.data.values())
-        self.bins = [minimum + i * (maximum - minimum) / n_bins for i in range(n_bins + 1)]
+        self.bins: list[float] = [minimum + i * (maximum - minimum) / n_bins for i in range(n_bins + 1)]
 
     def _read_file(self, file: str) -> list[float]:
         # check file path validity
@@ -85,12 +86,12 @@ class MassReader:
             print(f"Skipping '{file}'... No data found in file.")
         return data
 
-    def w_ratio(self) -> None:
+    def w_ratio(self):
         """ Calculates the ratio of W+ to W- events.
         """
         wp = self.data["Wp"]
         wm = self.data["Wm"]
-        
+
         print(40 * "*")
         print("***\tCalculating W+ to W- ratio...")
         if len(wm) == 0:
