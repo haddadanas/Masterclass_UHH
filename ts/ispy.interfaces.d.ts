@@ -1,5 +1,6 @@
+import { GUI } from "dat.gui";
+import { Scene, WebGLRenderer, Plane, PerspectiveCamera, OrthographicCamera, Raycaster } from "three";
 import { GUIController } from "dat.gui";
-import { Scene, WebGLRenderer, Plane } from "three";
 
 interface SubFolderReduced {
   Selection: Array<GUIController>;
@@ -7,34 +8,73 @@ interface SubFolderReduced {
 }
 
 interface Ispy {
-  current_view: string | undefined;
-  views: string[];
-  subfoldersReduced: SubFolderReduced;
-  scene: Scene | undefined;
-  scenes: Record<string, Scene> | undefined;
-  current_event: any;
-  event_list: any;
-  ig_data: any;
-  event_index: number;
-  detector: { Collections: Record<string, any> };
+  // File and Event Information
+  file_name?: string;
   version: string;
+  event_index: number;
+  current_event?: any;
+  event_list?: any;
+  ig_data?: any;
+
+  // Rendering and Camera
+  renderer?: WebGLRenderer | SVGRenderer;
+  inset_renderer?: WebGLRenderer | SVGRenderer;
+  renderer_name: string;
+  framerate: number;
+  is_perspective: boolean;
+  camera?: PerspectiveCamera | OrthographicCamera;
+  o_camera?: OrthographicCamera;
+  p_camera?: PerspectiveCamera;
+  inset_camera?: PerspectiveCamera;
+  current_view: string;
+  views: string[];
+
+  // Scene and Objects
+  scene?: Scene;
+  scenes: Record<string, Scene>;
+  inset_scene: Scene;
+  global_planes: Plane[];
+  local_planes: Plane[];
+
+  // GUI and Controls
+  gui: GUI;
+  guiReduced: GUI;
+  clipgui?: GUI;
+  subfolders: Record<string, string[]>;
+  subfoldersReduced: SubFolderReduced;
+  controls?: OrbitControls | TrackballControls;
+
+  // Interaction and Animation
+  showTrackInfo: boolean;
+  intersected: Set<any> | null;
+  raycaster: Raycaster;
   animating: boolean;
+  autoRotating: boolean;
+
+  // Image and Visualization
+  image_data: string | null;
+  get_image_data: boolean;
+  importTransparency: number;
+  inverted_colors: boolean;
+
+  // Detector and Data
+  detector: { Collections: Record<string, any> };
+
+  // Stats and Physics
+  stats: Stats;
+  acceleration: Vector3;
+  velocity: Vector3;
+
+  // Viewport Dimensions
+  vh: number;
+  vw: number;
+
+  // Additional Features
   use_line2: boolean;
-  renderer?: WebGLRenderer;
-  global_planes?: Plane[];
-  local_planes?: Plane[];
-  clipgui?: GUIController;
 }
 
 interface Analysis {
   file_events_summary: Map<string, EventSummary>;
-  getSelectionResults: () => void;
-  getSelectionCuts: () => Record<string, number>;
-  getPassingEvents: () => string[];
-  createCSV?: (category: string) => string;
-  buildFileSummary: () => void;
-  checkCurrentSelection: () => void;
-  getSceneObjects: () => Record<string, string>;
 }
 
 interface EventSummary {
@@ -94,6 +134,12 @@ type Style = {
   hcolor: string;
 }>;
 
+interface SelectionFieldController extends GUIController {
+  initialValue: string;
+  checkbox: boolean;
+  __input: HTMLInputElement;
+}
+
 export {
   EventObject,
   Particle,
@@ -106,4 +152,5 @@ export {
   Selection,
   DetectorCollectionEntry,
   Style,
+  SelectionFieldController,
 };

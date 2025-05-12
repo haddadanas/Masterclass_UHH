@@ -1,5 +1,7 @@
+import dat from "dat.gui";
 import {Ispy, Analysis, EventSummary} from "./ispy.interfaces";
-
+import { Raycaster, Scene, Vector3 } from "three";
+import Stats from "stats.js";
 
 // These need to be defined before adding objects:
 const POINT = 0
@@ -23,40 +25,67 @@ const STACKEDTOWER = 12
 export { POINT, LINE, BOX, SOLIDBOX, SCALEDBOX, SCALEDSOLIDBOX, SCALEDSOLIDTOWER, MODEL, ASSOC, SHAPE, TEXT, BUFFERBOX, STACKEDTOWER };
 
 export const ispy: Ispy = {
-  detector: { Collections: {} },
+  // Metadata and versioning
   version: "v1.0.0-UHH (dev)",
+  file_name: undefined,
+
+  // Detector and collections
+  detector: { Collections: {} },
   subfoldersReduced: { Selection: [] },
+  subfolders: {},
+
+  // Views and rendering settings
   views: ["3D", "RPhi", "RhoZ"],
-  current_view: undefined,
-  scenes: undefined,
-  scene: undefined,
-  current_event: undefined,
-  event_list: undefined,
-  ig_data: undefined,
+  current_view: "",
+  is_perspective: true,
+  renderer_name: "",
+  inverted_colors: false,
+  importTransparency: 0.75,
+
+  // Animation and interaction
   event_index: 0,
   animating: false,
+  autoRotating: false,
+  framerate: 30,
+  acceleration: new Vector3(0, 0, 0),
+  velocity: new Vector3(0, 0, 0),
+
+  // Track and object interaction
+  showTrackInfo: false,
+  intersected: null,
+  raycaster: new Raycaster(),
+
+  // Planes and clipping
+  global_planes: [],
+  local_planes: [],
+
+  // Image and rendering data
+  get_image_data: false,
+  image_data: null,
+
+  // GUI and stats
+  guiReduced: new dat.GUI({
+    name: "Controls Reduced",
+    hideable: false,
+    autoPlace: false,
+  }),
+  gui: new dat.GUI({
+    name: "Controls",
+    hideable: false,
+    autoPlace: false,
+  }),
+  stats: new Stats(),
+
+  // Scenes and rendering
+  inset_scene: new Scene(),
+  scenes: {},
+
+  // Experimental features
   use_line2: false,
+  vh: 0,
+  vw: 0,
 };
 
 export const analysis: Analysis = {
   file_events_summary: new Map<string, EventSummary>(),
-  getSelectionCuts: function (): Record<string, any> {
-    throw new Error("Function not implemented.");
-  },
-  getPassingEvents: function (): string[] {
-    throw new Error("Function not implemented.");
-  },
-  checkCurrentSelection: function (): void {
-    throw new Error("Function not implemented.");
-  },
-  getSceneObjects: function (): Record<string, string> {
-    throw new Error("Function not implemented.");
-  },
-  getSelectionResults: function (): any {
-    throw new Error("Function not implemented.");
-  },
-  buildFileSummary: function (): any {
-    throw new Error("Function not implemented.");
-  },
-    
 };

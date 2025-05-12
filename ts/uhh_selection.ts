@@ -4,23 +4,23 @@ import {ispy, analysis} from "./config";
 import {Particle, Lepton, VisibleParticle, FourVector} from "./ispy.interfaces";
 import * as utils from "./utils";
 
-analysis.checkCurrentSelection = function(): void {
+function checkCurrentSelection(): void {
   const [text, symbol] = getCurrentSelectionMessage();
   swal({text: text, title: "Selection Results", icon: symbol, buttons: false, timer: 3000} as SweetAlert.Settings);
   if (symbol === "warning") return;
   const nSelected = ispy.subfoldersReduced["Selection"].find(e => e.property === "nSelected");
   if (nSelected) {
-    nSelected.setValue(analysis.getPassingEvents().length);
+    nSelected.setValue(getPassingEvents().length);
   }
   const firstSelected = ispy.subfoldersReduced["Selection"].find(e => e.property === "firstSelected");
   if (firstSelected) {
     firstSelected.setValue(
-      analysis.getPassingEvents().map(e => Number(e) + 1).slice(0, 5).join(", ")
+      getPassingEvents().map(e => Number(e) + 1).slice(0, 5).join(", ")
     );
   }
-};
+}
 
-analysis.getSceneObjects = function(): { [key: string]: string } {
+function getSceneObjects(): { [key: string]: string } {
   return [
     ...(ispy.scenes?.["3D"]?.getObjectByName("Physics")?.children.map(o => o.name) || []),
     ...(ispy.scenes?.["3D"]?.getObjectByName("Tracking")?.children.map(o => o.name) || [])
@@ -28,11 +28,11 @@ analysis.getSceneObjects = function(): { [key: string]: string } {
     dic[o.replace(/^(?:PAT|PF)?(.*?)_V\d$/, "$1")] = o;
     return dic;
   }, {});
-};
+}
 
-analysis.getSelectionResults = function(): void {
+function getSelectionResults(): void {
   const event_stats = document.getElementById("event-statistics");
-  if (! event_stats) {
+  if (!event_stats) {
     return;
   }
   if (analysis.file_events_summary == undefined) {
@@ -40,7 +40,7 @@ analysis.getSelectionResults = function(): void {
     return;
   }
 
-  const passing_events = analysis.getPassingEvents();
+  const passing_events = getPassingEvents();
   let stats = "With the chosen selection:<br>";
   stats += "Number of passing events: " + passing_events.length + "<br>";
   stats += "This is " + (passing_events.length / analysis.file_events_summary.size * 100).toFixed(2) + "% of the total events.<br>";
@@ -52,9 +52,9 @@ analysis.getSelectionResults = function(): void {
   Plotly.newPlot("m-hist", [m_hist as Plotly.Data]);
   // Plotly.newPlot("mt-hist", [mt_hist]); // TODO enable this when transverse mass is implemented
   return;
-};
+}
 
-analysis.getSelectionCuts = function(): { [key: string]: number } {
+function getSelectionCuts(): { [key: string]: number } {
   const cuts: { [key: string]: number } = {};
   ispy.subfoldersReduced["Selection"].forEach(e => {
     if (["function", "string"].includes(typeof(e.getValue()))) return;
@@ -65,10 +65,9 @@ analysis.getSelectionCuts = function(): { [key: string]: number } {
     cuts[e.property] = e.getValue();
   });
   return cuts;
-};
+}
 
-// Get the passing events in the current file
-analysis.getPassingEvents = function(): string[] {
+function getPassingEvents(): string[] {
   if (!utils.getCurrentEvent()) {
     return [];
   }
@@ -80,11 +79,10 @@ analysis.getPassingEvents = function(): string[] {
   }
 
   return passing_events;
-};
+}
 
-// Get CSV of the passing events
-analysis.createCSV = function(category: string) { // TODO: enable transverse mass
-  const file_name = ispy.file_name.replace(/\.ig$/, "");
+function createCSV(category: string): string {
+  const file_name = ispy.file_name!.replace(/\.ig$/, "");
   const masses = getMassesArray();
   let csv = "data:text/csv;charset=utf-8,Event Index,Invariant Mass,Transverse Mass\r\n";
   masses.m.forEach((m, index) => {
@@ -101,13 +99,9 @@ analysis.createCSV = function(category: string) { // TODO: enable transverse mas
   document.body.removeChild(link);
 
   return csv;
-};
+}
 
-//
-// Get the needed information of all events in the current file
-//
-analysis.buildFileSummary = function() {
-
+function buildFileSummary(): void {
   let event_summary: utils.EventCollection;
   let analysisBtn = document.getElementById("analysis_btn");
   let downloadBtn = document.getElementById("save-csv-btn");
@@ -118,19 +112,17 @@ analysis.buildFileSummary = function() {
   $("#loading").modal("hide");
   $("#building").modal("show");
   try {
-	
     // get the event data
     event_summary = new utils.EventCollection(ispy.event_list, ispy.ig_data);
 
     // store the event summary as a global variable
     analysis.file_events_summary = event_summary.events;
-    
+
     // enable the analysis button
     (analysisBtn as HTMLButtonElement).disabled = false;
     (downloadBtn as HTMLButtonElement).disabled = false;
 
-  } catch(err) {
-    
+  } catch (err) {
     (analysisBtn as HTMLButtonElement).disabled = true;
     (downloadBtn as HTMLButtonElement).disabled = true;
 
@@ -143,13 +135,7 @@ analysis.buildFileSummary = function() {
 
   $("#building").modal("hide");
   $("#loading").modal("show");
-
-};
-
-
-//
-// Helper functions for the selection
-//
+}
 
 const getSelectionParticles = function(
   event_index: string
@@ -160,7 +146,7 @@ const getSelectionParticles = function(
   if (!summary) {
     return results;
   }
-  const selection = analysis.getSelectionCuts();
+  const selection = getSelectionCuts();
   const pt_cut = selection["pt"];
   const filteredSelection = ["TrackerMuons", "GsfElectrons", "Photons"].filter(
     (sel) => {
@@ -190,7 +176,7 @@ const checkIfEventPassing: (event_index?: number | string) => boolean = function
     event_index = utils.getCurrentIndex();
   }
   event_index = event_index.toString();
-  const cuts = analysis.getSelectionCuts();
+  const cuts = getSelectionCuts();
   const summary = analysis.file_events_summary.get(event_index);
 
   if (!summary) {
@@ -353,7 +339,7 @@ const createHistogramData = function(
 const getMassesArray = function(): {m: Map<number, number>, mt: Map<number, number>} {
   const masses = new Map();
   const massesT = new Map();
-  const particles = analysis.getPassingEvents().map(i => {
+  const particles = getPassingEvents().map(i => {
     return getSelectionParticles(i);
   });
   for (const value of particles) {
@@ -375,4 +361,26 @@ const getCurrentSelectionMessage = function(): [string, string] {
   html += (pass ? "passes" : "does not pass") + " the selection!";
   const symbol = pass ? "success" : "error";
   return [html, symbol];
+};
+
+export {
+  checkCurrentSelection,
+  getSceneObjects,
+  getSelectionResults,
+  getSelectionCuts,
+  getPassingEvents,
+  createCSV,
+  buildFileSummary,
+  checkIfEventPassing,
+  getSelectionParticles,
+  checkMinMET,
+  checkMaxMET,
+  checkCharge,
+  getPtPassingLeptons,
+  sumFourVectors,
+  getInvariantMass,
+  getTransverseMass,
+  createHistogramData,
+  getMassesArray,
+  getCurrentSelectionMessage
 };

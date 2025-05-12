@@ -1,4 +1,4 @@
-const SELEC_NAME_MAP = {
+const SELEC_NAME_MAP: Record<string, string> = {
   TrackerMuons: "# &mu;",
   GsfElectrons: "# e",
   Photons: "# &gamma;",
@@ -11,7 +11,14 @@ const SELEC_NAME_MAP = {
   firstSelected: "Passing Events",
 };
 
-const SELEC_HELP = {
+const CHARGE_MAP: Record<string, number | string> = {
+  negative: -1,
+  positive: 1,
+  opposite: 0,
+  "": "", // TODO switch to something else
+};
+
+const SELEC_HELP: Record<string, string> = {
   TrackerMuons:
     "Number of Muons required, which pass the p<sub>T</sub> constraint. If '-1' is entered, the selection is ignored.",
   GsfElectrons:
@@ -25,3 +32,5 @@ const SELEC_HELP = {
   nSelected: "Total Number of events passing the selection",
   firstSelected: "First 5 events passing the selection",
 };
+
+export { SELEC_HELP, SELEC_NAME_MAP, CHARGE_MAP };

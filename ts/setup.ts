@@ -10,28 +10,46 @@ import {
   MeshBasicMaterial,
   Mesh,
   REVISION,
-  Raycaster,
   Object3D,
   DirectionalLight,
+  Color,
+  LineBasicMaterial,
+  Font,
 } from "three";
 import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
 import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
-import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 import * as TWEEN from "@tweenjs/tween.js";
 import { getHTMLObject } from "./utils";
-import { get } from "jquery";
+
+import { ispy } from "./config"
+import dat, { GUIController } from "dat.gui";
+import { importDetector, loadDroppedFile } from "./files-load";
+import { data_groups } from "./objects-config";
+import { onMouseDown, onMouseMove, onWindowResize } from "./display";
+import { SelectionFieldController } from "./ispy.interfaces";
+import { CHARGE_MAP, SELEC_NAME_MAP } from "./analysis_config";
+import { checkCurrentSelection } from "./uhh_selection";
 
 function lookAtOrigin() {
-  ispy.camera.lookAt(new Vector3(0, 0, 0));
+  ispy.camera?.lookAt(new Vector3(0, 0, 0));
 }
 
 function setDisplayVerticalHeight(vh: number) {
+  if (! ispy.camera) {
+    console.error("Camera is not initialized");
+    return;
+  }
+  if (! ispy.renderer) {
+    console.error("Renderer is not initialized");
+    return;
+  }
   ispy.vh = vh;
 
-  document.getElementById("vh").innerHTML = vh.toString();
+  let vh_obj = getHTMLObject("vh")
+  vh_obj.innerHTML = vh.toString();
   let display = getHTMLObject("display");
   display.style.setProperty("height", vh + "vh");
 
@@ -39,12 +57,12 @@ function setDisplayVerticalHeight(vh: number) {
   let h = display.clientHeight;
 
   if (ispy.is_perspective) {
-    ispy.camera.aspect = w / h;
+    (ispy.camera as PerspectiveCamera).aspect = w / h;
   } else {
-    ispy.camera.left = -w / 2;
-    ispy.camera.right = w / 2;
-    ispy.camera.top = h / 2;
-    ispy.camera.bottom = -h / 2;
+    (ispy.camera as OrthographicCamera).left = -w / 2;
+    (ispy.camera as OrthographicCamera).right = w / 2;
+    (ispy.camera as OrthographicCamera).top = h / 2;
+    (ispy.camera as OrthographicCamera).bottom = -h / 2;
   }
 
   ispy.camera.updateProjectionMatrix();
@@ -53,10 +71,32 @@ function setDisplayVerticalHeight(vh: number) {
 
 function setFramerate(fr: number) {
   ispy.framerate = fr;
-  document.getElementById("fr").innerHTML = fr.toString();
+  const fr_obj = getHTMLObject("fr");
+  fr_obj.innerHTML = fr.toString();
 }
 
 function initCamera() {
+  const display = getHTMLObject("display");
+  const width = display.clientWidth;
+  const height = display.clientHeight;
+
+  ispy.p_camera = new PerspectiveCamera(75, width / height, 0.1, 100);
+
+  ispy.p_camera.name = "PerspectiveCamera";
+
+  ispy.o_camera = new OrthographicCamera(
+    width / -2,
+    width / 2,
+    height / 2,
+    height / -2,
+    0.1,
+    100
+  );
+
+  ispy.o_camera.name = "OrthographicCamera";
+
+  ispy.is_perspective = true;
+  ispy.camera = ispy.is_perspective ? ispy.p_camera : ispy.o_camera;
   ispy.camera.position.x = 9.5;
   ispy.camera.position.y = 9.5;
   ispy.camera.position.z = 13.0;
@@ -77,9 +117,9 @@ function useRenderer(type: string) {
   const width = display.clientWidth;
   const height = display.clientHeight;
 
-  const rendererTypes = {
-    WebGLRenderer: WebGLRenderer,
-    SVGRenderer: SVGRenderer,
+  const rendererTypes: Record<string, typeof WebGLRenderer | typeof SVGRenderer> = {
+    "WebGLRenderer": WebGLRenderer,
+    "SVGRenderer": SVGRenderer,
   };
 
   const renderer = new rendererTypes[type]({ antialias: true, alpha: true });
@@ -88,8 +128,8 @@ function useRenderer(type: string) {
   renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
   inset_renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
 
-  renderer.setClearColor(0x232323, 1);
-  inset_renderer.setClearColor(0x232323, 0);
+  renderer.setClearColor(new Color(0x232323), 1);
+  inset_renderer.setClearColor(new Color(0x232323), 0);
 
   renderer.setSize(width, height);
   inset_renderer.setSize(height / 5, height / 5);
@@ -99,9 +139,11 @@ function useRenderer(type: string) {
   ispy.inset_renderer = inset_renderer;
 
   display.appendChild(ispy.renderer.domElement);
-  document.getElementById("axes").appendChild(ispy.inset_renderer.domElement);
+  const axes_html = getHTMLObject("axes");
+  axes_html.appendChild(ispy.inset_renderer.domElement);
 
-  document.getElementById("settings").style.display = "none";
+  const settings = getHTMLObject("settings");
+  settings.style.display = "none";
 }
 
 function setupClipping() {
@@ -113,7 +155,8 @@ function setupClipping() {
   });
 
   ispy.clipgui.domElement.id = "clipgui";
-  document.getElementById("titlebar").appendChild(ispy.clipgui.domElement);
+  const titlebar = getHTMLObject("titlebar");
+  titlebar.appendChild(ispy.clipgui.domElement);
 
   const localFolder = ispy.clipgui.addFolder("Local Clipping");
   const globalFolder = ispy.clipgui.addFolder("Global Clipping");
@@ -248,44 +291,30 @@ function setupClipping() {
 }
 
 function setupGUIs() {
-    
-  ispy.gui = new dat.GUI({
-    name: "Controls",
-    hideable: false,
-    autoPlace: false
-  });
-
-  ispy.guiReduced = new dat.GUI({
-    name: "Controls Reduced",
-    hideable: false,
-    autoPlace: false
-  });
 
   ispy.gui.domElement.id = "treegui";
   ispy.guiReduced.domElement.id = "treegui-reduced";
   // document.getElementById('titlebar').appendChild(ispy.gui.domElement);
-  document.getElementById("titlebar").appendChild(ispy.guiReduced.domElement);
-    
+  const titlebar = getHTMLObject("titlebar");
+  titlebar.appendChild(ispy.guiReduced.domElement);
+
   // It seems currently impossible with dat.gui
   // to fetch the folders as an array and remove them
   // (without knowing the name beforehand).
   // Therefore we have to keep track of them by-hand.
-  ispy.subfolders = {};
-  ispy.subfoldersReduced = {};
-
+  // TODO check if needed
+  // ispy.subfolders = {};
+  // ispy.subfoldersReduced = {};
 }
 
 function setupInset(height: number) {
     
-  const inset_scene = new Scene();
-  ispy.inset_scene = inset_scene;
-
   // fov, aspect, near, far
   const inset_width = height/5;
   const inset_height = height/5;
   const inset_camera = new PerspectiveCamera(70, inset_width / inset_height, 1, 100);
   ispy.inset_camera = inset_camera;
-  ispy.inset_camera.up = ispy.camera.up;
+  ispy.inset_camera.up = ispy.camera?.up || new Vector3(0, 1, 0);
     
   const origin = new Vector3(0,0,0);
 
@@ -321,9 +350,9 @@ function setupInset(height: number) {
     headWidth
   );
 
-  rx.line.material.linewidth = 2.5;
-  gy.line.material.linewidth = 2.5;
-  bz.line.material.linewidth = 2.5;
+  (rx.line.material as LineBasicMaterial).linewidth = 2.5;
+  (gy.line.material as LineBasicMaterial).linewidth = 2.5;
+  (bz.line.material as LineBasicMaterial).linewidth = 2.5;
 
   ispy.inset_scene.add(rx);
   ispy.inset_scene.add(gy);
@@ -331,7 +360,7 @@ function setupInset(height: number) {
 				
   const font_loader = new FontLoader();
     
-  font_loader.load("./fonts/helvetiker_regular.typeface.json", function(font) {
+  font_loader.load("./fonts/helvetiker_regular.typeface.json", function(font: Font) {
 
     const tps = {size:0.75, height:0.1, font:font};
 	
@@ -365,62 +394,64 @@ function setupInset(height: number) {
 function handleToggles() {
 
   // On page load hide the stats
-  let stats = document.getElementById("stats");
+  let stats = getHTMLObject("stats");
   stats.style.display = "none";
 
-  let show_stats = document.getElementById("show-stats");
-    
+  let show_stats = getHTMLObject("show-stats") as HTMLInputElement;
+
   // FF keeps the check state on reload so force an "uncheck"
   show_stats.checked = false;
-    
-  show_stats.addEventListener("change", () => show_stats.checked == true ? stats.style.display = "block" : stats.style.display = "none");
-    
 
-  let show_logo = document.getElementById("show-logo");
+  show_stats.addEventListener("change", () => show_stats.checked == true ? stats.style.display = "block" : stats.style.display = "none");
+
+
+  let show_logo = getHTMLObject("show-logo") as HTMLInputElement;
   show_logo.checked = true;
 
-  show_logo.addEventListener("change", (event) => {
+  show_logo.addEventListener("change", (event: Event) => {
 
-    let cms_logo = document.getElementById("cms-logo");
-    return event.target.checked ? cms_logo.style.display = "block" : cms_logo.style.display = "none";
+    let cms_logo = getHTMLObject("cms-logo");
+    return (event.target as HTMLInputElement).checked ? cms_logo.style.display = "block" : cms_logo.style.display = "none";
 	   
   });
     
   ispy.inverted_colors = false;
-  document.getElementById("invert-colors").checked = false;
+  let invert_colors = getHTMLObject("invert-colors") as HTMLInputElement;
+  invert_colors.checked = false;
 
-  let show_axes = document.getElementById("show-axes");
-    
+  let show_axes = getHTMLObject("show-axes") as HTMLInputElement;
+
   // FF keeps the state after a page refresh. Therefore force uncheck.
   show_axes.checked = false;
 
-  show_axes.addEventListener("change", (event) => {
+  show_axes.addEventListener("change", (event: Event) => {
 
-    let axes = document.getElementById("axes");
-    return event.target.checked ? axes.style.display = "none" : axes.style.display = "block";
-	
+    let axes = getHTMLObject("axes");
+    return (event.target as HTMLInputElement).checked ? axes.style.display = "none" : axes.style.display = "block";
+
   });
 
   ispy.use_line2 = false;
 
-  let pickable_lines = document.getElementById("pickable_lines");
+  let pickable_lines = getHTMLObject("pickable_lines") as HTMLInputElement;
 
   pickable_lines.checked = false;
 
-  pickable_lines.addEventListener("change", (event) => {
+  pickable_lines.addEventListener("change", (event: Event) => {
 
-    ispy.use_line2 = event.target.checked ? true : false;
-	
+    ispy.use_line2 = (event.target as HTMLInputElement).checked ? true : false;
+
   });
 
-  let clipgui = document.getElementById("clipgui");
+  let clipgui = getHTMLObject("clipgui");
   clipgui.style.display = "none";
 
-  let clipping = document.getElementById("clipping");
+  let clipping = getHTMLObject("clipping") as HTMLInputElement;
   clipping.checked = false;
 
-  clipping.addEventListener("change", (event) => event.target.checked ? clipgui.style.display = "block" : clipgui.style.display = "none");
-
+  clipping.addEventListener("change", (event: Event) => {
+    (event.target as HTMLInputElement).checked ? clipgui.style.display = "block" : clipgui.style.display = "none";
+  });
 }
 
 function handleDragAndDrop() {
@@ -434,13 +465,16 @@ function handleDragAndDrop() {
 
   };
 
-  canvas.ondrop = function(e) {
+  canvas.ondrop = function(e: DragEvent) {
 
     e.preventDefault();
     this.classList.remove("hover");
-	
-    var file = e.dataTransfer.files[0];
-    ispy.loadDroppedFile(file);
+    if (e.dataTransfer == null) {
+      console.error("No data transfer object");
+      return false;
+    }
+   const file = e.dataTransfer.files[0];
+   loadDroppedFile(file);
 
     return false;
 
@@ -453,8 +487,8 @@ function handleDragAndDrop() {
 
 function init() {
 
-  const display = document.getElementById("display");
-  //   const inset = document.getElementById("axes");
+  const display = getHTMLObject("display");
+  //   const inset = getHTMLObject("axes");
 
   ispy.scenes = {
     "3D": new Scene(),
@@ -473,42 +507,14 @@ function init() {
   ispy.current_view = "3D";
   ispy.scene = ispy.scenes[ispy.current_view];
     
-  const width = display.clientWidth;
   const height = display.clientHeight;
     
-  ispy.p_camera = new PerspectiveCamera(
-    75,
-    width/height,
-    0.1,
-    100
-  );
-
-  ispy.p_camera.name = "PerspectiveCamera";
-
-  ispy.o_camera = new OrthographicCamera(
-    width / -2,
-    width / 2,
-    height / 2,
-    height / -2,
-    0.1,
-    100
-  );
- 
-  ispy.o_camera.name = "OrthographicCamera";
-    
-  ispy.is_perspective = true; 
-  ispy.camera = ispy.is_perspective ? ispy.p_camera : ispy.o_camera;
   initCamera();
-    
-  ispy.velocity = new Vector3(0, 0, 0);
-  ispy.acceleration = new Vector3(0, 0, 0);
-
   setupInset(height);
-    
-  useRenderer("WebGLRenderer", width, height);
+
+  useRenderer("WebGLRenderer");
   
-  ispy.stats = new Stats();
-  display.appendChild(ispy.stats.domElement);
+  display.appendChild(ispy.stats.domElement || ispy.stats.dom);
 
   setupGUIs();    
   setupClipping();
@@ -517,21 +523,22 @@ function init() {
 
   // The second argument is necessary to make sure that mouse events are
   // handled only when in the canvas
-  ispy.tcontrols = new TrackballControls(ispy.camera, ispy.renderer.domElement);
-  ispy.tcontrols.rotateSpeed = 3.0;
-  ispy.tcontrols.zoomSpeed = 0.5;
-  ispy.tcontrols.dynamicDampingFactor = 1.0;
-  ispy.tcontrols.noRotate = false;
-  ispy.tcontrols.noPan = false;
-    
-  ispy.ocontrols = new OrbitControls(ispy.camera, ispy.renderer.domElement);
-  ispy.ocontrols.enableRotate = true;
+  // TODO check if needed
+  // ispy.tcontrols = new TrackballControls(ispy.camera!, ispy.renderer.domElement);
+  // ispy.tcontrols.rotateSpeed = 3.0;
+  // ispy.tcontrols.zoomSpeed = 0.5;
+  // ispy.tcontrols.dynamicDampingFactor = 1.0;
+  // ispy.tcontrols.noRotate = false;
+  // ispy.tcontrols.noPan = false;
 
-  ispy.controls = ispy.ocontrols;
+  const ocontrols = new OrbitControls(ispy.camera!, ispy.renderer.domElement);
+  ocontrols.enableRotate = true;
+
+  ispy.controls = ocontrols;
 
   ispy.views.forEach(v => {
 
-    ["Detector", "Imported"].concat(ispy.data_groups).forEach(g => {
+    ["Detector", "Imported"].concat(data_groups).forEach(g => {
 
 	    let obj_group = new Group();
 	    obj_group.name = g;
@@ -541,88 +548,83 @@ function init() {
 
   });
 
-  document.getElementById("version").innerHTML = ispy.version;
-  document.getElementById("threejs").innerHTML = "r"+REVISION;
-  document.getElementById("sweetalert").innerHTML = "2.1.0";
-  document.getElementById("plotly").innerHTML = Plotly.version;
+  getHTMLObject("version").innerHTML = ispy.version;
+  getHTMLObject("threejs").innerHTML = "r"+REVISION;
+  getHTMLObject("sweetalert").innerHTML = "2.1.0";
+  // getHTMLObject("plotly").innerHTML = Plotly.version;
     
     
-  window.addEventListener("resize", ispy.onWindowResize, false);
-
-  ispy.get_image_data = false;
-  ispy.image_data = null;
+  window.addEventListener("resize", onWindowResize, false);
     
-  ispy.raycaster = new Raycaster();
   ispy.raycaster.layers.set(2);
-
-  ispy.intersected = null;
-  ispy.showTrackInfo = false;
     
-  ispy.renderer.domElement.addEventListener("pointermove", ispy.onMouseMove, false);
-  ispy.renderer.domElement.addEventListener("pointerdown", ispy.onMouseDown, false);
+  ispy.renderer.domElement.addEventListener("pointermove", onMouseMove, false);
+  ispy.renderer.domElement.addEventListener("pointerdown", onMouseDown, false);
     
   // Are we running an animation?
   ispy.animating = false;
 
   setDisplayVerticalHeight(90);
-  document.getElementById("vh-slider").value = ispy.vh;
-    
-  setFramerate(30);
-  document.getElementById("fps-slider").value = ispy.framerate;
+  (getHTMLObject("vh-slider") as HTMLInputElement).value = ispy.vh.toString();
 
-  ispy.importTransparency = 0.75;
-  document.getElementById("transparency-slider").value = ispy.importTransparency;
-   
-  document.getElementById("trspy").innerHTML = ispy.importTransparency;
+  setFramerate(30);
+  (getHTMLObject("fps-slider") as HTMLInputElement).value = ispy.framerate.toString();
+
+  (getHTMLObject("transparency-slider") as HTMLInputElement).value = ispy.importTransparency.toString();
+
+  getHTMLObject("trspy").innerHTML = ispy.importTransparency.toString();
     
-  document.getElementById("display").appendChild(document.getElementById("event-info"));
-    
-  ispy.autoRotating = false;
+  getHTMLObject("display").appendChild(getHTMLObject("event-info"));
 
 }
 
 function initLight() {
-
+  if (!ispy.scene) {
+    console.error("Scene is not initialized");
+    return;
+  }
   const intensity = 1.0;
   const length = 15.0;
     
   const lights = new Object3D();
   lights.name = "Lights";
+  
+  const light1 = new DirectionalLight(0xffffff, intensity);
+  light1.name = "Light1";
+  light1.position.set(-length, length, length);
+  lights.add(light1);
+
+  const light2 = new DirectionalLight(0xffffff, intensity);
+  light2.name = "Light2";
+  light2.position.set(length, -length, -length);
+  lights.add(light2);
   ispy.scene.add(lights);
-    
-  ispy.light1 = new DirectionalLight(0xffffff, intensity);
-  ispy.light1.name = "Light1";
-  ispy.light1.position.set(-length, length, length);
-  ispy.scene.getObjectByName("Lights").add(ispy.light1);
-    
-  ispy.light2 = new DirectionalLight(0xffffff, intensity);
-  ispy.light2.name = "Light2";
-  ispy.light2.position.set(length, -length, -length);
-  ispy.scene.getObjectByName("Lights").add(ispy.light2);
 
 }
 
 function initControlPanel() {
 
-  ispy.importDetector();
-  ispy.initSelectionFields();
+  importDetector();
+  initSelectionFields();
     
 }
 
-function createCheckboxContainer(cont) {
+function createCheckboxContainer(cont: GUIController) {
 
-  const inputField = cont.__input;
+  const selectionField = cont as SelectionFieldController
+  // check if not __input
+  const inputField = selectionField.domElement.querySelector("input") as HTMLInputElement;
 
   // Create a checkbox element
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
 
   // Add the checkbox to the DOM
-  cont.domElement.appendChild(checkbox);
-  cont.domElement.style.display = "flex";
+  selectionField.domElement.appendChild(checkbox);
+  selectionField.domElement.style.display = "flex";
 
   // Add the checkbox to the controller
-  cont.checkbox = false;
+  selectionField.checkbox = false;
 
   // Disable the input field initially
   inputField.disabled = true;
@@ -634,8 +636,8 @@ function createCheckboxContainer(cont) {
     inputField.disabled = !this.checked;
     inputField.style.backgroundColor = this.checked ? "" : "#e0e0e0";
     inputField.style.cursor = this.checked ? "" : "not-allowed";
-    inputField.value = this.checked ? cont.initialValue : "";
-    cont.checkbox = this.checked;
+    inputField.value = this.checked ? selectionField.initialValue : "";
+    selectionField.checkbox = this.checked;
   });
 }
 
@@ -643,7 +645,7 @@ function initSelectionFields() {
   const gui_elem = ispy.guiReduced;
 
   const folder = gui_elem.__folders["Event Selection"];
-  const nMuon = 0, nElectron = 0, nPhoton = 0, chargeSign = "", minPt = 0, maxPt = Infinity, test = analysis.checkCurrentSelection;
+  const nMuon = 0, nElectron = 0, nPhoton = 0, chargeSign = "", minPt = 0, maxPt = Infinity, test = checkCurrentSelection;
 
   const row_obj = {
     "TrackerMuons": nMuon,
@@ -658,25 +660,18 @@ function initSelectionFields() {
     "firstSelected": ""
   };
 
-  const naming_map = analysis.selection_naming_map;
   //   var help_map = analysis.selection_fields_help;
   let cont = null;
-  Object.keys(row_obj).forEach(key => {
-    const elem_name = naming_map[key];
+  (Object.keys(row_obj) as (keyof typeof row_obj)[]).forEach(key => {
+    const elem_name = SELEC_NAME_MAP[key];
     // let help_info = help_map[key] || false;
 
     // add the controller to the folder
     if (key === "charge") {
       cont = folder.add(row_obj, key, ["", "positive", "negative", "opposite"]).name(elem_name);
       cont.getValue = function() {
-        const result = this.object[this.property];
-        const mapping = {
-          "negative": -1,
-          "positive": 1,
-          "opposite": 0,
-          "": ""
-        };
-        return mapping[result];
+        const result = (this.object as Record<string, string | number>)[this.property];
+        return CHARGE_MAP[result];
       };
       cont.domElement.style.color = "blue";
       // cont.help(help_info);
@@ -690,17 +685,18 @@ function initSelectionFields() {
 
     if (typeof(row_obj[key]) == "boolean") return;
     if (typeof(row_obj[key]) == "function") {
-      cont.domElement.previousSibling.style.width = "100%";
-      cont.domElement.previousSibling.style.height = "auto";
-      cont.domElement.previousSibling.id = "clickable-button";
+      let btnContainer = (cont.domElement.previousSibling as HTMLElement);
+      btnContainer.style.width = "100%";
+      btnContainer.style.height = "auto";
+      btnContainer.id = "clickable-button";
       return;
     }
     if (typeof(row_obj[key]) == "string") {
-      cont.onFinishChange(function() {
+      cont.onFinishChange(function(this: SelectionFieldController) {
         this.setValue(this.initialValue);
       });                
     }
-    cont.onFinishChange(function(value) {
+    cont.onFinishChange(function(this: SelectionFieldController, value: number) {
       if (value < 0) this.setValue(0);
     });
     if (["TrackerMuons", "GsfElectrons", "Photons", "maxMETs"].includes(key)) {
@@ -745,6 +741,10 @@ function run() {
     requestAnimationFrame(run);
   
   }, 1000/ispy.framerate );
+  if (!ispy.camera || !ispy.inset_camera) {
+    console.error("Camera is not initialized");
+    return;
+  }
 
   ispy.stats.update();
 
@@ -752,15 +752,15 @@ function run() {
   ispy.inset_camera.position.subVectors(ispy.camera.position, ispy.controls.target);
 	
   ispy.inset_camera.up = ispy.camera.up;
-  ispy.inset_camera.quarternion = ispy.camera.quaternion;
+  ispy.inset_camera.quaternion.copy(ispy.camera.quaternion);
   ispy.inset_camera.position.setLength(10);
   ispy.inset_camera.lookAt(ispy.inset_scene.position);
 
   if ( ispy.inset_scene.getObjectByName("xtext") ) {
     
-    ispy.inset_scene.getObjectByName("xtext").quaternion.copy(ispy.inset_camera.quaternion);
-    ispy.inset_scene.getObjectByName("ytext").quaternion.copy(ispy.inset_camera.quaternion);
-    ispy.inset_scene.getObjectByName("ztext").quaternion.copy(ispy.inset_camera.quaternion);
+    ispy.inset_scene.getObjectByName("xtext")!.quaternion.copy(ispy.inset_camera.quaternion);
+    ispy.inset_scene.getObjectByName("ytext")!.quaternion.copy(ispy.inset_camera.quaternion);
+    ispy.inset_scene.getObjectByName("ztext")!.quaternion.copy(ispy.inset_camera.quaternion);
 
   }
 	
@@ -797,4 +797,5 @@ export {
   createCheckboxContainer,
   run,
   initSelectionFields,
+  initCamera,
 };
