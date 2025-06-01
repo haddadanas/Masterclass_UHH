@@ -28,7 +28,10 @@ import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { ispy } from "./config";
 import { getHTMLObject } from "./utils";
 
-import { Selection, DetectorCollectionEntry } from "./ispy.interfaces";
+import { Selection } from "./ispy.interfaces";
+
+// helpful type definition
+type DetectorCollectionEntry = [number, ...(number[] | number[][])];
 
 function makeWireframeBox(data: any, ci: number) {
   let all_positions: number[] = [];
@@ -1284,7 +1287,7 @@ function makeThickTracks(
       let line = new Line2(
         lg,
         new LineMaterial({
-          color: tcolor,
+          color: tcolor.getHex(),
           opacity: style.opacity,
           transparent: transp,
           linewidth: style.linewidth * 0.001,
@@ -1392,7 +1395,7 @@ function makeThickTracksRZ(
       let line = new Line2(
         lg,
         new LineMaterial({
-          color: tcolor,
+          color: tcolor.getHex(),
           opacity: style.opacity,
           transparent: transp,
           linewidth: style.linewidth * 0.001,
@@ -1883,7 +1886,7 @@ function makeArrowThick(
   const al = new Line2(
     new LineGeometry().setPositions(positions),
     new LineMaterial({
-      color: color,
+      color: color.getHex(),
       linewidth: 2 * 0.001,
     })
   );
@@ -2294,7 +2297,7 @@ function makePhoton(data: any, style: any, selection: any) {
     // For some reason LineDashedMaterial doesn't
     // work for Line2 so use this material
     const ldm = new LineMaterial({
-      color: color,
+      color: color.getHex(),
       dashed: true,
       linewidth: style.linewidth * 0.001,
       dashSize: 0.1,
@@ -2378,7 +2381,7 @@ function makePhotonRZ(data: any, style: any, selection: any) {
     // For some reason LineDashedMaterial doesn't
     // work for Line2 so use this material
     const ldm = new LineMaterial({
-      color: color,
+      color: color.getHex(),
       dashed: true,
       linewidth: style.linewidth * 0.001,
       dashSize: 0.1,

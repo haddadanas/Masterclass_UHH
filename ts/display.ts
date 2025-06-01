@@ -1,28 +1,22 @@
-import { Color, Vector2 } from "three";
+import {
+  Camera,
+  Color,
+  Mesh,
+  Object3D,
+  OrthographicCamera,
+  PerspectiveCamera,
+  Vector2,
+} from "three";
 import { TrackballControls } from "three/addons/controls/TrackballControls.js";
 
-import {
-  inverted_colors,
-  render,
-  renderer,
-  renderer_name,
-  scene,
-  camera,
-  raycaster,
-  zoomIn,
-  zoomOut,
-  exportScene,
-  current_view,
-} from "./setup";
-
-import { current_event } from "./objects-add";
-import { event_description } from "./objects-config";
+import { getFourVectorByIndex, getHTMLObject, removeExistingBubble, showInfoBubble, changeMeshMaterials } from "./utils";
+import { ispy } from "./config";
+import { useRenderer, render } from "./setup";
+import { toggleAnimation } from "./animate";
 import { nextEvent, prevEvent } from "./files-load";
-import { removeExistingBubble, showInfoBubble } from "./utils";
-
-let intersected = null;
-let currentCollection;
-let highlighted;
+import { exportScene, zoomIn, zoomOut } from "./controls";
+import { event_description } from "./objects-config";
+import { TrackLine } from "./ispy.interfaces";
 
 function invertColors() {
   ispy.inverted_colors = !ispy.inverted_colors;
@@ -34,6 +28,10 @@ function invertColors() {
   }
 
   let body = document.querySelector("body");
+  if (!body) {
+    console.error("Body element not found");
+    return;
+  }
   body.classList.toggle("white");
   body.classList.toggle("black");
 
@@ -49,7 +47,7 @@ function invertColors() {
   ];
 
   ids.forEach((id) => {
-    let el = document.getElementById(id);
+    let el = getHTMLObject(id);
 
     el.classList.toggle("white");
     el.classList.toggle("black");
@@ -72,16 +70,22 @@ function invertColors() {
 }
 
 function setTransparency(t: number) {
+  if (!ispy.scene) {
+    console.error("Scene is not defined");
+    return;
+  }
   ispy.importTransparency = t;
 
-  document.getElementById("trspy").innerHTML = t.toString();
+  getHTMLObject("trspy").innerHTML = t.toString();
 
-  let imported = ispy.scene.getObjectByName("Imported");
+  let imported = ispy.scene.getObjectByName("Imported")!;
 
   imported.children.forEach(function (obj) {
-    obj.children.forEach(function (c) {
-      c.material.transparent = true;
-      c.material.opacity = t;
+    (obj.children as Mesh[]).forEach(function (c) {
+      changeMeshMaterials(c.material, (m) => {
+        m.transparent = true;
+        m.opacity = t;
+      });
     });
   });
 }
@@ -106,7 +110,7 @@ function updateRendererInfo() {
     }
   }
 
-  document.getElementById("renderer-info").innerHTML = html;
+  getHTMLObject("renderer-info").innerHTML = html;
 }
 
 function updateRenderer(type: string) {
@@ -114,22 +118,17 @@ function updateRenderer(type: string) {
     alert(type + " is already in use");
     return;
   }
-
-  if (type === "WebGLRenderer") {
-    if (!ispy.hasWebGL()) {
-      alert("WebGL is not available");
-    }
+  if (! ispy.camera) {
+    console.error("Camera is not defined");
+    return;
   }
 
-  document.getElementById("display").removeChild(ispy.renderer.domElement);
-  document.getElementById("axes").removeChild(ispy.inset_renderer.domElement);
+  getHTMLObject("display").removeChild(ispy.renderer.domElement);
+  getHTMLObject("axes").removeChild(ispy.inset_renderer.domElement);
 
-  ispy.useRenderer(type);
+  useRenderer(type);
 
-  var controls = new TrackballControls(
-    ispy.camera,
-    ispy.renderer.domElement
-  );
+  var controls = new TrackballControls(ispy.camera, ispy.renderer.domElement);
   controls.rotateSpeed = 3.0;
   controls.zoomSpeed = 0.5;
   ispy.controls = controls;
@@ -138,24 +137,28 @@ function updateRenderer(type: string) {
 }
 
 function onWindowResize() {
-  let display = document.getElementById("display");
+  if (!ispy.camera) {
+    console.error("Camera is not defined");
+    return;
+  }
+  let display = getHTMLObject("display");
   display.removeAttribute("style");
 
   let w = display.clientWidth;
   let h = display.clientHeight;
 
   if (ispy.is_perspective) {
-    ispy.camera.aspect = w / h;
+    (ispy.camera as PerspectiveCamera).aspect = w / h;
   } else {
-    ispy.camera.left = -w / 2;
-    ispy.camera.right = w / 2;
-    ispy.camera.top = h / 2;
-    ispy.camera.bottom = -h / 2;
+    (ispy.camera as OrthographicCamera).left = -w / 2;
+    (ispy.camera as OrthographicCamera).right = w / 2;
+    (ispy.camera as OrthographicCamera).top = h / 2;
+    (ispy.camera as OrthographicCamera).bottom = -h / 2;
   }
 
   ispy.camera.updateProjectionMatrix();
   ispy.renderer.setSize(w, h);
-  ispy.render();
+  render();
 }
 
 function getObjectIds(obj: Object3D): number[] {
@@ -171,7 +174,7 @@ function getObjectIds(obj: Object3D): number[] {
 function onMouseMove(e: MouseEvent) {
   e.preventDefault();
 
-  const display = document.getElementById("display");
+  const display = getHTMLObject("display");
   const w = display.clientWidth;
   const h = display.clientHeight;
 
@@ -189,9 +192,9 @@ function onMouseMove(e: MouseEvent) {
   pointer.x = ((e.clientX - offsetX) / w) * 2 - 1;
   pointer.y = -((e.clientY - offsetY) / h) * 2 + 1;
 
-  ispy.raycaster.setFromCamera(pointer, ispy.camera);
+  ispy.raycaster.setFromCamera(pointer, ispy.camera as Camera);
   const intersects = ispy.raycaster.intersectObject(
-    ispy.scene.getObjectByName("Physics"),
+    ispy.scene!.getObjectByName("Physics")!,
     true
   );
 
@@ -200,7 +203,7 @@ function onMouseMove(e: MouseEvent) {
 
     if (!ispy.intersected.selected) {
       const original_color = new Color(
-        ispy.event_description[ispy.current_view][
+        event_description[ispy.current_view][
           ispy.intersected.name
         ].style.color
       );
@@ -219,7 +222,7 @@ function onMouseMove(e: MouseEvent) {
     })[0];
 
     if (res && res.object) {
-      ispy.intersected = res.object;
+      ispy.intersected = res.object as TrackLine;
 
       document.body.style.cursor = "pointer";
 
@@ -230,6 +233,7 @@ function onMouseMove(e: MouseEvent) {
       const intersectedObject = intersects[0].object;
       if (
         intersectedObject.name.match(/Muon|Electron/i) &&
+        intersectedObject.parent &&
         intersectedObject.parent.visible
       ) {
         const matchingTrack =
@@ -238,7 +242,7 @@ function onMouseMove(e: MouseEvent) {
           ];
         const chargeIndex = ispy.current_event.Types[
           intersectedObject.name
-        ].findIndex((type) => type[0] === "charge");
+        ].findIndex((type: [string, string]) => type[0] === "charge");
         const bubbleText =
           `Charge: ${matchingTrack[chargeIndex]}` +
           "\n" +
@@ -253,9 +257,6 @@ function onMouseMove(e: MouseEvent) {
   }
 }
 
-ispy.selected_objects = new Map();
-ispy.hidden_objects = [];
-
 function onMouseDown(e: MouseEvent) {
   if (ispy.intersected && ispy.intersected.visible) {
     if (
@@ -264,7 +265,7 @@ function onMouseDown(e: MouseEvent) {
     ) {
       if (ispy.intersected.selected) {
         const original_color = new Color(
-          ispy.event_description[ispy.current_view][
+          event_description[ispy.current_view][
             ispy.intersected.name
           ].style.color
         );
@@ -286,80 +287,82 @@ function onMouseDown(e: MouseEvent) {
   }
 }
 
-document.addEventListener("keyup", function (e) {
-  if (e.shiftKey || e.key === "Shift") {
-    ispy.shift_pressed = false;
-  }
-});
+function addKeyboardListeners() {
+  // document.addEventListener("keyup", function (e) {
+  //   if (e.shiftKey || e.key === "Shift") {
+  //     ispy.shift_pressed = false;
+  //   }
+  // });
 
-document.addEventListener("keydown", function (e) {
-  // Instead of a button, make output of 3D to JSON a "secret" key binding
-  // If shift + e then export
-  if (e.which === 69 && e.shiftKey) {
-    ispy.exportScene();
-  }
-
-  // up arrow
-  if (e.which === 38 && e.shiftKey) {
-    ispy.zoomIn();
-  }
-
-  // down
-  if (e.which === 40 && e.shiftKey) {
-    ispy.zoomOut();
-  }
-
-  // right
-  if (e.which === 39) {
-    ispy.nextEvent();
-  }
-
-  // left
-  if (e.which === 37) {
-    ispy.prevEvent();
-  }
-
-  // shift+a to toggle animation
-  if (e.which === 65 && e.shiftKey) {
-    ispy.toggleAnimation();
-  }
-
-  if (e.shiftKey || e.key === "Shift") {
-    ispy.shift_pressed = true;
-  }
-
-  // M
-  if (e.which === 77) {
-    showMass();
-  }
-
-  // H
-  if (e.which === 72) {
-    ispy.hide = true;
-
-    if (ispy.intersected && ispy.intersected.name.includes("Jet")) {
-      ispy.intersected.material.color = new Color(
-        ispy.event_description[ispy.current_view][
-          ispy.intersected.name
-        ].style.color
-      );
-
-      ispy.intersected.visible = false;
-      ispy.hidden_objects.push(ispy.intersected);
+  document.addEventListener("keydown", function (e: KeyboardEvent) {
+    // Instead of a button, make output of 3D to JSON a "secret" key binding
+    // If shift + e then export
+    if (e.which === 69 && e.shiftKey) {
+      exportScene();
     }
-  }
 
-  // S
-  if (e.which === 83) {
-    ispy.show = true;
-
-    const hidden_object = ispy.hidden_objects.pop();
-
-    if (hidden_object) {
-      hidden_object.visible = true;
+    // up arrow
+    if (e.which === 38 && e.shiftKey) {
+      zoomIn();
     }
-  }
-});
+
+    // down
+    if (e.which === 40 && e.shiftKey) {
+      zoomOut();
+    }
+
+    // right
+    if (e.which === 39) {
+      nextEvent();
+    }
+
+    // left
+    if (e.which === 37) {
+      prevEvent();
+    }
+
+    // shift+a to toggle animation
+    if (e.which === 65 && e.shiftKey) {
+      toggleAnimation();
+    }
+
+    // if (e.shiftKey || e.key === "Shift") {
+    //   ispy.shift_pressed = true;
+    // }
+
+    // M
+    if (e.which === 77) {
+      showMass();
+    }
+
+    // H
+    if (e.which === 72) {
+      ispy.hide = true;
+
+      if (ispy.intersected && ispy.intersected.name.includes("Jet")) {
+        ispy.intersected.material.color = new Color(
+          event_description[ispy.current_view][
+            ispy.intersected.name
+          ].style.color
+        );
+
+        ispy.intersected.visible = false;
+        ispy.hidden_objects.push(ispy.intersected);
+      }
+    }
+
+    // S
+    if (e.which === 83) {
+      ispy.show = true;
+
+      const hidden_object = ispy.hidden_objects.pop();
+
+      if (hidden_object) {
+        hidden_object.visible = true;
+      }
+    }
+  });
+}
 
 function showMass() {
   var m = 0;
@@ -368,11 +371,11 @@ function showMass() {
   var sumPy = 0;
   var sumPz = 0;
 
-  ispy.selected_objects.forEach(function (o, key) {
-    sumE += o.four_vector.E;
-    sumPx += o.four_vector.px;
-    sumPy += o.four_vector.py;
-    sumPz += o.four_vector.pz;
+  ispy.selected_objects.forEach(function (o, _key) {
+    sumE += o.fourVector.E;
+    sumPx += o.fourVector.px;
+    sumPy += o.fourVector.py;
+    sumPz += o.fourVector.pz;
 
     // This is cheating. Should get colors from event_description config.
     if (o.ptype === "Electron") {
@@ -390,7 +393,7 @@ function showMass() {
   m -= sumPx * sumPx + sumPy * sumPy + sumPz * sumPz;
   m = Math.sqrt(m);
 
-  document.getElementById("invariant-mass").innerHTML = m.toFixed(2);
+  getHTMLObject("invariant-mass").innerHTML = m.toFixed(2);
   //document.getElementById('invariant-mass-modal').style.display = 'block';
   $("#invariant-mass-modal").modal("show");
 
@@ -399,20 +402,26 @@ function showMass() {
 }
 
 function displayEventObjectData() {
+  if (!ispy.intersected) {
+    return;
+  }
   const key = ispy.intersected.name;
   const objectUserData = ispy.intersected.userData;
 
-  let fourVector = getFourVectorByObjectIndex(key, objectUserData);
-  let ptype = fourVector.ptype;
+  let [fourVector, ptype] = getFourVectorByIndex(key, objectUserData);
 
-  ispy.intersected.four_vector = fourVector;
-  ispy.intersected.ptype = ptype;
+  ispy.intersected.fourVector = fourVector;
+  ispy.intersected.ptype = ptype?.toString() || "";
 
   ispy.selected_objects.set(ispy.intersected.id, ispy.intersected);
 }
 
 function highlightObject(objectId: number) {
-  var selected = ispy.scene.getObjectById(Number(objectId), true);
+  if (!ispy.scene) {
+    console.error("Scene is not defined");
+    return;
+  }
+  var selected = ispy.scene.getObjectById(Number(objectId));
 
   document.body.style.cursor = "pointer";
 
@@ -439,16 +448,17 @@ function unHighlightObject() {
 }
 
 export {
-    invertColors,
-    setTransparency,
-    updateRendererInfo,
-    updateRenderer,
-    onWindowResize,
-    getObjectIds,
-    onMouseMove,
-    onMouseDown,
-    showMass,
-    displayEventObjectData,
-    highlightObject,
-    unHighlightObject,
-}
+  invertColors,
+  setTransparency,
+  updateRendererInfo,
+  updateRenderer,
+  onWindowResize,
+  getObjectIds,
+  onMouseMove,
+  onMouseDown,
+  showMass,
+  displayEventObjectData,
+  highlightObject,
+  unHighlightObject,
+  addKeyboardListeners,
+};

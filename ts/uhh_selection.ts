@@ -1,13 +1,13 @@
 import Plotly from "plotly.js";
 import swal from "sweetalert";
 import {ispy, analysis} from "./config";
-import {Particle, Lepton, VisibleParticle, FourVector} from "./ispy.interfaces";
+import {Particle, FourVector, MET} from "./ispy.interfaces";
 import * as utils from "./utils";
 
 function checkCurrentSelection(): void {
   const [text, symbol] = getCurrentSelectionMessage();
   swal({text: text, title: "Selection Results", icon: symbol, buttons: false, timer: 3000} as SweetAlert.Settings);
-  if (symbol === "warning") return;
+  if (symbol === "error") return;
   const nSelected = ispy.subfoldersReduced["Selection"].find(e => e.property === "nSelected");
   if (nSelected) {
     nSelected.setValue(getPassingEvents().length);
@@ -139,8 +139,8 @@ function buildFileSummary(): void {
 
 const getSelectionParticles = function(
   event_index: string
-): {index: string, parts: Map<string, any>, met: any} {
-  const results = {index: event_index.toString(), parts: new Map(), met: {}};
+): {index: string, parts: Map<string, Particle[]>, met: MET} {
+  const results = {index: event_index.toString(), parts: new Map(), met: {px: 0, py: 0, Et: 0}};
   const tmp_parts = new Map();
   const summary = analysis.file_events_summary.get(event_index.toString());
   if (!summary) {
@@ -190,8 +190,8 @@ const checkIfEventPassing: (event_index?: number | string) => boolean = function
   for (let [name, part] of summary.particles) {
     if (cuts[name] == -1) continue;
     if (name == "TrackerMuons" || name == "GsfElectrons") {
-      part = getPtPassingLeptons(part as Lepton[], cuts["pt"]);
-      pass = checkCharge(part as Lepton[], cuts["charge"]);
+      part = getPtPassingLeptons(part, cuts["pt"]);
+      pass = checkCharge(part, cuts["charge"]);
       if (!pass) break;
     }
     if (part.length != cuts[name]) {
@@ -204,23 +204,23 @@ const checkIfEventPassing: (event_index?: number | string) => boolean = function
 
 // Helper functions to check the selection
 const checkMinMET = function(
-  met: Particle,
+  met: MET,
   cut: number,
 ): boolean {
   if (cut == -1) return true;
-  return met["pt"] >= cut;
+  return met["Et"] >= cut;
 };
 
 const checkMaxMET = function(
-  met: Particle,
+  met: MET,
   cut: number,
 ): boolean {
   if (cut == -1) return true;
-  return met["pt"] <= cut;
+  return met["Et"] <= cut;
 };
 
 const checkCharge = function(
-  leptons: Lepton[],
+  leptons: Particle[],
   cut: number,
 ): boolean {
   if (cut === undefined) return true;
@@ -233,14 +233,14 @@ const checkCharge = function(
 };
 
 const getPtPassingLeptons = function(
-  leptons: Lepton[],
+  leptons: Particle[],
   cut: number,
-): Lepton[] {
+): Particle[] {
   return leptons.filter(lepton => lepton["pt"] >= cut);
 };
 
 const sumFourVectors = function(
-  particles: Map<string, VisibleParticle[]>,
+  particles: Map<string, Particle[]>,
 ): FourVector {
   if (particles.size < 1) {
     return {E: 0, px: 0, py: 0, pz: 0};
@@ -282,20 +282,19 @@ const getInvariantMass = function(
 // Calculate the transverse mass of a list of particles
 const getTransverseMass = function(
   sumVector: FourVector,
-  met: {px: number, py: number, [key: string]: any},
+  met: MET,
 ): number { 
 
-  let transversemass = 0;
-  const invariantmass = getInvariantMass(sumVector);
+  let transverseMass = 0;
+  const invariantMass = getInvariantMass(sumVector);
 
-  const metE = Math.sqrt(met.px * met.px + met.py * met.py);
   const Et = Math.sqrt(sumVector.E * sumVector.E - sumVector.pz * sumVector.pz);
 
-  transversemass = invariantmass * invariantmass;
-  transversemass += 2 * (Et * metE - sumVector.px * met.px - sumVector.py * met.py);
-  transversemass = Math.sqrt(transversemass);
+  transverseMass = invariantMass * invariantMass;
+  transverseMass += 2 * (Et * met.Et - sumVector.px * met.px - sumVector.py * met.py);
+  transverseMass = Math.sqrt(transverseMass);
 
-  return transversemass;
+  return transverseMass;
 };
 
 const _createHistogram = function(
@@ -319,7 +318,7 @@ const _createHistogram = function(
     const bin = Math.floor(val/binWidth);
     hist[bin]++;
   });
-  return hist;    
+  return hist;
 };
 
 const createHistogramData = function(
@@ -355,11 +354,11 @@ const getMassesArray = function(): {m: Map<number, number>, mt: Map<number, numb
 const getCurrentSelectionMessage = function(): [string, string] {
   const pass = checkIfEventPassing();
   if (pass === undefined) {
-    return ["No event file is loaded!", "warning"];
+    return ["No event file is loaded!", "error"];
   }
   let html = "This Event ";
   html += (pass ? "passes" : "does not pass") + " the selection!";
-  const symbol = pass ? "success" : "error";
+  const symbol = pass ? "success" : "warning";
   return [html, symbol];
 };
 

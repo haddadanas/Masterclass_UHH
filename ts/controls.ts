@@ -2,21 +2,29 @@ import { Vector3 } from "three";
 import { OBJExporter } from "three/examples/jsm/exporters/OBJExporter";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
 
+import { ispy } from "./config";
+import { initCamera, lookAtOrigin, render } from "./setup";
+import { getHTMLObject } from "./utils";
+
 function resetView() {
   setPerspective();
-  ispy.initCamera();
+  initCamera();
 
   ispy.controls.reset();
 
-  document.getElementById("3d").classList.add("active");
-  document.getElementById("rphi").classList.remove("active");
-  document.getElementById("rhoz").classList.remove("active");
+  getHTMLObject("3d").classList.add("active");
+  getHTMLObject("rphi").classList.remove("active");
+  getHTMLObject("rhoz").classList.remove("active");
 
   ispy.current_view = "3D";
   ispy.scene = ispy.scenes["3D"];
 }
 
 function setXY() {
+  if (!ispy.camera) {
+    console.error("Camera is not defined");
+    return;
+  }
   const length = ispy.camera.position.length();
 
   ispy.camera.position.x = 0;
@@ -24,10 +32,14 @@ function setXY() {
   ispy.camera.position.z = length;
   ispy.camera.up = new Vector3(0, 1, 0);
 
-  ispy.lookAtOrigin();
+  lookAtOrigin();
 }
 
 function setZX() {
+  if (!ispy.camera) {
+    console.error("Camera is not defined");
+    return;
+  }
   const length = ispy.camera.position.length();
 
   ispy.camera.position.x = 0;
@@ -35,10 +47,14 @@ function setZX() {
   ispy.camera.position.z = 0;
   ispy.camera.up = new Vector3(1, 0, 0);
 
-  ispy.lookAtOrigin();
+  lookAtOrigin();
 }
 
 function setYZ() {
+  if (!ispy.camera) {
+    console.error("Camera is not defined");
+    return;
+  }
   const length = ispy.camera.position.length();
 
   ispy.camera.position.x = -length;
@@ -46,18 +62,22 @@ function setYZ() {
   ispy.camera.position.z = 0;
   ispy.camera.up = new Vector3(0, 1, 0);
 
-  ispy.lookAtOrigin();
+  lookAtOrigin();
 }
 
 function autoRotate() {
   ispy.autoRotating = !ispy.autoRotating;
 
-  document.getElementById("autorotate").classList.toggle("active");
+  getHTMLObject("autorotate").classList.toggle("active");
 }
 
 function setOrthographic() {
-  document.getElementById("perspective").classList.remove("active");
-  document.getElementById("orthographic").classList.add("active");
+  if (!ispy.o_camera || !ispy.p_camera) {
+    console.error("Orthographic or Perspective camera is not defined");
+    return;
+  }
+  getHTMLObject("perspective").classList.remove("active");
+  getHTMLObject("orthographic").classList.add("active");
 
   ispy.is_perspective = false;
   ispy.camera = ispy.o_camera;
@@ -94,8 +114,12 @@ function setOrthographic() {
 }
 
 function setPerspective() {
-  document.getElementById("perspective").classList.add("active");
-  document.getElementById("orthographic").classList.remove("active");
+  if (!ispy.o_camera || !ispy.p_camera) {
+    console.error("Orthographic or Perspective camera is not defined");
+    return;
+  }
+  getHTMLObject("perspective").classList.add("active");
+  getHTMLObject("orthographic").classList.remove("active");
 
   ispy.is_perspective = true;
   ispy.camera = ispy.p_camera;
@@ -118,16 +142,16 @@ function setPerspective() {
 function showView(view: string) {
   switch (view) {
     case "3D":
-      document.getElementById("3d").classList.add("active");
-      document.getElementById("rphi").classList.remove("active");
-      document.getElementById("rhoz").classList.remove("active");
+      getHTMLObject("3d").classList.add("active");
+      getHTMLObject("rphi").classList.remove("active");
+      getHTMLObject("rhoz").classList.remove("active");
 
-      document.getElementById("perspective").removeAttribute("disabled");
-      document.getElementById("orthographic").removeAttribute("disabled");
+      getHTMLObject("perspective").removeAttribute("disabled");
+      getHTMLObject("orthographic").removeAttribute("disabled");
 
-      document.getElementById("xy").removeAttribute("disabled");
-      document.getElementById("yz").removeAttribute("disabled");
-      document.getElementById("xz").removeAttribute("disabled");
+      getHTMLObject("xy").removeAttribute("disabled");
+      getHTMLObject("yz").removeAttribute("disabled");
+      getHTMLObject("xz").removeAttribute("disabled");
 
       ispy.controls.enableRotate = true;
 
@@ -138,16 +162,16 @@ function showView(view: string) {
       break;
 
     case "RPhi":
-      document.getElementById("3d").classList.remove("active");
-      document.getElementById("rphi").classList.add("active");
-      document.getElementById("rhoz").classList.remove("active");
+      getHTMLObject("3d").classList.remove("active");
+      getHTMLObject("rphi").classList.add("active");
+      getHTMLObject("rhoz").classList.remove("active");
 
-      document.getElementById("perspective").setAttribute("disabled", "");
-      document.getElementById("orthographic").setAttribute("disabled", "");
+      getHTMLObject("perspective").setAttribute("disabled", "");
+      getHTMLObject("orthographic").setAttribute("disabled", "");
 
-      document.getElementById("xy").setAttribute("disabled", "");
-      document.getElementById("yz").setAttribute("disabled", "");
-      document.getElementById("xz").setAttribute("disabled", "");
+      getHTMLObject("xy").setAttribute("disabled", "");
+      getHTMLObject("yz").setAttribute("disabled", "");
+      getHTMLObject("xz").setAttribute("disabled", "");
 
       ispy.controls.enableRotate = false;
       ispy.controls.reset();
@@ -160,16 +184,16 @@ function showView(view: string) {
       break;
 
     case "RhoZ":
-      document.getElementById("3d").classList.remove("active");
-      document.getElementById("rphi").classList.remove("active");
-      document.getElementById("rhoz").classList.add("active");
+      getHTMLObject("3d").classList.remove("active");
+      getHTMLObject("rphi").classList.remove("active");
+      getHTMLObject("rhoz").classList.add("active");
 
-      document.getElementById("perspective").setAttribute("disabled", "");
-      document.getElementById("orthographic").setAttribute("disabled", "");
+      getHTMLObject("perspective").setAttribute("disabled", "");
+      getHTMLObject("orthographic").setAttribute("disabled", "");
 
-      document.getElementById("xy").setAttribute("disabled", "");
-      document.getElementById("yz").setAttribute("disabled", "");
-      document.getElementById("xz").setAttribute("disabled", "");
+      getHTMLObject("xy").setAttribute("disabled", "");
+      getHTMLObject("yz").setAttribute("disabled", "");
+      getHTMLObject("xz").setAttribute("disabled", "");
 
       ispy.controls.enableRotate = false;
       ispy.controls.reset();
@@ -179,6 +203,9 @@ function showView(view: string) {
 
       ispy.current_view = "RhoZ";
       ispy.scene = ispy.scenes["RhoZ"];
+      break;
+    default:
+      console.error(`Invalid view: ${view}`);
       break;
   }
 }
@@ -191,12 +218,12 @@ function enterFullscreen() {
   }
   if (container.requestFullscreen) {
     container.requestFullscreen();
-  } else if (container.msRequestFullscreen) {
-    container.msRequestFullscreen();
-  } else if (container.mozRequestFullScreen) {
-    container.mozRequestFullScreen();
-  } else if (container.webkitRequestFullscreen) {
-    container.webkitRequestFullscreen();
+  } else if ((container as any).msRequestFullscreen) {
+    (container as any).msRequestFullscreen();
+  } else if ((container as any).mozRequestFullScreen) {
+    (container as any).mozRequestFullScreen();
+  } else if ((container as any).webkitRequestFullscreen) {
+    (container as any).webkitRequestFullscreen();
   } else {
     alert("Cannot go to full screen!");
   }
@@ -205,20 +232,20 @@ function enterFullscreen() {
 function exitFullscreen() {
   if (document.exitFullscreen) {
     document.exitFullscreen();
-  } else if (document.msExitFullscreen) {
-    document.msExitFullscreen();
-  } else if (document.mozCancelFullScreen) {
-    document.mozCancelFullScreen();
-  } else if (document.webkitExitFullscreen) {
-    document.webkitExitFullscreen();
+  } else if ((document as any).msExitFullscreen) {
+    (document as any).msExitFullscreen();
+  } else if ((document as any).mozCancelFullScreen) {
+    (document as any).mozCancelFullScreen();
+  } else if ((document as any).webkitExitFullscreen) {
+    (document as any).webkitExitFullscreen();
   } else {
     alert("Cannot exit full screen. Try Esc?");
   }
 }
 
 function toggleFullscreen() {
-  document.getElementById("enterFullscreen").classList.toggle("active");
-  document.getElementById("exitFullscreen").classList.toggle("active");
+  getHTMLObject("enterFullscreen").classList.toggle("active");
+  getHTMLObject("exitFullscreen").classList.toggle("active");
 }
 
 document.addEventListener("webkitfullscreenchange", toggleFullscreen, false);
@@ -231,22 +258,30 @@ function reload() {
 }
 
 function zoomIn() {
-  ispy.camera.zoom += 0.5;
-  ispy.camera.updateProjectionMatrix();
+  ispy.camera!.zoom += 0.5;
+  ispy.camera!.updateProjectionMatrix();
 }
 
 function zoomOut() {
-  ispy.camera.zoom -= 0.5;
-  ispy.camera.updateProjectionMatrix();
+  ispy.camera!.zoom -= 0.5;
+  ispy.camera!.updateProjectionMatrix();
 }
 
 function printImage() {
+  if (!ispy.image_data) {
+    alert("Image data is not defined");
+    return;
+  }
   ispy.get_image_data = true;
-  ispy.render();
+  render();
   window.open(ispy.image_data, "toDataURL() image", "width=1600, height=900");
 }
 
 function exportScene() {
+  if (!ispy.scene) {
+    alert("Scene is not defined");
+    return;
+  }
   const exporter = new GLTFExporter();
 
   const options = {
@@ -257,7 +292,7 @@ function exportScene() {
   exporter.parse(
     ispy.scene,
     function (result) {
-      exportArrayBuffer(result, "scene.glb");
+      exportArrayBuffer(result as ArrayBuffer, "scene.glb");
     },
     options
   );
@@ -265,7 +300,7 @@ function exportScene() {
   alert("scene.glb created");
 }
 
-function exportString(output, filename) {
+function exportString(output: BlobPart, filename: string) {
   const blob = new Blob([output], { type: "text/plain" });
   const objectURL = URL.createObjectURL(blob);
 
@@ -285,7 +320,7 @@ function exportString(output, filename) {
   //window.focus();
 }
 
-function exportArrayBuffer(output, filename) {
+function exportArrayBuffer(output: BlobPart, filename: string) {
   const blob = new Blob([output], { type: "application/octect-stream" });
   const objectURL = URL.createObjectURL(blob);
 
@@ -308,8 +343,12 @@ function exportGLTF_text() {
   exportGLTF(false);
 }
 
-function exportGLTF(binary) {
-  document.getElementById("export-model").style.display = "none";
+function exportGLTF(binary: boolean) {
+  if (!ispy.scene) {
+    alert("Scene is not defined");
+    return;
+  }
+  getHTMLObject("export-model").style.display = "none";
   //$('#export-model').hide();
 
   const exporter = new GLTFExporter();
@@ -341,7 +380,11 @@ function exportGLTF(binary) {
 }
 
 function exportOBJ() {
-  document.getElementById("export-model").style.display = "none";
+  if (!ispy.scene) {
+    alert("Scene is not defined");
+    return;
+  }
+  getHTMLObject("export-model").style.display = "none";
   //$('#export-model').hide();
 
   const exporter = new OBJExporter();
@@ -379,5 +422,5 @@ export {
   exportGLTF_binary,
   exportGLTF_text,
   exportGLTF,
-  exportOBJ
+  exportOBJ,
 };

@@ -104,6 +104,14 @@ const animation = {
 };
 
 export function toggleAnimation() {
+  if (! ispy.camera) {
+    console.error("Camera is not defined");
+    return;
+  }
+  if (!ispy.scene) {
+    console.error("Scene is not defined");
+    return;
+  }
   ispy.animating = !ispy.animating;
 
   const animateElement = document.getElementById("animate");
@@ -222,14 +230,14 @@ export function toggleAnimation() {
     let c3 = new Tween(proton1.position)
       .to({ z: animation.collision.proton1.pf.z }, animation.collision.time)
       .onComplete(function () {
-        ispy.scene.remove(proton1);
+        ispy.scene?.remove(proton1);
       })
       .easing(Easing.Back.Out);
 
     let c4 = new Tween(proton2.position)
       .to({ z: animation.collision.proton2.pf.z }, animation.collision.time)
       .onComplete(function () {
-        ispy.scene.remove(proton2);
+        ispy.scene?.remove(proton2);
       })
       .easing(Easing.Back.Out);
 

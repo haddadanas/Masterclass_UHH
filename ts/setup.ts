@@ -1,31 +1,12 @@
-import {
-  WebGLRenderer,
-  Vector3,
-  Plane,
-  Scene,
-  Group,
-  PerspectiveCamera,
-  OrthographicCamera,
-  ArrowHelper,
-  MeshBasicMaterial,
-  Mesh,
-  REVISION,
-  Object3D,
-  DirectionalLight,
-  Color,
-  LineBasicMaterial,
-  Font,
-} from "three";
-import { FontLoader } from "three/examples/jsm/loaders/FontLoader.js";
-import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry.js";
+import THREE from "three";
 import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
+import dat from "dat.gui";
 import * as TWEEN from "@tweenjs/tween.js";
-import { getHTMLObject } from "./utils";
 
+import { getHTMLObject } from "./utils";
 import { ispy } from "./config"
-import dat, { GUIController } from "dat.gui";
 import { importDetector, loadDroppedFile } from "./files-load";
 import { data_groups } from "./objects-config";
 import { onMouseDown, onMouseMove, onWindowResize } from "./display";
@@ -34,7 +15,7 @@ import { CHARGE_MAP, SELEC_NAME_MAP } from "./analysis_config";
 import { checkCurrentSelection } from "./uhh_selection";
 
 function lookAtOrigin() {
-  ispy.camera?.lookAt(new Vector3(0, 0, 0));
+  ispy.camera?.lookAt(new THREE.Vector3(0, 0, 0));
 }
 
 function setDisplayVerticalHeight(vh: number) {
@@ -57,12 +38,12 @@ function setDisplayVerticalHeight(vh: number) {
   let h = display.clientHeight;
 
   if (ispy.is_perspective) {
-    (ispy.camera as PerspectiveCamera).aspect = w / h;
+    (ispy.camera as THREE.PerspectiveCamera).aspect = w / h;
   } else {
-    (ispy.camera as OrthographicCamera).left = -w / 2;
-    (ispy.camera as OrthographicCamera).right = w / 2;
-    (ispy.camera as OrthographicCamera).top = h / 2;
-    (ispy.camera as OrthographicCamera).bottom = -h / 2;
+    (ispy.camera as THREE.OrthographicCamera).left = -w / 2;
+    (ispy.camera as THREE.OrthographicCamera).right = w / 2;
+    (ispy.camera as THREE.OrthographicCamera).top = h / 2;
+    (ispy.camera as THREE.OrthographicCamera).bottom = -h / 2;
   }
 
   ispy.camera.updateProjectionMatrix();
@@ -80,11 +61,11 @@ function initCamera() {
   const width = display.clientWidth;
   const height = display.clientHeight;
 
-  ispy.p_camera = new PerspectiveCamera(75, width / height, 0.1, 100);
+  ispy.p_camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 100);
 
   ispy.p_camera.name = "PerspectiveCamera";
 
-  ispy.o_camera = new OrthographicCamera(
+  ispy.o_camera = new THREE.OrthographicCamera(
     width / -2,
     width / 2,
     height / 2,
@@ -102,7 +83,7 @@ function initCamera() {
   ispy.camera.position.z = 13.0;
 
   ispy.camera.zoom = 2.0;
-  ispy.camera.up = new Vector3(0, 1, 0);
+  ispy.camera.up = new THREE.Vector3(0, 1, 0);
 
   ispy.camera.updateProjectionMatrix();
   lookAtOrigin();
@@ -117,8 +98,8 @@ function useRenderer(type: string) {
   const width = display.clientWidth;
   const height = display.clientHeight;
 
-  const rendererTypes: Record<string, typeof WebGLRenderer | typeof SVGRenderer> = {
-    "WebGLRenderer": WebGLRenderer,
+  const rendererTypes: Record<string, typeof THREE.WebGLRenderer | typeof SVGRenderer> = {
+    "WebGLRenderer": THREE.WebGLRenderer,
     "SVGRenderer": SVGRenderer,
   };
 
@@ -128,8 +109,8 @@ function useRenderer(type: string) {
   renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
   inset_renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
 
-  renderer.setClearColor(new Color(0x232323), 1);
-  inset_renderer.setClearColor(new Color(0x232323), 0);
+  renderer.setClearColor(new THREE.Color(0x232323), 1);
+  inset_renderer.setClearColor(new THREE.Color(0x232323), 0);
 
   renderer.setSize(width, height);
   inset_renderer.setSize(height / 5, height / 5);
@@ -208,15 +189,15 @@ function setupClipping() {
   };
 
   ispy.local_planes = [
-    new Plane(new Vector3(-1,0,0), local_params.planeX.constant),
-    new Plane(new Vector3(0,-1,0), local_params.planeY.constant),
-    new Plane(new Vector3(0,0,-1), local_params.planeZ.constant)
+    new THREE.Plane(new THREE.Vector3(-1,0,0), local_params.planeX.constant),
+    new THREE.Plane(new THREE.Vector3(0,-1,0), local_params.planeY.constant),
+    new THREE.Plane(new THREE.Vector3(0,0,-1), local_params.planeZ.constant)
   ];
     
   ispy.global_planes = [
-    new Plane(new Vector3(-1,0,0), global_params.planeX.constant),
-    new Plane(new Vector3(0,-1,0), global_params.planeY.constant),
-    new Plane(new Vector3(0,0,-1), global_params.planeZ.constant)
+    new THREE.Plane(new THREE.Vector3(-1,0,0), global_params.planeX.constant),
+    new THREE.Plane(new THREE.Vector3(0,-1,0), global_params.planeY.constant),
+    new THREE.Plane(new THREE.Vector3(0,0,-1), global_params.planeZ.constant)
   ];
     
   ispy.renderer.clippingPlanes = ispy.global_planes;
@@ -312,19 +293,19 @@ function setupInset(height: number) {
   // fov, aspect, near, far
   const inset_width = height/5;
   const inset_height = height/5;
-  const inset_camera = new PerspectiveCamera(70, inset_width / inset_height, 1, 100);
+  const inset_camera = new THREE.PerspectiveCamera(70, inset_width / inset_height, 1, 100);
   ispy.inset_camera = inset_camera;
-  ispy.inset_camera.up = ispy.camera?.up || new Vector3(0, 1, 0);
+  ispy.inset_camera.up = ispy.camera?.up || new THREE.Vector3(0, 1, 0);
     
-  const origin = new Vector3(0,0,0);
+  const origin = new THREE.Vector3(0,0,0);
 
   // dir, origin, length, hex, headLength, headWidth
   const length = 3.5;
   const headLength = 1;
   const headWidth = 1;
     
-  const rx = new ArrowHelper(
-    new Vector3(4,0,0),
+  const rx = new THREE.ArrowHelper(
+    new THREE.Vector3(4,0,0),
     origin,
     length,
     0xff0000,
@@ -332,8 +313,8 @@ function setupInset(height: number) {
     headWidth
   );
 
-  const gy = new ArrowHelper(
-    new Vector3(0,4,0),
+  const gy = new THREE.ArrowHelper(
+    new THREE.Vector3(0,4,0),
     origin,
     length,
     0x00ff00,
@@ -341,8 +322,8 @@ function setupInset(height: number) {
     headWidth
   );
 
-  const bz = new ArrowHelper(
-    new Vector3(0,0,4),
+  const bz = new THREE.ArrowHelper(
+    new THREE.Vector3(0,0,4),
     origin,
     length,
     0x0000ff,
@@ -350,36 +331,36 @@ function setupInset(height: number) {
     headWidth
   );
 
-  (rx.line.material as LineBasicMaterial).linewidth = 2.5;
-  (gy.line.material as LineBasicMaterial).linewidth = 2.5;
-  (bz.line.material as LineBasicMaterial).linewidth = 2.5;
+  (rx.line.material as THREE.LineBasicMaterial).linewidth = 2.5;
+  (gy.line.material as THREE.LineBasicMaterial).linewidth = 2.5;
+  (bz.line.material as THREE.LineBasicMaterial).linewidth = 2.5;
 
   ispy.inset_scene.add(rx);
   ispy.inset_scene.add(gy);
   ispy.inset_scene.add(bz);
 				
-  const font_loader = new FontLoader();
+  const font_loader = new THREE.FontLoader();
     
-  font_loader.load("./fonts/helvetiker_regular.typeface.json", function(font: Font) {
+  font_loader.load("./fonts/helvetiker_regular.typeface.json", function(font: THREE.Font) {
 
     const tps = {size:0.75, height:0.1, font:font};
 	
-    const x_geo = new TextGeometry("X", tps);
-    const y_geo = new TextGeometry("Y", tps);
-    const z_geo = new TextGeometry("Z", tps);
+    const x_geo = new THREE.TextGeometry("X", tps);
+    const y_geo = new THREE.TextGeometry("Y", tps);
+    const z_geo = new THREE.TextGeometry("Z", tps);
 
-    const x_material = new MeshBasicMaterial({ color: 0xff0000 });
-    const x_text = new Mesh(x_geo, x_material);
+    const x_material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const x_text = new THREE.Mesh(x_geo, x_material);
     x_text.position.x = length+headLength;
     x_text.name = "xtext";
 
-    const y_material = new MeshBasicMaterial({ color: 0x00ff00});
-    const y_text = new Mesh(y_geo, y_material);
+    const y_material = new THREE.MeshBasicMaterial({ color: 0x00ff00});
+    const y_text = new THREE.Mesh(y_geo, y_material);
     y_text.position.y = length+headLength;
     y_text.name = "ytext";
 	    
-    const z_material = new MeshBasicMaterial({ color: 0x0000ff});
-    const z_text = new Mesh(z_geo, z_material);
+    const z_material = new THREE.MeshBasicMaterial({ color: 0x0000ff});
+    const z_text = new THREE.Mesh(z_geo, z_material);
     z_text.position.z = length+headLength;
     z_text.name = "ztext";
 
@@ -491,9 +472,9 @@ function init() {
   //   const inset = getHTMLObject("axes");
 
   ispy.scenes = {
-    "3D": new Scene(),
-    "RPhi": new Scene(),
-    "RhoZ": new Scene()
+    "3D": new THREE.Scene(),
+    "RPhi": new THREE.Scene(),
+    "RhoZ": new THREE.Scene()
   };
 
   ispy.views = ["3D", "RPhi", "RhoZ"];
@@ -540,7 +521,7 @@ function init() {
 
     ["Detector", "Imported"].concat(data_groups).forEach(g => {
 
-	    let obj_group = new Group();
+	    let obj_group = new THREE.Group();
 	    obj_group.name = g;
 	    ispy.scenes[v].add(obj_group);
 	   
@@ -549,7 +530,7 @@ function init() {
   });
 
   getHTMLObject("version").innerHTML = ispy.version;
-  getHTMLObject("threejs").innerHTML = "r"+REVISION;
+  getHTMLObject("threejs").innerHTML = "r"+THREE.REVISION;
   getHTMLObject("sweetalert").innerHTML = "2.1.0";
   // getHTMLObject("plotly").innerHTML = Plotly.version;
     
@@ -586,15 +567,15 @@ function initLight() {
   const intensity = 1.0;
   const length = 15.0;
     
-  const lights = new Object3D();
+  const lights = new THREE.Object3D();
   lights.name = "Lights";
   
-  const light1 = new DirectionalLight(0xffffff, intensity);
+  const light1 = new THREE.DirectionalLight(0xffffff, intensity);
   light1.name = "Light1";
   light1.position.set(-length, length, length);
   lights.add(light1);
 
-  const light2 = new DirectionalLight(0xffffff, intensity);
+  const light2 = new THREE.DirectionalLight(0xffffff, intensity);
   light2.name = "Light2";
   light2.position.set(length, -length, -length);
   lights.add(light2);
@@ -609,7 +590,7 @@ function initControlPanel() {
     
 }
 
-function createCheckboxContainer(cont: GUIController) {
+function createCheckboxContainer(cont: dat.GUIController) {
 
   const selectionField = cont as SelectionFieldController
   // check if not __input
@@ -798,4 +779,5 @@ export {
   run,
   initSelectionFields,
   initCamera,
+  render,
 };

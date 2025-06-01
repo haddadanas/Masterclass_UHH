@@ -75,6 +75,7 @@ import {
 } from "./objects-draw";
 import { addControllers, addInfo } from "./tree-view";
 
+// skipcq: JS-0323
 const detector_description: Record<string, Record<string, any>> = {
   "3D": {
     RPCMinusEndcap3D_V1: {
@@ -438,6 +439,7 @@ const detector_description: Record<string, Record<string, any>> = {
   },
 };
 
+// skipcq: JS-0323
 const event_description: Record<string, Record<string, any>> = {
   "3D": {
     SuperClusters_V1: {
@@ -2621,16 +2623,18 @@ const event_description: Record<string, Record<string, any>> = {
 
 const disabled: Record<string, boolean> = {};
 
-for (let view in detector_description) {
-  for (let key in detector_description[view]) {
+for (const view in detector_description) {
+  if (!detector_description[view]) continue;
+  for (const key in detector_description[view]) {
     if (!detector_description[view][key].on) {
       disabled[key] = true;
     }
   }
 }
 
-for (let view in event_description) {
-  for (let key in event_description[view]) {
+for (const view in event_description) {
+  if (!event_description[view]) continue;
+  for (const key in event_description[view]) {
     if (!event_description[view][key].on) {
       disabled[key] = true;
     }

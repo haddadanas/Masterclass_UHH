@@ -1,30 +1,16 @@
-import { Mesh, Line } from 'three';
-import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
-import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import THREE from "three";
+// @ts-ignore: No type definitions for 'jszip'
+import JSZip from "jszip";
+import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
+import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-import {
-    scene,
-    scenes,
-    import_transparency,
-    local_planes
-} from "./setup.js";
-
-import { selected_objects } from "./display.js";
-import { current_event, addEvent } from "./objects-add.js";
+import { addEvent, addDetector } from "./objects-add.js";
 import { addSelectionRow } from "./tree-view.js";
+import { changeMeshMaterials, getHTMLObject, toggleCollapse, cleanupData } from "./utils.js";
+import { ispy } from "./config.js";
+import { buildFileSummary, getPassingEvents } from "./uhh_selection.js";
 import { disabled } from "./objects-config.js";
-
-let ig_data = null;
-let ievent = 0;
-let isGeometry = false;
-let loaded_local = false;
-
-let event_index, file_name;
-let event_list = [];
-
-let local_files;
-let selected_gltf, selected_obj;
 
 
 function openDialog(id: string) {
@@ -49,7 +35,7 @@ function hasFileAPI(): boolean {
 }
 
 function clearTable(id: string) {
-  let tbl = document.getElementById(id);
+  let tbl = getHTMLObject(id) as HTMLTableElement;
 
   while (tbl.rows.length > 0) {
     tbl.deleteRow(0);
@@ -57,19 +43,19 @@ function clearTable(id: string) {
 }
 
 function selectEvent(index: number) {
-  document.getElementById("selected-event").innerHTML =
+  getHTMLObject("selected-event").innerHTML =
     ispy.file_name + ": " + ispy.event_list[index];
   //$("#selected-event").html(ispy.file_name+': '+ispy.event_list[index]);
 
   ispy.event_index = index;
 
-  document.getElementById("load-event").classList.remove("disabled");
+  getHTMLObject("load-event").classList.remove("disabled");
   //$('#load-event').removeClass('disabled');
 }
 
 function updateEventList() {
   clearTable("browser-events");
-  let tbl = document.getElementById("browser-events");
+  let tbl = getHTMLObject("browser-events") as HTMLTableElement;
 
   for (let i = 0; i < ispy.event_list.length; i++) {
     let e = ispy.event_list[i];
@@ -89,40 +75,43 @@ function updateEventList() {
 
 function enableNextPrev() {
   if (ispy.event_index > 0) {
-    document.getElementById("prev-event-button").classList.remove("disabled");
+    getHTMLObject("prev-event-button").classList.remove("disabled");
   } else {
-    document.getElementById("prev-event-button").classList.add("disabled");
+    getHTMLObject("prev-event-button").classList.add("disabled");
   }
 
   if (ispy.event_list && ispy.event_list.length - 1 > ispy.event_index) {
-    document.getElementById("next-event-button").classList.remove("disabled");
+    getHTMLObject("next-event-button").classList.remove("disabled");
   } else {
-    document.getElementById("next-event-button").classList.add("disabled");
+    getHTMLObject("next-event-button").classList.add("disabled");
   }
 }
 
 function enableNextPrevSelected() {
-  const selectedEvents = analysis.getPassingEvents() || [];
+  const selectedEvents = getPassingEvents() || [];
 
-  if (selectedEvents.length > 0 && ispy.event_index > selectedEvents[0]) {
-    document.getElementById("prev-sel-event").classList.remove("disabled");
+  if (
+    selectedEvents.length > 0 &&
+    ispy.event_index > Number(selectedEvents[0])
+  ) {
+    getHTMLObject("prev-sel-event").classList.remove("disabled");
   } else {
-    document.getElementById("prev-sel-event").classList.add("disabled");
+    getHTMLObject("prev-sel-event").classList.add("disabled");
   }
 
   if (
     selectedEvents.length > 0 &&
-    ispy.event_index < selectedEvents[selectedEvents.length - 1]
+    ispy.event_index < Number(selectedEvents[selectedEvents.length - 1])
   ) {
-    document.getElementById("next-sel-event").classList.remove("disabled");
+    getHTMLObject("next-sel-event").classList.remove("disabled");
   } else {
-    document.getElementById("next-sel-event").classList.add("disabled");
+    getHTMLObject("next-sel-event").classList.add("disabled");
   }
 }
 
 function loadEvent() {
-  document.getElementById("event-loaded").innerHTML = "";
-  //document.getElementById('loading').style.display = 'block';
+  getHTMLObject("event-loaded").innerHTML = "";
+  //getHTMLObject('loading').style.display = 'block';
 
   //$("#event-loaded").html("");
   $("#loading").modal("show");
@@ -131,35 +120,33 @@ function loadEvent() {
 
   // Hide Detector stuff in tree view if already shown
   if ($("i.Detector").hasClass("glyphicon-chevron-down")) {
-    ispy.toggleCollapse("Detector");
+    toggleCollapse("Detector");
   }
 
   let event;
 
   try {
     event = JSON.parse(
-      ispy.cleanupData(
-        ispy.ig_data.file(ispy.event_list[ispy.event_index]).asText()
-      )
+      cleanupData(ispy.ig_data.file(ispy.event_list[ispy.event_index]).asText())
     );
   } catch (err) {
     alert(err);
   }
-  //document.getElementById('loading').style.display = 'none';
+  //getHTMLObject('loading').style.display = 'none';
   $("#loading").modal("hide");
 
   if (ispy.isGeometry) {
     $.extend(ispy.detector, event);
-    ispy.addDetector();
+    addDetector();
     ispy.isGeometry = false;
   } else {
-    ispy.addEvent(event);
+    addEvent(event);
     enableNextPrev();
     enableNextPrevSelected();
 
     let ievent = +ispy.event_index + 1; // JavaScript!
 
-    document.getElementById("event-loaded").innerHTML =
+    getHTMLObject("event-loaded").innerHTML =
       ispy.file_name +
       ":" +
       ispy.event_list[ispy.event_index] +
@@ -190,7 +177,7 @@ function prevEvent() {
 }
 
 function nextSelectedEvent() {
-  let selectedEvents = analysis.getPassingEvents();
+  let selectedEvents = getPassingEvents();
   if (selectedEvents.length === 0) {
     return;
   }
@@ -201,8 +188,8 @@ function nextSelectedEvent() {
   if (currentIndex === -1) {
     nextIndex = selectedEvents.reduce(
       (nearestIndex, currentValue, currentIndex) => {
-        return Math.abs(currentValue - currentIndex) <
-          Math.abs(selectedEvents[nearestIndex] - currentIndex)
+        return Math.abs(Number(currentValue) - currentIndex) <
+          Math.abs(Number(selectedEvents[nearestIndex]) - currentIndex)
           ? currentIndex
           : nearestIndex;
       },
@@ -219,7 +206,7 @@ function nextSelectedEvent() {
 }
 
 function prevSelectedEvent() {
-  let selectedEvents = analysis.getPassingEvents();
+  let selectedEvents = getPassingEvents();
   if (selectedEvents.length === 0) {
     return;
   }
@@ -230,8 +217,8 @@ function prevSelectedEvent() {
   if (currentIndex === -1) {
     nextIndex = selectedEvents.reduce(
       (nearestIndex, currentValue, currentIndex) => {
-        return Math.abs(currentValue - currentIndex) <
-          Math.abs(selectedEvents[nearestIndex] - currentIndex)
+        return Math.abs(Number(currentValue) - currentIndex) <
+          Math.abs(Number(selectedEvents[nearestIndex]) - currentIndex)
           ? currentIndex
           : nearestIndex;
       },
@@ -249,13 +236,17 @@ function prevSelectedEvent() {
 }
 
 function selectLocalFile(index: number) {
+  if (!ispy.local_files) {
+    alert("No local files loaded!");
+    return;
+  }
   var reader = new FileReader();
   ispy.file_name = ispy.local_files[index].name;
 
-  reader.onload = function (e) {
-    var data = e.target.result;
+  reader.onload = function (e: ProgressEvent<FileReader>) {
+    var data = e.target!.result;
     var zip = new JSZip(data);
-    var event_list = [];
+    var event_list: string[] = [];
 
     $.each(zip.files, function (index, zipEntry) {
       if (zipEntry._data !== null && zipEntry.name !== "Header") {
@@ -270,7 +261,7 @@ function selectLocalFile(index: number) {
     ispy.event_list = event_list;
     ispy.event_index = 0;
     updateEventList();
-    ig_data = zip;
+    ispy.ig_data = zip;
   };
 
   reader.onerror = function (e) {
@@ -282,7 +273,7 @@ function selectLocalFile(index: number) {
 
 function updateLocalFileList(list: FileList) {
   clearTable("browser-files");
-  let tbl = document.getElementById("browser-files");
+  let tbl = getHTMLObject("browser-files") as HTMLTableElement;
 
   for (let i = 0; i < list.length; i++) {
     let name = list[i].name;
@@ -315,18 +306,23 @@ function loadLocalFiles() {
     return;
   }
 
-  document.getElementById("load-event").classList.add("disabled");
+  getHTMLObject("load-event").classList.add("disabled");
   //$('#load-event').addClass('disabled');
 
   clearTable("browser-files");
   clearTable("browser-events");
 
-  document.getElementById("selected-event").innerHTML = "Selected event";
+  getHTMLObject("selected-event").innerHTML = "Selected event";
   //$('#selected-event').html("Selected event");
 
-  ispy.local_files = document.getElementById("local-files").files;
+  let files = (getHTMLObject("local-files") as HTMLInputElement).files;
+  if (!files || files.length === 0) {
+    alert("Please select a file to load!");
+    return;
+  }
+  ispy.local_files = files;
   updateLocalFileList(ispy.local_files);
-  loaded_local = true;
+  ispy.loaded_local = true;
   openDialog("#files");
 }
 
@@ -334,14 +330,14 @@ function loadDroppedFile(file: File) {
   var reader = new FileReader();
   ispy.file_name = file.name;
 
-  //document.getElementById('loading').style.display = 'block';
+  //getHTMLObject('loading').style.display = 'block';
   $("#loading").modal("show");
 
   reader.onload = function (e) {
-    var data = e.target.result;
+    var data = e.target!.result;
     var zip = new JSZip(data);
 
-    var event_list = [];
+    var event_list: string[] = [];
 
     $.each(zip.files, function (index, zipEntry) {
       if (zipEntry._data !== null && zipEntry.name !== "Header") {
@@ -356,12 +352,12 @@ function loadDroppedFile(file: File) {
     ispy.event_list = event_list;
     ispy.event_index = 0;
     updateEventList();
-    ig_data = zip;
+    ispy.ig_data = zip;
 
-    analysis.buildFileSummary();
+    buildFileSummary();
     loadEvent();
 
-    //document.getElementById('loading').style.display = 'none';
+    //getHTMLObject('loading').style.display = 'none';
     $("#loading").modal("hide");
   };
 
@@ -378,7 +374,7 @@ function selectFile(filename: string) {
   var new_file_name = filename.split("/")[2]; // of course this isn't a general case for files
   ispy.file_name = new_file_name;
 
-  //document.getElementById('progress').style.display = 'block';
+  //getHTMLObject('progress').style.display = 'block';
   $("#progress").modal("show");
 
   var xhr = new XMLHttpRequest();
@@ -386,8 +382,7 @@ function selectFile(filename: string) {
   xhr.overrideMimeType("text/plain; charset=x-user-defined");
 
   clearTable("browser-events");
-  var ecell = document
-    .getElementById("browser-events")
+  var ecell = (getHTMLObject("browser-events") as HTMLTableElement)
     .insertRow(0)
     .insertCell(0);
   ecell.innerHTML = "Loading events...";
@@ -402,11 +397,11 @@ function selectFile(filename: string) {
 
   xhr.onreadystatechange = function () {
     if (this.readyState === 4) {
-      //document.getElementById('progress').style.display = 'none';
+      //getHTMLObject('progress').style.display = 'none';
 
       let progress_bars = document.querySelectorAll("progress-bar");
       progress_bars.forEach((pb) => {
-        pb.style.width = "0%";
+        (pb as HTMLDivElement).style.width = "0%";
         pb.innerHTML = "0%";
       });
 
@@ -419,7 +414,7 @@ function selectFile(filename: string) {
   xhr.onload = function () {
     if (this.status === 200) {
       var zip = JSZip(xhr.responseText);
-      var event_list = [];
+      var event_list: string[] = [];
 
       $.each(zip.files, function (index, zipEntry) {
         if (zipEntry._data !== null && zipEntry.name !== "Header") {
@@ -430,7 +425,7 @@ function selectFile(filename: string) {
       ispy.event_list = event_list;
       ispy.event_index = 0;
       updateEventList();
-      ig_data = zip;
+      ispy.ig_data = zip;
     }
   };
 
@@ -450,13 +445,13 @@ function loadWebFiles() {
     "./data/MinimumBias_Run2012C_0.ig",
   ];
 
-  document.getElementById("selected-event").innerHTML = "Selected event";
-  document.getElementById("load-event").classList.add("disabled");
+  getHTMLObject("selected-event").innerHTML = "Selected event";
+  getHTMLObject("load-event").classList.add("disabled");
 
   //$('#selected-event').html("Selected event");
   //$('#load-event').addClass('disabled');
 
-  let tbl = document.getElementById("browser-files");
+  let tbl = getHTMLObject("browser-files") as HTMLTableElement;
 
   for (let i = 0; i < web_files.length; i++) {
     let e = web_files[i];
@@ -481,31 +476,19 @@ function loadWebFiles() {
 function showWebFiles() {
   openDialog("#files");
 
-  if (loaded_local === true) {
+  if (ispy.loaded_local === true) {
     // If we have previously opened a local file then
     // we don't want its contents appearing
     // in the web files dialog
     clearTable("browser-files");
     clearTable("browser-events");
-    loaded_local = false;
+    ispy.loaded_local = false;
 
     loadWebFiles();
   }
 
-  //document.getElementById('open-files').style.display = 'none';
+  //getHTMLObject('open-files').style.display = 'none';
   $("#open-files").modal("hide");
-}
-
-function cleanupData(d: string): string {
-  // rm non-standard json bits
-  // newer files will not have this problem
-  d = d
-    .replace(/\(/g, "[")
-    .replace(/\)/g, "]")
-    .replace(/\'/g, '"')
-    .replace(/nan/g, "0");
-
-  return d;
 }
 
 function loadGLTFFiles() {
@@ -529,13 +512,13 @@ function loadGLTFFiles() {
 
   clearTable("obj-files");
 
-  document.getElementById("selected-obj").innerHTML = "Selected geometry";
-  document.getElementById("load-obj").classList.add("disabled");
+  getHTMLObject("selected-obj").innerHTML = "Selected geometry";
+  getHTMLObject("load-obj").classList.add("disabled");
 
   //$('#selected-obj').html("Selected geometry");
   //$('#load-obj').addClass('disabled');
 
-  let tbl = document.getElementById("obj-files");
+  let tbl = getHTMLObject("obj-files") as HTMLTableElement;
 
   for (let i = 0; i < gltf_files.length; i++) {
     let e = gltf_files[i];
@@ -578,13 +561,13 @@ function loadObjFiles() {
 
   clearTable("obj-files");
 
-  document.getElementById("selected-obj").innerHTML = "Selected geometry";
-  document.getElementById("load-obj").classList.add("disabled");
+  getHTMLObject("selected-obj").innerHTML = "Selected geometry";
+  getHTMLObject("load-obj").classList.add("disabled");
 
   //$('#selected-obj').html("Selected geometry");
   //$('#load-obj').addClass('disabled');
 
-  let tbl = document.getElementById("obj-files");
+  let tbl = getHTMLObject("obj-files") as HTMLTableElement;
 
   for (let i = 0; i < obj_files.length; i++) {
     let e = obj_files[i];
@@ -610,9 +593,9 @@ function readOBJ(file: File, cb: (contents: string, name: string) => void) {
   var reader = new FileReader();
 
   reader.onload = function (e) {
-    //document.getElementById('loading').style.display = 'none';
+    //getHTMLObject('loading').style.display = 'none';
     $("#loading").modal("hide");
-    cb(e.target.result as string, file.name);
+    cb(e.target!.result as string, file.name);
   };
 
   reader.onerror = function (e) {
@@ -626,13 +609,16 @@ function loadOBJ(contents: string, name: string) {
   let object = new OBJLoader().parse(contents);
   object.name = name;
 
-  object.children.forEach(function (c) {
-    c.material.transparency = true;
-    c.material.opacity = ispy.importTransparency;
+  (object.children as THREE.Mesh[]).forEach(function (c) {
+    changeMeshMaterials(c.material, (m) => {
+      m.transparent = true;
+      m.opacity = ispy.importTransparency;
+    });
   });
-
-  ispy.scene.getObjectByName("Imported").add(object);
-  ispy.addSelectionRow("Imported", object.name, object.name, [], true);
+  if (ispy.scene) {
+    ispy.scene.getObjectByName("Imported")!.add(object);
+  }
+  addSelectionRow("Imported", object.name, object.name, [], true);
 }
 
 function readOBJMTL(
@@ -643,7 +629,7 @@ function readOBJMTL(
   let reader = new FileReader();
 
   reader.onload = function (e) {
-    cb(e.target.result as string, mtl_file, file.name);
+    cb(e.target!.result as string, mtl_file, file.name);
   };
 
   reader.onerror = function (e) {
@@ -659,11 +645,11 @@ function loadOBJMTL(obj: string, mtl_file: File, name: string) {
 
   reader.onload = function (e) {
     // let mtl = e.target.result;
-    let materials_creator = new MTLLoader().parse(e.target.result as string);
+    let materials_creator = new MTLLoader().parse(e.target!.result as string, "");
     materials_creator.preload();
 
     object.traverse(function (o) {
-      if (o instanceof Mesh || o instanceof Line) {
+      if (o instanceof THREE.Mesh || o instanceof THREE.Line) {
         if (o.material.name) {
           var material = materials_creator.create(o.material.name);
 
@@ -676,15 +662,17 @@ function loadOBJMTL(obj: string, mtl_file: File, name: string) {
       }
     });
 
-    //document.getElementById('loading').style.display = 'none';
+    //getHTMLObject('loading').style.display = 'none';
     $("#loading").modal("hide");
 
     object.name = name;
     object.visible = true;
-    ispy.disabled[name] = false;
+    disabled[name] = false;
 
-    ispy.scene.getObjectByName("Imported").add(object);
-    ispy.addSelectionRow("Imported", name, name, [], true);
+    if (ispy.scene) {
+      ispy.scene.getObjectByName("Imported")!.add(object);
+    }
+    addSelectionRow("Imported", name, name, [], true);
   };
 
   reader.readAsText(mtl_file);
@@ -702,14 +690,18 @@ function importModel() {
     return;
   }
 
-  let files = document.getElementById("import-file").files;
+  let files = (getHTMLObject("import-file") as HTMLInputElement).files;
+  if (!files || files.length === 0) {
+    alert("Please select a file to load!");
+    return;
+  }
   let extension, file_name;
 
   if (files.length === 1) {
     // If one file we assume it's an obj file and load it
 
     file_name = files[0].name;
-    extension = file_name.split(".").pop().toLowerCase();
+    extension = file_name.split(".").pop()!.toLowerCase();
 
     if (extension !== "obj") {
       alert(
@@ -720,8 +712,8 @@ function importModel() {
       return;
     }
 
-    //document.getElementById('loading').style.display = 'block';
-    //document.getElementById('import-model').style.display = 'none';
+    //getHTMLObject('loading').style.display = 'block';
+    //getHTMLObject('import-model').style.display = 'none';
 
     $("#loading").modal("show");
     $("#import-model").modal("hide");
@@ -732,8 +724,8 @@ function importModel() {
 
     let obj_file, mtl_file;
 
-    let ext1 = files[0].name.split(".").pop().toLowerCase();
-    let ext2 = files[1].name.split(".").pop().toLowerCase();
+    let ext1 = files[0].name.split(".").pop()!.toLowerCase();
+    let ext2 = files[1].name.split(".").pop()!.toLowerCase();
 
     if (ext1 === "obj" && ext2 === "mtl") {
       obj_file = files[0];
@@ -748,8 +740,8 @@ function importModel() {
       return;
     }
 
-    //document.getElementById('loading').style.display = 'block';
-    //document.getElementById('import-model').style.display = 'none';
+    //getHTMLObject('loading').style.display = 'block';
+    //getHTMLObject('import-model').style.display = 'none';
 
     $("#loading").modal("show");
     $("#import-model").modal("hide");
@@ -764,8 +756,8 @@ function importModel() {
 }
 
 function selectGLTF(gltf_file: string) {
-  document.getElementById("selected-obj").innerHTML = gltf_file;
-  document.getElementById("load-obj").classList.remove("disabled");
+  getHTMLObject("selected-obj").innerHTML = gltf_file;
+  getHTMLObject("load-obj").classList.remove("disabled");
 
   //$('#selected-obj').html(gltf_file);
   //$('#load-obj').removeClass('disabled');
@@ -782,18 +774,22 @@ function loadSelectedGLTF() {
   gltf_loader.load(gltf_file, function (gltf) {
     let object = gltf.scene.children[0];
 
-    object.children.forEach(function (c) {
-      c.material.clippingPlanes = ispy.local_planes;
+    (object.children as THREE.Mesh[]).forEach(function (c) {
+      changeMeshMaterials(c.material, (m) => {
+        m.clippingPlanes = ispy.local_planes;
+      });
     });
 
-    ispy.scene.getObjectByName("Imported").add(object);
-    ispy.addSelectionRow("Imported", name, name, [], true);
+    if (ispy.scene) {
+      ispy.scene.getObjectByName("Imported")!.add(object);
+    }
+    addSelectionRow("Imported", name, name, [], true);
   });
 }
 
 function selectObj(obj_file: string) {
-  document.getElementById("selected-obj").innerHTML = obj_file;
-  document.getElementById("load-obj").classList.remove("disabled");
+  getHTMLObject("selected-obj").innerHTML = obj_file;
+  getHTMLObject("load-obj").classList.remove("disabled");
 
   //$('#selected-obj').html(obj_file);
   //$('#load-obj').removeClass('disabled');
@@ -828,16 +824,20 @@ function loadOBJMTL_new(
     obj_loader.load(obj_file, function (object) {
       object.name = id;
       object.visible = show;
-      ispy.disabled[object.name] = false;
+      disabled[object.name] = false;
 
-      object.children.forEach(function (c) {
-        c.material.transparent = true;
-        c.material.opacity = ispy.importTransparency;
-        c.material.clippingPlanes = ispy.local_planes;
+      (object.children as THREE.Mesh[]).forEach(function (c) {
+        changeMeshMaterials(c.material, (m) => {
+          m.transparent = true;
+          m.opacity = ispy.importTransparency;
+          m.clippingPlanes = ispy.local_planes;
+        });
       });
 
-      ispy.scene.getObjectByName(group).add(object);
-      ispy.addSelectionRow(group, object.name, name, [], show);
+      if (ispy.scene) {
+        ispy.scene.getObjectByName(group)!.add(object);
+      }
+      addSelectionRow(group, object.name, name, [], show);
     });
   });
 
@@ -856,6 +856,10 @@ function importBeampipe() {
 }
 
 function importDetector() {
+  if (! ispy.scenes) {
+    alert("No scene(s) loaded!");
+    return;
+  }
   const gltf_loader = new GLTFLoader();
 
   const gltf_objs = [
@@ -1085,16 +1089,15 @@ function importDetector() {
     },
   ];
 
-  //document.getElementById('loading').style.display = 'block';
+  //getHTMLObject('loading').style.display = 'block';
   $("#loading").modal("show");
 
-  function loadGLTFs() {
-    gltf_objs.map((g) => {
+    for (let g of gltf_objs) {
       gltf_loader.load(
         g.file,
 
         function (gltf) {
-          let object = gltf.scene.children[0];
+            let object = gltf.scene.children[0] as THREE.Object3D & { view?: string };
 
           object.name = g.id;
           object.visible = g.show;
@@ -1102,31 +1105,28 @@ function importDetector() {
 
           // Set render order for geometries
           // Otherwise they won't appear "in-front" of Imported geometries
-          object.children.forEach(function (c) {
+          (object.children as THREE.LineSegments[]).forEach(function (c) {
             c.renderOrder = 1;
-
-            if (c.material) {
-              c.material.clippingPlanes = ispy.local_planes;
-            }
+            changeMeshMaterials(c.material, (m: THREE.Material) => {
+              m.clippingPlanes = ispy.local_planes;
+            });
           });
 
-          ispy.disabled[object.name] = !g.show;
-          ispy.scenes[object.view].getObjectByName(g.group).add(object);
+          disabled[object.name] = !g.show;
+          ispy.scenes[object.view].getObjectByName(g.group)!.add(object);
 
           // For now do not add RPhi and RhoZ selection options to
           // the controls GUI
 
           if (!(object.name === "RPhi" || object.name === "RhoZ"))
-            ispy.addSelectionRow(g.group, object.name, g.name, [], g.show);
+            addSelectionRow(g.group, object.name, g.name, [], g.show);
         }
       );
-    });
+    };
 
-    //document.getElementById('loading').style.display = 'none';
+    //getHTMLObject('loading').style.display = 'none';
     $("#loading").modal("hide");
-  }
 
-  loadGLTFs();
 }
 
 export {
@@ -1156,5 +1156,12 @@ export {
   importModel,
   importBeampipe,
   importDetector,
+  selectGLTF,
+  loadSelectedGLTF,
+  selectObj,
+  loadSelectedObj,
+  loadOBJMTL,
+  loadOBJ,
+  readOBJ,
+  readOBJMTL,
 };
-export { loadOBJMTL, loadOBJ, readOBJ, readOBJMTL };

@@ -1,7 +1,8 @@
 // Type: TypeScript file
 // Description: This file contains utility functions that are used in the analysis code.
 
-import { Particle, EventObject, EventSummary } from "./ispy.interfaces";
+import { Particle, EventObject, EventSummary, MET, FourVector } from "./ispy.interfaces";
+// @ts-ignore: No type definitions for 'jszip'
 import JSZip from "jszip";  // TODO update to JSZip 3.0.0
 import { ispy } from "./config";
 
@@ -16,7 +17,7 @@ export function getCurrentEvent(): EventObject {
   return ispy.current_event;
 }
 
-export function getFourVector(
+export function getParticleInfo(
   key: string,
   type: [string, string][],
   eventObjectData: number[],
@@ -71,7 +72,7 @@ export function getFourVector(
   const pz: number = pt*Math.sinh(eta);
 
   if ( isPhoton ) {
-    return {"E":E, "px":px, "py":py, "pz":pz, "pt": pt, "ptype": "Photon"};
+    return {"E":E, "px":px, "py":py, "pz":pz, "pt": pt, "ptype": "Photon", "charge": 0};
   }
 
   E = 0;
@@ -96,23 +97,22 @@ export function getFourVector(
   return {"E":E, "px":px, "py":py, "pz":pz, "pt": pt, "charge": charge, "ptype": ptype};
 }
 
-export function getFourVectorByObjectIndex(
+export function getFourVectorByIndex(
   key: string,
   objectUserData: {originalIndex: number, [key: string]: any},
-): Particle {
+): [FourVector, string?] {
   const type = getCurrentEvent().Types[key];
   const eventObjectData = getCurrentEvent().Collections[key][objectUserData.originalIndex];
     
-  const result = getFourVector(key, type, eventObjectData as number[]);
-  result["index"] = objectUserData.originalIndex;
+  const result = getParticleInfo(key, type, eventObjectData as number[]);
 
-  return result;
+  return [{px: result.px, py: result.py, pz: result.pz, E: result.E}, result.ptype];
 }
 
 export function getMetInformation(
   type: [string, string][],
   eventObjectData: number[],
-): Particle {
+): MET {
     
   let pt: number, px: number, py: number, pz: number;
 
@@ -130,30 +130,26 @@ export function getMetInformation(
     } else if (t[0] === "py") {
       py = eventObjectData[index];
             
-    } else if (t[0] === "pz") {
-      pz = eventObjectData[index];
-            
     }
         
   }
 
-  return {"pt": pt, "px": px, "py": py, "pz": pz};
+  return {"Et": pt, "px": px, "py": py};
 };
 
-const cleanupData = function(d: string): string {
-
+export function cleanupData(d: string): string {
   // rm non-standard json bits
   // newer files will not have this problem
-  d = d.replace(/\(/g,"[")
-    .replace(/\)/g,"]")
-    .replace(/\'/g, "\"")
+  d = d
+    .replace(/\(/g, "[")
+    .replace(/\)/g, "]")
+    .replace(/\'/g, '\"')
     .replace(/nan/g, "0");
-    
+
   return d;
+}
 
-};
-
-const getEventsSummary = function(
+function getEventsSummary(
   event_json: EventObject,
 ): EventSummary {
   const part_names = ["TrackerMuons", "GsfElectrons", "Photons", "METs"];
@@ -161,7 +157,7 @@ const getEventsSummary = function(
   const map = part_names.map(name => keys.filter(k => k.includes(name)).reduce((x, y) => x > y ? x: y));
 
   const particles = new Map<string, Particle[]>();
-  let met: Particle = {E: 0, px: 0, py: 0, pz: 0, pt: 0};
+  let met: MET = {px: 0, py: 0, Et: 0};
   map.forEach((collec) => {
 
     const type = event_json.Types[collec];
@@ -172,7 +168,7 @@ const getEventsSummary = function(
     }
     const tmp = new Array<Particle>();
     event_json.Collections[collec].forEach((part) => {
-      tmp.push(getFourVector(collec, type, part as number[]));
+      tmp.push(getParticleInfo(collec, type, part as number[]));
     });
 
     particles.set(key, tmp);
@@ -238,4 +234,30 @@ export function getHTMLObject(id: string): HTMLElement {
     throw new Error("Object with id " + id + " not found.");
   }
   return obj;
+}
+
+export function changeMeshMaterials(
+  materials: THREE.Material | THREE.Material[],
+  func: (m: THREE.Material) => void
+) {
+  if (!Array.isArray(materials)) {
+    func(materials);
+    return;
+  }
+  materials.forEach((material) => {
+    func(material);
+  });
+}
+
+export function toggleCollapse(key: string) {
+  const guis = [ispy.gui];
+  if (key === "Detector") {
+    guis.push(ispy.guiReduced);
+  }
+  guis.forEach((gui) => {
+    const folder = gui.__folders[key];
+    if (folder) {
+      folder.close();
+    }
+  });
 }

@@ -1,20 +1,68 @@
 import { GUI } from "dat.gui";
-import { Scene, WebGLRenderer, Plane, PerspectiveCamera, OrthographicCamera, Raycaster } from "three";
+import {
+  Scene,
+  WebGLRenderer,
+  Plane,
+  PerspectiveCamera,
+  OrthographicCamera,
+  Raycaster,
+  Line,
+  LineBasicMaterial,
+} from "three";
 import { GUIController } from "dat.gui";
 
 interface SubFolderReduced {
+  Detector: string[];
   Selection: Array<GUIController>;
+  Controllers: Array<GUIController>;
+  Info: Array<GUIController>;
   [key: string]: Array<GUIController>;
 }
 
+interface SelectionFieldController extends GUIController {
+  initialValue: string;
+  checkbox: boolean;
+  __input: HTMLInputElement;
+}
+
+interface EventObject {
+  Collections: Record<string, Array<Array<number | number[]>>>;
+  Types: Record<string, [string, string][]>;
+  [key: string]: any;
+}
+
+interface TrackLine extends Line {
+  userData: {pt: number, originalIndex: number, [key: string]: number}
+  selected: boolean;
+  fourVector: FourVector;
+  ptype: string;
+  material: LineBasicMaterial;
+}
+
+interface EventSummary {
+  particles: Map<string, Particle[]>;
+  met: MET;
+}
+
 interface Ispy {
+  highlighted: Trackline;
+  show: boolean;
+  hide: boolean;
+  selected_obj: string;
+  selected_gltf: string;
+  local_files?: FileList;
+  isGeometry: boolean;
+  hidden_objects: Line[];
+  selected_objects: Map<number, TrackLine>;
   // File and Event Information
   file_name?: string;
   version: string;
   event_index: number;
   current_event?: any;
-  event_list?: any;
-  ig_data?: any;
+  event_list: string[];
+  ig_data: any;
+  ievent: number;
+  loaded_local: boolean;
 
   // Rendering and Camera
   renderer?: WebGLRenderer | SVGRenderer;
@@ -46,7 +94,7 @@ interface Ispy {
 
   // Interaction and Animation
   showTrackInfo: boolean;
-  intersected: Set<any> | null;
+  intersected: TrackLine | null;
   raycaster: Raycaster;
   animating: boolean;
   autoRotating: boolean;
@@ -77,11 +125,11 @@ interface Analysis {
   file_events_summary: Map<string, EventSummary>;
 }
 
-interface EventSummary {
-  particles: Map<string, Particle[]>;
-  met: Particle;
+interface MET {
+  px: number;
+  py: number;
+  Et: number;
 }
-
 interface FourVector {
   px: number;
   py: number;
@@ -89,27 +137,12 @@ interface FourVector {
   E: number;
 }
 
-interface Particle {
-  px: number;
-  py: number;
-  pz: number;
+interface Particle extends FourVector {
   pt: number;
-  [key: string]: number | string;
-}
-
-interface VisibleParticle extends Particle {
-  E: number;
-  dtype: string;
-}
-
-interface Lepton extends VisibleParticle {
   charge: number;
-}
-
-interface EventObject {
-  Collections: Record<string, Array<Array<number | number[]>>>;
-  Types: Record<string, [string, string][]>;
-  [key: string]: any;
+  ptype: string;
+  index?: number;
+  // [key: string]: number | string;
 }
 
 type Selection = Partial<{
@@ -118,8 +151,6 @@ type Selection = Partial<{
   min_et: number;
   index: number;
 }>;
-
-type DetectorCollectionEntry = [number, ...(number[] | number[][])];
 
 type Style = {
   color: string;
@@ -134,23 +165,15 @@ type Style = {
   hcolor: string;
 }>;
 
-interface SelectionFieldController extends GUIController {
-  initialValue: string;
-  checkbox: boolean;
-  __input: HTMLInputElement;
-}
-
 export {
   EventObject,
   Particle,
-  Lepton,
-  VisibleParticle,
   FourVector,
   Ispy,
   Analysis,
   EventSummary,
   Selection,
-  DetectorCollectionEntry,
-  Style,
+  TrackLine,
   SelectionFieldController,
+  MET,
 };
