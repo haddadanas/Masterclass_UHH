@@ -2,8 +2,7 @@
 // Description: This file contains utility functions that are used in the analysis code.
 
 import { Particle, EventObject, EventSummary, MET, FourVector } from "./ispy.interfaces";
-// @ts-ignore: No type definitions for 'jszip'
-import JSZip from "jszip";  // TODO update to JSZip 3.0.0
+import JSZip from "jszip";
 import { ispy } from "./config";
 
 const mMuon2 = 0.10566*0.10566;
@@ -189,19 +188,19 @@ export class EventCollection {
     }
     // get the event data
     eventList.forEach((event_path, event_index) => {
-      try {
-        const rawText = igData.files[event_path];
-        if (rawText === null) {
+        let eventFile = igData.file(event_path);
+        if (eventFile === null) {
           alert("Error encountered reading event " + (event_index + 1) + ": " + event_path + " not found.");
           alert("The event will be skipped in the analysis.");
           return;
         }
-        const _event = JSON.parse(cleanupData(rawText.asText()));
+        eventFile.async("string").then((rawText) => {  // TODO check if await is needed
+        const _event = JSON.parse(cleanupData(rawText));
         this.events.set(event_index.toString(), getEventsSummary(_event));
-      } catch(err) {
+      }, (err) => {
         alert("Error encountered parsing event " + (event_index + 1) + ": " + err);
         alert("The event will be skipped in the analysis.");
-      }
+      });
     });
   }
 }

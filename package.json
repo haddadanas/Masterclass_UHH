@@ -29,7 +29,7 @@
   "dependencies": {
     "@tweenjs/tween.js": "^25.0.0",
     "@types/stats.js": "^0.17.4",
-    "jszip": "^2.7.0",
+    "jszip": "^3.10.1",
     "plotly.js-dist-min": "^3.0.1",
     "three": "^0.130.0"
   }

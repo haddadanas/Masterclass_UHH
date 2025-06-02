@@ -1,5 +1,4 @@
 import THREE from "three";
-// @ts-ignore: No type definitions for 'jszip'
 import JSZip from "jszip";
 import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
@@ -7,11 +6,15 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 import { addEvent, addDetector } from "./objects-add.js";
 import { addSelectionRow } from "./tree-view.js";
-import { changeMeshMaterials, getHTMLObject, toggleCollapse, cleanupData } from "./utils.js";
+import {
+  changeMeshMaterials,
+  getHTMLObject,
+  toggleCollapse,
+  cleanupData,
+} from "./utils.js";
 import { ispy } from "./config.js";
 import { buildFileSummary, getPassingEvents } from "./uhh_selection.js";
 import { disabled } from "./objects-config.js";
-
 
 function openDialog(id: string) {
   $(id).modal("show");
@@ -245,25 +248,25 @@ function selectLocalFile(index: number) {
 
   reader.onload = function (e: ProgressEvent<FileReader>) {
     var data = e.target!.result;
-    var zip = new JSZip(data);
     var event_list: string[] = [];
+    JSZip.loadAsync(data).then((zip) => {
+      $.each(zip.files, function (_index, zipEntry) {
+        if (zipEntry.dir !== null && zipEntry.name !== "Header") {
+          // TODO check how to access _data instead of dir
+          if (zipEntry.name.split("/")[0] === "Geometry") {
+            ispy.isGeometry = true;
+          }
 
-    $.each(zip.files, function (index, zipEntry) {
-      if (zipEntry._data !== null && zipEntry.name !== "Header") {
-        if (zipEntry.name.split("/")[0] === "Geometry") {
-          ispy.isGeometry = true;
+          event_list.push(zipEntry.name);
         }
+      });
 
-        event_list.push(zipEntry.name);
-      }
+      ispy.event_list = event_list;
+      ispy.event_index = 0;
+      updateEventList();
+      ispy.ig_data = zip;
     });
-
-    ispy.event_list = event_list;
-    ispy.event_index = 0;
-    updateEventList();
-    ispy.ig_data = zip;
   };
-
   reader.onerror = function (e) {
     alert(e);
   };
@@ -335,30 +338,28 @@ function loadDroppedFile(file: File) {
 
   reader.onload = function (e) {
     var data = e.target!.result;
-    var zip = new JSZip(data);
-
     var event_list: string[] = [];
+    JSZip.loadAsync(data).then((zip) => {
+      $.each(zip.files, function (index, zipEntry) {
+        if (zipEntry.dir !== null && zipEntry.name !== "Header") {
+          if (zipEntry.name.split("/")[0] === "Geometry") {
+            ispy.isGeometry = true;
+          }
 
-    $.each(zip.files, function (index, zipEntry) {
-      if (zipEntry._data !== null && zipEntry.name !== "Header") {
-        if (zipEntry.name.split("/")[0] === "Geometry") {
-          ispy.isGeometry = true;
+          event_list.push(zipEntry.name);
         }
+      });
 
-        event_list.push(zipEntry.name);
-      }
+      ispy.event_list = event_list;
+      ispy.event_index = 0;
+      updateEventList();
+      ispy.ig_data = zip;
+      buildFileSummary();
+      loadEvent();
+
+      //getHTMLObject('loading').style.display = 'none';
+      $("#loading").modal("hide");
     });
-
-    ispy.event_list = event_list;
-    ispy.event_index = 0;
-    updateEventList();
-    ispy.ig_data = zip;
-
-    buildFileSummary();
-    loadEvent();
-
-    //getHTMLObject('loading').style.display = 'none';
-    $("#loading").modal("hide");
   };
 
   reader.onerror = function (e) {
@@ -413,19 +414,19 @@ function selectFile(filename: string) {
 
   xhr.onload = function () {
     if (this.status === 200) {
-      var zip = JSZip(xhr.responseText);
       var event_list: string[] = [];
+      JSZip.loadAsync(xhr.responseText).then((zip) => {
+        $.each(zip.files, function (index, zipEntry) {
+          if (zipEntry.dir && zipEntry.name !== "Header") {
+            event_list.push(zipEntry.name);
+          }
+        });
 
-      $.each(zip.files, function (index, zipEntry) {
-        if (zipEntry._data !== null && zipEntry.name !== "Header") {
-          event_list.push(zipEntry.name);
-        }
+        ispy.event_list = event_list;
+        ispy.event_index = 0;
+        updateEventList();
+        ispy.ig_data = zip;
       });
-
-      ispy.event_list = event_list;
-      ispy.event_index = 0;
-      updateEventList();
-      ispy.ig_data = zip;
     }
   };
 
@@ -645,7 +646,10 @@ function loadOBJMTL(obj: string, mtl_file: File, name: string) {
 
   reader.onload = function (e) {
     // let mtl = e.target.result;
-    let materials_creator = new MTLLoader().parse(e.target!.result as string, "");
+    let materials_creator = new MTLLoader().parse(
+      e.target!.result as string,
+      ""
+    );
     materials_creator.preload();
 
     object.traverse(function (o) {
@@ -856,7 +860,7 @@ function importBeampipe() {
 }
 
 function importDetector() {
-  if (! ispy.scenes) {
+  if (!ispy.scenes) {
     alert("No scene(s) loaded!");
     return;
   }
@@ -1092,41 +1096,42 @@ function importDetector() {
   //getHTMLObject('loading').style.display = 'block';
   $("#loading").modal("show");
 
-    for (let g of gltf_objs) {
-      gltf_loader.load(
-        g.file,
+  for (let g of gltf_objs) {
+    gltf_loader.load(
+      g.file,
 
-        function (gltf) {
-            let object = gltf.scene.children[0] as THREE.Object3D & { view?: string };
+      function (gltf) {
+        let object = gltf.scene.children[0] as THREE.Object3D & {
+          view?: string;
+        };
 
-          object.name = g.id;
-          object.visible = g.show;
-          object.view = g.view;
+        object.name = g.id;
+        object.visible = g.show;
+        object.view = g.view;
 
-          // Set render order for geometries
-          // Otherwise they won't appear "in-front" of Imported geometries
-          (object.children as THREE.LineSegments[]).forEach(function (c) {
-            c.renderOrder = 1;
-            changeMeshMaterials(c.material, (m: THREE.Material) => {
-              m.clippingPlanes = ispy.local_planes;
-            });
+        // Set render order for geometries
+        // Otherwise they won't appear "in-front" of Imported geometries
+        (object.children as THREE.LineSegments[]).forEach(function (c) {
+          c.renderOrder = 1;
+          changeMeshMaterials(c.material, (m: THREE.Material) => {
+            m.clippingPlanes = ispy.local_planes;
           });
+        });
 
-          disabled[object.name] = !g.show;
-          ispy.scenes[object.view].getObjectByName(g.group)!.add(object);
+        disabled[object.name] = !g.show;
+        ispy.scenes[object.view].getObjectByName(g.group)!.add(object);
 
-          // For now do not add RPhi and RhoZ selection options to
-          // the controls GUI
+        // For now do not add RPhi and RhoZ selection options to
+        // the controls GUI
 
-          if (!(object.name === "RPhi" || object.name === "RhoZ"))
-            addSelectionRow(g.group, object.name, g.name, [], g.show);
-        }
-      );
-    };
+        if (!(object.name === "RPhi" || object.name === "RhoZ"))
+          addSelectionRow(g.group, object.name, g.name, [], g.show);
+      }
+    );
+  }
 
-    //getHTMLObject('loading').style.display = 'none';
-    $("#loading").modal("hide");
-
+  //getHTMLObject('loading').style.display = 'none';
+  $("#loading").modal("hide");
 }
 
 export {
