@@ -1,7 +1,7 @@
 analysis.checkCurrentSelection = function () {
   const [text, symbol] = getCurrentSelectionMessage();
   (0, swal)({ text: text, title: "Selection Results", icon: symbol, buttons: false, timer: 3000 });
-  if (symbol == "warning")
+  if (symbol == "error")
     return;
   const nSelected = ispy.subfoldersReduced["Selection"].find(e => e.property == "nSelected");
   if (nSelected) {
@@ -289,10 +289,10 @@ const getMassesArray = function () {
 const getCurrentSelectionMessage = function () {
   const pass = checkIfEventPassing();
   if (!getCurrentEvent()) {
-    return ["No event file is loaded!", "warning"];
+    return ["No event file is loaded!", "error"];
   }
   let html = "This Event ";
   html += (pass ? "passes" : "does not pass") + " the selection!";
-  const symbol = pass ? "success" : "error";
+  const symbol = pass ? "success" : "warning";
   return [html, symbol];
 };
