@@ -6,7 +6,7 @@ import dat from "dat.gui";
 import * as TWEEN from "@tweenjs/tween.js";
 
 import { getHTMLObject } from "./utils";
-import { ispy } from "./config"
+import { ispy } from "./config";
 import { importDetector, loadDroppedFile } from "./files-load";
 import { data_groups } from "./objects-config";
 import { onMouseDown, onMouseMove, onWindowResize } from "./display";
@@ -19,17 +19,17 @@ function lookAtOrigin() {
 }
 
 function setDisplayVerticalHeight(vh: number) {
-  if (! ispy.camera) {
+  if (!ispy.camera) {
     console.error("Camera is not initialized");
     return;
   }
-  if (! ispy.renderer) {
+  if (!ispy.renderer) {
     console.error("Renderer is not initialized");
     return;
   }
   ispy.vh = vh;
 
-  let vh_obj = getHTMLObject("vh")
+  let vh_obj = getHTMLObject("vh");
   vh_obj.innerHTML = vh.toString();
   let display = getHTMLObject("display");
   display.style.setProperty("height", vh + "vh");
@@ -65,14 +65,7 @@ function initCamera() {
 
   ispy.p_camera.name = "PerspectiveCamera";
 
-  ispy.o_camera = new THREE.OrthographicCamera(
-    width / -2,
-    width / 2,
-    height / 2,
-    height / -2,
-    0.1,
-    100
-  );
+  ispy.o_camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 0.1, 100);
 
   ispy.o_camera.name = "OrthographicCamera";
 
@@ -99,8 +92,8 @@ function useRenderer(type: string) {
   const height = display.clientHeight;
 
   const rendererTypes: Record<string, typeof THREE.WebGLRenderer | typeof SVGRenderer> = {
-    "WebGLRenderer": THREE.WebGLRenderer,
-    "SVGRenderer": SVGRenderer,
+    WebGLRenderer: THREE.WebGLRenderer,
+    SVGRenderer: SVGRenderer,
   };
 
   const renderer = new rendererTypes[type]({ antialias: true, alpha: true });
@@ -128,11 +121,10 @@ function useRenderer(type: string) {
 }
 
 function setupClipping() {
-    
   ispy.clipgui = new dat.GUI({
     name: "Clipping Controls",
     hideable: false,
-    autoPlace: false
+    autoPlace: false,
   });
 
   ispy.clipgui.domElement.id = "clipgui";
@@ -145,78 +137,78 @@ function setupClipping() {
   const local_planeX = localFolder.addFolder("planeX");
   const local_planeY = localFolder.addFolder("planeY");
   const local_planeZ = localFolder.addFolder("planeZ");
-    
+
   const global_planeX = globalFolder.addFolder("planeX");
   const global_planeY = globalFolder.addFolder("planeY");
   const global_planeZ = globalFolder.addFolder("planeZ");
 
   const local_params = {
-	
     planeX: {
-	    constant: 10,
-	    negated: false 
+      constant: 10,
+      negated: false,
     },
-    
-    planeY: {
-	    constant: 10,
-	    negated: false
-    },
-    
-    planeZ: {
-	    constant: 30,
-	    negated: false
-    }
 
-  };
-    
-  const global_params = {
-    
-    planeX: {
-	    constant: 10,
-	    negated: false 
-    },
-    
     planeY: {
-	    constant: 10,
-	    negated: false
+      constant: 10,
+      negated: false,
     },
-    
+
     planeZ: {
-	    constant: 30,
-	    negated: false
-    }
-	
+      constant: 30,
+      negated: false,
+    },
+  };
+
+  const global_params = {
+    planeX: {
+      constant: 10,
+      negated: false,
+    },
+
+    planeY: {
+      constant: 10,
+      negated: false,
+    },
+
+    planeZ: {
+      constant: 30,
+      negated: false,
+    },
   };
 
   ispy.local_planes = [
-    new THREE.Plane(new THREE.Vector3(-1,0,0), local_params.planeX.constant),
-    new THREE.Plane(new THREE.Vector3(0,-1,0), local_params.planeY.constant),
-    new THREE.Plane(new THREE.Vector3(0,0,-1), local_params.planeZ.constant)
+    new THREE.Plane(new THREE.Vector3(-1, 0, 0), local_params.planeX.constant),
+    new THREE.Plane(new THREE.Vector3(0, -1, 0), local_params.planeY.constant),
+    new THREE.Plane(new THREE.Vector3(0, 0, -1), local_params.planeZ.constant),
   ];
-    
+
   ispy.global_planes = [
-    new THREE.Plane(new THREE.Vector3(-1,0,0), global_params.planeX.constant),
-    new THREE.Plane(new THREE.Vector3(0,-1,0), global_params.planeY.constant),
-    new THREE.Plane(new THREE.Vector3(0,0,-1), global_params.planeZ.constant)
+    new THREE.Plane(new THREE.Vector3(-1, 0, 0), global_params.planeX.constant),
+    new THREE.Plane(new THREE.Vector3(0, -1, 0), global_params.planeY.constant),
+    new THREE.Plane(new THREE.Vector3(0, 0, -1), global_params.planeZ.constant),
   ];
-    
+
   ispy.renderer.clippingPlanes = ispy.global_planes;
   ispy.renderer.localClippingEnabled = true;
 
-  local_planeX.add(local_params.planeX, "constant").min(-10).max(10).onChange(
-    d => ispy.local_planes[0].constant = d
-  );
-    
+  local_planeX
+    .add(local_params.planeX, "constant")
+    .min(-10)
+    .max(10)
+    .onChange((d) => (ispy.local_planes[0].constant = d));
+
   local_planeX.add(local_params.planeX, "negated").onChange(() => {
     ispy.local_planes[0].negate();
     local_params.planeX.constant = ispy.local_planes[0].constant;
   });
-    
+
   local_planeX.open();
-    
-  global_planeX.add(global_params.planeX, "constant").min(-10).max(10).onChange(
-    d => ispy.global_planes[0].constant = d
-  );
+
+  global_planeX
+    .add(global_params.planeX, "constant")
+    .min(-10)
+    .max(10)
+    .onChange((d) => (ispy.global_planes[0].constant = d));
 
   global_planeX.add(global_params.planeX, "negated").onChange(() => {
     ispy.global_planes[0].negate();
@@ -224,21 +216,25 @@ function setupClipping() {
   });
 
   global_planeX.open();
-    
-  local_planeY.add(local_params.planeY, "constant").min(-10).max(10).onChange(
-    d => ispy.local_planes[1].constant = d
-  );
+
+  local_planeY
+    .add(local_params.planeY, "constant")
+    .min(-10)
+    .max(10)
+    .onChange((d) => (ispy.local_planes[1].constant = d));
 
   local_planeY.add(local_params.planeY, "negated").onChange(() => {
     ispy.local_planes[1].negate();
     local_params.planeY.constant = ispy.local_planes[1].constant;
   });
-        
+
   local_planeY.open();
-    
-  global_planeY.add(global_params.planeY, "constant").min(-10).max(10).onChange(
-    d => ispy.global_planes[1].constant = d
-  );
+
+  global_planeY
+    .add(global_params.planeY, "constant")
+    .min(-10)
+    .max(10)
+    .onChange((d) => (ispy.global_planes[1].constant = d));
 
   global_planeY.add(global_params.planeY, "negated").onChange(() => {
     ispy.global_planes[1].negate();
@@ -246,21 +242,25 @@ function setupClipping() {
   });
 
   global_planeY.open();
-    
-  local_planeZ.add(local_params.planeZ, "constant").min(-30).max(30).onChange(
-    d => ispy.local_planes[2].constant = d
-  );
+
+  local_planeZ
+    .add(local_params.planeZ, "constant")
+    .min(-30)
+    .max(30)
+    .onChange((d) => (ispy.local_planes[2].constant = d));
 
   local_planeZ.add(local_params.planeZ, "negated").onChange(() => {
     ispy.local_planes[2].negate();
     local_params.planeZ.constant = ispy.local_planes[2].constant;
   });
-    
+
   local_planeZ.open();
-    
-  global_planeZ.add(global_params.planeZ, "constant").min(-30).max(30).onChange(
-    d => ispy.global_planes[2].constant = d
-  );
+
+  global_planeZ
+    .add(global_params.planeZ, "constant")
+    .min(-30)
+    .max(30)
+    .onChange((d) => (ispy.global_planes[2].constant = d));
 
   global_planeZ.add(global_params.planeZ, "negated").onChange(() => {
     ispy.global_planes[2].negate();
@@ -268,11 +268,9 @@ function setupClipping() {
   });
 
   global_planeZ.open();
-
 }
 
 function setupGUIs() {
-
   ispy.gui.domElement.id = "treegui";
   ispy.guiReduced.domElement.id = "treegui-reduced";
   // document.getElementById('titlebar').appendChild(ispy.gui.domElement);
@@ -289,47 +287,25 @@ function setupGUIs() {
 }
 
 function setupInset(height: number) {
-    
   // fov, aspect, near, far
-  const inset_width = height/5;
-  const inset_height = height/5;
+  const inset_width = height / 5;
+  const inset_height = height / 5;
   const inset_camera = new THREE.PerspectiveCamera(70, inset_width / inset_height, 1, 100);
   ispy.inset_camera = inset_camera;
   ispy.inset_camera.up = ispy.camera?.up || new THREE.Vector3(0, 1, 0);
-    
-  const origin = new THREE.Vector3(0,0,0);
+
+  const origin = new THREE.Vector3(0, 0, 0);
 
   // dir, origin, length, hex, headLength, headWidth
   const length = 3.5;
   const headLength = 1;
   const headWidth = 1;
-    
-  const rx = new THREE.ArrowHelper(
-    new THREE.Vector3(4,0,0),
-    origin,
-    length,
-    0xff0000,
-    headLength,
-    headWidth
-  );
 
-  const gy = new THREE.ArrowHelper(
-    new THREE.Vector3(0,4,0),
-    origin,
-    length,
-    0x00ff00,
-    headLength,
-    headWidth
-  );
+  const rx = new THREE.ArrowHelper(new THREE.Vector3(4, 0, 0), origin, length, 0xff0000, headLength, headWidth);
 
-  const bz = new THREE.ArrowHelper(
-    new THREE.Vector3(0,0,4),
-    origin,
-    length,
-    0x0000ff,
-    headLength,
-    headWidth
-  );
+  const gy = new THREE.ArrowHelper(new THREE.Vector3(0, 4, 0), origin, length, 0x00ff00, headLength, headWidth);
+
+  const bz = new THREE.ArrowHelper(new THREE.Vector3(0, 0, 4), origin, length, 0x0000ff, headLength, headWidth);
 
   (rx.line.material as THREE.LineBasicMaterial).linewidth = 2.5;
   (gy.line.material as THREE.LineBasicMaterial).linewidth = 2.5;
@@ -338,42 +314,38 @@ function setupInset(height: number) {
   ispy.inset_scene.add(rx);
   ispy.inset_scene.add(gy);
   ispy.inset_scene.add(bz);
-				
-  const font_loader = new THREE.FontLoader();
-    
-  font_loader.load("./fonts/helvetiker_regular.typeface.json", function(font: THREE.Font) {
 
-    const tps = {size:0.75, height:0.1, font:font};
-	
+  const font_loader = new THREE.FontLoader();
+
+  font_loader.load("./fonts/helvetiker_regular.typeface.json", function (font: THREE.Font) {
+    const tps = { size: 0.75, height: 0.1, font: font };
+
     const x_geo = new THREE.TextGeometry("X", tps);
     const y_geo = new THREE.TextGeometry("Y", tps);
     const z_geo = new THREE.TextGeometry("Z", tps);
 
     const x_material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
     const x_text = new THREE.Mesh(x_geo, x_material);
-    x_text.position.x = length+headLength;
+    x_text.position.x = length + headLength;
     x_text.name = "xtext";
 
-    const y_material = new THREE.MeshBasicMaterial({ color: 0x00ff00});
+    const y_material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     const y_text = new THREE.Mesh(y_geo, y_material);
-    y_text.position.y = length+headLength;
+    y_text.position.y = length + headLength;
     y_text.name = "ytext";
-	    
-    const z_material = new THREE.MeshBasicMaterial({ color: 0x0000ff});
+
+    const z_material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
     const z_text = new THREE.Mesh(z_geo, z_material);
-    z_text.position.z = length+headLength;
+    z_text.position.z = length + headLength;
     z_text.name = "ztext";
 
     ispy.inset_scene.add(x_text);
     ispy.inset_scene.add(y_text);
     ispy.inset_scene.add(z_text);
-
   });
-    
 }
 
 function handleToggles() {
-
   // On page load hide the stats
   let stats = getHTMLObject("stats");
   stats.style.display = "none";
@@ -383,19 +355,20 @@ function handleToggles() {
   // FF keeps the check state on reload so force an "uncheck"
   show_stats.checked = false;
 
-  show_stats.addEventListener("change", () => show_stats.checked == true ? stats.style.display = "block" : stats.style.display = "none");
-
+  show_stats.addEventListener("change", () =>
+    show_stats.checked == true ? (stats.style.display = "block") : (stats.style.display = "none"),
+  );
 
   let show_logo = getHTMLObject("show-logo") as HTMLInputElement;
   show_logo.checked = true;
 
   show_logo.addEventListener("change", (event: Event) => {
-
     let cms_logo = getHTMLObject("cms-logo");
-    return (event.target as HTMLInputElement).checked ? cms_logo.style.display = "block" : cms_logo.style.display = "none";
-	   
+    return (event.target as HTMLInputElement).checked
+      ? (cms_logo.style.display = "block")
+      : (cms_logo.style.display = "none");
   });
-    
+
   ispy.inverted_colors = false;
   let invert_colors = getHTMLObject("invert-colors") as HTMLInputElement;
   invert_colors.checked = false;
@@ -406,10 +379,8 @@ function handleToggles() {
   show_axes.checked = false;
 
   show_axes.addEventListener("change", (event: Event) => {
-
     let axes = getHTMLObject("axes");
-    return (event.target as HTMLInputElement).checked ? axes.style.display = "none" : axes.style.display = "block";
-
+    return (event.target as HTMLInputElement).checked ? (axes.style.display = "none") : (axes.style.display = "block");
   });
 
   ispy.use_line2 = false;
@@ -419,9 +390,7 @@ function handleToggles() {
   pickable_lines.checked = false;
 
   pickable_lines.addEventListener("change", (event: Event) => {
-
     ispy.use_line2 = (event.target as HTMLInputElement).checked ? true : false;
-
   });
 
   let clipgui = getHTMLObject("clipgui");
@@ -431,73 +400,64 @@ function handleToggles() {
   clipping.checked = false;
 
   clipping.addEventListener("change", (event: Event) => {
-    (event.target as HTMLInputElement).checked ? clipgui.style.display = "block" : clipgui.style.display = "none";
+    (event.target as HTMLInputElement).checked ? (clipgui.style.display = "block") : (clipgui.style.display = "none");
   });
 }
 
 function handleDragAndDrop() {
-    
   const canvas = ispy.renderer.domElement;
 
-  canvas.ondragover = function() {
-
+  canvas.ondragover = function () {
     this.classList.add("hover");
     return false;
-
   };
 
-  canvas.ondrop = function(e: DragEvent) {
-
+  canvas.ondrop = function (e: DragEvent) {
     e.preventDefault();
     this.classList.remove("hover");
     if (e.dataTransfer == null) {
       console.error("No data transfer object");
       return false;
     }
-   const file = e.dataTransfer.files[0];
-   loadDroppedFile(file);
+    const file = e.dataTransfer.files[0];
+    loadDroppedFile(file);
 
     return false;
-
   };
 
   canvas.addEventListener("ondragover", canvas.ondragover);
   canvas.addEventListener("ondrop", canvas.ondrop);
-
 }
 
 function init() {
-
   const display = getHTMLObject("display");
   //   const inset = getHTMLObject("axes");
 
   ispy.scenes = {
     "3D": new THREE.Scene(),
-    "RPhi": new THREE.Scene(),
-    "RhoZ": new THREE.Scene()
+    RPhi: new THREE.Scene(),
+    RhoZ: new THREE.Scene(),
   };
 
   ispy.views = ["3D", "RPhi", "RhoZ"];
-    
-  for ( const key in ispy.scenes ) {
 
+  for (const key in ispy.scenes) {
     ispy.scenes[key].name = key;
-
   }
-    
+
   ispy.current_view = "3D";
   ispy.scene = ispy.scenes[ispy.current_view];
-    
+
   const height = display.clientHeight;
-    
+
   initCamera();
   setupInset(height);
 
   useRenderer("WebGLRenderer");
-  
+
   display.appendChild(ispy.stats.domElement || ispy.stats.dom);
 
-  setupGUIs();    
+  setupGUIs();
   setupClipping();
   handleToggles();
   handleDragAndDrop();
@@ -517,31 +477,26 @@ function init() {
 
   ispy.controls = ocontrols;
 
-  ispy.views.forEach(v => {
-
-    ["Detector", "Imported"].concat(data_groups).forEach(g => {
-
-	    let obj_group = new THREE.Group();
-	    obj_group.name = g;
-	    ispy.scenes[v].add(obj_group);
-	   
+  ispy.views.forEach((v) => {
+    ["Detector", "Imported"].concat(data_groups).forEach((g) => {
+      let obj_group = new THREE.Group();
+      obj_group.name = g;
+      ispy.scenes[v].add(obj_group);
     });
-
   });
 
   getHTMLObject("version").innerHTML = ispy.version;
-  getHTMLObject("threejs").innerHTML = "r"+THREE.REVISION;
+  getHTMLObject("threejs").innerHTML = "r" + THREE.REVISION;
   getHTMLObject("sweetalert").innerHTML = "2.1.0";
   // getHTMLObject("plotly").innerHTML = Plotly.version;
-    
-    
+
   window.addEventListener("resize", onWindowResize, false);
-    
+
   ispy.raycaster.layers.set(2);
-    
+
   ispy.renderer.domElement.addEventListener("pointermove", onMouseMove, false);
   ispy.renderer.domElement.addEventListener("pointerdown", onMouseDown, false);
-    
+
   // Are we running an animation?
   ispy.animating = false;
 
@@ -554,9 +509,8 @@ function init() {
   (getHTMLObject("transparency-slider") as HTMLInputElement).value = ispy.importTransparency.toString();
 
   getHTMLObject("trspy").innerHTML = ispy.importTransparency.toString();
-    
-  getHTMLObject("display").appendChild(getHTMLObject("event-info"));
 
+  getHTMLObject("display").appendChild(getHTMLObject("event-info"));
 }
 
 function initLight() {
@@ -566,10 +520,10 @@ function initLight() {
   }
   const intensity = 1.0;
   const length = 15.0;
-    
+
   const lights = new THREE.Object3D();
   lights.name = "Lights";
-  
+
   const light1 = new THREE.DirectionalLight(0xffffff, intensity);
   light1.name = "Light1";
   light1.position.set(-length, length, length);
@@ -580,19 +534,15 @@ function initLight() {
   light2.position.set(length, -length, -length);
   lights.add(light2);
   ispy.scene.add(lights);
-
 }
 
 function initControlPanel() {
-
   importDetector();
   initSelectionFields();
-    
 }
 
 function createCheckboxContainer(cont: dat.GUIController) {
-
-  const selectionField = cont as SelectionFieldController
+  const selectionField = cont as SelectionFieldController;
   // check if not __input
   const inputField = selectionField.domElement.querySelector("input") as HTMLInputElement;
 
@@ -613,7 +563,7 @@ function createCheckboxContainer(cont: dat.GUIController) {
   inputField.style.cursor = "not-allowed";
   inputField.value = "";
 
-  checkbox.addEventListener("change", function() {
+  checkbox.addEventListener("change", function () {
     inputField.disabled = !this.checked;
     inputField.style.backgroundColor = this.checked ? "" : "#e0e0e0";
     inputField.style.cursor = this.checked ? "" : "not-allowed";
@@ -626,31 +576,37 @@ function initSelectionFields() {
   const gui_elem = ispy.guiReduced;
 
   const folder = gui_elem.__folders["Event Selection"];
-  const nMuon = 0, nElectron = 0, nPhoton = 0, chargeSign = "", minPt = 0, maxPt = Infinity, test = checkCurrentSelection;
+  const nMuon = 0,
+    nElectron = 0,
+    nPhoton = 0,
+    chargeSign = "",
+    minPt = 0,
+    maxPt = Infinity,
+    test = checkCurrentSelection;
 
   const row_obj = {
-    "TrackerMuons": nMuon,
-    "GsfElectrons": nElectron,
-    "Photons": nPhoton,
-    "charge": chargeSign,
-    "pt": minPt,
-    "minMETs": minPt,
-    "maxMETs": maxPt,
-    "check": test,
-    "nSelected": "0",
-    "firstSelected": ""
+    TrackerMuons: nMuon,
+    GsfElectrons: nElectron,
+    Photons: nPhoton,
+    charge: chargeSign,
+    pt: minPt,
+    minMETs: minPt,
+    maxMETs: maxPt,
+    check: test,
+    nSelected: "0",
+    firstSelected: "",
   };
 
   //   var help_map = analysis.selection_fields_help;
   let cont = null;
-  (Object.keys(row_obj) as (keyof typeof row_obj)[]).forEach(key => {
+  (Object.keys(row_obj) as (keyof typeof row_obj)[]).forEach((key) => {
     const elem_name = SELEC_NAME_MAP[key];
     // let help_info = help_map[key] || false;
 
     // add the controller to the folder
     if (key === "charge") {
       cont = folder.add(row_obj, key, ["", "positive", "negative", "opposite"]).name(elem_name);
-      cont.getValue = function() {
+      cont.getValue = function () {
         const result = (this.object as Record<string, string | number>)[this.property];
         return CHARGE_MAP[result];
       };
@@ -664,20 +620,20 @@ function initSelectionFields() {
     //     cont.help(help_info);
     // }
 
-    if (typeof(row_obj[key]) == "boolean") return;
-    if (typeof(row_obj[key]) == "function") {
-      let btnContainer = (cont.domElement.previousSibling as HTMLElement);
+    if (typeof row_obj[key] == "boolean") return;
+    if (typeof row_obj[key] == "function") {
+      let btnContainer = cont.domElement.previousSibling as HTMLElement;
       btnContainer.style.width = "100%";
       btnContainer.style.height = "auto";
       btnContainer.id = "clickable-button";
       return;
     }
-    if (typeof(row_obj[key]) == "string") {
-      cont.onFinishChange(function(this: SelectionFieldController) {
+    if (typeof row_obj[key] == "string") {
+      cont.onFinishChange(function (this: SelectionFieldController) {
         this.setValue(this.initialValue);
-      });                
+      });
     }
-    cont.onFinishChange(function(this: SelectionFieldController, value: number) {
+    cont.onFinishChange(function (this: SelectionFieldController, value: number) {
       if (value < 0) this.setValue(0);
     });
     if (["TrackerMuons", "GsfElectrons", "Photons", "maxMETs"].includes(key)) {
@@ -686,42 +642,30 @@ function initSelectionFields() {
   });
 
   // add all controllers to the reduced subfolders for convenience
-  folder.__controllers.forEach(c => {
+  folder.__controllers.forEach((c) => {
     ispy.subfoldersReduced.Selection.push(c);
   });
-
 }
 
 function render() {
-
-  if ( ispy.renderer !== null ) {
-	    
+  if (ispy.renderer !== null) {
     ispy.renderer.render(ispy.scene, ispy.camera);
-    
-    if ( ispy.get_image_data ){
-      
-	    ispy.image_data = ispy.renderer.domElement.toDataURL();
-	    ispy.get_image_data = false;
 
+    if (ispy.get_image_data) {
+      ispy.image_data = ispy.renderer.domElement.toDataURL();
+      ispy.get_image_data = false;
     }
-
   }
 
-  if ( ispy.inset_renderer !== null ) {
-
+  if (ispy.inset_renderer !== null) {
     ispy.inset_renderer.render(ispy.inset_scene, ispy.inset_camera);
-
   }
-
 }
 
 function run() {
-
-  setTimeout( function() {
-  
+  setTimeout(function () {
     requestAnimationFrame(run);
-  
-  }, 1000/ispy.framerate );
+  }, 1000 / ispy.framerate);
   if (!ispy.camera || !ispy.inset_camera) {
     console.error("Camera is not initialized");
     return;
@@ -731,36 +675,29 @@ function run() {
 
   ispy.controls.update();
   ispy.inset_camera.position.subVectors(ispy.camera.position, ispy.controls.target);
-	
+
   ispy.inset_camera.up = ispy.camera.up;
   ispy.inset_camera.quaternion.copy(ispy.camera.quaternion);
   ispy.inset_camera.position.setLength(10);
   ispy.inset_camera.lookAt(ispy.inset_scene.position);
 
-  if ( ispy.inset_scene.getObjectByName("xtext") ) {
-    
+  if (ispy.inset_scene.getObjectByName("xtext")) {
     ispy.inset_scene.getObjectByName("xtext")!.quaternion.copy(ispy.inset_camera.quaternion);
     ispy.inset_scene.getObjectByName("ytext")!.quaternion.copy(ispy.inset_camera.quaternion);
     ispy.inset_scene.getObjectByName("ztext")!.quaternion.copy(ispy.inset_camera.quaternion);
-
   }
-	
+
   render();
 
-  if ( ispy.animating ) {
-
+  if (ispy.animating) {
     TWEEN.update();
-	
   }
 
-  if ( ispy.autoRotating ) {
-	
-    var speed = Date.now()*0.0005;
-    ispy.camera.position.x = Math.cos(speed)*10;
-    ispy.camera.position.z = Math.sin(speed)*10;
-    
+  if (ispy.autoRotating) {
+    var speed = Date.now() * 0.0005;
+    ispy.camera.position.x = Math.cos(speed) * 10;
+    ispy.camera.position.z = Math.sin(speed) * 10;
   }
-
 }
 
 export {

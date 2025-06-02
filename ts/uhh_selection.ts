@@ -1,29 +1,32 @@
 import Plotly from "plotly.js";
 import swal from "sweetalert";
-import {ispy, analysis} from "./config";
-import {Particle, FourVector, MET} from "./ispy.interfaces";
+import { ispy, analysis } from "./config";
+import { Particle, FourVector, MET } from "./ispy.interfaces";
 import * as utils from "./utils";
 
 function checkCurrentSelection(): void {
   const [text, symbol] = getCurrentSelectionMessage();
-  swal({text: text, title: "Selection Results", icon: symbol, buttons: false, timer: 3000} as SweetAlert.Settings);
+  swal({ text: text, title: "Selection Results", icon: symbol, buttons: false, timer: 3000 } as SweetAlert.Settings);
   if (symbol === "error") return;
-  const nSelected = ispy.subfoldersReduced["Selection"].find(e => e.property === "nSelected");
+  const nSelected = ispy.subfoldersReduced["Selection"].find((e) => e.property === "nSelected");
   if (nSelected) {
     nSelected.setValue(getPassingEvents().length);
   }
-  const firstSelected = ispy.subfoldersReduced["Selection"].find(e => e.property === "firstSelected");
+  const firstSelected = ispy.subfoldersReduced["Selection"].find((e) => e.property === "firstSelected");
   if (firstSelected) {
     firstSelected.setValue(
-      getPassingEvents().map(e => Number(e) + 1).slice(0, 5).join(", ")
+      getPassingEvents()
+        .map((e) => Number(e) + 1)
+        .slice(0, 5)
+        .join(", "),
     );
   }
 }
 
 function getSceneObjects(): { [key: string]: string } {
   return [
-    ...(ispy.scenes?.["3D"]?.getObjectByName("Physics")?.children.map(o => o.name) || []),
-    ...(ispy.scenes?.["3D"]?.getObjectByName("Tracking")?.children.map(o => o.name) || [])
+    ...(ispy.scenes?.["3D"]?.getObjectByName("Physics")?.children.map((o) => o.name) || []),
+    ...(ispy.scenes?.["3D"]?.getObjectByName("Tracking")?.children.map((o) => o.name) || []),
   ].reduce((dic: { [key: string]: string }, o) => {
     dic[o.replace(/^(?:PAT|PF)?(.*?)_V\d$/, "$1")] = o;
     return dic;
@@ -43,7 +46,10 @@ function getSelectionResults(): void {
   const passing_events = getPassingEvents();
   let stats = "With the chosen selection:<br>";
   stats += "Number of passing events: " + passing_events.length + "<br>";
-  stats += "This is " + (passing_events.length / analysis.file_events_summary.size * 100).toFixed(2) + "% of the total events.<br>";
+  stats +=
+    "This is " +
+    ((passing_events.length / analysis.file_events_summary.size) * 100).toFixed(2) +
+    "% of the total events.<br>";
   event_stats.innerHTML = stats;
 
   const masses = getMassesArray();
@@ -56,8 +62,8 @@ function getSelectionResults(): void {
 
 function getSelectionCuts(): { [key: string]: number } {
   const cuts: { [key: string]: number } = {};
-  ispy.subfoldersReduced["Selection"].forEach(e => {
-    if (["function", "string"].includes(typeof(e.getValue()))) return;
+  ispy.subfoldersReduced["Selection"].forEach((e) => {
+    if (["function", "string"].includes(typeof e.getValue())) return;
     if ("checkbox" in e && !e.checkbox) {
       cuts[e.property] = -1;
       return;
@@ -121,7 +127,6 @@ function buildFileSummary(): void {
     // enable the analysis button
     (analysisBtn as HTMLButtonElement).disabled = false;
     (downloadBtn as HTMLButtonElement).disabled = false;
-
   } catch (err) {
     (analysisBtn as HTMLButtonElement).disabled = true;
     (downloadBtn as HTMLButtonElement).disabled = true;
@@ -137,10 +142,12 @@ function buildFileSummary(): void {
   $("#loading").modal("show");
 }
 
-const getSelectionParticles = function(
-  event_index: string
-): {index: string, parts: Map<string, Particle[]>, met: MET} {
-  const results = {index: event_index.toString(), parts: new Map(), met: {px: 0, py: 0, Et: 0}};
+const getSelectionParticles = function (event_index: string): {
+  index: string;
+  parts: Map<string, Particle[]>;
+  met: MET;
+} {
+  const results = { index: event_index.toString(), parts: new Map(), met: { px: 0, py: 0, Et: 0 } };
   const tmp_parts = new Map();
   const summary = analysis.file_events_summary.get(event_index.toString());
   if (!summary) {
@@ -148,16 +155,15 @@ const getSelectionParticles = function(
   }
   const selection = getSelectionCuts();
   const pt_cut = selection["pt"];
-  const filteredSelection = ["TrackerMuons", "GsfElectrons", "Photons"].filter(
-    (sel) => {
-      return !(selection[sel] === 0 || selection[sel] === -1);
-    });
+  const filteredSelection = ["TrackerMuons", "GsfElectrons", "Photons"].filter((sel) => {
+    return !(selection[sel] === 0 || selection[sel] === -1);
+  });
   results["met"] = summary.met;
-  filteredSelection.forEach(key => {
+  filteredSelection.forEach((key) => {
     if (summary.particles.has(key)) {
       let tmp = summary.particles.get(key) || [];
       if (key === "GsfElectrons" || key === "TrackerMuons") {
-        tmp = tmp.filter(part => part["pt"] >= pt_cut);
+        tmp = tmp.filter((part) => part["pt"] >= pt_cut);
       }
       tmp_parts.set(key, tmp);
     }
@@ -166,8 +172,8 @@ const getSelectionParticles = function(
   return results;
 };
 
-const checkIfEventPassing: (event_index?: number | string) => boolean = function(
-  event_index: number | string=-1
+const checkIfEventPassing: (event_index?: number | string) => boolean = function (
+  event_index: number | string = -1,
 ): boolean {
   if (!utils.getCurrentEvent()) {
     return false;
@@ -198,52 +204,38 @@ const checkIfEventPassing: (event_index?: number | string) => boolean = function
       pass = false;
       break;
     }
-  };
+  }
   return pass;
 };
 
 // Helper functions to check the selection
-const checkMinMET = function(
-  met: MET,
-  cut: number,
-): boolean {
+const checkMinMET = function (met: MET, cut: number): boolean {
   if (cut == -1) return true;
   return met["Et"] >= cut;
 };
 
-const checkMaxMET = function(
-  met: MET,
-  cut: number,
-): boolean {
+const checkMaxMET = function (met: MET, cut: number): boolean {
   if (cut == -1) return true;
   return met["Et"] <= cut;
 };
 
-const checkCharge = function(
-  leptons: Particle[],
-  cut: number,
-): boolean {
+const checkCharge = function (leptons: Particle[], cut: number): boolean {
   if (cut === undefined) return true;
   if (leptons.length === 0) return true;
   let chargeSum = 0;
-  leptons.forEach(lepton => {
+  leptons.forEach((lepton) => {
     chargeSum += lepton["charge"];
   });
   return Math.sign(chargeSum) === cut;
 };
 
-const getPtPassingLeptons = function(
-  leptons: Particle[],
-  cut: number,
-): Particle[] {
-  return leptons.filter(lepton => lepton["pt"] >= cut);
+const getPtPassingLeptons = function (leptons: Particle[], cut: number): Particle[] {
+  return leptons.filter((lepton) => lepton["pt"] >= cut);
 };
 
-const sumFourVectors = function(
-  particles: Map<string, Particle[]>,
-): FourVector {
+const sumFourVectors = function (particles: Map<string, Particle[]>): FourVector {
   if (particles.size < 1) {
-    return {E: 0, px: 0, py: 0, pz: 0};
+    return { E: 0, px: 0, py: 0, pz: 0 };
   }
   let sumPx: number, sumPy: number, sumPz: number, sumE: number;
   sumPx = sumPy = sumPz = sumE = 0;
@@ -257,15 +249,11 @@ const sumFourVectors = function(
     });
   });
 
-  return {E: sumE, px: sumPx, py: sumPy, pz: sumPz};
+  return { E: sumE, px: sumPx, py: sumPy, pz: sumPz };
 };
 
-
 // Calculate the invariant mass of a list of particles
-const getInvariantMass = function(
-  sumVector: FourVector,
-): number {
-
+const getInvariantMass = function (sumVector: FourVector): number {
   let m = 0;
   const sumPx: number = sumVector.px;
   const sumPy: number = sumVector.py;
@@ -273,18 +261,14 @@ const getInvariantMass = function(
   const sumE: number = sumVector.E;
 
   m = sumE * sumE;
-  m -= (sumPx * sumPx + sumPy * sumPy + sumPz * sumPz);
+  m -= sumPx * sumPx + sumPy * sumPy + sumPz * sumPz;
   m = Math.sqrt(m);
-    
+
   return m;
 };
 
 // Calculate the transverse mass of a list of particles
-const getTransverseMass = function(
-  sumVector: FourVector,
-  met: MET,
-): number { 
-
+const getTransverseMass = function (sumVector: FourVector, met: MET): number {
   let transverseMass = 0;
   const invariantMass = getInvariantMass(sumVector);
 
@@ -297,12 +281,7 @@ const getTransverseMass = function(
   return transverseMass;
 };
 
-const _createHistogram = function(
-  array: number[],
-  start: number,
-  end: number,
-  bins: number,
-): number[] {
+const _createHistogram = function (array: number[], start: number, end: number, bins: number): number[] {
   // Histogram the array to the range `start` to `end` with `bins` bins
   const hist: number[] = new Array(bins).fill(0);
   const binWidth: number = (end - start) / bins;
@@ -312,21 +291,21 @@ const _createHistogram = function(
       return;
     }
     if (val >= end) {
-      hist[bins-1]++;
+      hist[bins - 1]++;
       return;
     }
-    const bin = Math.floor(val/binWidth);
+    const bin = Math.floor(val / binWidth);
     hist[bin]++;
   });
   return hist;
 };
 
-const createHistogramData = function(
+const createHistogramData = function (
   array: number[],
   _start: number,
   _end: number,
   bins: number,
-): {x: number[], type: string, nbinsx: number} {
+): { x: number[]; type: string; nbinsx: number } {
   // Create the data for a histogram of the array
   return {
     x: array,
@@ -335,10 +314,10 @@ const createHistogramData = function(
   };
 };
 
-const getMassesArray = function(): {m: Map<number, number>, mt: Map<number, number>} {
+const getMassesArray = function (): { m: Map<number, number>; mt: Map<number, number> } {
   const masses = new Map();
   const massesT = new Map();
-  const particles = getPassingEvents().map(i => {
+  const particles = getPassingEvents().map((i) => {
     return getSelectionParticles(i);
   });
   for (const value of particles) {
@@ -348,10 +327,10 @@ const getMassesArray = function(): {m: Map<number, number>, mt: Map<number, numb
       massesT.set(value.index, getTransverseMass(sumVector, value.met));
     }
   }
-  return {m: masses, mt: massesT};
+  return { m: masses, mt: massesT };
 };
 
-const getCurrentSelectionMessage = function(): [string, string] {
+const getCurrentSelectionMessage = function (): [string, string] {
   const pass = checkIfEventPassing();
   if (pass === undefined) {
     return ["No event file is loaded!", "error"];
@@ -381,5 +360,5 @@ export {
   getTransverseMass,
   createHistogramData,
   getMassesArray,
-  getCurrentSelectionMessage
+  getCurrentSelectionMessage,
 };

@@ -65,10 +65,7 @@ function makeWireframeBox(data: any, ci: number) {
   addFace3(data[ci + 6], data[ci + 2], data[ci + 1]);
 
   const box_buffer = new BufferGeometry();
-  box_buffer.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  box_buffer.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   const box = new EdgesGeometry(box_buffer);
 
@@ -86,10 +83,7 @@ function makeWireFace(data: any, ci: number) {
   addFace3(data[ci + 2], data[ci + 3], data[ci]);
 
   const box_buffer = new BufferGeometry();
-  box_buffer.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  box_buffer.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   const box = new EdgesGeometry(box_buffer);
 
@@ -107,10 +101,7 @@ function makeSolidFace(data: any, ci: number) {
   addFace3(data[ci + 2], data[ci + 3], data[ci]);
 
   const box_buffer = new BufferGeometry();
-  box_buffer.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  box_buffer.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   return box_buffer;
 }
@@ -147,10 +138,7 @@ function makeSolidBox(data: any, ci: number) {
   addFace3(data[ci + 6], data[ci + 2], data[ci + 1]);
 
   const box_buffer = new BufferGeometry();
-  box_buffer.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  box_buffer.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   const box_edges = new EdgesGeometry(box_buffer);
 
@@ -211,23 +199,14 @@ function makeSolidBoxRZ(data: any, ci: number) {
   addFace3(v6, v2, v1);
 
   const box_buffer = new BufferGeometry();
-  box_buffer.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  box_buffer.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   const box_edges = new EdgesGeometry(box_buffer);
 
   return [box_buffer, box_edges];
 }
 
-function makeScaledSolidBox(
-  data: any,
-  boxes: any[],
-  ci: number,
-  energy: number,
-  scale: number
-) {
+function makeScaledSolidBox(data: any, boxes: any[], ci: number, energy: number, scale: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -304,21 +283,12 @@ function makeScaledSolidBox(
   addFace3(v6.toArray(), v2.toArray(), v1.toArray());
 
   const box = new BufferGeometry();
-  box.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  box.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   boxes.push(box);
 }
 
-function makeScaledSolidBoxRZ(
-  data: any,
-  boxes: any[],
-  ci: number,
-  energy: number,
-  scale: number
-) {
+function makeScaledSolidBoxRZ(data: any, boxes: any[], ci: number, energy: number, scale: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -431,21 +401,12 @@ function makeScaledSolidBoxRZ(
   addFace3(v6.toArray(), v2.toArray(), v1.toArray());
 
   const box = new BufferGeometry();
-  box.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  box.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   boxes.push(box);
 }
 
-function makeScaledSolidTower(
-  data: any,
-  towers: any[],
-  ci: number,
-  energy: number,
-  scale: number
-) {
+function makeScaledSolidTower(data: any, towers: any[], ci: number, energy: number, scale: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -506,21 +467,12 @@ function makeScaledSolidTower(
   addFace3(v6.toArray(), v2.toArray(), v1.toArray());
 
   const tower = new BufferGeometry();
-  tower.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  tower.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   towers.push(tower);
 }
 
-function makePFCandidateTowersRZ(
-  data: any,
-  towers: any[],
-  ci: number,
-  energy: number,
-  scale: number
-) {
+function makePFCandidateTowersRZ(data: any, towers: any[], ci: number, energy: number, scale: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -618,21 +570,12 @@ function makePFCandidateTowersRZ(
   addFace3(v6.toArray(), v2.toArray(), v1.toArray());
 
   const tower = new BufferGeometry();
-  tower.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  tower.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   towers.push(tower);
 }
 
-function makePFCandidateTowers(
-  data: any,
-  towers: any[],
-  ci: number,
-  energy: number,
-  scale: number
-) {
+function makePFCandidateTowers(data: any, towers: any[], ci: number, energy: number, scale: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: Vector3Tuple[]) => {
@@ -693,10 +636,7 @@ function makePFCandidateTowers(
   addFace3(v6.toArray(), v2.toArray(), v1.toArray());
 
   const tower = new BufferGeometry();
-  tower.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  tower.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   towers.push(tower);
 }
@@ -705,7 +645,7 @@ function makeEcalPFCandidateTowers(
   data: DetectorCollectionEntry,
   towers: any[],
   scale: number,
-  selection: Selection
+  selection: Selection,
 ): void {
   const energy = data[0];
 
@@ -718,7 +658,7 @@ function makeEcalPFCandidateTowersRZ(
   data: DetectorCollectionEntry,
   towers: any[],
   scale: number,
-  selection: Selection
+  selection: Selection,
 ): void {
   const energy = data[0];
 
@@ -730,7 +670,7 @@ function makeHcalPFCandidateTowersRZ(
   data: DetectorCollectionEntry,
   towers: any[],
   scale: number,
-  selection: Selection
+  selection: Selection,
 ): void {
   const energy = data[0];
 
@@ -743,7 +683,7 @@ function makeHcalPFCandidateTowers(
   data: DetectorCollectionEntry,
   towers: any[],
   scale: number,
-  selection: Selection
+  selection: Selection,
 ): void {
   const energy = data[0];
 
@@ -755,13 +695,7 @@ function makeHcalPFCandidateTowers(
 // Transform energy towers in R-Z view:
 // All hits above XZ plane go up, below - down.
 
-function makeScaledSolidTowerRZ(
-  data: any,
-  towers: any[],
-  ci: number,
-  energy: number,
-  scale: number
-): void {
+function makeScaledSolidTowerRZ(data: any, towers: any[], ci: number, energy: number, scale: number): void {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -859,10 +793,7 @@ function makeScaledSolidTowerRZ(
   addFace3(v6.toArray(), v2.toArray(), v1.toArray());
 
   const tower = new BufferGeometry();
-  tower.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  tower.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   towers.push(tower);
 }
@@ -887,13 +818,7 @@ function projectPoint(v: number[], s: number[]): number[] {
   return [0, size, v[2]];
 }
 
-function makeTrackPointsRZ(
-  data: any[],
-  extra: number[][][],
-  assoc: number[][][],
-  style: any,
-  selection: any
-) {
+function makeTrackPointsRZ(data: any[], extra: number[][][], assoc: number[][][], style: any, selection: any) {
   if (!assoc) {
     throw "No association!";
   }
@@ -966,7 +891,7 @@ function makeTrackPointsRZ(
         color: tcolor,
         transparent: transp,
         opacity: style.opacity,
-      })
+      }),
     );
 
     line.userData.pt = data[k][selection.index];
@@ -978,13 +903,7 @@ function makeTrackPointsRZ(
   return lines;
 }
 
-function makeTrackPoints(
-  data: any[],
-  extra: number[][][],
-  assoc: number[][][],
-  style: any,
-  selection: any
-) {
+function makeTrackPoints(data: any[], extra: number[][][], assoc: number[][][], style: any, selection: any) {
   if (!assoc) {
     throw "No association!";
   }
@@ -1038,7 +957,7 @@ function makeTrackPoints(
         color: tcolor,
         transparent: transp,
         opacity: style.opacity,
-      })
+      }),
     );
 
     line.userData.pt = data[k][selection.index];
@@ -1050,13 +969,7 @@ function makeTrackPoints(
   return lines;
 }
 
-function makeTracks(
-  tracks: any[],
-  extras: any[],
-  assocs: any[],
-  style: any,
-  selection: any
-) {
+function makeTracks(tracks: any[], extras: any[], assocs: any[], style: any, selection: any) {
   if (!assocs) {
     throw "No association!";
   }
@@ -1101,16 +1014,8 @@ function makeTracks(
     distance = p1.distanceTo(p2);
     scale = distance * 0.25;
 
-    p3 = new Vector3(
-      p1.x + scale * d1.x,
-      p1.y + scale * d1.y,
-      p1.z + scale * d1.z
-    );
-    p4 = new Vector3(
-      p2.x - scale * d2.x,
-      p2.y - scale * d2.y,
-      p2.z - scale * d2.z
-    );
+    p3 = new Vector3(p1.x + scale * d1.x, p1.y + scale * d1.y, p1.z + scale * d1.z);
+    p4 = new Vector3(p2.x - scale * d2.x, p2.y - scale * d2.y, p2.z - scale * d2.z);
 
     curve = new CubicBezierCurve3(p1, p3, p4, p2);
     let line = new Line(
@@ -1119,7 +1024,7 @@ function makeTracks(
         color: tcolor,
         opacity: style.opacity,
         transparent: transp,
-      })
+      }),
     );
 
     line.userData.pt = pt;
@@ -1130,13 +1035,7 @@ function makeTracks(
   return curves;
 }
 
-function makeTracksRZ(
-  tracks: any[],
-  extras: any[],
-  assocs: any[],
-  style: any,
-  selection: any
-) {
+function makeTracksRZ(tracks: any[], extras: any[], assocs: any[], style: any, selection: any) {
   if (!assocs) {
     throw "No association!";
   }
@@ -1183,16 +1082,8 @@ function makeTracksRZ(
     distance = p1.distanceTo(p2);
     scale = distance * 0.25;
 
-    p3 = new Vector3(
-      p1.x + scale * d1.x,
-      p1.y + scale * d1.y,
-      p1.z + scale * d1.z
-    );
-    p4 = new Vector3(
-      p2.x - scale * d2.x,
-      p2.y - scale * d2.y,
-      p2.z - scale * d2.z
-    );
+    p3 = new Vector3(p1.x + scale * d1.x, p1.y + scale * d1.y, p1.z + scale * d1.z);
+    p4 = new Vector3(p2.x - scale * d2.x, p2.y - scale * d2.y, p2.z - scale * d2.z);
 
     curve = new CubicBezierCurve3(p1, p3, p4, p2);
     let line = new Line(
@@ -1201,7 +1092,7 @@ function makeTracksRZ(
         color: tcolor,
         opacity: style.opacity,
         transparent: transp,
-      })
+      }),
     );
 
     line.userData.pt = pt;
@@ -1212,13 +1103,7 @@ function makeTracksRZ(
   return curves;
 }
 
-function makeThickTracks(
-  tracks: any[],
-  extras: any[],
-  assocs: any[],
-  style: any,
-  selection: any
-) {
+function makeThickTracks(tracks: any[], extras: any[], assocs: any[], style: any, selection: any) {
   if (!assocs) {
     throw "No association!";
   }
@@ -1263,16 +1148,8 @@ function makeThickTracks(
     distance = p1.distanceTo(p2);
     scale = distance * 0.25;
 
-    p3 = new Vector3(
-      p1.x + scale * d1.x,
-      p1.y + scale * d1.y,
-      p1.z + scale * d1.z
-    );
-    p4 = new Vector3(
-      p2.x - scale * d2.x,
-      p2.y - scale * d2.y,
-      p2.z - scale * d2.z
-    );
+    p3 = new Vector3(p1.x + scale * d1.x, p1.y + scale * d1.y, p1.z + scale * d1.z);
+    p4 = new Vector3(p2.x - scale * d2.x, p2.y - scale * d2.y, p2.z - scale * d2.z);
 
     curve = new CubicBezierCurve3(p1, p3, p4, p2);
 
@@ -1291,7 +1168,7 @@ function makeThickTracks(
           opacity: style.opacity,
           transparent: transp,
           linewidth: style.linewidth * 0.001,
-        })
+        }),
       );
 
       line.computeLineDistances();
@@ -1306,7 +1183,7 @@ function makeThickTracks(
           color: tcolor,
           opacity: style.opacity,
           transparent: transp,
-        })
+        }),
       );
 
       line.userData.pt = pt;
@@ -1318,13 +1195,7 @@ function makeThickTracks(
   return curves;
 }
 
-function makeThickTracksRZ(
-  tracks: any[],
-  extras: any[],
-  assocs: any[],
-  style: any,
-  selection: any
-) {
+function makeThickTracksRZ(tracks: any[], extras: any[], assocs: any[], style: any, selection: any) {
   if (!assocs) {
     throw "No association!";
   }
@@ -1371,16 +1242,8 @@ function makeThickTracksRZ(
     distance = p1.distanceTo(p2);
     scale = distance * 0.25;
 
-    p3 = new Vector3(
-      p1.x + scale * d1.x,
-      p1.y + scale * d1.y,
-      p1.z + scale * d1.z
-    );
-    p4 = new Vector3(
-      p2.x - scale * d2.x,
-      p2.y - scale * d2.y,
-      p2.z - scale * d2.z
-    );
+    p3 = new Vector3(p1.x + scale * d1.x, p1.y + scale * d1.y, p1.z + scale * d1.z);
+    p4 = new Vector3(p2.x - scale * d2.x, p2.y - scale * d2.y, p2.z - scale * d2.z);
 
     curve = new CubicBezierCurve3(p1, p3, p4, p2);
 
@@ -1399,7 +1262,7 @@ function makeThickTracksRZ(
           opacity: style.opacity,
           transparent: transp,
           linewidth: style.linewidth * 0.001,
-        })
+        }),
       );
 
       line.computeLineDistances();
@@ -1414,7 +1277,7 @@ function makeThickTracksRZ(
           color: tcolor,
           opacity: style.opacity,
           transparent: transp,
-        })
+        }),
       );
 
       line.userData.pt = pt;
@@ -1486,13 +1349,7 @@ function makeSimVertex(data: any, style: any) {
   return vertex;
 }
 
-function makeCaloClusters(
-  _data: any[],
-  extra: any[],
-  assoc: any[],
-  style: any,
-  _selection: any
-) {
+function makeCaloClusters(_data: any[], extra: any[], assoc: any[], style: any, _selection: any) {
   if (!assoc) {
     throw "No association!";
   }
@@ -1524,8 +1381,8 @@ function makeCaloClusters(
           transparent: transp,
           opacity: style.opacity,
           side: DoubleSide,
-        })
-      )
+        }),
+      ),
     );
   }
 
@@ -1540,12 +1397,7 @@ function makeEcalDigi(data: any, boxes: any[], scale: number, selection: any) {
   }
 }
 
-function makeERecHit_V2(
-  data: any,
-  boxes: any[],
-  scale: number,
-  selection: any
-) {
+function makeERecHit_V2(data: any, boxes: any[], scale: number, selection: any) {
   const energy = data[0];
 
   if (energy > selection.min_energy) {
@@ -1553,12 +1405,7 @@ function makeERecHit_V2(
   }
 }
 
-function makeHRecHit_V2(
-  data: any,
-  geometry: any[],
-  scale: number,
-  selection: any
-) {
+function makeHRecHit_V2(data: any, geometry: any[], scale: number, selection: any) {
   const energy = data[0];
 
   if (energy > selection.min_energy) {
@@ -1566,12 +1413,7 @@ function makeHRecHit_V2(
   }
 }
 
-function makeERecHit_RZ(
-  data: any,
-  boxes: any[],
-  scale: number,
-  selection: any
-) {
+function makeERecHit_RZ(data: any, boxes: any[], scale: number, selection: any) {
   const energy = data[0];
 
   if (energy > selection.min_energy) {
@@ -1579,12 +1421,7 @@ function makeERecHit_RZ(
   }
 }
 
-function makeHRecHit_RZ(
-  data: any,
-  geometry: any[],
-  scale: number,
-  selection: any
-) {
+function makeHRecHit_RZ(data: any, geometry: any[], scale: number, selection: any) {
   const energy = data[0];
 
   if (energy > selection.min_energy) {
@@ -1592,12 +1429,7 @@ function makeHRecHit_RZ(
   }
 }
 
-function makeHGCRecHit(
-  data: any,
-  geometry: any[],
-  scale: number,
-  selection: any
-) {
+function makeHGCRecHit(data: any, geometry: any[], scale: number, selection: any) {
   const energy = data[0];
 
   if (energy > selection.min_energy) {
@@ -1605,13 +1437,7 @@ function makeHGCRecHit(
   }
 }
 
-function makeCaloTower(
-  data: any,
-  egeometry: any[],
-  hgeometry: any[],
-  scale: number,
-  selection: any
-) {
+function makeCaloTower(data: any, egeometry: any[], hgeometry: any[], scale: number, selection: any) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -1685,10 +1511,7 @@ function makeCaloTower(
       addFace3(b3e.toArray(), f3.toArray(), f2.toArray());
 
       const ebox = new BufferGeometry();
-      ebox.attributes.position = new BufferAttribute(
-        new Float32Array(all_positions),
-        3
-      );
+      ebox.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
       egeometry.push(ebox);
     }
@@ -1757,10 +1580,7 @@ function makeCaloTower(
       addFace3(v[6].toArray(), v[2].toArray(), v[1].toArray());
 
       const hbox = new BufferGeometry();
-      hbox.attributes.position = new BufferAttribute(
-        new Float32Array(all_positions),
-        3
-      );
+      hbox.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
       hgeometry.push(hbox);
     }
@@ -1852,12 +1672,7 @@ function makeTrackingClustersRZ(data: any[]) {
   return makePointCloudRZ(data, 1);
 }
 
-function makeArrow(
-  dir: Vector3,
-  origin: Vector3,
-  length: number,
-  color: Color
-) {
+function makeArrow(dir: Vector3, origin: Vector3, length: number, color: Color) {
   // dir, origin, length, hex, headLength, headWidth
   const arrow = new ArrowHelper(dir, origin, length, color.getHex(), 0.2, 0.2);
 
@@ -1870,13 +1685,7 @@ function makeArrow(
   return arrow;
 }
 
-function makeArrowThick(
-  dir: Vector3,
-  origin: Vector3,
-  length: number,
-  color: Color,
-  displacement: number
-) {
+function makeArrowThick(dir: Vector3, origin: Vector3, length: number, color: Color, displacement: number) {
   dir.setLength(length);
 
   const positions = [...origin.toArray(), ...dir.toArray()];
@@ -1888,7 +1697,7 @@ function makeArrowThick(
     new LineMaterial({
       color: color.getHex(),
       linewidth: 2 * 0.001,
-    })
+    }),
   );
 
   al.computeLineDistances();
@@ -1901,7 +1710,7 @@ function makeArrowThick(
     new CylinderGeometry(0, 0.1, cl, 24, 1),
     new MeshBasicMaterial({
       color: color,
-    })
+    }),
   );
 
   ac.geometry.applyMatrix4(new Matrix4().makeTranslation(0, cl * 0.5, 0));
@@ -1953,7 +1762,7 @@ function makeMET(data: any, style: any, selection: any) {
       origin,
       length,
       color,
-      d // displace out to ECAL barrel radius
+      d, // displace out to ECAL barrel radius
     );
   } else {
     origin.add(dir);
@@ -2023,13 +1832,7 @@ function makeJet(data: any, style: any, selection: any) {
   material.depthWrite = false;
 
   const jet = new Mesh(geometry, material);
-  jet.lookAt(
-    new Vector3(
-      length * 0.5 * st * cp,
-      length * 0.5 * st * sp,
-      length * 0.5 * ct
-    )
-  );
+  jet.lookAt(new Vector3(length * 0.5 * st * cp, length * 0.5 * st * sp, length * 0.5 * ct));
   jet.visible = true;
 
   jet.userData.et = et;
@@ -2091,13 +1894,7 @@ function makeJetRZ(data: any, style: any, selection: any) {
   cp = Math.cos(angles[1]);
   ct = Math.cos(angles[0]);
 
-  jet.lookAt(
-    new Vector3(
-      length * 0.5 * st * cp,
-      length * 0.5 * st * sp,
-      length * 0.5 * ct
-    )
-  );
+  jet.lookAt(new Vector3(length * 0.5 * st * cp, length * 0.5 * st * sp, length * 0.5 * ct));
   jet.visible = true;
 
   jet.userData.et = et;
@@ -2159,13 +1956,7 @@ function makeJetWithVertex(data: any, style: any, selection: any) {
   jet.position.y = vertex.y;
   jet.position.z = vertex.z;
 
-  jet.lookAt(
-    new Vector3(
-      length * 0.5 * st * cp,
-      length * 0.5 * st * sp,
-      length * 0.5 * ct
-    )
-  );
+  jet.lookAt(new Vector3(length * 0.5 * st * cp, length * 0.5 * st * sp, length * 0.5 * ct));
   jet.visible = true;
 
   jet.userData.et = et;
@@ -2232,13 +2023,7 @@ function makeJetWithVertexRZ(data: any, style: any, selection: any) {
   cp = Math.cos(angles[1]);
   ct = Math.cos(angles[0]);
 
-  jet.lookAt(
-    new Vector3(
-      length * 0.5 * st * cp,
-      length * 0.5 * st * sp,
-      length * 0.5 * ct
-    )
-  );
+  jet.lookAt(new Vector3(length * 0.5 * st * cp, length * 0.5 * st * sp, length * 0.5 * ct));
   jet.visible = true;
 
   jet.userData.et = et;
@@ -2307,10 +2092,7 @@ function makePhoton(data: any, style: any, selection: any) {
     ldm.defines.USE_DASH = "";
     ldm.needsUpdate = true;
 
-    photon = new Line2(
-      new LineGeometry().setPositions([...pt1.toArray(), ...pt2.toArray()]),
-      ldm
-    );
+    photon = new Line2(new LineGeometry().setPositions([...pt1.toArray(), ...pt2.toArray()]), ldm);
   } else {
     photon = new LineSegments(
       new BufferGeometry().setFromPoints([pt1, pt2]),
@@ -2319,7 +2101,7 @@ function makePhoton(data: any, style: any, selection: any) {
         scale: 1,
         dashSize: 0.1,
         gapSize: 0.1,
-      })
+      }),
     );
   }
 
@@ -2391,10 +2173,7 @@ function makePhotonRZ(data: any, style: any, selection: any) {
     ldm.defines.USE_DASH = "";
     ldm.needsUpdate = true;
 
-    photon = new Line2(
-      new LineGeometry().setPositions([...pt1.toArray(), ...pt2.toArray()]),
-      ldm
-    );
+    photon = new Line2(new LineGeometry().setPositions([...pt1.toArray(), ...pt2.toArray()]), ldm);
   } else {
     photon = new LineSegments(
       new BufferGeometry().setFromPoints([pt1, pt2]),
@@ -2403,7 +2182,7 @@ function makePhotonRZ(data: any, style: any, selection: any) {
         scale: 1,
         dashSize: 0.1,
         gapSize: 0.1,
-      })
+      }),
     );
   }
 
@@ -2459,7 +2238,7 @@ function makeProtons(data: any, style: any, _selection: any) {
   const rg = new RingGeometry(
     radius, // inner radius
     radius + thickness, // outer radius
-    32 // theta segments
+    32, // theta segments
   );
 
   rg.applyMatrix4(new Matrix4().makeRotationX(Math.PI / 2));
@@ -2535,10 +2314,7 @@ function makeDTRecHits(data: any) {
   addFace3(v6.toArray(), v2.toArray(), v1.toArray());
 
   const box = new BufferGeometry();
-  box.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  box.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   box.applyMatrix4(new Matrix4().makeRotationAxis(axis, angle));
   box.applyMatrix4(new Matrix4().makeTranslation(pos.x, pos.y, pos.z));
@@ -2600,10 +2376,7 @@ function makeDTRecHitsRZ(data: any) {
   addFace3(v6.toArray(), v2.toArray(), v1.toArray());
 
   const box = new BufferGeometry();
-  box.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  box.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   box.applyMatrix4(new Matrix4().makeRotationAxis(axis, angle));
   box.applyMatrix4(new Matrix4().makeTranslation(pos.x, pos.y, pos.z));
@@ -2644,22 +2417,13 @@ function makeRPCRecHitsRZ(data: any) {
 
   if (ispy.use_line2) {
     u = new LineGeometry();
-    u.setPositions([
-      ...projectPoint(data[0], data[0]),
-      ...projectPoint(data[1], data[0]),
-    ]);
+    u.setPositions([...projectPoint(data[0], data[0]), ...projectPoint(data[1], data[0])]);
 
     v = new LineGeometry();
-    v.setPositions([
-      ...projectPoint(data[2], data[0]),
-      ...projectPoint(data[3], data[0]),
-    ]);
+    v.setPositions([...projectPoint(data[2], data[0]), ...projectPoint(data[3], data[0])]);
 
     w = new LineGeometry();
-    w.setPositions([
-      ...projectPoint(data[4], data[0]),
-      ...projectPoint(data[5], data[0]),
-    ]);
+    w.setPositions([...projectPoint(data[4], data[0]), ...projectPoint(data[5], data[0])]);
   } else {
     const u1 = new Vector3(...data[0]);
     const u2 = new Vector3(...data[1]);
@@ -2668,20 +2432,11 @@ function makeRPCRecHitsRZ(data: any) {
     const w1 = new Vector3(...data[4]);
     const w2 = new Vector3(...data[5]);
 
-    u = new BufferGeometry().setFromPoints([
-      projectVector(u1, u1),
-      projectVector(u2, u1),
-    ]);
+    u = new BufferGeometry().setFromPoints([projectVector(u1, u1), projectVector(u2, u1)]);
 
-    v = new BufferGeometry().setFromPoints([
-      projectVector(v1, u1),
-      projectVector(v2, u1),
-    ]);
+    v = new BufferGeometry().setFromPoints([projectVector(v1, u1), projectVector(v2, u1)]);
 
-    w = new BufferGeometry().setFromPoints([
-      projectVector(w1, u1),
-      projectVector(w2, u1),
-    ]);
+    w = new BufferGeometry().setFromPoints([projectVector(w1, u1), projectVector(w2, u1)]);
   }
 
   return [u, v, w];
@@ -2710,10 +2465,7 @@ function makeDTRecSegments(data: any) {
     geometry = new LineGeometry();
     geometry.setPositions([...data[1], ...data[2]]);
   } else {
-    geometry = new BufferGeometry().setFromPoints([
-      new Vector3(...data[1]),
-      new Vector3(...data[2]),
-    ]);
+    geometry = new BufferGeometry().setFromPoints([new Vector3(...data[1]), new Vector3(...data[2])]);
   }
 
   return [geometry];
@@ -2724,18 +2476,12 @@ function makeDTRecSegmentsRZ(data: any) {
 
   if (ispy.use_line2) {
     geometry = new LineGeometry();
-    geometry.setPositions([
-      ...projectPoint(data[1], data[1]),
-      ...projectPoint(data[2], data[1]),
-    ]);
+    geometry.setPositions([...projectPoint(data[1], data[1]), ...projectPoint(data[2], data[1])]);
   } else {
     let p1 = new Vector3(...data[1]);
     let p2 = new Vector3(...data[2]);
 
-    geometry = new BufferGeometry().setFromPoints([
-      projectVector(p1, p2),
-      projectVector(p2, p2),
-    ]);
+    geometry = new BufferGeometry().setFromPoints([projectVector(p1, p2), projectVector(p2, p2)]);
   }
 
   return [geometry];
@@ -2798,10 +2544,7 @@ function makeCSCDigis(data: any, w: number, d: number, rotate: number) {
   addFace3(v6.toArray(), v2.toArray(), v1.toArray());
 
   const box = new BufferGeometry();
-  box.attributes.position = new BufferAttribute(
-    new Float32Array(all_positions),
-    3
-  );
+  box.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
 
   box.applyMatrix4(new Matrix4().makeRotationAxis(axis, angle));
   box.applyMatrix4(new Matrix4().makeTranslation(pos.x, pos.y, pos.z));
@@ -2816,10 +2559,7 @@ function makeCSCDigis_V2(data: any) {
     geometry = new LineGeometry();
     geometry.setPositions([...data[0], ...data[1]]);
   } else {
-    geometry = new BufferGeometry().setFromPoints([
-      new Vector3(...data[0]),
-      new Vector3(...data[1]),
-    ]);
+    geometry = new BufferGeometry().setFromPoints([new Vector3(...data[0]), new Vector3(...data[1])]);
   }
 
   return [geometry];
@@ -2832,10 +2572,7 @@ function makeGEMDigis_V2(data: any) {
     geometry = new LineGeometry();
     geometry.setPositions([...data[0], ...data[1]]);
   } else {
-    geometry = new BufferGeometry().setFromPoints([
-      new Vector3(...data[0]),
-      new Vector3(...data[1]),
-    ]);
+    geometry = new BufferGeometry().setFromPoints([new Vector3(...data[0]), new Vector3(...data[1])]);
   }
 
   return [geometry];
@@ -2868,15 +2605,9 @@ function makeCSCLCTCorrelatedLCTDigis(data: any) {
     l2 = new LineGeometry();
     l2.setPositions([...data[2], ...data[3]]);
   } else {
-    l1 = new BufferGeometry().setFromPoints([
-      new Vector3(...data[0]),
-      new Vector3(...data[1]),
-    ]);
+    l1 = new BufferGeometry().setFromPoints([new Vector3(...data[0]), new Vector3(...data[1])]);
 
-    l2 = new BufferGeometry().setFromPoints([
-      new Vector3(...data[2]),
-      new Vector3(...data[3]),
-    ]);
+    l2 = new BufferGeometry().setFromPoints([new Vector3(...data[2]), new Vector3(...data[3])]);
   }
 
   return [l1, l2];

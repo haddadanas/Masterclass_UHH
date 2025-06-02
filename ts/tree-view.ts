@@ -1,12 +1,6 @@
 import THREE from "three";
 import { ispy } from "./config";
-import {
-  data_groups,
-  detector_description,
-  disabled,
-  event_description,
-  reduced_data_groups,
-} from "./objects-config";
+import { data_groups, detector_description, disabled, event_description, reduced_data_groups } from "./objects-config";
 import { getHTMLObject, removeExistingBubble } from "./utils";
 import { getSceneObjects } from "./uhh_selection";
 import { SelectionFieldController } from "./ispy.interfaces";
@@ -105,13 +99,7 @@ function showObject(key: string, view: string, show: boolean) {
   }
 }
 
-function addSelectionRow(
-  group: string,
-  key: string,
-  name: string,
-  objectIds: any[],
-  visible: boolean
-) {
+function addSelectionRow(group: string, key: string, name: string, objectIds: any[], visible: boolean) {
   let opacity = 1.0;
   let color = new THREE.Color();
   let linewidth = 1;
@@ -168,13 +156,7 @@ function addSelectionRow(
 
     let sf = folder.addFolder(name);
 
-    if (
-      !(
-        group.includes("Detector") ||
-        group.includes("Imported") ||
-        group.includes("Provenance")
-      )
-    ) {
+    if (!(group.includes("Detector") || group.includes("Imported") || group.includes("Provenance"))) {
       sf.add(row_obj, "number");
     }
 
@@ -207,7 +189,7 @@ function addSelectionRow(
         if (!obj) return;
 
         obj.children.forEach(function (o) {
-          if (! ("material" in o)) return;
+          if (!("material" in o)) return;
           (o.material as THREE.Material).opacity = row_obj.opacity;
         });
       });
@@ -242,11 +224,7 @@ function addSelectionRow(
     }
 
     if (ispy.use_line2) {
-      if (
-        key.includes("GlobalMuon") ||
-        key.includes("Electron") ||
-        key.includes("Photon")
-      ) {
+      if (key.includes("GlobalMuon") || key.includes("Electron") || key.includes("Photon")) {
         sf.add(row_obj, "linewidth", 1, 5).onChange(function () {
           ispy.views.forEach((v) => {
             let obj = ispy.scenes[v].getObjectByName(key);
@@ -262,11 +240,7 @@ function addSelectionRow(
       }
     }
 
-    if (
-      key.includes("Muons_") ||
-      key.includes("Electron") ||
-      key.includes("Tracks_")
-    ) {
+    if (key.includes("Muons_") || key.includes("Electron") || key.includes("Tracks_")) {
       sf.add(row_obj, "min_pt").onChange(function () {
         ispy.views.forEach((v) => {
           let obj = ispy.scenes[v].getObjectByName(key);
@@ -324,14 +298,12 @@ function addSelectionRow(
         obj.children.forEach(function (o) {
           o.traverse(function (oc) {
             // Special case to handle
-            if (
-              oc.type === "ArrowHelper" ||
-              key.includes("MET") ||
-              key.includes("Proton")
-            ) {
+            if (oc.type === "ArrowHelper" || key.includes("MET") || key.includes("Proton")) {
               oc.children.forEach(function (og) {
                 if (!("material" in og)) return;
-                (og.material as THREE.LineBasicMaterial | THREE.MeshBasicMaterial).color = new THREE.Color(row_obj.color);
+                (og.material as THREE.LineBasicMaterial | THREE.MeshBasicMaterial).color = new THREE.Color(
+                  row_obj.color,
+                );
               });
             } else {
               if (!("material" in oc)) return;
@@ -380,9 +352,7 @@ function addControllers(group: string) {
           let physic_objs = [
             ...ispy.scenes[v].getObjectByName("Physics")!.children,
             ...ispy.scenes[v].getObjectByName("Tracking")!.children,
-          ].filter(
-            (o) => o.visible && o.children[0].userData.hasOwnProperty("pt")
-          );
+          ].filter((o) => o.visible && o.children[0].userData.hasOwnProperty("pt"));
 
           if (!physic_objs.length) return;
 
@@ -399,9 +369,7 @@ function addControllers(group: string) {
       .name("min. E<sub>T, Jets</sub>")
       .onChange(function () {
         ispy.views.forEach((v) => {
-          let physic_objs = ispy.scenes[v].getObjectByName(
-            names["Jets"]
-          )!.children;
+          let physic_objs = ispy.scenes[v].getObjectByName(names["Jets"])!.children;
 
           if (!physic_objs.length) return;
 
@@ -424,12 +392,8 @@ function addControllers(group: string) {
       });
     };
 
-    let pt_controller = ispy.subfoldersReduced.Controllers.filter(
-      (o) => o.property == "min_pt"
-    )[0];
-    let jet_controller = ispy.subfoldersReduced.Controllers.filter(
-      (o) => o.property == "Jet: min Et"
-    )[0];
+    let pt_controller = ispy.subfoldersReduced.Controllers.filter((o) => o.property == "min_pt")[0];
+    let jet_controller = ispy.subfoldersReduced.Controllers.filter((o) => o.property == "Jet: min Et")[0];
 
     folder.add(row_obj, "Electrons").onChange(function (this: SelectionFieldController) {
       let val = this.getValue();
@@ -489,12 +453,10 @@ function addInfo(group: string) {
     track: false,
   };
 
-  folder
-    .add(row_obj, "MET")
-    .onFinishChange(function (this: SelectionFieldController) {
-      // reset to original value
-      this.setValue(this.initialValue);
-    });
+  folder.add(row_obj, "MET").onFinishChange(function (this: SelectionFieldController) {
+    // reset to original value
+    this.setValue(this.initialValue);
+  });
 
   folder
     .add(row_obj, "Sel")
@@ -520,9 +482,7 @@ function addInfo(group: string) {
 
 function saveCutSettings() {
   let settings: Record<string, any> = {};
-  let btn = ispy.guiReduced.__controllers.find(
-    (o) => o.property == "Keep Settings"
-  );
+  let btn = ispy.guiReduced.__controllers.find((o) => o.property == "Keep Settings");
   if (btn && btn.getValue()) {
     let controllers = ispy.subfoldersReduced["Controllers"];
     controllers.forEach(function (c) {

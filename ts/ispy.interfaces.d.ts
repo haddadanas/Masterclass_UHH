@@ -32,7 +32,7 @@ interface EventObject {
 }
 
 interface TrackLine extends Line {
-  userData: {pt: number, originalIndex: number, [key: string]: number}
+  userData: { pt: number; originalIndex: number; [key: string]: number };
   selected: boolean;
   fourVector: FourVector;
   ptype: string;

@@ -294,7 +294,7 @@ function exportScene() {
     function (result) {
       exportArrayBuffer(result as ArrayBuffer, "scene.glb");
     },
-    options
+    options,
   );
 
   alert("scene.glb created");
@@ -371,7 +371,7 @@ function exportGLTF(binary: boolean) {
                 exportString(output, o.name + ".gltf");
               }
             },
-            options
+            options,
           );
         }
       });

@@ -104,7 +104,7 @@ const animation = {
 };
 
 export function toggleAnimation() {
-  if (! ispy.camera) {
+  if (!ispy.camera) {
     console.error("Camera is not defined");
     return;
   }
@@ -159,10 +159,7 @@ export function toggleAnimation() {
     let c1y = cy.slice(0, es);
     let c1z = cz.slice(0, es);
 
-    let rotation1 = new Tween(ispy.camera.position).to(
-      { x: c1x, y: c1y, z: c1z },
-      animation.rotation.time
-    );
+    let rotation1 = new Tween(ispy.camera.position).to({ x: c1x, y: c1y, z: c1z }, animation.rotation.time);
 
     // Split the rotation in half and
     // turn off tracks and turn on electrons/muons/jets

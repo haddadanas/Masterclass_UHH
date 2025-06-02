@@ -1,15 +1,13 @@
-import {
-  Camera,
-  Color,
-  Mesh,
-  Object3D,
-  OrthographicCamera,
-  PerspectiveCamera,
-  Vector2,
-} from "three";
+import { Camera, Color, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, Vector2 } from "three";
 import { TrackballControls } from "three/addons/controls/TrackballControls.js";
 
-import { getFourVectorByIndex, getHTMLObject, removeExistingBubble, showInfoBubble, changeMeshMaterials } from "./utils";
+import {
+  getFourVectorByIndex,
+  getHTMLObject,
+  removeExistingBubble,
+  showInfoBubble,
+  changeMeshMaterials,
+} from "./utils";
 import { ispy } from "./config";
 import { useRenderer, render } from "./setup";
 import { toggleAnimation } from "./animate";
@@ -53,13 +51,7 @@ function invertColors() {
     el.classList.toggle("black");
   });
 
-  let selectors = [
-    "#browser-table th",
-    "#obj-table th",
-    ".modal-content",
-    ".modal-title",
-    "#table-data-eventObject",
-  ];
+  let selectors = ["#browser-table th", "#obj-table th", ".modal-content", ".modal-title", "#table-data-eventObject"];
 
   selectors.forEach((sels) => {
     document.querySelectorAll(sels).forEach((s) => {
@@ -118,7 +110,7 @@ function updateRenderer(type: string) {
     alert(type + " is already in use");
     return;
   }
-  if (! ispy.camera) {
+  if (!ispy.camera) {
     console.error("Camera is not defined");
     return;
   }
@@ -182,10 +174,8 @@ function onMouseMove(e: MouseEvent) {
   const left = (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
   const top = (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
 
-  const offsetX =
-    display.getBoundingClientRect().left + window.pageXOffset - left;
-  const offsetY =
-    display.getBoundingClientRect().top + window.pageYOffset - top;
+  const offsetX = display.getBoundingClientRect().left + window.pageXOffset - left;
+  const offsetY = display.getBoundingClientRect().top + window.pageYOffset - top;
 
   const pointer = new Vector2();
 
@@ -193,20 +183,13 @@ function onMouseMove(e: MouseEvent) {
   pointer.y = -((e.clientY - offsetY) / h) * 2 + 1;
 
   ispy.raycaster.setFromCamera(pointer, ispy.camera as Camera);
-  const intersects = ispy.raycaster.intersectObject(
-    ispy.scene!.getObjectByName("Physics")!,
-    true
-  );
+  const intersects = ispy.raycaster.intersectObject(ispy.scene!.getObjectByName("Physics")!, true);
 
   if (ispy.intersected) {
     document.body.style.cursor = "auto";
 
     if (!ispy.intersected.selected) {
-      const original_color = new Color(
-        event_description[ispy.current_view][
-          ispy.intersected.name
-        ].style.color
-      );
+      const original_color = new Color(event_description[ispy.current_view][ispy.intersected.name].style.color);
 
       ispy.intersected.material.color = original_color;
     } else {
@@ -237,16 +220,12 @@ function onMouseMove(e: MouseEvent) {
         intersectedObject.parent.visible
       ) {
         const matchingTrack =
-          ispy.current_event.Collections[intersectedObject.name][
-            intersectedObject.userData.originalIndex
-          ];
-        const chargeIndex = ispy.current_event.Types[
-          intersectedObject.name
-        ].findIndex((type: [string, string]) => type[0] === "charge");
+          ispy.current_event.Collections[intersectedObject.name][intersectedObject.userData.originalIndex];
+        const chargeIndex = ispy.current_event.Types[intersectedObject.name].findIndex(
+          (type: [string, string]) => type[0] === "charge",
+        );
         const bubbleText =
-          `Charge: ${matchingTrack[chargeIndex]}` +
-          "\n" +
-          `Pt: ${intersectedObject.userData.pt.toFixed(2)}`;
+          `Charge: ${matchingTrack[chargeIndex]}` + "\n" + `Pt: ${intersectedObject.userData.pt.toFixed(2)}`;
 
         removeExistingBubble();
         showInfoBubble(bubbleText, pointer);
@@ -259,16 +238,9 @@ function onMouseMove(e: MouseEvent) {
 
 function onMouseDown(e: MouseEvent) {
   if (ispy.intersected && ispy.intersected.visible) {
-    if (
-      ispy.intersected.name.includes("Muon") ||
-      ispy.intersected.name.includes("Electron")
-    ) {
+    if (ispy.intersected.name.includes("Muon") || ispy.intersected.name.includes("Electron")) {
       if (ispy.intersected.selected) {
-        const original_color = new Color(
-          event_description[ispy.current_view][
-            ispy.intersected.name
-          ].style.color
-        );
+        const original_color = new Color(event_description[ispy.current_view][ispy.intersected.name].style.color);
 
         ispy.intersected.material.color = original_color;
         ispy.intersected.selected = false;
@@ -341,9 +313,7 @@ function addKeyboardListeners() {
 
       if (ispy.intersected && ispy.intersected.name.includes("Jet")) {
         ispy.intersected.material.color = new Color(
-          event_description[ispy.current_view][
-            ispy.intersected.name
-          ].style.color
+          event_description[ispy.current_view][ispy.intersected.name].style.color,
         );
 
         ispy.intersected.visible = false;

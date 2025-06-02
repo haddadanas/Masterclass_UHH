@@ -6,12 +6,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 import { addEvent, addDetector } from "./objects-add.js";
 import { addSelectionRow } from "./tree-view.js";
-import {
-  changeMeshMaterials,
-  getHTMLObject,
-  toggleCollapse,
-  cleanupData,
-} from "./utils.js";
+import { changeMeshMaterials, getHTMLObject, toggleCollapse, cleanupData } from "./utils.js";
 import { ispy } from "./config.js";
 import { buildFileSummary, getPassingEvents } from "./uhh_selection.js";
 import { disabled } from "./objects-config.js";
@@ -46,8 +41,7 @@ function clearTable(id: string) {
 }
 
 function selectEvent(index: number) {
-  getHTMLObject("selected-event").innerHTML =
-    ispy.file_name + ": " + ispy.event_list[index];
+  getHTMLObject("selected-event").innerHTML = ispy.file_name + ": " + ispy.event_list[index];
   //$("#selected-event").html(ispy.file_name+': '+ispy.event_list[index]);
 
   ispy.event_index = index;
@@ -66,13 +60,7 @@ function updateEventList() {
     let cell = row.insertCell(0);
 
     cell.innerHTML =
-      '<a id="browser-event-' +
-      i +
-      '" class="event" onclick="selectEvent(\'' +
-      i +
-      "');\">" +
-      e +
-      "</a>";
+      '<a id="browser-event-' + i + '" class="event" onclick="selectEvent(\'' + i + "');\">" + e + "</a>";
   }
 }
 
@@ -93,19 +81,13 @@ function enableNextPrev() {
 function enableNextPrevSelected() {
   const selectedEvents = getPassingEvents() || [];
 
-  if (
-    selectedEvents.length > 0 &&
-    ispy.event_index > Number(selectedEvents[0])
-  ) {
+  if (selectedEvents.length > 0 && ispy.event_index > Number(selectedEvents[0])) {
     getHTMLObject("prev-sel-event").classList.remove("disabled");
   } else {
     getHTMLObject("prev-sel-event").classList.add("disabled");
   }
 
-  if (
-    selectedEvents.length > 0 &&
-    ispy.event_index < Number(selectedEvents[selectedEvents.length - 1])
-  ) {
+  if (selectedEvents.length > 0 && ispy.event_index < Number(selectedEvents[selectedEvents.length - 1])) {
     getHTMLObject("next-sel-event").classList.remove("disabled");
   } else {
     getHTMLObject("next-sel-event").classList.add("disabled");
@@ -129,9 +111,7 @@ function loadEvent() {
   let event;
 
   try {
-    event = JSON.parse(
-      cleanupData(ispy.ig_data.file(ispy.event_list[ispy.event_index]).asText())
-    );
+    event = JSON.parse(cleanupData(ispy.ig_data.file(ispy.event_list[ispy.event_index]).asText()));
   } catch (err) {
     alert(err);
   }
@@ -150,14 +130,7 @@ function loadEvent() {
     let ievent = +ispy.event_index + 1; // JavaScript!
 
     getHTMLObject("event-loaded").innerHTML =
-      ispy.file_name +
-      ":" +
-      ispy.event_list[ispy.event_index] +
-      "  [" +
-      ievent +
-      " of " +
-      ispy.event_list.length +
-      "]";
+      ispy.file_name + ":" + ispy.event_list[ispy.event_index] + "  [" + ievent + " of " + ispy.event_list.length + "]";
     //$("#event-loaded").html(ispy.file_name + ":" + ispy.event_list[ispy.event_index] + "  [" + ievent + " of " + ispy.event_list.length + "]");
 
     console.log(ispy.current_event.Types);
@@ -189,15 +162,12 @@ function nextSelectedEvent() {
   let currentIndex = selectedEvents.indexOf(currentEvent.toString());
   let nextIndex;
   if (currentIndex === -1) {
-    nextIndex = selectedEvents.reduce(
-      (nearestIndex, currentValue, currentIndex) => {
-        return Math.abs(Number(currentValue) - currentIndex) <
-          Math.abs(Number(selectedEvents[nearestIndex]) - currentIndex)
-          ? currentIndex
-          : nearestIndex;
-      },
-      0
-    );
+    nextIndex = selectedEvents.reduce((nearestIndex, currentValue, currentIndex) => {
+      return Math.abs(Number(currentValue) - currentIndex) <
+        Math.abs(Number(selectedEvents[nearestIndex]) - currentIndex)
+        ? currentIndex
+        : nearestIndex;
+    }, 0);
   } else {
     nextIndex = currentIndex + 1;
   }
@@ -218,15 +188,12 @@ function prevSelectedEvent() {
   let currentIndex = selectedEvents.indexOf(currentEvent.toString());
   let nextIndex;
   if (currentIndex === -1) {
-    nextIndex = selectedEvents.reduce(
-      (nearestIndex, currentValue, currentIndex) => {
-        return Math.abs(Number(currentValue) - currentIndex) <
-          Math.abs(Number(selectedEvents[nearestIndex]) - currentIndex)
-          ? currentIndex
-          : nearestIndex;
-      },
-      0
-    );
+    nextIndex = selectedEvents.reduce((nearestIndex, currentValue, currentIndex) => {
+      return Math.abs(Number(currentValue) - currentIndex) <
+        Math.abs(Number(selectedEvents[nearestIndex]) - currentIndex)
+        ? currentIndex
+        : nearestIndex;
+    }, 0);
   } else {
     nextIndex = currentIndex - 1;
   }
@@ -285,24 +252,14 @@ function updateLocalFileList(list: FileList) {
     let cls = "file";
 
     cell.innerHTML =
-      '<a id="browser-file-' +
-      i +
-      '" class="' +
-      cls +
-      '" onclick="selectLocalFile(\'' +
-      i +
-      "');\">" +
-      name +
-      "</a>";
+      '<a id="browser-file-' + i + '" class="' + cls + '" onclick="selectLocalFile(\'' + i + "');\">" + name + "</a>";
   }
 }
 
 function loadLocalFiles() {
   if (!hasFileAPI()) {
-    var err_msg =
-      "Sorry. You seeem to be using a browser that does not support FileReader API. ";
-    err_msg +=
-      "Please try with Chrome (6.0+), Firefox (3.6+), Safari (6.0+), or IE (10+). ";
+    var err_msg = "Sorry. You seeem to be using a browser that does not support FileReader API. ";
+    err_msg += "Please try with Chrome (6.0+), Firefox (3.6+), Safari (6.0+), or IE (10+). ";
     err_msg += "Alternatively, open a file from the web. ";
     alert(err_msg);
 
@@ -383,9 +340,7 @@ function selectFile(filename: string) {
   xhr.overrideMimeType("text/plain; charset=x-user-defined");
 
   clearTable("browser-events");
-  var ecell = (getHTMLObject("browser-events") as HTMLTableElement)
-    .insertRow(0)
-    .insertCell(0);
+  var ecell = (getHTMLObject("browser-events") as HTMLTableElement).insertRow(0).insertCell(0);
   ecell.innerHTML = "Loading events...";
 
   xhr.onprogress = function (evt) {
@@ -462,15 +417,7 @@ function loadWebFiles() {
     let cls = "file";
 
     cell.innerHTML =
-      '<a id="browser-file-' +
-      i +
-      '" class="' +
-      cls +
-      '" onclick="selectFile(\'' +
-      e +
-      "');\">" +
-      name +
-      "</a>";
+      '<a id="browser-file-' + i + '" class="' + cls + '" onclick="selectFile(\'' + e + "');\">" + name + "</a>";
   }
 }
 
@@ -529,15 +476,7 @@ function loadGLTFFiles() {
     let cls = "file";
 
     cell.innerHTML =
-      '<a id="browser-file-' +
-      i +
-      '" class="' +
-      cls +
-      '" onclick="selectGLTF(\'' +
-      name +
-      "');\">" +
-      name +
-      "</a>";
+      '<a id="browser-file-' + i + '" class="' + cls + '" onclick="selectGLTF(\'' + name + "');\">" + name + "</a>";
   }
 }
 
@@ -578,15 +517,7 @@ function loadObjFiles() {
     let cls = "file";
 
     cell.innerHTML =
-      '<a id="browser-file-' +
-      i +
-      '" class="' +
-      cls +
-      '" onclick="selectObj(\'' +
-      name +
-      "');\">" +
-      name +
-      "</a>";
+      '<a id="browser-file-' + i + '" class="' + cls + '" onclick="selectObj(\'' + name + "');\">" + name + "</a>";
   }
 }
 
@@ -622,11 +553,7 @@ function loadOBJ(contents: string, name: string) {
   addSelectionRow("Imported", object.name, object.name, [], true);
 }
 
-function readOBJMTL(
-  file: File,
-  mtl_file: File,
-  cb: (obj: string, mtl_file: File, name: string) => void
-) {
+function readOBJMTL(file: File, mtl_file: File, cb: (obj: string, mtl_file: File, name: string) => void) {
   let reader = new FileReader();
 
   reader.onload = function (e) {
@@ -646,10 +573,7 @@ function loadOBJMTL(obj: string, mtl_file: File, name: string) {
 
   reader.onload = function (e) {
     // let mtl = e.target.result;
-    let materials_creator = new MTLLoader().parse(
-      e.target!.result as string,
-      ""
-    );
+    let materials_creator = new MTLLoader().parse(e.target!.result as string, "");
     materials_creator.preload();
 
     object.traverse(function (o) {
@@ -684,10 +608,8 @@ function loadOBJMTL(obj: string, mtl_file: File, name: string) {
 
 function importModel() {
   if (!hasFileAPI()) {
-    var err_msg =
-      "Sorry. You seeem to be using a browser that does not support FileReader API. ";
-    err_msg +=
-      "Please try with Chrome (6.0+), Firefox (3.6+), Safari (6.0+), or IE (10+). ";
+    var err_msg = "Sorry. You seeem to be using a browser that does not support FileReader API. ";
+    err_msg += "Please try with Chrome (6.0+), Firefox (3.6+), Safari (6.0+), or IE (10+). ";
     err_msg += "Alternatively, open a file from the web. ";
     alert(err_msg);
 
@@ -711,7 +633,7 @@ function importModel() {
       alert(
         'The file you attempted to load: "' +
           file_name +
-          '" does not appear (at least from the extension) to be an .obj file!'
+          '" does not appear (at least from the extension) to be an .obj file!',
       );
       return;
     }
@@ -739,7 +661,7 @@ function importModel() {
       mtl_file = files[0];
     } else {
       alert(
-        "For now, this application supports either loading one .obj file or loading an .obj file and a corresponding .mtl file!"
+        "For now, this application supports either loading one .obj file or loading an .obj file and a corresponding .mtl file!",
       );
       return;
     }
@@ -753,7 +675,7 @@ function importModel() {
     readOBJMTL(obj_file, mtl_file, loadOBJMTL);
   } else {
     alert(
-      "For now, this application supports either loading one .obj file or loading an .obj file and a corresponding .mtl file!"
+      "For now, this application supports either loading one .obj file or loading an .obj file and a corresponding .mtl file!",
     );
     return;
   }
@@ -809,14 +731,7 @@ function loadSelectedObj() {
   loadOBJMTL_new(obj_file, mtl_file, name, name, "Imported", true);
 }
 
-function loadOBJMTL_new(
-  obj_file: string,
-  mtl_file: string,
-  id: string,
-  name: string,
-  group: string,
-  show: boolean
-) {
+function loadOBJMTL_new(obj_file: string, mtl_file: string, id: string, name: string, group: string, show: boolean) {
   var mtl_loader = new MTLLoader();
 
   mtl_loader.load(mtl_file, function (materials) {
@@ -855,7 +770,7 @@ function importBeampipe() {
     "BeamPipe",
     "Beam Pipe",
     "Imported",
-    true
+    true,
   );
 }
 
@@ -1126,7 +1041,7 @@ function importDetector() {
 
         if (!(object.name === "RPhi" || object.name === "RhoZ"))
           addSelectionRow(g.group, object.name, g.name, [], g.show);
-      }
+      },
     );
   }
 

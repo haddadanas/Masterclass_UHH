@@ -4,7 +4,7 @@ import { event_description } from "./objects-config";
 import { init, initLight, initControlPanel, run } from "./setup";
 import { addGroups } from "./tree-view";
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   init();
   addGroups();
   initLight();
@@ -14,5 +14,4 @@ document.addEventListener("DOMContentLoaded", function() {
   run();
 
   console.log(event_description);
-
 });

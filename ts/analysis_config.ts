@@ -23,8 +23,7 @@ const SELEC_HELP: Record<string, string> = {
     "Number of Muons required, which pass the p<sub>T</sub> constraint. If '-1' is entered, the selection is ignored.",
   GsfElectrons:
     "Number of Electrons required, which pass the p<sub>T</sub> constraint. If '-1' is entered, the selection is ignored.",
-  Photons:
-    "Number of photons required. If '-1' is entered, the selection is ignored.",
+  Photons: "Number of photons required. If '-1' is entered, the selection is ignored.",
   charge: "Required charge of the sum of selected leptons",
   pt: "Minimum p<sub>T</sub> required for the leptons",
   minMETs: "Minimum MET required",
