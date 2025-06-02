@@ -1,5 +1,7 @@
 version = 1
 
+exclude_patterns = ["/js/**"]
+
 [[analyzers]]
 name = "javascript"
 
