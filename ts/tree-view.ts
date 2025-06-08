@@ -1,4 +1,5 @@
 import THREE from "three";
+
 import { ispy } from "./config";
 import { data_groups, detector_description, disabled, event_description, reduced_data_groups } from "./objects-config";
 import { getHTMLObject, removeExistingBubble } from "./utils";
@@ -24,29 +25,29 @@ function addGroups() {
   ispy.subfoldersReduced["Info"] = [];
   ispy.subfoldersReduced["Selection"] = [];
 
-  data_groups.forEach(function (gr) {
+  data_groups.forEach((gr) => {
     ispy.gui.addFolder(gr);
     ispy.subfolders[gr] = [];
   });
 
-  reduced_data_groups.forEach(function (gr) {
+  reduced_data_groups.forEach((gr) => {
     ispy.guiReduced.addFolder(gr.name);
   });
 }
 
 function clearSubfolders() {
-  data_groups.forEach(function (g) {
-    let folder = ispy.gui.__folders[g];
+  data_groups.forEach((g) => {
+    const folder = ispy.gui.__folders[g];
 
-    ispy.subfolders[g].forEach(function (s) {
+    ispy.subfolders[g].forEach((s) => {
       folder.removeFolder(folder.__folders[s]);
     });
 
     ispy.subfolders[g] = [];
   });
 
-  ["Controllers", "Info"].forEach(function (g) {
-    ispy.subfoldersReduced[g].forEach(function (s) {
+  ["Controllers", "Info"].forEach((g) => {
+    ispy.subfoldersReduced[g].forEach((s) => {
       s.remove();
     });
     ispy.subfoldersReduced[g] = [];
@@ -59,7 +60,7 @@ function toggle(key: string) {
   // For event information we display as simple HTML
   // so therefore not part of the scene
   if (key.includes("Event")) {
-    let event_text = getHTMLObject("event-text");
+    const event_text = getHTMLObject("event-text");
     if (disabled[key]) {
       event_text.style.display = "none";
     } else {
@@ -68,7 +69,7 @@ function toggle(key: string) {
   }
 
   ispy.views.forEach((v) => {
-    let obj = ispy.scenes[v].getObjectByName(key);
+    const obj = ispy.scenes[v].getObjectByName(key);
 
     // Not every object (and therefore key) is present in
     // every scene.
@@ -80,7 +81,7 @@ function toggle(key: string) {
     // In-principle this toggle will add other non-pickable
     // objects to the layer but we only check raycasting for
     // Physics objects so this is fine.
-    obj.traverse(function (s) {
+    obj.traverse((s) => {
       s.layers.toggle(2);
     });
   });
@@ -93,28 +94,28 @@ function showObject(key: string, view: string, show: boolean) {
     obj.visible = show;
     disabled[key] = !show;
 
-    let elem = getHTMLObject(key) as HTMLInputElement;
+    const elem = getHTMLObject(key) as HTMLInputElement;
 
     if (elem !== null) elem.checked = show;
   }
 }
 
-function addSelectionRow(group: string, key: string, name: string, objectIds: any[], visible: boolean) {
+function addSelectionRow(group: string, key: string, name: string, _objectIds: any[], visible: boolean) {
   let opacity = 1.0;
-  let color = new THREE.Color();
+  const color = new THREE.Color();
   let linewidth = 1;
   let nobjects = 0;
 
   const view = "3D";
-
+  let style;
   if (detector_description[view].hasOwnProperty(key)) {
-    let style = detector_description[view][key].style;
+    style = detector_description[view][key].style;
     opacity = style.opacity;
     color.set(style.color);
   }
 
   if (event_description[view].hasOwnProperty(key)) {
-    let style = event_description[view][key].style;
+    style = event_description[view][key].style;
 
     if (style.hasOwnProperty("opacity")) {
       opacity = style.opacity;
@@ -138,7 +139,7 @@ function addSelectionRow(group: string, key: string, name: string, objectIds: an
     number: nobjects,
     key: key,
     opacity: opacity,
-    color: "#" + color.getHexString(),
+    color: `#${color.getHexString()}`,
     linewidth: linewidth,
     min_pt: 1.0,
     min_et: 10.0,
@@ -151,10 +152,10 @@ function addSelectionRow(group: string, key: string, name: string, objectIds: an
     guis.splice(1, 0, ispy.guiReduced);
     ispy.subfoldersReduced[group].push(name);
   }
-  guis.forEach(function (gui_elem) {
-    let folder = gui_elem.__folders[group];
+  guis.forEach((gui_elem) => {
+    const folder = gui_elem.__folders[group];
 
-    let sf = folder.addFolder(name);
+    const sf = folder.addFolder(name); // TODO check if works right
 
     if (!(group.includes("Detector") || group.includes("Imported") || group.includes("Provenance"))) {
       sf.add(row_obj, "number");
@@ -169,12 +170,12 @@ function addSelectionRow(group: string, key: string, name: string, objectIds: an
       group.includes("Muon") ||
       group.includes("Physics")
     ) {
-      sf.domElement.onclick = function (e) {};
+      sf.domElement.onclick = null;
     }
 
     sf.add(row_obj, "key");
 
-    sf.add(row_obj, "show").onChange(function () {
+    sf.add(row_obj, "show").onChange(() => {
       toggle(key);
     });
 
@@ -182,13 +183,13 @@ function addSelectionRow(group: string, key: string, name: string, objectIds: an
     // handled with css so no need for the rest
     if (key.includes("Event_") || group.includes("Imported")) return;
 
-    sf.add(row_obj, "opacity", 0, 1).onChange(function () {
+    sf.add(row_obj, "opacity", 0, 1).onChange(() => {
       ispy.views.forEach((v) => {
-        let obj = ispy.scenes[v].getObjectByName(key);
+        const obj = ispy.scenes[v].getObjectByName(key);
 
         if (!obj) return;
 
-        obj.children.forEach(function (o) {
+        obj.children.forEach((o) => {
           if (!("material" in o)) return;
           (o.material as THREE.Material).opacity = row_obj.opacity;
         });
@@ -208,13 +209,13 @@ function addSelectionRow(group: string, key: string, name: string, objectIds: an
         key.includes("RPCRec") ||
         key.includes("DTRecSegment")
       ) {
-        sf.add(row_obj, "linewidth", 1, 5).onChange(function () {
+        sf.add(row_obj, "linewidth", 1, 5).onChange(() => {
           ispy.views.forEach((v) => {
-            let obj = ispy.scenes[v].getObjectByName(key);
+            const obj = ispy.scenes[v].getObjectByName(key);
 
             if (!obj) return;
 
-            obj.children.forEach(function (o) {
+            obj.children.forEach((o) => {
               if (!("material" in o)) return;
               (o.material as THREE.LineBasicMaterial).linewidth = row_obj.linewidth * 0.001;
             });
@@ -225,13 +226,13 @@ function addSelectionRow(group: string, key: string, name: string, objectIds: an
 
     if (ispy.use_line2) {
       if (key.includes("GlobalMuon") || key.includes("Electron") || key.includes("Photon")) {
-        sf.add(row_obj, "linewidth", 1, 5).onChange(function () {
+        sf.add(row_obj, "linewidth", 1, 5).onChange(() => {
           ispy.views.forEach((v) => {
-            let obj = ispy.scenes[v].getObjectByName(key);
+            const obj = ispy.scenes[v].getObjectByName(key);
 
             if (!obj) return;
 
-            obj.children.forEach(function (o) {
+            obj.children.forEach((o) => {
               if (!("material" in o)) return;
               (o.material as THREE.LineBasicMaterial).linewidth = row_obj.linewidth * 0.001;
             });
@@ -241,13 +242,13 @@ function addSelectionRow(group: string, key: string, name: string, objectIds: an
     }
 
     if (key.includes("Muons_") || key.includes("Electron") || key.includes("Tracks_")) {
-      sf.add(row_obj, "min_pt").onChange(function () {
+      sf.add(row_obj, "min_pt").onChange(() => {
         ispy.views.forEach((v) => {
-          let obj = ispy.scenes[v].getObjectByName(key);
+          const obj = ispy.scenes[v].getObjectByName(key);
 
           if (!obj) return;
 
-          obj.children.forEach(function (o) {
+          obj.children.forEach((o) => {
             o.visible = o.userData.pt < row_obj.min_pt ? false : true;
           });
         });
@@ -255,13 +256,13 @@ function addSelectionRow(group: string, key: string, name: string, objectIds: an
     }
 
     if (key.includes("Jet")) {
-      sf.add(row_obj, "min_et").onChange(function () {
+      sf.add(row_obj, "min_et").onChange(() => {
         ispy.views.forEach((v) => {
-          let obj = ispy.scenes[v].getObjectByName(key);
+          const obj = ispy.scenes[v].getObjectByName(key);
 
           if (!obj) return;
 
-          obj.children.forEach(function (o) {
+          obj.children.forEach((o) => {
             o.visible = o.userData.et < row_obj.min_et ? false : true;
           });
         });
@@ -269,22 +270,22 @@ function addSelectionRow(group: string, key: string, name: string, objectIds: an
     }
 
     if (key.includes("Photon")) {
-      sf.add(row_obj, "min_energy").onChange(function () {
+      sf.add(row_obj, "min_energy").onChange(() => {
         ispy.views.forEach((v) => {
-          let obj = ispy.scenes[v].getObjectByName(key);
+          const obj = ispy.scenes[v].getObjectByName(key);
 
           if (!obj) return;
 
-          obj.children.forEach(function (o) {
+          obj.children.forEach((o) => {
             o.visible = o.userData.energy < row_obj.min_energy ? false : true;
           });
         });
       });
     }
 
-    sf.addColor(row_obj, "color").onChange(function () {
+    sf.addColor(row_obj, "color").onChange(() => {
       ispy.views.forEach((v) => {
-        let obj = ispy.scenes[v].getObjectByName(key);
+        const obj = ispy.scenes[v].getObjectByName(key);
 
         if (!obj) return;
 
@@ -295,11 +296,11 @@ function addSelectionRow(group: string, key: string, name: string, objectIds: an
           event_description[v][key].style.color = row_obj.color;
         }
 
-        obj.children.forEach(function (o) {
-          o.traverse(function (oc) {
+        obj.children.forEach((o) => {
+          o.traverse((oc) => {
             // Special case to handle
             if (oc.type === "ArrowHelper" || key.includes("MET") || key.includes("Proton")) {
-              oc.children.forEach(function (og) {
+              oc.children.forEach((og) => {
                 if (!("material" in og)) return;
                 (og.material as THREE.LineBasicMaterial | THREE.MeshBasicMaterial).color = new THREE.Color(
                   row_obj.color,
@@ -319,45 +320,39 @@ function addSelectionRow(group: string, key: string, name: string, objectIds: an
 function addControllers(group: string) {
   //   let color = new THREE.Color();
   //   let linewidth = 1;
-  let min_pt = 1.0;
-  let jet_min_et = 1.0;
-  let nobjects = 0;
-  let hidden = false;
-  let visible = true;
-
   const row_obj = {
-    number: nobjects,
-    min_pt: min_pt,
-    Electrons: visible,
-    Muons: visible,
-    Photons: visible,
-    Jets: hidden,
-    MET: hidden,
-    "Jet: min Et": jet_min_et,
-    "Additional Tracks": visible,
+    number: 0,
+    min_pt: 1.0,
+    Electrons: true,
+    Muons: true,
+    Photons: true,
+    Jets: false,
+    MET: false,
+    "Jet: min Et": 1.0,
+    "Additional Tracks": true,
   };
 
-  let gui_elem = ispy.guiReduced;
+  const gui_elem = ispy.guiReduced;
 
-  let folder = gui_elem.__folders[group];
+  const folder = gui_elem.__folders[group];
 
-  let names = getSceneObjects();
+  const names = getSceneObjects();
 
   if (group.includes("Momentum Cut (GeV)")) {
     folder
       .add(row_obj, "min_pt", 0, 100)
       .name("min. p<sub>T, visible</sub>")
-      .onChange(function () {
+      .onChange(() => {
         ispy.views.forEach((v) => {
-          let physic_objs = [
+          const physic_objs = [
             ...ispy.scenes[v].getObjectByName("Physics")!.children,
             ...ispy.scenes[v].getObjectByName("Tracking")!.children,
           ].filter((o) => o.visible && o.children[0].userData.hasOwnProperty("pt"));
 
           if (!physic_objs.length) return;
 
-          physic_objs.forEach(function (obj) {
-            obj.children.forEach(function (o) {
+          physic_objs.forEach((obj) => {
+            obj.children.forEach((o) => {
               o.visible = o.userData.pt < row_obj.min_pt ? false : true;
             });
           });
@@ -367,13 +362,13 @@ function addControllers(group: string) {
     folder
       .add(row_obj, "Jet: min Et", 0, 200)
       .name("min. E<sub>T, Jets</sub>")
-      .onChange(function () {
+      .onChange(() => {
         ispy.views.forEach((v) => {
-          let physic_objs = ispy.scenes[v].getObjectByName(names["Jets"])!.children;
+          const physic_objs = ispy.scenes[v].getObjectByName(names["Jets"])!.children;
 
           if (!physic_objs.length) return;
 
-          physic_objs.forEach(function (o) {
+          physic_objs.forEach((o) => {
             o.visible = o.userData.et < row_obj["Jet: min Et"] ? false : true;
           });
         });
@@ -382,73 +377,67 @@ function addControllers(group: string) {
 
   if (group.includes("Show/Hide")) {
     // Helper function to toggle physics objects
-    let togglePhysicsObjects = function (leptongroup: string[], visibility: boolean) {
+    const togglePhysicsObjects = (leptongroup: string[], visibility: boolean) => {
       ispy.views.forEach((v) => {
         leptongroup.forEach((lepton) => {
-          let obj = ispy.scenes[v].getObjectByName(names[lepton]);
+          const obj = ispy.scenes[v].getObjectByName(names[lepton]);
           if (!obj) return;
           obj.visible = visibility;
         });
       });
     };
 
-    let pt_controller = ispy.subfoldersReduced.Controllers.filter((o) => o.property == "min_pt")[0];
-    let jet_controller = ispy.subfoldersReduced.Controllers.filter((o) => o.property == "Jet: min Et")[0];
+    const pt_controller = ispy.subfoldersReduced.Controllers.filter((o) => o.property === "min_pt")[0];
+    const jet_controller = ispy.subfoldersReduced.Controllers.filter((o) => o.property === "Jet: min Et")[0];
 
     folder.add(row_obj, "Electrons").onChange(function (this: SelectionFieldController) {
-      let val = this.getValue();
-      togglePhysicsObjects(["GsfElectrons"], val);
+      togglePhysicsObjects(["GsfElectrons"], this.getValue());
       // retoggle the pt controller to update the visibility
       pt_controller.setValue(pt_controller.getValue());
     });
 
     folder.add(row_obj, "Muons").onChange(function (this: SelectionFieldController) {
-      let val = this.getValue();
-      togglePhysicsObjects(["GlobalMuons", "TrackerMuons"], val);
+      togglePhysicsObjects(["GlobalMuons", "TrackerMuons"], this.getValue());
       // retoggle the pt controller to update the visibility
       pt_controller.setValue(pt_controller.getValue());
     });
 
     folder.add(row_obj, "Photons").onChange(function (this: SelectionFieldController) {
-      let val = this.getValue();
-      togglePhysicsObjects(["Photons"], val);
+      togglePhysicsObjects(["Photons"], this.getValue());
     });
 
     folder.add(row_obj, "Jets").onChange(function (this: SelectionFieldController) {
-      let val = this.getValue();
-      togglePhysicsObjects(["Jets"], val);
+      togglePhysicsObjects(["Jets"], this.getValue());
       // retoggle the jet controller to update the visibility
       jet_controller.setValue(jet_controller.getValue());
     });
 
     folder.add(row_obj, "MET").onChange(function (this: SelectionFieldController) {
-      let val = this.getValue();
-      togglePhysicsObjects(["METs"], val);
+      togglePhysicsObjects(["METs"], this.getValue());
     });
 
     folder.add(row_obj, "Additional Tracks").onChange(function (this: SelectionFieldController) {
-      let val = this.getValue();
-      togglePhysicsObjects(["Tracks"], val);
+      togglePhysicsObjects(["Tracks"], this.getValue());
     });
   }
 
   // add all controllers to the reduced subfolders for convenience
-  folder.__controllers.forEach(function (c) {
+  folder.__controllers.forEach((c) => {
     ispy.subfoldersReduced["Controllers"].push(c);
   });
 }
 
 function addInfo(group: string) {
-  let gui_elem = ispy.guiReduced;
+  const gui_elem = ispy.guiReduced;
 
-  let folder = gui_elem.__folders[group];
+  const folder = gui_elem.__folders[group];
 
-  let names = getSceneObjects();
+  const names = getSceneObjects();
   // pt is element 1 in the collection object (inconvinient definition by design)
-  let met_pt = ispy.current_event.Collections[names["METs"]][0][1];
+  const met_pt = ispy.current_event.Collections[names["METs"]][0][1];
 
   const row_obj = {
-    MET: met_pt.toFixed(2) + " GeV",
+    MET: `${met_pt.toFixed(2)} GeV`,
     Sel: "0",
     track: false,
   };
@@ -475,17 +464,17 @@ function addInfo(group: string) {
     });
 
   // add all controllers to the reduced subfolders for convenience
-  folder.__controllers.forEach(function (c) {
+  folder.__controllers.forEach((c) => {
     ispy.subfoldersReduced["Info"].push(c);
   });
 }
 
 function saveCutSettings() {
-  let settings: Record<string, any> = {};
-  let btn = ispy.guiReduced.__controllers.find((o) => o.property == "Keep Settings");
-  if (btn && btn.getValue()) {
-    let controllers = ispy.subfoldersReduced["Controllers"];
-    controllers.forEach(function (c) {
+  const settings: Record<string, any> = {};
+  const btn = ispy.guiReduced.__controllers.find((o) => o.property === "Keep Settings");
+  if (btn?.getValue()) {
+    const controllers = ispy.subfoldersReduced["Controllers"];
+    controllers.forEach((c) => {
       settings[c.property] = c.getValue();
     });
   }
@@ -496,13 +485,12 @@ function applySavedSettings(settings: any) {
   if (!Object.keys(settings).length) {
     return;
   }
-  let controllers = ispy.subfoldersReduced["Controllers"];
-  controllers.forEach(function (c) {
+  const controllers = ispy.subfoldersReduced["Controllers"];
+  controllers.forEach((c) => {
     if (c.property in settings) {
       c.setValue(settings[c.property]);
     }
   });
-  return {};
 }
 
 export {

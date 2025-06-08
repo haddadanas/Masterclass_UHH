@@ -4,12 +4,12 @@ import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
 import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
-import { addEvent, addDetector } from "./objects-add.js";
-import { addSelectionRow } from "./tree-view.js";
-import { changeMeshMaterials, getHTMLObject, toggleCollapse, cleanupData } from "./utils.js";
-import { ispy } from "./config.js";
-import { buildFileSummary, getPassingEvents } from "./uhh_selection.js";
-import { disabled } from "./objects-config.js";
+import { addEvent, addDetector } from "./objects-add";
+import { addSelectionRow } from "./tree-view";
+import { changeMeshMaterials, getHTMLObject, toggleCollapse, cleanupData } from "./utils";
+import { ispy } from "./config";
+import { buildFileSummary, getPassingEvents } from "./uhh_selection";
+import { disabled } from "./objects-config";
 
 function openDialog(id: string) {
   $(id).modal("show");
@@ -33,7 +33,7 @@ function hasFileAPI(): boolean {
 }
 
 function clearTable(id: string) {
-  let tbl = getHTMLObject(id) as HTMLTableElement;
+  const tbl = getHTMLObject(id) as HTMLTableElement;
 
   while (tbl.rows.length > 0) {
     tbl.deleteRow(0);
@@ -41,7 +41,7 @@ function clearTable(id: string) {
 }
 
 function selectEvent(index: number) {
-  getHTMLObject("selected-event").innerHTML = ispy.file_name + ": " + ispy.event_list[index];
+  getHTMLObject("selected-event").innerHTML = `${ispy.file_name}: ${ispy.event_list[index]}`;
   //$("#selected-event").html(ispy.file_name+': '+ispy.event_list[index]);
 
   ispy.event_index = index;
@@ -52,15 +52,14 @@ function selectEvent(index: number) {
 
 function updateEventList() {
   clearTable("browser-events");
-  let tbl = getHTMLObject("browser-events") as HTMLTableElement;
+  const tbl = getHTMLObject("browser-events") as HTMLTableElement;
 
   for (let i = 0; i < ispy.event_list.length; i++) {
-    let e = ispy.event_list[i];
-    let row = tbl.insertRow(tbl.rows.length);
-    let cell = row.insertCell(0);
+    const e = ispy.event_list[i];
+    const row = tbl.insertRow(tbl.rows.length);
+    const cell = row.insertCell(0);
 
-    cell.innerHTML =
-      '<a id="browser-event-' + i + '" class="event" onclick="selectEvent(\'' + i + "');\">" + e + "</a>";
+    cell.innerHTML = `<a id="browser-event-${i}" class="event" onclick="selectEvent('${i}');">${e}</a>`;
   }
 }
 
@@ -127,10 +126,11 @@ function loadEvent() {
     enableNextPrev();
     enableNextPrevSelected();
 
-    let ievent = +ispy.event_index + 1; // JavaScript!
+    const ievent = Number(ispy.event_index) + 1; // JavaScript!
 
-    getHTMLObject("event-loaded").innerHTML =
-      ispy.file_name + ":" + ispy.event_list[ispy.event_index] + "  [" + ievent + " of " + ispy.event_list.length + "]";
+    getHTMLObject("event-loaded").innerHTML = `${ispy.file_name}:${ispy.event_list[ispy.event_index]}  [${ievent} of ${
+      ispy.event_list.length
+    }]`;
     //$("#event-loaded").html(ispy.file_name + ":" + ispy.event_list[ispy.event_index] + "  [" + ievent + " of " + ispy.event_list.length + "]");
 
     console.log(ispy.current_event.Types);
@@ -153,13 +153,13 @@ function prevEvent() {
 }
 
 function nextSelectedEvent() {
-  let selectedEvents = getPassingEvents();
+  const selectedEvents = getPassingEvents();
   if (selectedEvents.length === 0) {
     return;
   }
 
-  let currentEvent = ispy.event_index;
-  let currentIndex = selectedEvents.indexOf(currentEvent.toString());
+  const currentEvent = ispy.event_index;
+  const currentIndex = selectedEvents.indexOf(currentEvent.toString());
   let nextIndex;
   if (currentIndex === -1) {
     nextIndex = selectedEvents.reduce((nearestIndex, currentValue, currentIndex) => {
@@ -179,13 +179,13 @@ function nextSelectedEvent() {
 }
 
 function prevSelectedEvent() {
-  let selectedEvents = getPassingEvents();
+  const selectedEvents = getPassingEvents();
   if (selectedEvents.length === 0) {
     return;
   }
 
-  let currentEvent = ispy.event_index;
-  let currentIndex = selectedEvents.indexOf(currentEvent.toString());
+  const currentEvent = ispy.event_index;
+  const currentIndex = selectedEvents.indexOf(currentEvent.toString());
   let nextIndex;
   if (currentIndex === -1) {
     nextIndex = selectedEvents.reduce((nearestIndex, currentValue, currentIndex) => {
@@ -210,14 +210,14 @@ function selectLocalFile(index: number) {
     alert("No local files loaded!");
     return;
   }
-  var reader = new FileReader();
+  let reader = new FileReader();
   ispy.file_name = ispy.local_files[index].name;
 
   reader.onload = function (e: ProgressEvent<FileReader>) {
     var data = e.target!.result;
-    var event_list: string[] = [];
+    const event_list: string[] = [];
     JSZip.loadAsync(data).then((zip) => {
-      $.each(zip.files, function (_index, zipEntry) {
+      $.each(zip.files, (_index, zipEntry) => {
         if (zipEntry.dir !== null && zipEntry.name !== "Header") {
           // TODO check how to access _data instead of dir
           if (zipEntry.name.split("/")[0] === "Geometry") {
@@ -243,22 +243,21 @@ function selectLocalFile(index: number) {
 
 function updateLocalFileList(list: FileList) {
   clearTable("browser-files");
-  let tbl = getHTMLObject("browser-files") as HTMLTableElement;
+  const tbl = getHTMLObject("browser-files") as HTMLTableElement;
 
   for (let i = 0; i < list.length; i++) {
-    let name = list[i].name;
-    let row = tbl.insertRow(tbl.rows.length);
-    let cell = row.insertCell(0);
-    let cls = "file";
+    const name = list[i].name;
+    const row = tbl.insertRow(tbl.rows.length);
+    const cell = row.insertCell(0);
+    const cls = "file";
 
-    cell.innerHTML =
-      '<a id="browser-file-' + i + '" class="' + cls + '" onclick="selectLocalFile(\'' + i + "');\">" + name + "</a>";
+    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}" onclick="selectLocalFile('${i}');">${name}</a>`;
   }
 }
 
 function loadLocalFiles() {
   if (!hasFileAPI()) {
-    var err_msg = "Sorry. You seeem to be using a browser that does not support FileReader API. ";
+    let err_msg = "Sorry. You seeem to be using a browser that does not support FileReader API. ";
     err_msg += "Please try with Chrome (6.0+), Firefox (3.6+), Safari (6.0+), or IE (10+). ";
     err_msg += "Alternatively, open a file from the web. ";
     alert(err_msg);
@@ -275,7 +274,7 @@ function loadLocalFiles() {
   getHTMLObject("selected-event").innerHTML = "Selected event";
   //$('#selected-event').html("Selected event");
 
-  let files = (getHTMLObject("local-files") as HTMLInputElement).files;
+  const files = (getHTMLObject("local-files") as HTMLInputElement).files;
   if (!files || files.length === 0) {
     alert("Please select a file to load!");
     return;
@@ -287,17 +286,17 @@ function loadLocalFiles() {
 }
 
 function loadDroppedFile(file: File) {
-  var reader = new FileReader();
+  const reader = new FileReader();
   ispy.file_name = file.name;
 
   //getHTMLObject('loading').style.display = 'block';
   $("#loading").modal("show");
 
   reader.onload = function (e) {
-    var data = e.target!.result;
-    var event_list: string[] = [];
+    const data = e.target!.result;
+    const event_list: string[] = [];
     JSZip.loadAsync(data).then((zip) => {
-      $.each(zip.files, function (index, zipEntry) {
+      $.each(zip.files, (_index, zipEntry) => {
         if (zipEntry.dir !== null && zipEntry.name !== "Header") {
           if (zipEntry.name.split("/")[0] === "Geometry") {
             ispy.isGeometry = true;
@@ -329,25 +328,25 @@ function loadDroppedFile(file: File) {
 function selectFile(filename: string) {
   clearTable("browser-events");
 
-  var new_file_name = filename.split("/")[2]; // of course this isn't a general case for files
+  let new_file_name = filename.split("/")[2]; // of course this isn't a general case for files
   ispy.file_name = new_file_name;
 
   //getHTMLObject('progress').style.display = 'block';
   $("#progress").modal("show");
 
-  var xhr = new XMLHttpRequest();
+  const xhr = new XMLHttpRequest();
   xhr.open("GET", filename, true);
   xhr.overrideMimeType("text/plain; charset=x-user-defined");
 
   clearTable("browser-events");
-  var ecell = (getHTMLObject("browser-events") as HTMLTableElement).insertRow(0).insertCell(0);
+  const ecell = (getHTMLObject("browser-events") as HTMLTableElement).insertRow(0).insertCell(0);
   ecell.innerHTML = "Loading events...";
 
   xhr.onprogress = function (evt) {
     if (evt.lengthComputable) {
-      var percentComplete = Math.round((evt.loaded / evt.total) * 100);
-      $(".progress-bar").attr("style", "width:" + percentComplete + "%;");
-      $(".progress-bar").html(percentComplete + "%");
+      const percentComplete = Math.round((evt.loaded / evt.total) * 100);
+      $(".progress-bar").attr("style", `width:${percentComplete}%;`);
+      $(".progress-bar").html(`${percentComplete}%`);
     }
   };
 
@@ -355,7 +354,7 @@ function selectFile(filename: string) {
     if (this.readyState === 4) {
       //getHTMLObject('progress').style.display = 'none';
 
-      let progress_bars = document.querySelectorAll("progress-bar");
+      const progress_bars = document.querySelectorAll("progress-bar");
       progress_bars.forEach((pb) => {
         (pb as HTMLDivElement).style.width = "0%";
         pb.innerHTML = "0%";
@@ -369,9 +368,9 @@ function selectFile(filename: string) {
 
   xhr.onload = function () {
     if (this.status === 200) {
-      var event_list: string[] = [];
+      const event_list: string[] = [];
       JSZip.loadAsync(xhr.responseText).then((zip) => {
-        $.each(zip.files, function (index, zipEntry) {
+        $.each(zip.files, (_index, zipEntry) => {
           if (zipEntry.dir && zipEntry.name !== "Header") {
             event_list.push(zipEntry.name);
           }
@@ -407,17 +406,16 @@ function loadWebFiles() {
   //$('#selected-event').html("Selected event");
   //$('#load-event').addClass('disabled');
 
-  let tbl = getHTMLObject("browser-files") as HTMLTableElement;
+  const tbl = getHTMLObject("browser-files") as HTMLTableElement;
 
   for (let i = 0; i < web_files.length; i++) {
-    let e = web_files[i];
-    let name = e.split("/")[2];
-    let row = tbl.insertRow(tbl.rows.length);
-    let cell = row.insertCell(0);
-    let cls = "file";
+    const e = web_files[i];
+    const name = e.split("/")[2];
+    const row = tbl.insertRow(tbl.rows.length);
+    const cell = row.insertCell(0);
+    const cls = "file";
 
-    cell.innerHTML =
-      '<a id="browser-file-' + i + '" class="' + cls + '" onclick="selectFile(\'' + e + "');\">" + name + "</a>";
+    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}" onclick="selectFile('${e}');">${name}</a>`;
   }
 }
 
@@ -466,17 +464,16 @@ function loadGLTFFiles() {
   //$('#selected-obj').html("Selected geometry");
   //$('#load-obj').addClass('disabled');
 
-  let tbl = getHTMLObject("obj-files") as HTMLTableElement;
+  const tbl = getHTMLObject("obj-files") as HTMLTableElement;
 
   for (let i = 0; i < gltf_files.length; i++) {
-    let e = gltf_files[i];
-    let name = e.split("/")[3];
-    let row = tbl.insertRow(tbl.rows.length);
-    let cell = row.insertCell(0);
-    let cls = "file";
+    const e = gltf_files[i];
+    const name = e.split("/")[3];
+    const row = tbl.insertRow(tbl.rows.length);
+    const cell = row.insertCell(0);
+    const cls = "file";
 
-    cell.innerHTML =
-      '<a id="browser-file-' + i + '" class="' + cls + '" onclick="selectGLTF(\'' + name + "');\">" + name + "</a>";
+    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}" onclick="selectGLTF('${name}');">${name}</a>`;
   }
 }
 
@@ -507,22 +504,21 @@ function loadObjFiles() {
   //$('#selected-obj').html("Selected geometry");
   //$('#load-obj').addClass('disabled');
 
-  let tbl = getHTMLObject("obj-files") as HTMLTableElement;
+  const tbl = getHTMLObject("obj-files") as HTMLTableElement;
 
   for (let i = 0; i < obj_files.length; i++) {
-    let e = obj_files[i];
-    let name = e.split("/")[3];
-    let row = tbl.insertRow(tbl.rows.length);
-    let cell = row.insertCell(0);
-    let cls = "file";
+    const e = obj_files[i];
+    const name = e.split("/")[3];
+    const row = tbl.insertRow(tbl.rows.length);
+    const cell = row.insertCell(0);
+    const cls = "file";
 
-    cell.innerHTML =
-      '<a id="browser-file-' + i + '" class="' + cls + '" onclick="selectObj(\'' + name + "');\">" + name + "</a>";
+    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}" onclick="selectObj('${name}');">${name}</a>`;
   }
 }
 
 function readOBJ(file: File, cb: (contents: string, name: string) => void) {
-  var reader = new FileReader();
+  const reader = new FileReader();
 
   reader.onload = function (e) {
     //getHTMLObject('loading').style.display = 'none';
@@ -538,10 +534,10 @@ function readOBJ(file: File, cb: (contents: string, name: string) => void) {
 }
 
 function loadOBJ(contents: string, name: string) {
-  let object = new OBJLoader().parse(contents);
+  const object = new OBJLoader().parse(contents);
   object.name = name;
 
-  (object.children as THREE.Mesh[]).forEach(function (c) {
+  (object.children as THREE.Mesh[]).forEach((c) => {
     changeMeshMaterials(c.material, (m) => {
       m.transparent = true;
       m.opacity = ispy.importTransparency;
@@ -554,7 +550,7 @@ function loadOBJ(contents: string, name: string) {
 }
 
 function readOBJMTL(file: File, mtl_file: File, cb: (obj: string, mtl_file: File, name: string) => void) {
-  let reader = new FileReader();
+  const reader = new FileReader();
 
   reader.onload = function (e) {
     cb(e.target!.result as string, mtl_file, file.name);
@@ -568,19 +564,18 @@ function readOBJMTL(file: File, mtl_file: File, cb: (obj: string, mtl_file: File
 }
 
 function loadOBJMTL(obj: string, mtl_file: File, name: string) {
-  let object = new OBJLoader().parse(obj);
-  let reader = new FileReader();
+  const object = new OBJLoader().parse(obj);
+  const reader = new FileReader();
 
   reader.onload = function (e) {
     // let mtl = e.target.result;
-    let materials_creator = new MTLLoader().parse(e.target!.result as string, "");
+    const materials_creator = new MTLLoader().parse(e.target!.result as string, "");
     materials_creator.preload();
 
-    object.traverse(function (o) {
+    object.traverse((o) => {
       if (o instanceof THREE.Mesh || o instanceof THREE.Line) {
         if (o.material.name) {
-          var material = materials_creator.create(o.material.name);
-
+          const material = materials_creator.create(o.material.name);
           if (material) {
             o.material = material;
             o.material.transparent = true;
@@ -608,7 +603,7 @@ function loadOBJMTL(obj: string, mtl_file: File, name: string) {
 
 function importModel() {
   if (!hasFileAPI()) {
-    var err_msg = "Sorry. You seeem to be using a browser that does not support FileReader API. ";
+    let err_msg = "Sorry. You seeem to be using a browser that does not support FileReader API. ";
     err_msg += "Please try with Chrome (6.0+), Firefox (3.6+), Safari (6.0+), or IE (10+). ";
     err_msg += "Alternatively, open a file from the web. ";
     alert(err_msg);
@@ -616,7 +611,7 @@ function importModel() {
     return;
   }
 
-  let files = (getHTMLObject("import-file") as HTMLInputElement).files;
+  const files = (getHTMLObject("import-file") as HTMLInputElement).files;
   if (!files || files.length === 0) {
     alert("Please select a file to load!");
     return;
@@ -631,9 +626,7 @@ function importModel() {
 
     if (extension !== "obj") {
       alert(
-        'The file you attempted to load: "' +
-          file_name +
-          '" does not appear (at least from the extension) to be an .obj file!',
+        `The file you attempted to load: "${file_name}" does not appear (at least from the extension) to be an .obj file!`,
       );
       return;
     }
@@ -650,8 +643,8 @@ function importModel() {
 
     let obj_file, mtl_file;
 
-    let ext1 = files[0].name.split(".").pop()!.toLowerCase();
-    let ext2 = files[1].name.split(".").pop()!.toLowerCase();
+    const ext1 = files[0].name.split(".").pop()!.toLowerCase();
+    const ext2 = files[1].name.split(".").pop()!.toLowerCase();
 
     if (ext1 === "obj" && ext2 === "mtl") {
       obj_file = files[0];
@@ -677,7 +670,6 @@ function importModel() {
     alert(
       "For now, this application supports either loading one .obj file or loading an .obj file and a corresponding .mtl file!",
     );
-    return;
   }
 }
 
@@ -692,15 +684,15 @@ function selectGLTF(gltf_file: string) {
 }
 
 function loadSelectedGLTF() {
-  let name = ispy.selected_gltf.split(".")[0];
-  let gltf_file = "./geometry/gltf/" + ispy.selected_gltf;
+  const name = ispy.selected_gltf.split(".")[0];
+  const gltf_file = `./geometry/gltf/${ispy.selected_gltf}`;
 
   const gltf_loader = new GLTFLoader();
 
-  gltf_loader.load(gltf_file, function (gltf) {
-    let object = gltf.scene.children[0];
+  gltf_loader.load(gltf_file, (gltf) => {
+    const object = gltf.scene.children[0];
 
-    (object.children as THREE.Mesh[]).forEach(function (c) {
+    (object.children as THREE.Mesh[]).forEach((c) => {
       changeMeshMaterials(c.material, (m) => {
         m.clippingPlanes = ispy.local_planes;
       });
@@ -724,28 +716,28 @@ function selectObj(obj_file: string) {
 }
 
 function loadSelectedObj() {
-  var name = ispy.selected_obj.split(".")[0];
-  var obj_file = "./geometry/obj/" + ispy.selected_obj;
-  var mtl_file = "./geometry/obj/" + name + ".mtl";
+  const name = ispy.selected_obj.split(".")[0];
+  const obj_file = `./geometry/obj/${ispy.selected_obj}`;
+  const mtl_file = `./geometry/obj/${name}.mtl`;
 
   loadOBJMTL_new(obj_file, mtl_file, name, name, "Imported", true);
 }
 
 function loadOBJMTL_new(obj_file: string, mtl_file: string, id: string, name: string, group: string, show: boolean) {
-  var mtl_loader = new MTLLoader();
+  const mtl_loader = new MTLLoader();
 
-  mtl_loader.load(mtl_file, function (materials) {
+  mtl_loader.load(mtl_file, (materials) => {
     materials.preload();
 
-    var obj_loader = new OBJLoader();
+    const obj_loader = new OBJLoader();
     obj_loader.setMaterials(materials);
 
-    obj_loader.load(obj_file, function (object) {
+    obj_loader.load(obj_file, (object) => {
       object.name = id;
       object.visible = show;
       disabled[object.name] = false;
 
-      (object.children as THREE.Mesh[]).forEach(function (c) {
+      (object.children as THREE.Mesh[]).forEach((c) => {
         changeMeshMaterials(c.material, (m) => {
           m.transparent = true;
           m.opacity = ispy.importTransparency;
@@ -1011,12 +1003,11 @@ function importDetector() {
   //getHTMLObject('loading').style.display = 'block';
   $("#loading").modal("show");
 
-  for (let g of gltf_objs) {
+  for (const g of gltf_objs) {
     gltf_loader.load(
       g.file,
-
-      function (gltf) {
-        let object = gltf.scene.children[0] as THREE.Object3D & {
+      (gltf) => {
+        const object = gltf.scene.children[0] as THREE.Object3D & {
           view?: string;
         };
 
@@ -1026,7 +1017,7 @@ function importDetector() {
 
         // Set render order for geometries
         // Otherwise they won't appear "in-front" of Imported geometries
-        (object.children as THREE.LineSegments[]).forEach(function (c) {
+        (object.children as THREE.LineSegments[]).forEach((c) => {
           c.renderOrder = 1;
           changeMeshMaterials(c.material, (m: THREE.Material) => {
             m.clippingPlanes = ispy.local_planes;

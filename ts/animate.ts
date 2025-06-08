@@ -1,8 +1,9 @@
+import { Easing, Tween } from "@tweenjs/tween.js";
+import { SphereGeometry, MeshBasicMaterial, Mesh } from "three";
+
 import { ispy } from "./config";
 import { resetView } from "./controls";
 import { showObject } from "./tree-view";
-import { Easing, Tween } from "@tweenjs/tween.js";
-import { SphereGeometry, MeshBasicMaterial, Mesh } from "three";
 
 // This is particular to the sequence below:
 // - Colliding bunch crossings
@@ -122,29 +123,29 @@ export function toggleAnimation() {
   if (ispy.animating) {
     resetView();
 
-    let home = ispy.camera.position;
+    const home = ispy.camera.position;
 
-    let length = ispy.camera.position.length();
-    let xs = [ispy.camera.position.x, 0];
-    let ys = [0, 0];
-    let zs = [ispy.camera.position.z, length];
+    const length = ispy.camera.position.length();
+    const xs = [ispy.camera.position.x, 0];
+    const ys = [0, 0];
+    const zs = [ispy.camera.position.z, length];
 
-    let zoom1 = new Tween(ispy.camera.position)
+    const zoom1 = new Tween(ispy.camera.position)
       .to({ x: xs, y: ys, z: zs }, animation.zoom.time)
       .easing(Easing.Sinusoidal.In);
 
-    let r = animation.rotation.radius;
+    const r = animation.rotation.radius;
 
-    let zoom2 = new Tween(ispy.camera.position)
+    const zoom2 = new Tween(ispy.camera.position)
       .to({ x: 0, y: 0, z: r }, animation.zoom.time)
       .easing(Easing.Sinusoidal.In);
 
-    let ns = animation.rotation.nsteps;
-    let s = animation.rotation.angle / ns;
+    const ns = animation.rotation.nsteps;
+    const s = animation.rotation.angle / ns;
 
-    let cx = [];
-    let cy = [];
-    let cz = [];
+    const cx = [];
+    const cy = [];
+    const cz = [];
 
     for (let i = 1; i <= ns; i++) {
       cx.push(r * Math.sin(s * i));
@@ -155,32 +156,32 @@ export function toggleAnimation() {
     let bs = 0;
     let es = ns / 2;
 
-    let c1x = cx.slice(0, es);
-    let c1y = cy.slice(0, es);
-    let c1z = cz.slice(0, es);
+    const c1x = cx.slice(0, es);
+    const c1y = cy.slice(0, es);
+    const c1z = cz.slice(0, es);
 
-    let rotation1 = new Tween(ispy.camera.position).to({ x: c1x, y: c1y, z: c1z }, animation.rotation.time);
+    const rotation1 = new Tween(ispy.camera.position).to({ x: c1x, y: c1y, z: c1z }, animation.rotation.time);
 
     // Split the rotation in half and
     // turn off tracks and turn on electrons/muons/jets
     bs = ns / 2 + 1;
     es = ns;
 
-    let c2x = cx.slice(bs, es);
-    let c2y = cy.slice(bs, es);
-    let c2z = cz.slice(bs, es);
+    const c2x = cx.slice(bs, es);
+    const c2y = cy.slice(bs, es);
+    const c2z = cz.slice(bs, es);
 
-    let rotation2 = new Tween(ispy.camera.position)
+    const rotation2 = new Tween(ispy.camera.position)
       .to({ x: c2x, y: c2y, z: c2z }, animation.rotation.time)
-      .onStart(function () {
-        animation.rotation.objects.forEach(function (o) {
+      .onStart(() => {
+        animation.rotation.objects.forEach((o) => {
           showObject(o.key, ispy.current_view, o.show);
         });
       });
 
-    let zoom3 = new Tween(ispy.camera.position)
+    const zoom3 = new Tween(ispy.camera.position)
       .to({ x: home.x, y: home.y, z: home.z }, 5000)
-      .onComplete(function () {
+      .onComplete(() => {
         if (animateElement) {
           animateElement.classList.toggle("active");
         }
@@ -189,15 +190,15 @@ export function toggleAnimation() {
 
     zoom3.delay(1000);
 
-    let pgeometry = new SphereGeometry(0.25, 32, 32);
-    let pmaterial = new MeshBasicMaterial({ color: 0xffff00 });
+    const pgeometry = new SphereGeometry(0.25, 32, 32);
+    const pmaterial = new MeshBasicMaterial({ color: 0xffff00 });
 
-    let proton1 = new Mesh(pgeometry, pmaterial);
+    const proton1 = new Mesh(pgeometry, pmaterial);
     proton1.position.x = animation.collision.proton1.pi.x;
     proton1.position.y = animation.collision.proton1.pi.y;
     proton1.position.z = animation.collision.proton1.pi.z;
 
-    let proton2 = new Mesh(pgeometry, pmaterial);
+    const proton2 = new Mesh(pgeometry, pmaterial);
     proton2.position.x = animation.collision.proton2.pi.x;
     proton2.position.y = animation.collision.proton2.pi.y;
     proton2.position.z = animation.collision.proton2.pi.z;
@@ -205,35 +206,35 @@ export function toggleAnimation() {
     ispy.scene.add(proton1);
     ispy.scene.add(proton2);
 
-    let c1 = new Tween(proton1.position)
+    const c1 = new Tween(proton1.position)
       .to({ z: 0.0 }, animation.collision.time)
-      .onStart(function () {
-        animation.collision.before_objects.forEach(function (o) {
+      .onStart(() => {
+        animation.collision.before_objects.forEach((o) => {
           showObject(o.key, ispy.current_view, o.show);
         });
       })
       .easing(Easing.Back.In);
 
-    let c2 = new Tween(proton2.position)
+    const c2 = new Tween(proton2.position)
       .to({ z: 0.0 }, animation.collision.time)
-      .onComplete(function () {
+      .onComplete(() => {
         zoom1.start();
-        animation.collision.after_objects.forEach(function (o) {
+        animation.collision.after_objects.forEach((o) => {
           showObject(o.key, ispy.current_view, o.show);
         });
       })
       .easing(Easing.Back.In);
 
-    let c3 = new Tween(proton1.position)
+    const c3 = new Tween(proton1.position)
       .to({ z: animation.collision.proton1.pf.z }, animation.collision.time)
-      .onComplete(function () {
+      .onComplete(() => {
         ispy.scene?.remove(proton1);
       })
       .easing(Easing.Back.Out);
 
-    let c4 = new Tween(proton2.position)
+    const c4 = new Tween(proton2.position)
       .to({ z: animation.collision.proton2.pf.z }, animation.collision.time)
-      .onComplete(function () {
+      .onComplete(() => {
         ispy.scene?.remove(proton2);
       })
       .easing(Easing.Back.Out);

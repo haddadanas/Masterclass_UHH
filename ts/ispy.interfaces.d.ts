@@ -1,4 +1,4 @@
-import { GUI } from "dat.gui";
+import { GUI, GUIController } from "dat.gui";
 import {
   Scene,
   WebGLRenderer,
@@ -9,7 +9,6 @@ import {
   Line,
   LineBasicMaterial,
 } from "three";
-import { GUIController } from "dat.gui";
 
 interface SubFolderReduced {
   Detector: string[];

@@ -14,6 +14,7 @@ import { toggleAnimation } from "./animate";
 import { nextEvent, prevEvent } from "./files-load";
 import { exportScene, zoomIn, zoomOut } from "./controls";
 import { event_description } from "./objects-config";
+
 import { TrackLine } from "./ispy.interfaces";
 
 function invertColors() {
@@ -25,7 +26,7 @@ function invertColors() {
     ispy.renderer.setClearColor(0xefefef, 1);
   }
 
-  let body = document.querySelector("body");
+  const body = document.querySelector("body");
   if (!body) {
     console.error("Body element not found");
     return;
@@ -33,7 +34,7 @@ function invertColors() {
   body.classList.toggle("white");
   body.classList.toggle("black");
 
-  let ids = [
+  const ids = [
     "event-info",
     "titlebar",
     "toolbar",
@@ -45,13 +46,13 @@ function invertColors() {
   ];
 
   ids.forEach((id) => {
-    let el = getHTMLObject(id);
+    const el = getHTMLObject(id);
 
     el.classList.toggle("white");
     el.classList.toggle("black");
   });
 
-  let selectors = ["#browser-table th", "#obj-table th", ".modal-content", ".modal-title", "#table-data-eventObject"];
+  const selectors = ["#browser-table th", "#obj-table th", ".modal-content", ".modal-title", "#table-data-eventObject"];
 
   selectors.forEach((sels) => {
     document.querySelectorAll(sels).forEach((s) => {
@@ -70,10 +71,14 @@ function setTransparency(t: number) {
 
   getHTMLObject("trspy").innerHTML = t.toString();
 
-  let imported = ispy.scene.getObjectByName("Imported")!;
+  const imported = ispy.scene.getObjectByName("Imported");
+  if (!imported) {
+    console.error("Imported object not found in the scene");
+    return;
+  }
 
-  imported.children.forEach(function (obj) {
-    (obj.children as Mesh[]).forEach(function (c) {
+  imported.children.forEach((obj) => {
+    (obj.children as Mesh[]).forEach((c) => {
       changeMeshMaterials(c.material, (m) => {
         m.transparent = true;
         m.opacity = t;
@@ -83,22 +88,22 @@ function setTransparency(t: number) {
 }
 
 function updateRendererInfo() {
-  var info = ispy.renderer.info;
+  const info = ispy.renderer.info;
 
-  var html = "<strong>" + ispy.renderer_name + " info: </strong>";
+  let html = `<strong>${ispy.renderer_name} info: </strong>`;
 
   html += "<dl>";
   html += "<dt><strong> render </strong></dt>";
 
-  for (let prop in info.render) {
-    html += "<dd>" + prop + ": " + info.render[prop] + "</dd>";
+  for (const prop in info.render) {
+    html += `<dd>${prop}: ${info.render[prop]}</dd>`;
   }
 
   if (info.memory) {
     html += "<dt><strong> memory </strong></dt>";
 
-    for (let prop in info.memory) {
-      html += "<dd>" + prop + ": " + info.memory[prop] + "</dd>";
+    for (const prop in info.memory) {
+      html += `<dd>${prop}: ${info.memory[prop]}</dd>`;
     }
   }
 
@@ -107,7 +112,7 @@ function updateRendererInfo() {
 
 function updateRenderer(type: string) {
   if (type === ispy.renderer_name) {
-    alert(type + " is already in use");
+    alert(`${type} is already in use`);
     return;
   }
   if (!ispy.camera) {
@@ -120,7 +125,7 @@ function updateRenderer(type: string) {
 
   useRenderer(type);
 
-  var controls = new TrackballControls(ispy.camera, ispy.renderer.domElement);
+  const controls = new TrackballControls(ispy.camera, ispy.renderer.domElement);
   controls.rotateSpeed = 3.0;
   controls.zoomSpeed = 0.5;
   ispy.controls = controls;
@@ -133,11 +138,11 @@ function onWindowResize() {
     console.error("Camera is not defined");
     return;
   }
-  let display = getHTMLObject("display");
+  const display = getHTMLObject("display");
   display.removeAttribute("style");
 
-  let w = display.clientWidth;
-  let h = display.clientHeight;
+  const w = display.clientWidth;
+  const h = display.clientHeight;
 
   if (ispy.is_perspective) {
     (ispy.camera as PerspectiveCamera).aspect = w / h;
@@ -156,7 +161,7 @@ function onWindowResize() {
 function getObjectIds(obj: Object3D): number[] {
   const ids: number[] = [];
 
-  obj.children.forEach(function (c) {
+  obj.children.forEach((c) => {
     ids.push(c.id);
   });
 
@@ -200,11 +205,11 @@ function onMouseMove(e: MouseEvent) {
   }
 
   if (intersects.length > 0) {
-    const res = intersects.filter(function (res) {
-      return res && res.object;
+    const res = intersects.filter((res) => {
+      return res?.object;
     })[0];
 
-    if (res && res.object) {
+    if (res?.object) {
       ispy.intersected = res.object as TrackLine;
 
       document.body.style.cursor = "pointer";
@@ -236,8 +241,8 @@ function onMouseMove(e: MouseEvent) {
   }
 }
 
-function onMouseDown(e: MouseEvent) {
-  if (ispy.intersected && ispy.intersected.visible) {
+function onMouseDown(_e: MouseEvent) {
+  if (ispy.intersected?.visible) {
     if (ispy.intersected.name.includes("Muon") || ispy.intersected.name.includes("Electron")) {
       if (ispy.intersected.selected) {
         const original_color = new Color(event_description[ispy.current_view][ispy.intersected.name].style.color);
@@ -266,7 +271,7 @@ function addKeyboardListeners() {
   //   }
   // });
 
-  document.addEventListener("keydown", function (e: KeyboardEvent) {
+  document.addEventListener("keydown", (e: KeyboardEvent) => {
     // Instead of a button, make output of 3D to JSON a "secret" key binding
     // If shift + e then export
     if (e.which === 69 && e.shiftKey) {
@@ -311,7 +316,7 @@ function addKeyboardListeners() {
     if (e.which === 72) {
       ispy.hide = true;
 
-      if (ispy.intersected && ispy.intersected.name.includes("Jet")) {
+      if (ispy.intersected?.name.includes("Jet")) {
         ispy.intersected.material.color = new Color(
           event_description[ispy.current_view][ispy.intersected.name].style.color,
         );
@@ -335,13 +340,13 @@ function addKeyboardListeners() {
 }
 
 function showMass() {
-  var m = 0;
-  var sumE = 0;
-  var sumPx = 0;
-  var sumPy = 0;
-  var sumPz = 0;
+  let mass = 0;
+  let sumE = 0;
+  let sumPx = 0;
+  let sumPy = 0;
+  let sumPz = 0;
 
-  ispy.selected_objects.forEach(function (o, _key) {
+  ispy.selected_objects.forEach((o, _key) => {
     sumE += o.fourVector.E;
     sumPx += o.fourVector.px;
     sumPy += o.fourVector.py;
@@ -359,11 +364,11 @@ function showMass() {
     o.selected = false;
   });
 
-  m = sumE * sumE;
-  m -= sumPx * sumPx + sumPy * sumPy + sumPz * sumPz;
-  m = Math.sqrt(m);
+  mass = sumE * sumE;
+  mass -= sumPx * sumPx + sumPy * sumPy + sumPz * sumPz;
+  mass = Math.sqrt(mass);
 
-  getHTMLObject("invariant-mass").innerHTML = m.toFixed(2);
+  getHTMLObject("invariant-mass").innerHTML = mass.toFixed(2);
   //document.getElementById('invariant-mass-modal').style.display = 'block';
   $("#invariant-mass-modal").modal("show");
 
@@ -378,7 +383,7 @@ function displayEventObjectData() {
   const key = ispy.intersected.name;
   const objectUserData = ispy.intersected.userData;
 
-  let [fourVector, ptype] = getFourVectorByIndex(key, objectUserData);
+  const [fourVector, ptype] = getFourVectorByIndex(key, objectUserData);
 
   ispy.intersected.fourVector = fourVector;
   ispy.intersected.ptype = ptype?.toString() || "";
@@ -391,12 +396,12 @@ function highlightObject(objectId: number) {
     console.error("Scene is not defined");
     return;
   }
-  var selected = ispy.scene.getObjectById(Number(objectId));
+  const selected = ispy.scene.getObjectById(Number(objectId));
 
   document.body.style.cursor = "pointer";
 
   if (selected) {
-    if (ispy.highlighted != selected && selected.visible) {
+    if (ispy.highlighted !== selected && selected.visible) {
       if (ispy.highlighted) {
         ispy.highlighted.material.color.setHex(ispy.highlighted.current_color);
       }

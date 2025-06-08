@@ -42,7 +42,6 @@ export {
 export const ispy: Ispy = {
   // Metadata and versioning
   version: "v1.0.0-UHH (dev)",
-  file_name: undefined,
   event_list: [],
   ig_data: null,
   ievent: 0,

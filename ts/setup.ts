@@ -1,18 +1,18 @@
 import THREE from "three";
 import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-
 import dat from "dat.gui";
-import * as TWEEN from "@tweenjs/tween.js";
+import { update } from "@tweenjs/tween.js";
 
 import { getHTMLObject } from "./utils";
 import { ispy } from "./config";
 import { importDetector, loadDroppedFile } from "./files-load";
 import { data_groups } from "./objects-config";
 import { onMouseDown, onMouseMove, onWindowResize } from "./display";
-import { SelectionFieldController } from "./ispy.interfaces";
 import { CHARGE_MAP, SELEC_NAME_MAP } from "./analysis_config";
 import { checkCurrentSelection } from "./uhh_selection";
+
+import { SelectionFieldController } from "./ispy.interfaces";
 
 function lookAtOrigin() {
   ispy.camera?.lookAt(new THREE.Vector3(0, 0, 0));
@@ -29,13 +29,13 @@ function setDisplayVerticalHeight(vh: number) {
   }
   ispy.vh = vh;
 
-  let vh_obj = getHTMLObject("vh");
+  const vh_obj = getHTMLObject("vh");
   vh_obj.innerHTML = vh.toString();
-  let display = getHTMLObject("display");
-  display.style.setProperty("height", vh + "vh");
+  const display = getHTMLObject("display");
+  display.style.setProperty("height", `${vh}vh`);
 
-  let w = display.clientWidth;
-  let h = display.clientHeight;
+  const w = display.clientWidth;
+  const h = display.clientHeight;
 
   if (ispy.is_perspective) {
     (ispy.camera as THREE.PerspectiveCamera).aspect = w / h;
@@ -317,7 +317,7 @@ function setupInset(height: number) {
 
   const font_loader = new THREE.FontLoader();
 
-  font_loader.load("./fonts/helvetiker_regular.typeface.json", function (font: THREE.Font) {
+  font_loader.load("./fonts/helvetiker_regular.typeface.json", (font: THREE.Font) => {
     const tps = { size: 0.75, height: 0.1, font: font };
 
     const x_geo = new THREE.TextGeometry("X", tps);
@@ -347,45 +347,45 @@ function setupInset(height: number) {
 
 function handleToggles() {
   // On page load hide the stats
-  let stats = getHTMLObject("stats");
+  const stats = getHTMLObject("stats");
   stats.style.display = "none";
 
-  let show_stats = getHTMLObject("show-stats") as HTMLInputElement;
+  const show_stats = getHTMLObject("show-stats") as HTMLInputElement;
 
   // FF keeps the check state on reload so force an "uncheck"
   show_stats.checked = false;
 
   show_stats.addEventListener("change", () =>
-    show_stats.checked == true ? (stats.style.display = "block") : (stats.style.display = "none"),
+    show_stats.checked === true ? (stats.style.display = "block") : (stats.style.display = "none"),
   );
 
-  let show_logo = getHTMLObject("show-logo") as HTMLInputElement;
+  const show_logo = getHTMLObject("show-logo") as HTMLInputElement;
   show_logo.checked = true;
 
   show_logo.addEventListener("change", (event: Event) => {
-    let cms_logo = getHTMLObject("cms-logo");
+    const cms_logo = getHTMLObject("cms-logo");
     return (event.target as HTMLInputElement).checked
       ? (cms_logo.style.display = "block")
       : (cms_logo.style.display = "none");
   });
 
   ispy.inverted_colors = false;
-  let invert_colors = getHTMLObject("invert-colors") as HTMLInputElement;
+  const invert_colors = getHTMLObject("invert-colors") as HTMLInputElement;
   invert_colors.checked = false;
 
-  let show_axes = getHTMLObject("show-axes") as HTMLInputElement;
+  const show_axes = getHTMLObject("show-axes") as HTMLInputElement;
 
   // FF keeps the state after a page refresh. Therefore force uncheck.
   show_axes.checked = false;
 
   show_axes.addEventListener("change", (event: Event) => {
-    let axes = getHTMLObject("axes");
+    const axes = getHTMLObject("axes");
     return (event.target as HTMLInputElement).checked ? (axes.style.display = "none") : (axes.style.display = "block");
   });
 
   ispy.use_line2 = false;
 
-  let pickable_lines = getHTMLObject("pickable_lines") as HTMLInputElement;
+  const pickable_lines = getHTMLObject("pickable_lines") as HTMLInputElement;
 
   pickable_lines.checked = false;
 
@@ -393,10 +393,10 @@ function handleToggles() {
     ispy.use_line2 = (event.target as HTMLInputElement).checked ? true : false;
   });
 
-  let clipgui = getHTMLObject("clipgui");
+  const clipgui = getHTMLObject("clipgui");
   clipgui.style.display = "none";
 
-  let clipping = getHTMLObject("clipping") as HTMLInputElement;
+  const clipping = getHTMLObject("clipping") as HTMLInputElement;
   clipping.checked = false;
 
   clipping.addEventListener("change", (event: Event) => {
@@ -479,14 +479,14 @@ function init() {
 
   ispy.views.forEach((v) => {
     ["Detector", "Imported"].concat(data_groups).forEach((g) => {
-      let obj_group = new THREE.Group();
+      const obj_group = new THREE.Group();
       obj_group.name = g;
       ispy.scenes[v].add(obj_group);
     });
   });
 
   getHTMLObject("version").innerHTML = ispy.version;
-  getHTMLObject("threejs").innerHTML = "r" + THREE.REVISION;
+  getHTMLObject("threejs").innerHTML = `r${THREE.REVISION}`;
   getHTMLObject("sweetalert").innerHTML = "2.1.0";
   // getHTMLObject("plotly").innerHTML = Plotly.version;
 
@@ -622,7 +622,7 @@ function initSelectionFields() {
 
     if (typeof row_obj[key] == "boolean") return;
     if (typeof row_obj[key] == "function") {
-      let btnContainer = cont.domElement.previousSibling as HTMLElement;
+      const btnContainer = cont.domElement.previousSibling as HTMLElement;
       btnContainer.style.width = "100%";
       btnContainer.style.height = "auto";
       btnContainer.id = "clickable-button";
@@ -663,7 +663,7 @@ function render() {
 }
 
 function run() {
-  setTimeout(function () {
+  setTimeout(() => {
     requestAnimationFrame(run);
   }, 1000 / ispy.framerate);
   if (!ispy.camera || !ispy.inset_camera) {
@@ -690,11 +690,11 @@ function run() {
   render();
 
   if (ispy.animating) {
-    TWEEN.update();
+    update();
   }
 
   if (ispy.autoRotating) {
-    var speed = Date.now() * 0.0005;
+    const speed = Date.now() * 0.0005;
     ispy.camera.position.x = Math.cos(speed) * 10;
     ispy.camera.position.z = Math.sin(speed) * 10;
   }

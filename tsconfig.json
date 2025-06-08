@@ -1,16 +1,15 @@
 {
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
-
     /* Language and Environment */
-    "target": "ES2022",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "module": "NodeNext",                                /* Specify what module code is generated. */
-    "rootDir": "./ts",                                   /* Specify the root folder within your source files. */
-    "outDir": "./dist",                                  /* Specify an output folder for all emitted files. */
-    "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
-    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
-    "strict": true,                                      /* Enable all strict type-checking options. */
-    "skipLibCheck": true,                                /* Skip type checking all .d.ts files. */
+    "target": "es2022", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "module": "es2022", /* Specify what module code is generated. */
+    "moduleResolution": "node10", /* Specify how TypeScript looks up a file from a given module specifier. */
+    "baseUrl": "./",
+    "rootDir": "./ts", /* Specify the root folder within your source files. */
+    "outDir": "./dist", /* Specify an output folder for all emitted files. */
+    "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    "skipLibCheck": true, /* Skip type checking all .d.ts files. */
     "paths": {
       "three/addons/loaders/*": [
         "node_modules/@types/three/examples/jsm/loaders/*",
@@ -19,13 +18,35 @@
         "node_modules/@types/three/examples/jsm/controls/*",
       ],
     },
-    "baseUrl": "./",
+    // Type Checking
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "useUnknownInCatchVariables": true,
+    // No unused code (4)
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    // No implicit code (2)
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    // Others (5)
+    // "noUncheckedIndexedAccess": true,
+    // "noPropertyAccessFromIndexSignature": true,
+    "noFallthroughCasesInSwitch": true,
+    "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "ts/**/*.ts",
-    "js/*.js"
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
 }

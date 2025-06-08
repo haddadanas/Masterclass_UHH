@@ -20,11 +20,10 @@ import {
   LineDashedMaterial,
   RingGeometry,
 } from "three";
-
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
-
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
+
 import { ispy } from "./config";
 import { getHTMLObject } from "./utils";
 
@@ -153,26 +152,26 @@ function makeSolidBoxRZ(data: any, ci: number) {
   };
 
   // Front vertices
-  let f1 = data[ci];
-  let f2 = data[ci + 1];
-  let f3 = data[ci + 2];
-  let f4 = data[ci + 3];
+  const f1 = data[ci];
+  const f2 = data[ci + 1];
+  const f3 = data[ci + 2];
+  const f4 = data[ci + 3];
 
   // Back vertices
-  let b1 = data[ci + 4];
-  let b2 = data[ci + 5];
-  let b3 = data[ci + 6];
-  let b4 = data[ci + 7];
+  const b1 = data[ci + 4];
+  const b2 = data[ci + 5];
+  const b3 = data[ci + 6];
+  const b4 = data[ci + 7];
 
-  let v0 = projectPoint(f1, f1);
-  let v1 = projectPoint(f2, f1);
-  let v2 = projectPoint(f3, f1);
-  let v3 = projectPoint(f4, f1);
+  const v0 = projectPoint(f1, f1);
+  const v1 = projectPoint(f2, f1);
+  const v2 = projectPoint(f3, f1);
+  const v3 = projectPoint(f4, f1);
 
-  let v4 = projectPoint(b1, f1);
-  let v5 = projectPoint(b2, f1);
-  let v6 = projectPoint(b3, f1);
-  let v7 = projectPoint(b4, f1);
+  const v4 = projectPoint(b1, f1);
+  const v5 = projectPoint(b2, f1);
+  const v6 = projectPoint(b3, f1);
+  const v7 = projectPoint(b4, f1);
 
   // front
   addFace3(v0, v1, v2);
@@ -213,15 +212,15 @@ function makeScaledSolidBox(data: any, boxes: any[], ci: number, energy: number,
     all_positions = all_positions.concat(...vectors);
   };
 
-  let v0 = new Vector3(...data[ci]);
-  let v1 = new Vector3(...data[ci + 1]);
-  let v2 = new Vector3(...data[ci + 2]);
-  let v3 = new Vector3(...data[ci + 3]);
+  const v0 = new Vector3(...data[ci]);
+  const v1 = new Vector3(...data[ci + 1]);
+  const v2 = new Vector3(...data[ci + 2]);
+  const v3 = new Vector3(...data[ci + 3]);
 
-  let v4 = new Vector3(...data[ci + 4]);
-  let v5 = new Vector3(...data[ci + 5]);
-  let v6 = new Vector3(...data[ci + 6]);
-  let v7 = new Vector3(...data[ci + 7]);
+  const v4 = new Vector3(...data[ci + 4]);
+  const v5 = new Vector3(...data[ci + 5]);
+  const v6 = new Vector3(...data[ci + 6]);
+  const v7 = new Vector3(...data[ci + 7]);
 
   scale = energy / scale;
 
@@ -296,16 +295,16 @@ function makeScaledSolidBoxRZ(data: any, boxes: any[], ci: number, energy: numbe
   };
 
   // Front vertices
-  let f1 = new Vector3(...data[ci]);
-  let f2 = new Vector3(...data[ci + 1]);
-  let f3 = new Vector3(...data[ci + 2]);
-  let f4 = new Vector3(...data[ci + 3]);
+  const f1 = new Vector3(...data[ci]);
+  const f2 = new Vector3(...data[ci + 1]);
+  const f3 = new Vector3(...data[ci + 2]);
+  const f4 = new Vector3(...data[ci + 3]);
 
   // Back vertices
-  let b1 = new Vector3(...data[ci + 4]);
-  let b2 = new Vector3(...data[ci + 5]);
-  let b3 = new Vector3(...data[ci + 6]);
-  let b4 = new Vector3(...data[ci + 7]);
+  const b1 = new Vector3(...data[ci + 4]);
+  const b2 = new Vector3(...data[ci + 5]);
+  const b3 = new Vector3(...data[ci + 6]);
+  const b4 = new Vector3(...data[ci + 7]);
 
   let yf1 = Math.sqrt(f1.x * f1.x + f1.y * f1.y);
   let yf2 = Math.sqrt(f2.x * f2.x + f2.y * f2.y);
@@ -331,15 +330,15 @@ function makeScaledSolidBoxRZ(data: any, boxes: any[], ci: number, energy: numbe
     x = -x;
   }
 
-  let v0 = new Vector3(x, yf1, f1.z);
-  let v1 = new Vector3(2 * x, yf2, f2.z);
-  let v2 = new Vector3(2 * x, yf3, f3.z);
-  let v3 = new Vector3(x, yf4, f4.z);
+  const v0 = new Vector3(x, yf1, f1.z);
+  const v1 = new Vector3(2 * x, yf2, f2.z);
+  const v2 = new Vector3(2 * x, yf3, f3.z);
+  const v3 = new Vector3(x, yf4, f4.z);
 
-  let v4 = new Vector3(x, yb1, b1.z);
-  let v5 = new Vector3(2 * x, yb2, b2.z);
-  let v6 = new Vector3(2 * x, yb3, b3.z);
-  let v7 = new Vector3(x, yb4, b4.z);
+  const v4 = new Vector3(x, yb1, b1.z);
+  const v5 = new Vector3(2 * x, yb2, b2.z);
+  const v6 = new Vector3(2 * x, yb3, b3.z);
+  const v7 = new Vector3(x, yb4, b4.z);
 
   scale = energy / scale;
 
@@ -414,16 +413,16 @@ function makeScaledSolidTower(data: any, towers: any[], ci: number, energy: numb
   };
 
   // Front vertices
-  let v0 = new Vector3(...data[ci]);
-  let v1 = new Vector3(...data[ci + 1]);
-  let v2 = new Vector3(...data[ci + 2]);
-  let v3 = new Vector3(...data[ci + 3]);
+  const v0 = new Vector3(...data[ci]);
+  const v1 = new Vector3(...data[ci + 1]);
+  const v2 = new Vector3(...data[ci + 2]);
+  const v3 = new Vector3(...data[ci + 3]);
 
   // Back vertices
-  let v4 = new Vector3(...data[ci + 4]);
-  let v5 = new Vector3(...data[ci + 5]);
-  let v6 = new Vector3(...data[ci + 6]);
-  let v7 = new Vector3(...data[ci + 7]);
+  const v4 = new Vector3(...data[ci + 4]);
+  const v5 = new Vector3(...data[ci + 5]);
+  const v6 = new Vector3(...data[ci + 6]);
+  const v7 = new Vector3(...data[ci + 7]);
 
   scale = energy / scale;
 
@@ -480,16 +479,16 @@ function makePFCandidateTowersRZ(data: any, towers: any[], ci: number, energy: n
   };
 
   // Front vertices
-  let f1 = new Vector3(...data[ci]);
-  let f2 = new Vector3(...data[ci + 1]);
-  let f3 = new Vector3(...data[ci + 2]);
-  let f4 = new Vector3(...data[ci + 3]);
+  const f1 = new Vector3(...data[ci]);
+  const f2 = new Vector3(...data[ci + 1]);
+  const f3 = new Vector3(...data[ci + 2]);
+  const f4 = new Vector3(...data[ci + 3]);
 
   // Back vertices
-  let b1 = new Vector3(...data[ci + 4]);
-  let b2 = new Vector3(...data[ci + 5]);
-  let b3 = new Vector3(...data[ci + 6]);
-  let b4 = new Vector3(...data[ci + 7]);
+  const b1 = new Vector3(...data[ci + 4]);
+  const b2 = new Vector3(...data[ci + 5]);
+  const b3 = new Vector3(...data[ci + 6]);
+  const b4 = new Vector3(...data[ci + 7]);
 
   let yf1 = Math.sqrt(f1.x * f1.x + f1.y * f1.y);
   let yf2 = Math.sqrt(f2.x * f2.x + f2.y * f2.y);
@@ -502,7 +501,7 @@ function makePFCandidateTowersRZ(data: any, towers: any[], ci: number, energy: n
   let yb4 = Math.sqrt(b4.x * b4.x + b4.y * b4.y);
 
   let x = 0.001;
-  let layer = -0.5;
+  const layer = -0.5;
 
   if (f1.y < 0.0) {
     yf1 = -yf1;
@@ -518,15 +517,15 @@ function makePFCandidateTowersRZ(data: any, towers: any[], ci: number, energy: n
 
   if (f2.z > 0.0) x = -x;
 
-  let v0 = new Vector3(layer + x, yf1, f1.z);
-  let v1 = new Vector3(layer + 2 * x, yf2, f2.z);
-  let v2 = new Vector3(layer + 2 * x, yf3, f3.z);
-  let v3 = new Vector3(layer + x, yf4, f4.z);
+  const v0 = new Vector3(layer + x, yf1, f1.z);
+  const v1 = new Vector3(layer + 2 * x, yf2, f2.z);
+  const v2 = new Vector3(layer + 2 * x, yf3, f3.z);
+  const v3 = new Vector3(layer + x, yf4, f4.z);
 
-  let v4 = new Vector3(layer + x, yb1, b1.z);
-  let v5 = new Vector3(layer + 2 * x, yb2, b2.z);
-  let v6 = new Vector3(layer + 2 * x, yb3, b3.z);
-  let v7 = new Vector3(layer + x, yb4, b4.z);
+  const v4 = new Vector3(layer + x, yb1, b1.z);
+  const v5 = new Vector3(layer + 2 * x, yb2, b2.z);
+  const v6 = new Vector3(layer + 2 * x, yb3, b3.z);
+  const v7 = new Vector3(layer + x, yb4, b4.z);
 
   scale = energy / scale;
 
@@ -583,16 +582,16 @@ function makePFCandidateTowers(data: any, towers: any[], ci: number, energy: num
   };
 
   // Front vertices
-  let v0 = new Vector3(...data[ci]);
-  let v1 = new Vector3(...data[ci + 1]);
-  let v2 = new Vector3(...data[ci + 2]);
-  let v3 = new Vector3(...data[ci + 3]);
+  const v0 = new Vector3(...data[ci]);
+  const v1 = new Vector3(...data[ci + 1]);
+  const v2 = new Vector3(...data[ci + 2]);
+  const v3 = new Vector3(...data[ci + 3]);
 
   // Back vertices
-  let v4 = new Vector3(...data[ci + 4]);
-  let v5 = new Vector3(...data[ci + 5]);
-  let v6 = new Vector3(...data[ci + 6]);
-  let v7 = new Vector3(...data[ci + 7]);
+  const v4 = new Vector3(...data[ci + 4]);
+  const v5 = new Vector3(...data[ci + 5]);
+  const v6 = new Vector3(...data[ci + 6]);
+  const v7 = new Vector3(...data[ci + 7]);
 
   scale = energy / scale;
 
@@ -641,16 +640,11 @@ function makePFCandidateTowers(data: any, towers: any[], ci: number, energy: num
   towers.push(tower);
 }
 
-function makeEcalPFCandidateTowers(
-  data: DetectorCollectionEntry,
-  towers: any[],
-  scale: number,
-  selection: Selection,
-): void {
+function makeEcalPFCandidateTowers(data: DetectorCollectionEntry, towers: any[], scale: number, selection: Selection) {
   const energy = data[0];
 
   if (energy > (selection.min_energy ?? 0)) {
-    return makePFCandidateTowers(data, towers, 6, energy, scale);
+    makePFCandidateTowers(data, towers, 6, energy, scale);
   }
 }
 
@@ -659,11 +653,11 @@ function makeEcalPFCandidateTowersRZ(
   towers: any[],
   scale: number,
   selection: Selection,
-): void {
+) {
   const energy = data[0];
 
   if (energy > (selection.min_energy ?? 0)) {
-    return makePFCandidateTowersRZ(data, towers, 6, energy, scale);
+    makePFCandidateTowersRZ(data, towers, 6, energy, scale);
   }
 }
 function makeHcalPFCandidateTowersRZ(
@@ -671,31 +665,26 @@ function makeHcalPFCandidateTowersRZ(
   towers: any[],
   scale: number,
   selection: Selection,
-): void {
+) {
   const energy = data[0];
 
   if (energy > (selection.min_energy ?? 0)) {
-    return makeScaledSolidTowerRZ(data, towers, 6, energy, scale);
+    makeScaledSolidTowerRZ(data, towers, 6, energy, scale);
   }
 }
 
-function makeHcalPFCandidateTowers(
-  data: DetectorCollectionEntry,
-  towers: any[],
-  scale: number,
-  selection: Selection,
-): void {
+function makeHcalPFCandidateTowers(data: DetectorCollectionEntry, towers: any[], scale: number, selection: Selection) {
   const energy = data[0];
 
   if (energy > (selection.min_energy ?? 0)) {
-    return makePFCandidateTowers(data, towers, 6, energy, scale);
+    makePFCandidateTowers(data, towers, 6, energy, scale);
   }
 }
 
 // Transform energy towers in R-Z view:
 // All hits above XZ plane go up, below - down.
 
-function makeScaledSolidTowerRZ(data: any, towers: any[], ci: number, energy: number, scale: number): void {
+function makeScaledSolidTowerRZ(data: any, towers: any[], ci: number, energy: number, scale: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -703,16 +692,16 @@ function makeScaledSolidTowerRZ(data: any, towers: any[], ci: number, energy: nu
   };
 
   // Front vertices
-  let f1 = new Vector3(...data[ci]);
-  let f2 = new Vector3(...data[ci + 1]);
-  let f3 = new Vector3(...data[ci + 2]);
-  let f4 = new Vector3(...data[ci + 3]);
+  const f1 = new Vector3(...data[ci]);
+  const f2 = new Vector3(...data[ci + 1]);
+  const f3 = new Vector3(...data[ci + 2]);
+  const f4 = new Vector3(...data[ci + 3]);
 
   // Back vertices
-  let b1 = new Vector3(...data[ci + 4]);
-  let b2 = new Vector3(...data[ci + 5]);
-  let b3 = new Vector3(...data[ci + 6]);
-  let b4 = new Vector3(...data[ci + 7]);
+  const b1 = new Vector3(...data[ci + 4]);
+  const b2 = new Vector3(...data[ci + 5]);
+  const b3 = new Vector3(...data[ci + 6]);
+  const b4 = new Vector3(...data[ci + 7]);
 
   let yf1 = Math.sqrt(f1.x * f1.x + f1.y * f1.y);
   let yf2 = Math.sqrt(f2.x * f2.x + f2.y * f2.y);
@@ -725,7 +714,7 @@ function makeScaledSolidTowerRZ(data: any, towers: any[], ci: number, energy: nu
   let yb4 = Math.sqrt(b4.x * b4.x + b4.y * b4.y);
 
   let x = 0.001;
-  let layer = -0.5;
+  const layer = -0.5;
 
   if (f1.y < 0) {
     yf1 = -yf1;
@@ -741,15 +730,15 @@ function makeScaledSolidTowerRZ(data: any, towers: any[], ci: number, energy: nu
 
   if (f2.z > 0) x = -x;
 
-  let v0 = new Vector3(layer + x, yf1, f1.z);
-  let v1 = new Vector3(layer + 2 * x, yf2, f2.z);
-  let v2 = new Vector3(layer + 2 * x, yf3, f3.z);
-  let v3 = new Vector3(layer + x, yf4, f4.z);
+  const v0 = new Vector3(layer + x, yf1, f1.z);
+  const v1 = new Vector3(layer + 2 * x, yf2, f2.z);
+  const v2 = new Vector3(layer + 2 * x, yf3, f3.z);
+  const v3 = new Vector3(layer + x, yf4, f4.z);
 
-  let v4 = new Vector3(layer + x, yb1, b1.z);
-  let v5 = new Vector3(layer + 2 * x, yb2, b2.z);
-  let v6 = new Vector3(layer + 2 * x, yb3, b3.z);
-  let v7 = new Vector3(layer + x, yb4, b4.z);
+  const v4 = new Vector3(layer + x, yb1, b1.z);
+  const v5 = new Vector3(layer + 2 * x, yb2, b2.z);
+  const v6 = new Vector3(layer + 2 * x, yb3, b3.z);
+  const v7 = new Vector3(layer + x, yb4, b4.z);
 
   scale = energy / scale;
 
@@ -826,8 +815,8 @@ function makeTrackPointsRZ(data: any[], extra: number[][][], assoc: number[][][]
   //   let cut = [];
   let mi = 0;
   let pi;
-  let positions: Vector3[][] = [];
-  let lps: Vector3[] = [];
+  const positions: Vector3[][] = [];
+  const lps: Vector3[] = [];
   let ap: number[][], ai: number;
 
   for (let i = 0; i < data.length; i++) {
@@ -851,9 +840,9 @@ function makeTrackPointsRZ(data: any[], extra: number[][][], assoc: number[][][]
     // }
   }
 
-  for (let j = 0; j < assoc.length; j++) {
-    mi = assoc[j][0][1];
-    pi = assoc[j][1][1];
+  for (const entry of assoc) {
+    mi = entry[0][1];
+    pi = entry[1][1];
 
     // if (ispy.use_line2) {
     //   positions[mi].push(projectPoint(...extra[pi][0], lps[mi]));
@@ -862,10 +851,10 @@ function makeTrackPointsRZ(data: any[], extra: number[][][], assoc: number[][][]
     // }
   }
 
-  let tcolor = new Color(style.color);
-  let transp = true;
+  const tcolor = new Color(style.color);
+  const transp = true;
 
-  let lines = [];
+  const lines = [];
 
   for (let k = 0; k < positions.length; k++) {
     // if (ispy.use_line2) {
@@ -911,15 +900,15 @@ function makeTrackPoints(data: any[], extra: number[][][], assoc: number[][][], 
   //   let cut = [];
   let mi = 0;
   let pi;
-  let positions: Vector3[][] = [];
+  const positions: Vector3[][] = [];
 
   for (let i = 0; i < data.length; i++) {
     positions[i] = [];
   }
 
-  for (let j = 0; j < assoc.length; j++) {
-    mi = assoc[j][0][1];
-    pi = assoc[j][1][1];
+  for (const j of assoc) {
+    mi = j[0][1];
+    pi = j[1][1];
 
     // if (ispy.use_line2) {
     //   positions[mi].push(...extra[pi][0]);
@@ -928,10 +917,10 @@ function makeTrackPoints(data: any[], extra: number[][][], assoc: number[][][], 
     // }
   }
 
-  let tcolor = new Color(style.color);
-  let transp = true;
+  const tcolor = new Color(style.color);
+  const transp = true;
 
-  let lines = [];
+  const lines = [];
 
   for (let k = 0; k < positions.length; k++) {
     // if (ispy.use_line2) {
@@ -978,15 +967,15 @@ function makeTracks(tracks: any[], extras: any[], assocs: any[], style: any, sel
   let p1, d1, p2, d2;
   let p3, p4;
   let distance, scale, curve;
-  let curves = [];
+  const curves = [];
 
-  let tcolor = new Color();
+  const tcolor = new Color();
   tcolor.setStyle(style.color);
 
   const transp = true;
 
   for (let i = 0; i < assocs.length; i++) {
-    let pt = tracks[i][selection.index];
+    const pt = tracks[i][selection.index];
     // let eta = tracks[i][4];
     // let phi = tracks[i][3];
 
@@ -1018,7 +1007,7 @@ function makeTracks(tracks: any[], extras: any[], assocs: any[], style: any, sel
     p4 = new Vector3(p2.x - scale * d2.x, p2.y - scale * d2.y, p2.z - scale * d2.z);
 
     curve = new CubicBezierCurve3(p1, p3, p4, p2);
-    let line = new Line(
+    const line = new Line(
       new BufferGeometry().setFromPoints(curve.getPoints(32)),
       new LineBasicMaterial({
         color: tcolor,
@@ -1044,15 +1033,15 @@ function makeTracksRZ(tracks: any[], extras: any[], assocs: any[], style: any, s
   let p1, d1, p2, d2;
   let p3, p4;
   let distance, scale, curve;
-  let curves = [];
+  const curves = [];
 
-  let tcolor = new Color();
+  const tcolor = new Color();
   tcolor.setStyle(style.color);
 
   const transp = true;
 
   for (let i = 0; i < assocs.length; i++) {
-    let pt = tracks[i][selection.index];
+    const pt = tracks[i][selection.index];
     // let eta = tracks[i][4];
     // let phi = tracks[i][3];
 
@@ -1086,7 +1075,7 @@ function makeTracksRZ(tracks: any[], extras: any[], assocs: any[], style: any, s
     p4 = new Vector3(p2.x - scale * d2.x, p2.y - scale * d2.y, p2.z - scale * d2.z);
 
     curve = new CubicBezierCurve3(p1, p3, p4, p2);
-    let line = new Line(
+    const line = new Line(
       new BufferGeometry().setFromPoints(curve.getPoints(32)),
       new LineBasicMaterial({
         color: tcolor,
@@ -1112,15 +1101,15 @@ function makeThickTracks(tracks: any[], extras: any[], assocs: any[], style: any
   let p1, d1, p2, d2;
   let p3, p4;
   let distance, scale, curve;
-  let curves = [];
+  const curves = [];
 
-  let tcolor = new Color();
+  const tcolor = new Color();
   tcolor.setStyle(style.color);
 
   const transp = true;
 
   for (let i = 0; i < assocs.length; i++) {
-    let pt = tracks[i][selection.index];
+    const pt = tracks[i][selection.index];
     // let eta = tracks[i][4];
     // let phi = tracks[i][3];
 
@@ -1154,14 +1143,14 @@ function makeThickTracks(tracks: any[], extras: any[], assocs: any[], style: any
     curve = new CubicBezierCurve3(p1, p3, p4, p2);
 
     if (ispy.use_line2) {
-      let lg = new LineGeometry();
-      let positions: number[] = [];
-      curve.getPoints(32).forEach(function (p) {
+      const lg = new LineGeometry();
+      const positions: number[] = [];
+      curve.getPoints(32).forEach((p) => {
         positions.push(p.x, p.y, p.z);
       });
       lg.setPositions(positions);
 
-      let line = new Line2(
+      const line = new Line2(
         lg,
         new LineMaterial({
           color: tcolor.getHex(),
@@ -1177,7 +1166,7 @@ function makeThickTracks(tracks: any[], extras: any[], assocs: any[], style: any
       line.visible = pt > selection.min_pt ? true : false;
       curves.push(line);
     } else {
-      let line = new Line(
+      const line = new Line(
         new BufferGeometry().setFromPoints(curve.getPoints(32)),
         new LineBasicMaterial({
           color: tcolor,
@@ -1204,15 +1193,15 @@ function makeThickTracksRZ(tracks: any[], extras: any[], assocs: any[], style: a
   let p1, d1, p2, d2;
   let p3, p4;
   let distance, scale, curve;
-  let curves = [];
+  const curves = [];
 
-  let tcolor = new Color();
+  const tcolor = new Color();
   tcolor.setStyle(style.color);
 
   const transp = true;
 
   for (let i = 0; i < assocs.length; i++) {
-    let pt = tracks[i][selection.index];
+    const pt = tracks[i][selection.index];
     // let eta = tracks[i][4];
     // let phi = tracks[i][3];
 
@@ -1248,14 +1237,14 @@ function makeThickTracksRZ(tracks: any[], extras: any[], assocs: any[], style: a
     curve = new CubicBezierCurve3(p1, p3, p4, p2);
 
     if (ispy.use_line2) {
-      let lg = new LineGeometry();
-      let positions: number[] = [];
-      curve.getPoints(32).forEach(function (p) {
+      const lg = new LineGeometry();
+      const positions: number[] = [];
+      curve.getPoints(32).forEach((p) => {
         positions.push(p.x, p.y, p.z);
       });
       lg.setPositions(positions);
 
-      let line = new Line2(
+      const line = new Line2(
         lg,
         new LineMaterial({
           color: tcolor.getHex(),
@@ -1271,7 +1260,7 @@ function makeThickTracksRZ(tracks: any[], extras: any[], assocs: any[], style: a
       line.visible = pt > selection.min_pt ? true : false;
       curves.push(line);
     } else {
-      let line = new Line(
+      const line = new Line(
         new BufferGeometry().setFromPoints(curve.getPoints(32)),
         new LineBasicMaterial({
           color: tcolor,
@@ -1354,28 +1343,28 @@ function makeCaloClusters(_data: any[], extra: any[], assoc: any[], style: any, 
     throw "No association!";
   }
 
-  var ri = 0;
-  var boxes = [];
+  let ri = 0;
+  const boxes = [];
 
-  for (var j = 0; j < assoc.length; j++) {
+  for (let j = 0; j < assoc.length; j++) {
     ri = assoc[j][1][1];
     boxes[j] = makeSolidFace(extra[ri], 2);
   }
 
-  var ccolor = new Color(style.color);
+  const ccolor = new Color(style.color);
 
-  var transp = false;
+  let transp = false;
 
   if (style.opacity < 1.0) {
     transp = true;
   }
 
-  var clusters = [];
+  const clusters = [];
 
-  for (var k = 0; k < boxes.length; k++) {
+  for (const box of boxes) {
     clusters.push(
       new Mesh(
-        boxes[k],
+        box,
         new MeshBasicMaterial({
           color: ccolor,
           transparent: transp,
@@ -1393,7 +1382,7 @@ function makeEcalDigi(data: any, boxes: any[], scale: number, selection: any) {
   const energy = data[0];
 
   if (energy > selection.min_energy) {
-    return makeScaledSolidTower(data, boxes, 15, energy, scale);
+    makeScaledSolidTower(data, boxes, 15, energy, scale);
   }
 }
 
@@ -1401,7 +1390,7 @@ function makeERecHit_V2(data: any, boxes: any[], scale: number, selection: any) 
   const energy = data[0];
 
   if (energy > selection.min_energy) {
-    return makeScaledSolidTower(data, boxes, 5, energy, scale);
+    makeScaledSolidTower(data, boxes, 5, energy, scale);
   }
 }
 
@@ -1409,7 +1398,7 @@ function makeHRecHit_V2(data: any, geometry: any[], scale: number, selection: an
   const energy = data[0];
 
   if (energy > selection.min_energy) {
-    return makeScaledSolidBox(data, geometry, 5, energy, scale);
+    makeScaledSolidBox(data, geometry, 5, energy, scale);
   }
 }
 
@@ -1417,7 +1406,7 @@ function makeERecHit_RZ(data: any, boxes: any[], scale: number, selection: any) 
   const energy = data[0];
 
   if (energy > selection.min_energy) {
-    return makeScaledSolidTowerRZ(data, boxes, 5, energy, scale);
+    makeScaledSolidTowerRZ(data, boxes, 5, energy, scale);
   }
 }
 
@@ -1425,7 +1414,7 @@ function makeHRecHit_RZ(data: any, geometry: any[], scale: number, selection: an
   const energy = data[0];
 
   if (energy > selection.min_energy) {
-    return makeScaledSolidBoxRZ(data, geometry, 5, energy, scale);
+    makeScaledSolidBoxRZ(data, geometry, 5, energy, scale);
   }
 }
 
@@ -1433,7 +1422,7 @@ function makeHGCRecHit(data: any, geometry: any[], scale: number, selection: any
   const energy = data[0];
 
   if (energy > selection.min_energy) {
-    return makeScaledSolidBox(data, geometry, 5, energy, 0.05 * scale);
+    makeScaledSolidBox(data, geometry, 5, energy, 0.05 * scale);
   }
 }
 
@@ -1444,36 +1433,36 @@ function makeCaloTower(data: any, egeometry: any[], hgeometry: any[], scale: num
     all_positions = all_positions.concat(...vectors);
   };
 
-  let et = data[0];
+  const et = data[0];
 
-  let emEnergy = data[5];
-  let hadEnergy = data[4];
+  const emEnergy = data[5];
+  const hadEnergy = data[4];
 
-  let eta = data[1];
-  //   let phi = data[2];
+  const eta = data[1];
+  //   const phi = data[2];
 
-  let theta = 2 * Math.atan(Math.exp(-eta));
+  const theta = 2 * Math.atan(Math.exp(-eta));
 
-  let ci = 11;
+  const ci = 11;
 
   if (et > selection.min_energy) {
-    let f1 = new Vector3(...data[ci]);
-    let f2 = new Vector3(...data[ci + 1]);
-    let f3 = new Vector3(...data[ci + 2]);
-    let f4 = new Vector3(...data[ci + 3]);
+    const f1 = new Vector3(...data[ci]);
+    const f2 = new Vector3(...data[ci + 1]);
+    const f3 = new Vector3(...data[ci + 2]);
+    const f4 = new Vector3(...data[ci + 3]);
 
-    let b1e = new Vector3(...data[ci + 4]);
-    let b2e = new Vector3(...data[ci + 5]);
-    let b3e = new Vector3(...data[ci + 6]);
-    let b4e = new Vector3(...data[ci + 7]);
+    const b1e = new Vector3(...data[ci + 4]);
+    const b2e = new Vector3(...data[ci + 5]);
+    const b3e = new Vector3(...data[ci + 6]);
+    const b4e = new Vector3(...data[ci + 7]);
 
-    let b1h = b1e;
-    let b2h = b2e;
-    let b3h = b3e;
-    let b4h = b4e;
+    const b1h = b1e;
+    const b2h = b2e;
+    const b3h = b3e;
+    const b4h = b4e;
 
-    let escale = scale * (emEnergy > 0 ? emEnergy * Math.sin(theta) : 0);
-    let hscale = scale * (hadEnergy > 0 ? hadEnergy * Math.sin(theta) : 0);
+    const escale = scale * (emEnergy > 0 ? emEnergy * Math.sin(theta) : 0);
+    const hscale = scale * (hadEnergy > 0 ? hadEnergy * Math.sin(theta) : 0);
 
     if (escale > 0) {
       b1e.normalize();
@@ -1519,7 +1508,7 @@ function makeCaloTower(data: any, egeometry: any[], hgeometry: any[], scale: num
     all_positions = [];
 
     if (hscale > 0) {
-      let v = [];
+      const v = [];
 
       if (escale > 0) {
         v.push(b1e);
@@ -1621,10 +1610,10 @@ function makeRPC(rpc: any) {
 }
 
 function makePointCloud(data: any[], index: number) {
-  var geometry = new BufferGeometry();
-  var positions = new Float32Array(data.length * 3);
+  const geometry = new BufferGeometry();
+  const positions = new Float32Array(data.length * 3);
 
-  for (var i = 0; i < data.length; i++) {
+  for (let i = 0; i < data.length; i++) {
     positions[i * 3 + 0] = data[i][index][0];
     positions[i * 3 + 1] = data[i][index][1];
     positions[i * 3 + 2] = data[i][index][2];
@@ -1637,13 +1626,13 @@ function makePointCloud(data: any[], index: number) {
 }
 
 function makePointCloudRZ(data: any[], index: number) {
-  var geometry = new BufferGeometry();
-  var positions = new Float32Array(data.length * 3);
+  const geometry = new BufferGeometry();
+  const positions = new Float32Array(data.length * 3);
 
-  for (var i = 0; i < data.length; i++) {
-    let point = [data[i][index][0], data[i][index][1], data[i][index][2]];
+  for (let i = 0; i < data.length; i++) {
+    const point = [data[i][index][0], data[i][index][1], data[i][index][2]];
 
-    let proj = projectPoint(point, point);
+    const proj = projectPoint(point, point);
 
     positions[i * 3 + 0] = proj[0];
     positions[i * 3 + 1] = proj[1];
@@ -1742,19 +1731,19 @@ function makeMET(data: any, style: any, selection: any) {
   const px = data[2];
   const py = data[3];
 
-  let d = 1.45; // ECAL barrel radius
+  const d = 1.45; // ECAL barrel radius
   let length = pt * style.scale;
 
   // Clamp length of MET
   length = length + d > 5 ? 5 : length;
 
-  let dir = new Vector3(px, py, 0);
+  const dir = new Vector3(px, py, 0);
   dir.normalize();
 
-  let origin = new Vector3(0, 0, 0);
-  let color = new Color(style.color);
+  const origin = new Vector3(0, 0, 0);
+  const color = new Color(style.color);
 
-  var met;
+  let met;
 
   if (ispy.use_line2) {
     met = makeArrowThick(
@@ -1777,12 +1766,12 @@ function makeMET(data: any, style: any, selection: any) {
 }
 
 function projectThetaPhi(theta: number, phi: number) {
-  let x = Math.cos(theta) * Math.sin(phi);
-  let y = Math.sin(theta) * Math.sin(phi);
-  let z = Math.cos(theta);
+  const x = Math.cos(theta) * Math.sin(phi);
+  const y = Math.sin(theta) * Math.sin(phi);
+  const z = Math.cos(theta);
 
-  let sign = y < 0.0 ? -1 : 1;
-  let size = Math.sqrt(x * x + y * y);
+  const sign = y < 0.0 ? -1 : 1;
+  const size = Math.sqrt(x * x + y * y);
 
   // Return new theta and phi
   return [Math.acos(z), Math.atan2(sign * size, 0)];
@@ -1795,18 +1784,18 @@ function makeJet(data: any, style: any, selection: any) {
   const theta = data[2];
   const phi = data[3];
 
-  let ct = Math.cos(theta);
-  let st = Math.sin(theta);
-  let cp = Math.cos(phi);
-  let sp = Math.sin(phi);
+  const ct = Math.cos(theta);
+  const st = Math.sin(theta);
+  const cp = Math.cos(phi);
+  const sp = Math.sin(phi);
 
-  let maxZ = 2.25;
-  let maxR = 1.1;
+  const maxZ = 2.25;
+  const maxR = 1.1;
 
-  let length1 = ct ? maxZ / Math.abs(ct) : maxZ;
-  let length2 = st ? maxR / Math.abs(st) : maxR;
-  let length = length1 < length2 ? length1 : length2;
-  let radius = 0.3 * (1.0 / (1 + 0.001));
+  const length1 = ct ? maxZ / Math.abs(ct) : maxZ;
+  const length2 = st ? maxR / Math.abs(st) : maxR;
+  const length = length1 < length2 ? length1 : length2;
+  const radius = 0.3 * (1.0 / (1 + 0.001));
 
   // radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded
   const geometry = new CylinderGeometry(radius, 0.0, length, 16, 1, true);
@@ -1814,7 +1803,7 @@ function makeJet(data: any, style: any, selection: any) {
   geometry.applyMatrix4(new Matrix4().makeTranslation(0, length * 0.5, 0));
   geometry.applyMatrix4(new Matrix4().makeRotationX(Math.PI / 2));
 
-  let jcolor = new Color(style.color);
+  const jcolor = new Color(style.color);
 
   let transp = false;
 
@@ -1853,16 +1842,16 @@ function makeJetRZ(data: any, style: any, selection: any) {
 
   let ct = Math.cos(theta);
   let st = Math.sin(theta);
-  let cp = Math.cos(phi);
-  let sp = Math.sin(phi);
+  // let cp = Math.cos(phi);  TODO check if needed
+  const sp = Math.sin(phi);
 
-  let maxZ = 2.25;
-  let maxR = 1.1;
+  const maxZ = 2.25;
+  const maxR = 1.1;
 
-  let length1 = ct ? maxZ / Math.abs(ct) : maxZ;
-  let length2 = st ? maxR / Math.abs(st) : maxR;
-  let length = length1 < length2 ? length1 : length2;
-  let radius = 0.3 * (1.0 / (1 + 0.001));
+  const length1 = ct ? maxZ / Math.abs(ct) : maxZ;
+  const length2 = st ? maxR / Math.abs(st) : maxR;
+  const length = length1 < length2 ? length1 : length2;
+  const radius = 0.3 * (1.0 / (1 + 0.001));
 
   // radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded
   const geometry = new CylinderGeometry(radius, 0.0, length, 16, 1, true);
@@ -1870,7 +1859,7 @@ function makeJetRZ(data: any, style: any, selection: any) {
   geometry.applyMatrix4(new Matrix4().makeTranslation(0, length * 0.5, 0));
   geometry.applyMatrix4(new Matrix4().makeRotationX(Math.PI / 2));
 
-  let jcolor = new Color(style.color);
+  const jcolor = new Color(style.color);
 
   let transp = false;
 
@@ -1889,9 +1878,9 @@ function makeJetRZ(data: any, style: any, selection: any) {
 
   const jet = new Mesh(geometry, material);
 
-  let angles = projectThetaPhi(theta, phi);
+  const angles = projectThetaPhi(theta, phi);
   st = Math.sin(angles[0]);
-  cp = Math.cos(angles[1]);
+  const cp = Math.cos(angles[1]);
   ct = Math.cos(angles[0]);
 
   jet.lookAt(new Vector3(length * 0.5 * st * cp, length * 0.5 * st * sp, length * 0.5 * ct));
@@ -1915,18 +1904,18 @@ function makeJetWithVertex(data: any, style: any, selection: any) {
 
   const vertex = new Vector3(...data[4]);
 
-  let ct = Math.cos(theta);
-  let st = Math.sin(theta);
-  let cp = Math.cos(phi);
-  let sp = Math.sin(phi);
+  const ct = Math.cos(theta);
+  const st = Math.sin(theta);
+  const cp = Math.cos(phi);
+  const sp = Math.sin(phi);
 
-  let maxZ = 2.25;
-  let maxR = 1.1;
+  const maxZ = 2.25;
+  const maxR = 1.1;
 
-  let length1 = ct ? maxZ / Math.abs(ct) : maxZ;
-  let length2 = st ? maxR / Math.abs(st) : maxR;
-  let length = length1 < length2 ? length1 : length2;
-  let radius = 0.3 * (1.0 / (1 + 0.001));
+  const length1 = ct ? maxZ / Math.abs(ct) : maxZ;
+  const length2 = st ? maxR / Math.abs(st) : maxR;
+  const length = length1 < length2 ? length1 : length2;
+  const radius = 0.3 * (1.0 / (1 + 0.001));
 
   // radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded
   const geometry = new CylinderGeometry(radius, 0.0, length, 16, 1, true);
@@ -1934,7 +1923,7 @@ function makeJetWithVertex(data: any, style: any, selection: any) {
   geometry.applyMatrix4(new Matrix4().makeTranslation(0, length * 0.5, 0));
   geometry.applyMatrix4(new Matrix4().makeRotationX(Math.PI / 2));
 
-  let jcolor = new Color(style.color);
+  const jcolor = new Color(style.color);
   let transp = false;
 
   if (style.opacity < 1.0) {
@@ -1979,16 +1968,16 @@ function makeJetWithVertexRZ(data: any, style: any, selection: any) {
 
   let ct = Math.cos(theta);
   let st = Math.sin(theta);
-  let cp = Math.cos(phi);
-  let sp = Math.sin(phi);
+  // let cp = Math.cos(phi);
+  const sp = Math.sin(phi);
 
-  let maxZ = 2.25;
-  let maxR = 1.1;
+  const maxZ = 2.25;
+  const maxR = 1.1;
 
-  let length1 = ct ? maxZ / Math.abs(ct) : maxZ;
-  let length2 = st ? maxR / Math.abs(st) : maxR;
-  let length = length1 < length2 ? length1 : length2;
-  let radius = 0.3 * (1.0 / (1 + 0.001));
+  const length1 = ct ? maxZ / Math.abs(ct) : maxZ;
+  const length2 = st ? maxR / Math.abs(st) : maxR;
+  const length = length1 < length2 ? length1 : length2;
+  const radius = 0.3 * (1.0 / (1 + 0.001));
 
   // radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded
   const geometry = new CylinderGeometry(radius, 0.0, length, 16, 1, true);
@@ -1996,7 +1985,7 @@ function makeJetWithVertexRZ(data: any, style: any, selection: any) {
   geometry.applyMatrix4(new Matrix4().makeTranslation(0, length * 0.5, 0));
   geometry.applyMatrix4(new Matrix4().makeRotationX(Math.PI / 2));
 
-  let jcolor = new Color(style.color);
+  const jcolor = new Color(style.color);
   let transp = false;
 
   if (style.opacity < 1.0) {
@@ -2018,9 +2007,9 @@ function makeJetWithVertexRZ(data: any, style: any, selection: any) {
   jet.position.y = vertex.y;
   jet.position.z = vertex.z;
 
-  let angles = projectThetaPhi(theta, phi);
+  const angles = projectThetaPhi(theta, phi);
   st = Math.sin(angles[0]);
-  cp = Math.cos(angles[1]);
+  const cp = Math.cos(angles[1]);
   ct = Math.cos(angles[0]);
 
   jet.lookAt(new Vector3(length * 0.5 * st * cp, length * 0.5 * st * sp, length * 0.5 * ct));
@@ -2065,16 +2054,16 @@ function makePhoton(data: any, style: any, selection: any) {
   } else {
     // propagate to EB
 
-    let a = px * px + py * py;
-    let b = 2 * x0 * px + 2 * y0 * py;
-    let c = x0 * x0 + y0 * y0 - rEB * rEB;
+    const a = px * px + py * py;
+    const b = 2 * x0 * px + 2 * y0 * py;
+    const c = x0 * x0 + y0 * y0 - rEB * rEB;
     t = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
   }
 
-  let pt1 = new Vector3(x0, y0, z0);
-  let pt2 = new Vector3(x0 + px * t, y0 + py * t, z0 + pz * t);
+  const pt1 = new Vector3(x0, y0, z0);
+  const pt2 = new Vector3(x0 + px * t, y0 + py * t, z0 + pz * t);
 
-  let color = new Color(style.color);
+  const color = new Color(style.color);
 
   let photon;
 
@@ -2145,17 +2134,17 @@ function makePhotonRZ(data: any, style: any, selection: any) {
   } else {
     // propagate to EB
 
-    let a = px * px + py * py;
-    let b = 2 * x0 * px + 2 * y0 * py;
-    let c = x0 * x0 + y0 * y0 - rEB * rEB;
+    const a = px * px + py * py;
+    const b = 2 * x0 * px + 2 * y0 * py;
+    const c = x0 * x0 + y0 * y0 - rEB * rEB;
     t = (-b + Math.sqrt(b * b - 4 * a * c)) / (2 * a);
   }
 
   let pt2 = new Vector3(x0 + px * t, y0 + py * t, z0 + pz * t);
-  let pt1 = projectVector(new Vector3(x0, y0, z0), pt2);
+  const pt1 = projectVector(new Vector3(x0, y0, z0), pt2);
   pt2 = projectVector(pt2, pt2);
 
-  let color = new Color(style.color);
+  const color = new Color(style.color);
 
   let photon;
 
@@ -2212,17 +2201,17 @@ function makeProtons(data: any, style: any, _selection: any) {
   const py = data[6];
   const pz = data[7];
 
-  let dir = new Vector3(px, py, pz);
+  const dir = new Vector3(px, py, pz);
   dir.normalize();
 
-  let origin = new Vector3(x0, y0, z0);
+  const origin = new Vector3(x0, y0, z0);
 
   let length = Math.abs(pz) * 0.01;
   length -= 0.75 * 65;
 
-  let color = new Color(style.color);
+  const color = new Color(style.color);
 
-  var proton;
+  let proton;
 
   if (ispy.use_line2) {
     proton = makeArrowThick(dir, origin, length, color, 0);
@@ -2277,22 +2266,22 @@ function makeDTRecHits(data: any) {
     all_positions = all_positions.concat(...vectors);
   };
 
-  let pos = new Vector3(...data[7]);
-  let axis = new Vector3(...data[14]);
-  let angle = data[15];
+  const pos = new Vector3(...data[7]);
+  const axis = new Vector3(...data[14]);
+  const angle = data[15];
 
-  let w = data[16] * 0.5;
-  let h = data[17] * 0.5;
-  let d = data[18] * 0.5;
+  const w = data[16] * 0.5;
+  const h = data[17] * 0.5;
+  const d = data[18] * 0.5;
 
-  let v0 = new Vector3(-w, h, -d);
-  let v1 = new Vector3(w, h, -d);
-  let v2 = new Vector3(w, h, d);
-  let v3 = new Vector3(-w, h, d);
-  let v4 = new Vector3(-w, -h, d);
-  let v5 = new Vector3(w, -h, d);
-  let v6 = new Vector3(w, -h, -d);
-  let v7 = new Vector3(-w, -h, -d);
+  const v0 = new Vector3(-w, h, -d);
+  const v1 = new Vector3(w, h, -d);
+  const v2 = new Vector3(w, h, d);
+  const v3 = new Vector3(-w, h, d);
+  const v4 = new Vector3(-w, -h, d);
+  const v5 = new Vector3(w, -h, d);
+  const v6 = new Vector3(w, -h, -d);
+  const v7 = new Vector3(-w, -h, -d);
 
   //front
   addFace3(v0.toArray(), v1.toArray(), v2.toArray());
@@ -2337,24 +2326,24 @@ function makeDTRecHitsRZ(data: any) {
     all_positions = all_positions.concat(...vectors);
   };
 
-  let pos = new Vector3(...data[7]);
-  let axis = new Vector3(...data[14]);
-  let angle = data[15];
+  const pos = new Vector3(...data[7]);
+  const axis = new Vector3(...data[14]);
+  const angle = data[15];
 
-  let w = data[16] * 0.5;
-  let h = data[17] * 0.5;
-  let d = data[18] * 0.5;
+  const w = data[16] * 0.5;
+  const h = data[17] * 0.5;
+  const d = data[18] * 0.5;
 
-  let lglobalpos = new Vector3(...data[12]);
+  const lglobalpos = new Vector3(...data[12]);
 
-  let v0 = projectVector(new Vector3(-w, h, -d), lglobalpos);
-  let v1 = projectVector(new Vector3(w, h, -d), lglobalpos);
-  let v2 = projectVector(new Vector3(w, h, d), lglobalpos);
-  let v3 = projectVector(new Vector3(-w, h, d), lglobalpos);
-  let v4 = projectVector(new Vector3(-w, -h, d), lglobalpos);
-  let v5 = projectVector(new Vector3(w, -h, d), lglobalpos);
-  let v6 = projectVector(new Vector3(w, -h, -d), lglobalpos);
-  let v7 = projectVector(new Vector3(-w, -h, -d), lglobalpos);
+  const v0 = projectVector(new Vector3(-w, h, -d), lglobalpos);
+  const v1 = projectVector(new Vector3(w, h, -d), lglobalpos);
+  const v2 = projectVector(new Vector3(w, h, d), lglobalpos);
+  const v3 = projectVector(new Vector3(-w, h, d), lglobalpos);
+  const v4 = projectVector(new Vector3(-w, -h, d), lglobalpos);
+  const v5 = projectVector(new Vector3(w, -h, d), lglobalpos);
+  const v6 = projectVector(new Vector3(w, -h, -d), lglobalpos);
+  const v7 = projectVector(new Vector3(-w, -h, -d), lglobalpos);
 
   //front
   addFace3(v0.toArray(), v1.toArray(), v2.toArray());
@@ -2385,7 +2374,7 @@ function makeDTRecHitsRZ(data: any) {
 }
 
 function makeRPCRecHits(data: any) {
-  var u, v, w;
+  let u, v, w;
 
   if (ispy.use_line2) {
     u = new LineGeometry();
@@ -2459,7 +2448,7 @@ function makeGEMRecHitsRZ(data: any, _descr: any) {
 }
 
 function makeDTRecSegments(data: any) {
-  var geometry;
+  let geometry;
 
   if (ispy.use_line2) {
     geometry = new LineGeometry();
@@ -2472,14 +2461,14 @@ function makeDTRecSegments(data: any) {
 }
 
 function makeDTRecSegmentsRZ(data: any) {
-  var geometry;
+  let geometry;
 
   if (ispy.use_line2) {
     geometry = new LineGeometry();
     geometry.setPositions([...projectPoint(data[1], data[1]), ...projectPoint(data[2], data[1])]);
   } else {
-    let p1 = new Vector3(...data[1]);
-    let p2 = new Vector3(...data[2]);
+    const p1 = new Vector3(...data[1]);
+    const p2 = new Vector3(...data[2]);
 
     geometry = new BufferGeometry().setFromPoints([projectVector(p1, p2), projectVector(p2, p2)]);
   }
@@ -2506,23 +2495,23 @@ function makeCSCDigis(data: any, w: number, d: number, rotate: number) {
     all_positions = all_positions.concat(...vectors);
   };
 
-  var pos = new Vector3(...data[0]);
-  var h = data[1] * 0.5;
+  const pos = new Vector3(...data[0]);
+  const h = data[1] * 0.5;
 
   w *= 0.5;
   d *= 0.5;
 
-  var axis = new Vector3(0.0, 0.0, 1.0);
-  var angle = -Math.atan2(pos.x, pos.y) - rotate;
+  const axis = new Vector3(0.0, 0.0, 1.0);
+  const angle = -Math.atan2(pos.x, pos.y) - rotate;
 
-  let v0 = new Vector3(-w, h, -d);
-  let v1 = new Vector3(w, h, -d);
-  let v2 = new Vector3(w, h, d);
-  let v3 = new Vector3(-w, h, d);
-  let v4 = new Vector3(-w, -h, d);
-  let v5 = new Vector3(w, -h, d);
-  let v6 = new Vector3(w, -h, -d);
-  let v7 = new Vector3(-w, -h, -d);
+  const v0 = new Vector3(-w, h, -d);
+  const v1 = new Vector3(w, h, -d);
+  const v2 = new Vector3(w, h, d);
+  const v3 = new Vector3(-w, h, d);
+  const v4 = new Vector3(-w, -h, d);
+  const v5 = new Vector3(w, -h, d);
+  const v6 = new Vector3(w, -h, -d);
+  const v7 = new Vector3(-w, -h, -d);
 
   // front
   addFace3(v0.toArray(), v1.toArray(), v2.toArray());
@@ -2553,7 +2542,7 @@ function makeCSCDigis(data: any, w: number, d: number, rotate: number) {
 }
 
 function makeCSCDigis_V2(data: any) {
-  var geometry;
+  let geometry;
 
   if (ispy.use_line2) {
     geometry = new LineGeometry();
@@ -2566,7 +2555,7 @@ function makeCSCDigis_V2(data: any) {
 }
 
 function makeGEMDigis_V2(data: any) {
-  var geometry;
+  let geometry;
 
   if (ispy.use_line2) {
     geometry = new LineGeometry();
@@ -2596,7 +2585,7 @@ function makeCSCLCTDigis(data: any) {
 }
 
 function makeCSCLCTCorrelatedLCTDigis(data: any) {
-  var l1, l2;
+  let l1, l2;
 
   if (ispy.use_line2) {
     l1 = new LineGeometry();
@@ -2618,17 +2607,17 @@ function makeEvent(data: any) {
       "Event_V2": [["run", "int"],["event", "int"],["ls", "int"],["orbit", "int"],["bx", "int"],["time", "string"],["localtime", "string"]]
       for what we do here, Event_V1 is the same, i.e. we don't show localtime
     */
-  let ei = data[0];
+  const ei = data[0];
   const run = ei[0],
     event = ei[1],
     ls = ei[2],
     time = ei[5];
 
   let et = "CMS Experiment at the LHC, CERN<br>";
-  et += "Data recorded: " + time + "</br>";
-  et += "Run / Event / LS: " + run + " / " + event + " / " + ls + "</br>";
+  et += `Data recorded: ${time}</br>`;
+  et += `Run / Event / LS: ${run} / ${event} / ${ls}</br>`;
 
-  let eventText = getHTMLObject("event-text");
+  const eventText = getHTMLObject("event-text");
   eventText.innerHTML = et;
   getHTMLObject("display").appendChild(getHTMLObject("event-info"));
 }

@@ -1,9 +1,10 @@
 // Type: TypeScript file
 // Description: This file contains utility functions that are used in the analysis code.
+import JSZip from "jszip";
+
+import { ispy } from "./config";
 
 import { Particle, EventObject, EventSummary, MET, FourVector } from "./ispy.interfaces";
-import JSZip from "jszip";
-import { ispy } from "./config";
 
 const mMuon2 = 0.10566 * 0.10566;
 const mElectron2 = 0.511e-3 * 0.511e-3;
@@ -22,7 +23,7 @@ export function getParticleInfo(key: string, type: [string, string][], eventObje
   const isPhoton = key.includes("Photon");
 
   if (!(isMuon || isElectron || isPhoton)) {
-    throw new Error("Unknown particle type: " + key + ", only Muon, Electron, and Photon are supported.");
+    throw new Error(`Unknown particle type: ${key}, only Muon, Electron, and Photon are supported.`);
   }
 
   let pt: number, eta: number, phi: number, charge: number, ptype: string;
@@ -88,9 +89,9 @@ export function getFourVectorByIndex(
 }
 
 export function getMetInformation(type: [string, string][], eventObjectData: number[]): MET {
-  let pt: number, px: number, py: number, pz: number;
+  let pt: number, px: number, py: number;
 
-  pt = px = py = pz = 0;
+  pt = px = py = 0;
 
   for (const [index, t] of type.entries()) {
     if (t[0] === "pt") {
@@ -150,9 +151,9 @@ export class EventCollection {
     }
     // get the event data
     eventList.forEach((event_path, event_index) => {
-      let eventFile = igData.file(event_path);
+      const eventFile = igData.file(event_path);
       if (eventFile === null) {
-        alert("Error encountered reading event " + (event_index + 1) + ": " + event_path + " not found.");
+        alert(`Error encountered reading event ${event_index + 1}: ${event_path} not found.`);
         alert("The event will be skipped in the analysis.");
         return;
       }
@@ -163,7 +164,7 @@ export class EventCollection {
           this.events.set(event_index.toString(), getEventsSummary(_event));
         },
         (err) => {
-          alert("Error encountered parsing event " + (event_index + 1) + ": " + err);
+          alert(`Error encountered parsing event ${event_index + 1}: ${err}`);
           alert("The event will be skipped in the analysis.");
         },
       );
@@ -192,7 +193,7 @@ export function removeExistingBubble(): void {
 export function getHTMLObject(id: string): HTMLElement {
   const obj = document.getElementById(id);
   if (obj === null) {
-    throw new Error("Object with id " + id + " not found.");
+    throw new Error(`Object with id ${id} not found.`);
   }
   return obj;
 }

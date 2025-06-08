@@ -258,13 +258,21 @@ function reload() {
 }
 
 function zoomIn() {
-  ispy.camera!.zoom += 0.5;
-  ispy.camera!.updateProjectionMatrix();
+  if (!ispy.camera) {
+    console.error("Camera is not defined");
+    return;
+  }
+  ispy.camera.zoom += 0.5;
+  ispy.camera.updateProjectionMatrix();
 }
 
 function zoomOut() {
-  ispy.camera!.zoom -= 0.5;
-  ispy.camera!.updateProjectionMatrix();
+  if (!ispy.camera) {
+    console.error("Camera is not defined");
+    return;
+  }
+  ispy.camera.zoom -= 0.5;
+  ispy.camera.updateProjectionMatrix();
 }
 
 function printImage() {
@@ -291,7 +299,7 @@ function exportScene() {
 
   exporter.parse(
     ispy.scene,
-    function (result) {
+    (result) => {
       exportArrayBuffer(result as ArrayBuffer, "scene.glb");
     },
     options,
@@ -357,18 +365,18 @@ function exportGLTF(binary: boolean) {
     binary: binary,
   };
 
-  ispy.scene.children.forEach(function (c) {
+  ispy.scene.children.forEach((c) => {
     if (c.children.length > 0 && c.name !== "Lights") {
-      c.children.forEach(function (o) {
+      c.children.forEach((o) => {
         if (o.visible) {
           exporter.parse(
             o,
-            function (result) {
+            (result) => {
               if (result instanceof ArrayBuffer) {
-                exportArrayBuffer(result, o.name + ".glb");
+                exportArrayBuffer(result, `${o.name}.glb`);
               } else {
                 const output = JSON.stringify(result, null, 2);
-                exportString(output, o.name + ".gltf");
+                exportString(output, `${o.name}.gltf`);
               }
             },
             options,
@@ -389,11 +397,11 @@ function exportOBJ() {
 
   const exporter = new OBJExporter();
 
-  ispy.scene.children.forEach(function (c) {
+  ispy.scene.children.forEach((c) => {
     if (c.children.length > 0 && c.name !== "Lights") {
-      c.children.forEach(function (o) {
+      c.children.forEach((o) => {
         if (o.visible) {
-          exportString(exporter.parse(o), o.name + ".obj");
+          exportString(exporter.parse(o), `${o.name}.obj`);
         }
       });
     }

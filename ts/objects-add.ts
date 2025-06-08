@@ -7,9 +7,9 @@ import THREE, {
   PointsMaterial,
   BufferGeometry,
 } from "three";
-
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
+
 import {
   POINT,
   LINE,
@@ -41,7 +41,8 @@ function addToSceneObject(key: string, obj: any): void {
 }
 
 function addDetector() {
-  for (const key in detector_description) {
+  for (const key of Object.keys(detector_description)) {
+    // TODO: check if same as before!
     const data = ispy.detector.Collections[key];
 
     if (!data || data.length === 0) {
@@ -70,7 +71,7 @@ function addDetector() {
 
     switch (descr.type) {
       case BOX: {
-        let box_material = new THREE.LineBasicMaterial({
+        const box_material = new THREE.LineBasicMaterial({
           color: ocolor,
           transparent: transp,
           linewidth: descr.style.linewidth,
@@ -79,13 +80,13 @@ function addDetector() {
           clippingPlanes: ispy.local_planes,
         });
 
-        let box_geometries = [];
+        const box_geometries = [];
 
-        for (var i = 0; i < data.length; i++) {
-          box_geometries.push(descr.fn(data[i]));
+        for (const entry of data) {
+          box_geometries.push(descr.fn(entry));
         }
 
-        let box = new LineSegments(mergeBufferGeometries(box_geometries), box_material);
+        const box = new LineSegments(mergeBufferGeometries(box_geometries), box_material);
 
         box.name = key;
         box.renderOrder = 1;
@@ -94,7 +95,7 @@ function addDetector() {
         break;
       }
       case SOLIDBOX: {
-        let solidbox_material = new MeshBasicMaterial({
+        const solidbox_material = new MeshBasicMaterial({
           color: ocolor,
           transparent: transp,
           opacity: descr.style.opacity,
@@ -104,11 +105,11 @@ function addDetector() {
 
         solidbox_material.side = DoubleSide;
 
-        let boxes = [];
-        let lines = [];
+        const boxes = [];
+        const lines = [];
 
-        for (let i = 0; i < data.length; i++) {
-          const bl = descr.fn(data[i]);
+        for (const entry of data) {
+          const bl = descr.fn(data[entry]);
 
           if (bl.length === 0) continue;
 
@@ -116,25 +117,28 @@ function addDetector() {
           lines.push(bl[1]);
         }
 
-        let meshes = new Mesh(mergeBufferGeometries(boxes), solidbox_material);
+        const meshes = new Mesh(mergeBufferGeometries(boxes), solidbox_material);
 
         meshes.name = key;
         meshes.renderOrder = 1;
         addToSceneObject(key, meshes);
 
-        let line_material = new THREE.LineBasicMaterial({
+        const line_material = new THREE.LineBasicMaterial({
           color: 0x000000,
           transparent: false,
           linewidth: 1,
           depthTest: false,
         });
 
-        let line_mesh = new LineSegments(mergeBufferGeometries(lines), line_material);
+        const line_mesh = new LineSegments(mergeBufferGeometries(lines), line_material);
 
         line_mesh.name = key;
         addToSceneObject(key, line_mesh);
 
         break;
+      }
+      default: {
+        console.warn(`Detector type '${descr.type}' is not implemented.`);
       }
     }
   }
@@ -148,7 +152,7 @@ function addToScene(event: any, view: string) {
   ispy.scene = ispy.scenes[view];
 
   data_groups.forEach((g) => {
-    let dataGroupObj = ispy.scene?.getObjectByName(g);
+    const dataGroupObj = ispy.scene?.getObjectByName(g);
     if (!dataGroupObj) {
       console.error(`Group object '${g}' not found in the scene.`);
       return;
@@ -156,7 +160,7 @@ function addToScene(event: any, view: string) {
     dataGroupObj.children.length = 0;
   });
 
-  for (let key in event_description[view]) {
+  for (const key of Object.keys(event_description[view])) {
     const data = event.Collections[key];
 
     if (!data || data.length === 0) continue;
@@ -200,8 +204,8 @@ function addToScene(event: any, view: string) {
       case BOX: {
         const boxes = [];
 
-        for (let i = 0; i < data.length; i++) {
-          boxes.push(descr.fn(data[i]));
+        for (const entry of data) {
+          boxes.push(descr.fn(data[entry]));
         }
 
         const line = new LineSegments(
@@ -223,8 +227,8 @@ function addToScene(event: any, view: string) {
         const sboxes = [];
         const slines = [];
 
-        for (let j = 0; j < data.length; j++) {
-          let bl = descr.fn(data[j]);
+        for (const entry of data) {
+          const bl = descr.fn(entry);
 
           if (bl.length === 1) {
             sboxes.push(bl[0]);
@@ -271,14 +275,14 @@ function addToScene(event: any, view: string) {
         const ss_boxes: BufferGeometry[] = [];
         let maxEnergy = 0.0;
 
-        for (let k = 0; k < data.length; k++) {
-          let energy = data[k][0];
+        for (const entry of data) {
+          const energy = entry[0];
 
           if (energy > maxEnergy) maxEnergy = energy;
         }
 
-        for (let l = 0; l < data.length; l++) {
-          descr.fn(data[l], ss_boxes, maxEnergy, descr.selection);
+        for (const entry of data) {
+          descr.fn(entry, ss_boxes, maxEnergy, descr.selection);
         }
 
         if (ss_boxes.length > 0) {
@@ -302,14 +306,14 @@ function addToScene(event: any, view: string) {
         const sst_boxes: BufferGeometry[] = [];
         let maxE = 0.0;
 
-        for (let ee = 0; ee < data.length; ee++) {
-          let energy = data[ee][0];
+        for (const entry of data) {
+          const energy = entry[0];
 
           if (energy > maxE) maxE = energy;
         }
 
-        for (var m = 0; m < data.length; m++) {
-          descr.fn(data[m], sst_boxes, maxE, descr.selection);
+        for (const entry of data) {
+          descr.fn(entry, sst_boxes, maxE, descr.selection);
         }
 
         if (sst_boxes.length > 0) {
@@ -321,7 +325,7 @@ function addToScene(event: any, view: string) {
 
           sst_material.side = DoubleSide;
 
-          var sst_meshes = new Mesh(mergeBufferGeometries(sst_boxes), sst_material);
+          const sst_meshes = new Mesh(mergeBufferGeometries(sst_boxes), sst_material);
 
           sst_meshes.name = key;
           addToSceneObject(key, sst_meshes);
@@ -333,8 +337,8 @@ function addToScene(event: any, view: string) {
         const eboxes: BufferGeometry[] = [];
         const hboxes: BufferGeometry[] = [];
 
-        for (let n = 0; n < data.length; n++) {
-          descr.fn(data[n], eboxes, hboxes, descr.scale, descr.selection);
+        for (const entry of data) {
+          descr.fn(entry, eboxes, hboxes, descr.scale, descr.selection);
         }
 
         const ematerial = new MeshBasicMaterial({
@@ -373,7 +377,7 @@ function addToScene(event: any, view: string) {
         const objs = descr.fn(data, extra, assoc, descr.style, descr.selection);
 
         if (objs !== undefined) {
-          objs.forEach(function (obj: THREE.Object3D, index: number) {
+          objs.forEach((obj: THREE.Object3D, index: number) => {
             obj.name = key;
 
             if (is_physics_obj && visible) {
@@ -408,7 +412,7 @@ function addToScene(event: any, view: string) {
           if (shape !== null) {
             shape.name = key;
 
-            shape.traverse(function (s: THREE.Object3D) {
+            shape.traverse((s: THREE.Object3D) => {
               s.name = key;
 
               if (is_physics_obj && visible) {
@@ -426,7 +430,7 @@ function addToScene(event: any, view: string) {
       }
       case LINE: {
         for (let li = 0; li < data.length; li++) {
-          descr.fn(data[li]).forEach(function (g: LineGeometry) {
+          descr.fn(data[li]).forEach((g: LineGeometry) => {
             if (ispy.use_line2) {
               const line2 = new Line2(
                 g,
@@ -470,6 +474,9 @@ function addToScene(event: any, view: string) {
 
         break;
       }
+      default: {
+        console.warn(`Event type '${descr.type}' is not implemented.`);
+      }
     }
 
     if (view === "3D") {
@@ -486,7 +493,7 @@ function addEvent(event: any) {
   $("tr.Event").remove();
 
   // If saveSetting is active, save the current event preferences
-  let currentSetting = saveCutSettings();
+  const currentSetting = saveCutSettings();
 
   // Clear the subfolders for event information in the treegui
   clearSubfolders();
