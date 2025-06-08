@@ -96,7 +96,7 @@ function showObject(key: string, view: string, show: boolean) {
 
     const elem = getHTMLObject(key) as HTMLInputElement;
 
-    if (elem !== null) elem.checked = show;
+    if (elem != null) elem.checked = show;
   }
 }
 
