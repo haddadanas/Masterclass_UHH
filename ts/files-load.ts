@@ -1,4 +1,10 @@
-import THREE from "three";
+import {
+  Line,
+  LineSegments,
+  Material,
+  Mesh,
+  Object3D,
+} from "three";
 import JSZip from "jszip";
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
@@ -537,7 +543,7 @@ function loadOBJ(contents: string, name: string) {
   const object = new OBJLoader().parse(contents);
   object.name = name;
 
-  (object.children as THREE.Mesh[]).forEach((c) => {
+  (object.children as Mesh[]).forEach((c) => {
     changeMeshMaterials(c.material, (m) => {
       m.transparent = true;
       m.opacity = ispy.importTransparency;
@@ -573,7 +579,7 @@ function loadOBJMTL(obj: string, mtl_file: File, name: string) {
     materials_creator.preload();
 
     object.traverse((o) => {
-      if (o instanceof THREE.Mesh || o instanceof THREE.Line) {
+      if (o instanceof Mesh || o instanceof Line) {
         if (o.material.name) {
           const material = materials_creator.create(o.material.name);
           if (material) {
@@ -692,7 +698,7 @@ function loadSelectedGLTF() {
   gltf_loader.load(gltf_file, (gltf) => {
     const object = gltf.scene.children[0];
 
-    (object.children as THREE.Mesh[]).forEach((c) => {
+    (object.children as Mesh[]).forEach((c) => {
       changeMeshMaterials(c.material, (m) => {
         m.clippingPlanes = ispy.local_planes;
       });
@@ -737,7 +743,7 @@ function loadOBJMTL_new(obj_file: string, mtl_file: string, id: string, name: st
       object.visible = show;
       disabled[object.name] = false;
 
-      (object.children as THREE.Mesh[]).forEach((c) => {
+      (object.children as Mesh[]).forEach((c) => {
         changeMeshMaterials(c.material, (m) => {
           m.transparent = true;
           m.opacity = ispy.importTransparency;
@@ -1007,7 +1013,7 @@ function importDetector() {
     gltf_loader.load(
       g.file,
       (gltf) => {
-        const object = gltf.scene.children[0] as THREE.Object3D & {
+        const object = gltf.scene.children[0] as Object3D & {
           view?: string;
         };
 
@@ -1017,9 +1023,9 @@ function importDetector() {
 
         // Set render order for geometries
         // Otherwise they won't appear "in-front" of Imported geometries
-        (object.children as THREE.LineSegments[]).forEach((c) => {
+        (object.children as LineSegments[]).forEach((c) => {
           c.renderOrder = 1;
-          changeMeshMaterials(c.material, (m: THREE.Material) => {
+          changeMeshMaterials(c.material, (m: Material) => {
             m.clippingPlanes = ispy.local_planes;
           });
         });

@@ -1,6 +1,7 @@
 // Type: TypeScript file
 // Description: This file contains utility functions that are used in the analysis code.
 import JSZip from "jszip";
+import { Material } from "three";
 
 import { ispy } from "./config";
 
@@ -198,7 +199,8 @@ export function getHTMLObject(id: string): HTMLElement {
   return obj;
 }
 
-export function changeMeshMaterials(materials: THREE.Material | THREE.Material[], func: (m: THREE.Material) => void) {
+export function changeMeshMaterials(materials: Material | Material[], func: (m: Material) => void) {
+  console.log("Changing materials", materials);
   if (!Array.isArray(materials)) {
     func(materials);
     return;

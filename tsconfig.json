@@ -3,20 +3,40 @@
     /* Visit https://aka.ms/tsconfig to read more about this file */
     /* Language and Environment */
     "target": "es2022", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "module": "commonjs", /* Specify what module code is generated. */
-    "moduleResolution": "node10", /* Specify how TypeScript looks up a file from a given module specifier. */
+    "module": "es2022", /* Specify what module code is generated. */
+    "moduleResolution": "node", /* Specify how TypeScript looks up a file from a given module specifier. */
     "baseUrl": "./",
     "rootDir": "./ts", /* Specify the root folder within your source files. */
     "outDir": "./dist", /* Specify an output folder for all emitted files. */
     "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
     "skipLibCheck": true, /* Skip type checking all .d.ts files. */
+    "resolveJsonModule": true, /* Include modules imported with .json extension. */
+    "allowJs": true,
     "paths": {
-      "three/addons/loaders/*": [
-        "node_modules/@types/three/examples/jsm/loaders/*",
+      "@types/*": [
+        "node_modules/@types/*"
       ],
-      "three/addons/controls/*": [
-        "node_modules/@types/three/examples/jsm/controls/*",
+      "three": [
+        "node_modules/three/src/Three"
       ],
+      "three/examples/jsm/*": [
+        "node_modules/three/examples/jsm/*"
+      ],
+      "dat.gui": [
+        "node_modules/dat.gui/build/dat.gui"
+      ],
+      "jquery": [
+        "node_modules/jquery/dist/jquery"
+      ],
+      "sweetalert": [
+        "node_modules/sweetalert/dist/sweetalert"
+      ],
+      "stupid-table-plugin": [
+        "node_modules/stupid-table-plugin/stupidtable.min"
+      ],
+      "stats.js": [
+        "node_modules/stats.js/build/stats.min"
+      ]
     },
     // Type Checking
     "strict": true,

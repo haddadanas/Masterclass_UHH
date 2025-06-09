@@ -1,4 +1,5 @@
-import THREE, {
+import {
+  Object3D,
   LineSegments,
   MeshBasicMaterial,
   DoubleSide,
@@ -6,9 +7,13 @@ import THREE, {
   Points,
   PointsMaterial,
   BufferGeometry,
+  Color,
+  LineBasicMaterial,
+  Line,
 } from "three";
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
+import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
 import {
   POINT,
@@ -28,8 +33,6 @@ import { addSelectionRow, applySavedSettings, clearSubfolders, saveCutSettings }
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
 import { showView } from "./controls";
 
-// helper functions
-const mergeBufferGeometries = THREE.BufferGeometryUtils.mergeBufferGeometries;
 
 function addToSceneObject(key: string, obj: any): void {
   const groupObject = ispy.scene?.getObjectByName(key);
@@ -57,7 +60,7 @@ function addDetector() {
     const visible = !disabled[key] ? (descr.on = true) : (descr.on = false);
     addSelectionRow(descr.group, key, descr.name, [], visible);
 
-    const obj = new THREE.Object3D();
+    const obj = new Object3D();
     obj.name = key;
     obj.visible = visible;
     if (!ispy.scene) {
@@ -66,12 +69,12 @@ function addDetector() {
     }
     addToSceneObject(descr.group, obj);
 
-    const ocolor = new THREE.Color(descr.style.color);
+    const ocolor = new Color(descr.style.color);
     const transp = true;
 
     switch (descr.type) {
       case BOX: {
-        const box_material = new THREE.LineBasicMaterial({
+        const box_material = new LineBasicMaterial({
           color: ocolor,
           transparent: transp,
           linewidth: descr.style.linewidth,
@@ -86,7 +89,7 @@ function addDetector() {
           box_geometries.push(descr.fn(entry));
         }
 
-        const box = new LineSegments(mergeBufferGeometries(box_geometries), box_material);
+        const box = new LineSegments(BufferGeometryUtils.mergeBufferGeometries(box_geometries), box_material);
 
         box.name = key;
         box.renderOrder = 1;
@@ -117,20 +120,20 @@ function addDetector() {
           lines.push(bl[1]);
         }
 
-        const meshes = new Mesh(mergeBufferGeometries(boxes), solidbox_material);
+        const meshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(boxes), solidbox_material);
 
         meshes.name = key;
         meshes.renderOrder = 1;
         addToSceneObject(key, meshes);
 
-        const line_material = new THREE.LineBasicMaterial({
+        const line_material = new LineBasicMaterial({
           color: 0x000000,
           transparent: false,
           linewidth: 1,
           depthTest: false,
         });
 
-        const line_mesh = new LineSegments(mergeBufferGeometries(lines), line_material);
+        const line_mesh = new LineSegments(BufferGeometryUtils.mergeBufferGeometries(lines), line_material);
 
         line_mesh.name = key;
         addToSceneObject(key, line_mesh);
@@ -182,7 +185,7 @@ function addToScene(event: any, view: string) {
     const objectIds = [];
     const visible = !disabled[key] ? (descr.on = true) : (descr.on = false);
 
-    const obj = new THREE.Object3D();
+    const obj = new Object3D();
     obj.name = key;
     obj.visible = visible;
 
@@ -192,10 +195,10 @@ function addToScene(event: any, view: string) {
     const transp = true;
 
     if (descr.style.color !== undefined) {
-      ocolor = new THREE.Color();
+      ocolor = new Color();
       ocolor.setStyle(descr.style.color);
     } else {
-      ocolor = new THREE.Color(0xffffff);
+      ocolor = new Color(0xffffff);
     }
 
     const is_physics_obj = descr.group === "Physics";
@@ -209,8 +212,8 @@ function addToScene(event: any, view: string) {
         }
 
         const line = new LineSegments(
-          mergeBufferGeometries(boxes),
-          new THREE.LineBasicMaterial({
+          BufferGeometryUtils.mergeBufferGeometries(boxes),
+          new LineBasicMaterial({
             color: ocolor,
             transparent: transp,
             linewidth: descr.style.linewidth,
@@ -250,20 +253,20 @@ function addToScene(event: any, view: string) {
 
         solidbox_material.side = DoubleSide;
 
-        const smeshes = new Mesh(mergeBufferGeometries(sboxes), solidbox_material);
+        const smeshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(sboxes), solidbox_material);
 
         smeshes.name = key;
         addToSceneObject(key, smeshes);
 
         if (slines.length > 0) {
-          const sline_material = new THREE.LineBasicMaterial({
+          const sline_material = new LineBasicMaterial({
             color: 0xcccccc,
             transparent: false,
             linewidth: 1,
             depthTest: false,
           });
 
-          const sline_mesh = new LineSegments(mergeBufferGeometries(slines), sline_material);
+          const sline_mesh = new LineSegments(BufferGeometryUtils.mergeBufferGeometries(slines), sline_material);
 
           sline_mesh.name = key;
           addToSceneObject(key, sline_mesh);
@@ -294,7 +297,7 @@ function addToScene(event: any, view: string) {
 
           ssb_material.side = DoubleSide;
 
-          const ssb_meshes = new Mesh(mergeBufferGeometries(ss_boxes), ssb_material);
+          const ssb_meshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(ss_boxes), ssb_material);
 
           ssb_meshes.name = key;
           addToSceneObject(key, ssb_meshes);
@@ -325,7 +328,7 @@ function addToScene(event: any, view: string) {
 
           sst_material.side = DoubleSide;
 
-          const sst_meshes = new Mesh(mergeBufferGeometries(sst_boxes), sst_material);
+          const sst_meshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(sst_boxes), sst_material);
 
           sst_meshes.name = key;
           addToSceneObject(key, sst_meshes);
@@ -342,13 +345,13 @@ function addToScene(event: any, view: string) {
         }
 
         const ematerial = new MeshBasicMaterial({
-          color: new THREE.Color(descr.style.ecolor),
+          color: new Color(descr.style.ecolor),
           transparent: transp,
           opacity: descr.style.opacity,
         });
 
         const hmaterial = new MeshBasicMaterial({
-          color: new THREE.Color(descr.style.hcolor),
+          color: new Color(descr.style.hcolor),
           transparent: transp,
           opacity: descr.style.opacity,
         });
@@ -356,9 +359,9 @@ function addToScene(event: any, view: string) {
         ematerial.side = DoubleSide;
         hmaterial.side = DoubleSide;
 
-        const emeshes = new Mesh(mergeBufferGeometries(eboxes), ematerial);
+        const emeshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(eboxes), ematerial);
 
-        const hmeshes = new Mesh(mergeBufferGeometries(hboxes), hmaterial);
+        const hmeshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(hboxes), hmaterial);
 
         emeshes.name = key;
         hmeshes.name = key;
@@ -377,7 +380,7 @@ function addToScene(event: any, view: string) {
         const objs = descr.fn(data, extra, assoc, descr.style, descr.selection);
 
         if (objs !== undefined) {
-          objs.forEach((obj: THREE.Object3D, index: number) => {
+          objs.forEach((obj: Object3D, index: number) => {
             obj.name = key;
 
             if (is_physics_obj && visible) {
@@ -412,7 +415,7 @@ function addToScene(event: any, view: string) {
           if (shape !== null) {
             shape.name = key;
 
-            shape.traverse((s: THREE.Object3D) => {
+            shape.traverse((s: Object3D) => {
               s.name = key;
 
               if (is_physics_obj && visible) {
@@ -449,9 +452,9 @@ function addToScene(event: any, view: string) {
               objectIds.push(line2.id);
               addToSceneObject(key, line2);
             } else {
-              const line = new THREE.Line(
+              const line = new Line(
                 g,
-                new THREE.LineBasicMaterial({
+                new LineBasicMaterial({
                   color: ocolor,
                   transparent: transp,
                   opacity: descr.style.opacity,

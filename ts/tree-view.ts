@@ -1,4 +1,4 @@
-import THREE from "three";
+import { Color, LineBasicMaterial, Material, MeshBasicMaterial } from "three";
 
 import { ispy } from "./config";
 import { data_groups, detector_description, disabled, event_description, reduced_data_groups } from "./objects-config";
@@ -102,7 +102,7 @@ function showObject(key: string, view: string, show: boolean) {
 
 function addSelectionRow(group: string, key: string, name: string, _objectIds: any[], visible: boolean) {
   let opacity = 1.0;
-  const color = new THREE.Color();
+  const color = new Color();
   let linewidth = 1;
   let nobjects = 0;
 
@@ -191,7 +191,7 @@ function addSelectionRow(group: string, key: string, name: string, _objectIds: a
 
         obj.children.forEach((o) => {
           if (!("material" in o)) return;
-          (o.material as THREE.Material).opacity = row_obj.opacity;
+          (o.material as Material).opacity = row_obj.opacity;
         });
       });
     });
@@ -217,7 +217,7 @@ function addSelectionRow(group: string, key: string, name: string, _objectIds: a
 
             obj.children.forEach((o) => {
               if (!("material" in o)) return;
-              (o.material as THREE.LineBasicMaterial).linewidth = row_obj.linewidth * 0.001;
+              (o.material as LineBasicMaterial).linewidth = row_obj.linewidth * 0.001;
             });
           });
         });
@@ -234,7 +234,7 @@ function addSelectionRow(group: string, key: string, name: string, _objectIds: a
 
             obj.children.forEach((o) => {
               if (!("material" in o)) return;
-              (o.material as THREE.LineBasicMaterial).linewidth = row_obj.linewidth * 0.001;
+              (o.material as LineBasicMaterial).linewidth = row_obj.linewidth * 0.001;
             });
           });
         });
@@ -302,13 +302,13 @@ function addSelectionRow(group: string, key: string, name: string, _objectIds: a
             if (oc.type === "ArrowHelper" || key.includes("MET") || key.includes("Proton")) {
               oc.children.forEach((og) => {
                 if (!("material" in og)) return;
-                (og.material as THREE.LineBasicMaterial | THREE.MeshBasicMaterial).color = new THREE.Color(
+                (og.material as LineBasicMaterial | MeshBasicMaterial).color = new Color(
                   row_obj.color,
                 );
               });
             } else {
               if (!("material" in oc)) return;
-              (oc.material as THREE.LineBasicMaterial | THREE.MeshBasicMaterial).color = new THREE.Color(row_obj.color);
+              (oc.material as LineBasicMaterial | MeshBasicMaterial).color = new Color(row_obj.color);
             }
           });
         });
@@ -318,7 +318,7 @@ function addSelectionRow(group: string, key: string, name: string, _objectIds: a
 }
 
 function addControllers(group: string) {
-  //   let color = new THREE.Color();
+  //   let color = new Color();
   //   let linewidth = 1;
   const row_obj = {
     number: 0,
