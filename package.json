@@ -1,36 +1,48 @@
 {
-  "name": "ispy-webgl",
-  "version": "v1.0.0-UHH (dev)",
-  "description": "A browser-based event display for the CMS experiment at the LHC, using WebGL",
-  "main": "",
+  "name": "masterclass-uhh",
+  "type": "commonjs",
+  "version": "v1.0.0-UHH",
+  "description": "A browser-based event display for the CMS experiment at the LHC, adjusted for the Masterclass at University of Hamburg.",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "http-server -p 8080 -c10"
+    "start": "http-server -p 8080 -c10",
+    "build": "tsc && webpack --mode production",
+    "analyze": "webpack --profile --json > stats.json && webpack-bundle-analyzer stats.json"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cms-outreach/ispy-webgl.git"
+    "url": "git+https://github.com/haddadanas/Masterclass_UHH.git"
   },
-  "author": "thomas.mccauley@cern.ch",
+  "author": "anas.haddad@uni-hamburg.de",
+  "private": true,
   "license": "SEE LICENSE IN LICENSE",
   "bugs": {
-    "url": "https://github.com/cms-outreach/ispy-webgl/issues"
+    "url": "https://github.com/haddadanas/Masterclass_UHH/issues"
   },
-  "homepage": "https://github.com/cms-outreach/ispy-webgl#readme",
+  "homepage": "https://github.com/haddadanas/Masterclass_UHH#readme",
   "devDependencies": {
-    "@types/bootstrap": "^5.2.10",
+    "@types/bootstrap": "^3.3.1",
     "@types/dat.gui": "^0.7.13",
     "@types/jquery": "^3.5.32",
-    "@types/plotly.js": "^2.35.1",
     "@types/sweetalert": "^1.1.28",
     "@types/three": "^0.130.0",
-    "typescript": "^5.7.2"
+    "css-loader": "^7.1.2",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.8.3",
+    "webpack": "^5.99.9",
+    "webpack-bundle-analyzer": "^4.10.2",
+    "webpack-cli": "^6.0.1"
   },
   "dependencies": {
     "@tweenjs/tween.js": "^18.6.4",
     "@types/stats.js": "^0.17.4",
+    "bootstrap": "latest-3",
+    "dat.gui": "^0.7.9",
+    "jquery": "^3.7.1",
     "jszip": "^3.10.1",
-    "plotly.js-dist-min": "^3.0.1",
-    "three": "^0.130.0"
+    "stats.js": "^0.17.0",
+    "sweetalert": "^2.1.2",
+    "three": "^0.130.1"
   }
 }

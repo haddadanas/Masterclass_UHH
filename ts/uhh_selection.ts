@@ -1,4 +1,4 @@
-import { Data, newPlot } from "plotly.js";
+// import { Data, newPlot } from "plotly.js";
 import swal from "sweetalert";
 
 import { ispy, analysis } from "./config";
@@ -334,10 +334,10 @@ function getSelectionResults(): void {
   )}% of the total events.<br>`;
   event_stats.innerHTML = stats;
 
-  const masses = getMassesArray();
-  const m_hist = createHistogramData([...masses.m.values()], 0, 200, 20);
+  // const masses = getMassesArray();
+  // const m_hist = createHistogramData([...masses.m.values()], 0, 200, 20);
   // var mt_hist = createHistogramData([...masses.mt.values()], 0, 200, 20);
-  newPlot("m-hist", [m_hist as Data]);
+  // newPlot("m-hist", [m_hist as Data]);
   // Plotly.newPlot("mt-hist", [mt_hist]); // TODO enable this when transverse mass is implemented
   return;
 }

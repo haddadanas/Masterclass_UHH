@@ -1,5 +1,5 @@
 import { Camera, Color, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, Vector2 } from "three";
-import { TrackballControls } from "three/addons/controls/TrackballControls.js";
+import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 
 import {
   getFourVectorByIndex,

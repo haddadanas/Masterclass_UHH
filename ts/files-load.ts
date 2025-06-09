@@ -1,8 +1,8 @@
 import THREE from "three";
 import JSZip from "jszip";
-import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
-import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 import { addEvent, addDetector } from "./objects-add";
 import { addSelectionRow } from "./tree-view";
@@ -214,7 +214,7 @@ function selectLocalFile(index: number) {
   ispy.file_name = ispy.local_files[index].name;
 
   reader.onload = function (e: ProgressEvent<FileReader>) {
-    var data = e.target!.result;
+    const data = e.target!.result as ArrayBuffer;
     const event_list: string[] = [];
     JSZip.loadAsync(data).then((zip) => {
       $.each(zip.files, (_index, zipEntry) => {
@@ -293,7 +293,7 @@ function loadDroppedFile(file: File) {
   $("#loading").modal("show");
 
   reader.onload = function (e) {
-    const data = e.target!.result;
+    const data = e.target!.result as ArrayBuffer;
     const event_list: string[] = [];
     JSZip.loadAsync(data).then((zip) => {
       $.each(zip.files, (_index, zipEntry) => {
