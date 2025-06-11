@@ -10,12 +10,12 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-import { addEvent, addDetector } from "./objects-add";
-import { addSelectionRow } from "./tree-view";
-import { changeMeshMaterials, getHTMLObject, toggleCollapse, cleanupData } from "./utils";
-import { ispy } from "./config";
-import { buildFileSummary, getPassingEvents } from "./uhh_selection";
-import { disabled } from "./objects-config";
+import { addEvent, addDetector } from "./objects-add.js";
+import { addSelectionRow } from "./tree-view.js";
+import { changeMeshMaterials, getHTMLObject, toggleCollapse, cleanupData } from "./utils.js";
+import { ispy } from "./config.js";
+import { buildFileSummary, getPassingEvents } from "./uhh_selection.js";
+import { disabled } from "./objects-config.js";
 
 function openDialog(id: string) {
   $(id).modal("show");

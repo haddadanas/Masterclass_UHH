@@ -7,23 +7,27 @@ import {
   removeExistingBubble,
   showInfoBubble,
   changeMeshMaterials,
-} from "./utils";
-import { ispy } from "./config";
-import { useRenderer, render } from "./setup";
-import { toggleAnimation } from "./animate";
-import { nextEvent, prevEvent } from "./files-load";
-import { exportScene, zoomIn, zoomOut } from "./controls";
-import { event_description } from "./objects-config";
+} from "./utils.js";
+import { ispy } from "./config.js";
+import { useRenderer, render } from "./setup.js";
+import { toggleAnimation } from "./animate.js";
+import { nextEvent, prevEvent } from "./files-load.js";
+import { exportScene, zoomIn, zoomOut } from "./controls.js";
+import { event_description } from "./objects-config.js";
 
-import { TrackLine } from "./ispy.interfaces";
+import { TrackLine } from "./ispy.interfaces.js";
 
 function invertColors() {
+  if (!ispy.renderer) {
+    console.error("Renderer is not defined");
+    return;
+  }
   ispy.inverted_colors = !ispy.inverted_colors;
 
   if (!ispy.inverted_colors) {
-    ispy.renderer.setClearColor(0x232323, 1);
+    ispy.renderer.setClearColor(new Color(0x232323), 1);
   } else {
-    ispy.renderer.setClearColor(0xefefef, 1);
+    ispy.renderer.setClearColor(new Color(0xefefef), 1);
   }
 
   const body = document.querySelector("body");
@@ -88,6 +92,10 @@ function setTransparency(t: number) {
 }
 
 function updateRendererInfo() {
+  if (!ispy.renderer) {
+    console.error("Renderer is not defined");
+    return;
+  }
   const info = ispy.renderer.info;
 
   let html = `<strong>${ispy.renderer_name} info: </strong>`;
@@ -96,14 +104,14 @@ function updateRendererInfo() {
   html += "<dt><strong> render </strong></dt>";
 
   for (const prop in info.render) {
-    html += `<dd>${prop}: ${info.render[prop]}</dd>`;
+    html += `<dd>${prop}: ${(info.render as Record<string, number>)[prop]}</dd>`;
   }
 
-  if (info.memory) {
+  if ("memory" in info && info.memory) {
     html += "<dt><strong> memory </strong></dt>";
 
     for (const prop in info.memory) {
-      html += `<dd>${prop}: ${info.memory[prop]}</dd>`;
+      html += `<dd>${prop}: ${(info.memory as Record<string, number>)[prop]}</dd>`;
     }
   }
 
@@ -119,13 +127,17 @@ function updateRenderer(type: string) {
     console.error("Camera is not defined");
     return;
   }
+  if (!ispy.renderer || !ispy.inset_renderer) {
+    console.error("Renderer is not defined");
+    return;
+  }
 
   getHTMLObject("display").removeChild(ispy.renderer.domElement);
   getHTMLObject("axes").removeChild(ispy.inset_renderer.domElement);
 
   useRenderer(type);
 
-  const controls = new TrackballControls(ispy.camera, ispy.renderer.domElement);
+  const controls = new TrackballControls(ispy.camera, ispy.renderer.domElement as HTMLCanvasElement);
   controls.rotateSpeed = 3.0;
   controls.zoomSpeed = 0.5;
   ispy.controls = controls;
@@ -136,6 +148,10 @@ function updateRenderer(type: string) {
 function onWindowResize() {
   if (!ispy.camera) {
     console.error("Camera is not defined");
+    return;
+  }
+  if (!ispy.renderer) {
+    console.error("Renderer is not defined");
     return;
   }
   const display = getHTMLObject("display");
@@ -406,7 +422,7 @@ function highlightObject(objectId: number) {
         ispy.highlighted.material.color.setHex(ispy.highlighted.current_color);
       }
 
-      ispy.highlighted = selected;
+      ispy.highlighted = selected as TrackLine;
       ispy.highlighted.current_color = ispy.highlighted.material.color.getHex();
       ispy.highlighted.material.color.setHex(0xcccccc);
     }

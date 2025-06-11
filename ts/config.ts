@@ -2,7 +2,7 @@ import { GUI } from "dat.gui";
 import { Raycaster, Scene, Vector3 } from "three";
 import Stats from "stats.js";
 
-import { Ispy, Analysis, EventSummary, TrackLine } from "./ispy.interfaces";
+import { Ispy, Analysis, EventSummary, TrackLine } from "./ispy.interfaces.js";
 
 // These need to be defined before adding objects:
 const POINT = 0;
@@ -112,7 +112,7 @@ export const ispy: Ispy = {
   vw: 0,
   selected_obj: "",
   selected_gltf: "",
-  highlighted: undefined,
+  highlighted: null,
   show: false,
   hide: false,
 };

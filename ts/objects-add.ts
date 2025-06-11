@@ -14,6 +14,7 @@ import {
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtils.js";
+import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
 
 import {
   POINT,
@@ -27,11 +28,10 @@ import {
   TEXT,
   STACKEDTOWER,
   ispy,
-} from "./config";
-import { data_groups, detector_description, disabled, event_description, reduced_data_groups } from "./objects-config";
-import { addSelectionRow, applySavedSettings, clearSubfolders, saveCutSettings } from "./tree-view";
-import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
-import { showView } from "./controls";
+} from "./config.js";
+import { data_groups, detector_description, disabled, event_description, reduced_data_groups } from "./objects-config.js";
+import { addSelectionRow, applySavedSettings, clearSubfolders, saveCutSettings } from "./tree-view.js";
+import { showView } from "./controls.js";
 
 
 function addToSceneObject(key: string, obj: any): void {

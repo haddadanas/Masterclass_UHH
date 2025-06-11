@@ -1,3 +1,6 @@
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
+import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer";
 import { GUI, GUIController } from "dat.gui";
 import {
   Scene,
@@ -8,6 +11,7 @@ import {
   Raycaster,
   Line,
   LineBasicMaterial,
+  Vector3,
 } from "three";
 
 interface SubFolderReduced {
@@ -15,13 +19,16 @@ interface SubFolderReduced {
   Selection: Array<GUIController>;
   Controllers: Array<GUIController>;
   Info: Array<GUIController>;
-  [key: string]: Array<GUIController>;
+  [key: string]: Array<GUIController> | string[];
 }
 
 interface SelectionFieldController extends GUIController {
+  __input: HTMLInputElement;
   initialValue: string;
   checkbox: boolean;
-  __input: HTMLInputElement;
+  property: string;
+  getValue: () => any;
+  setValue: (value: any) => GUIController;
 }
 
 interface EventObject {
@@ -31,6 +38,7 @@ interface EventObject {
 }
 
 interface TrackLine extends Line {
+  current_color: number;
   userData: { pt: number; originalIndex: number; [key: string]: number };
   selected: boolean;
   fourVector: FourVector;
@@ -44,7 +52,7 @@ interface EventSummary {
 }
 
 interface Ispy {
-  highlighted: Trackline;
+  highlighted: TrackLine | null;
   show: boolean;
   hide: boolean;
   selected_obj: string;

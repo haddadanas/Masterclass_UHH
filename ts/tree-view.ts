@@ -1,10 +1,11 @@
 import { Color, LineBasicMaterial, Material, MeshBasicMaterial } from "three";
+import { GUIController } from "dat.gui/index.js";
 
-import { ispy } from "./config";
-import { data_groups, detector_description, disabled, event_description, reduced_data_groups } from "./objects-config";
-import { getHTMLObject, removeExistingBubble } from "./utils";
-import { getSceneObjects } from "./uhh_selection";
-import { SelectionFieldController } from "./ispy.interfaces";
+import { ispy } from "./config.js";
+import { data_groups, detector_description, disabled, event_description, reduced_data_groups } from "./objects-config.js";
+import { getHTMLObject, removeExistingBubble } from "./utils.js";
+import { getSceneObjects } from "./uhh_selection.js";
+import { SelectionFieldController } from "./ispy.interfaces.js";
 
 function addGroups() {
   // Add option to keep user cuts and preferences when switching between events
@@ -47,7 +48,7 @@ function clearSubfolders() {
   });
 
   ["Controllers", "Info"].forEach((g) => {
-    ispy.subfoldersReduced[g].forEach((s) => {
+    (ispy.subfoldersReduced[g] as GUIController[]).forEach((s) => {
       s.remove();
     });
     ispy.subfoldersReduced[g] = [];
@@ -422,7 +423,7 @@ function addControllers(group: string) {
   }
 
   // add all controllers to the reduced subfolders for convenience
-  folder.__controllers.forEach((c) => {
+  (folder.__controllers as SelectionFieldController[]).forEach((c) => {
     ispy.subfoldersReduced["Controllers"].push(c);
   });
 }
@@ -464,14 +465,14 @@ function addInfo(group: string) {
     });
 
   // add all controllers to the reduced subfolders for convenience
-  folder.__controllers.forEach((c) => {
+  (folder.__controllers as SelectionFieldController[]).forEach((c) => {
     ispy.subfoldersReduced["Info"].push(c);
   });
 }
 
 function saveCutSettings() {
   const settings: Record<string, any> = {};
-  const btn = ispy.guiReduced.__controllers.find((o) => o.property === "Keep Settings");
+  const btn = (ispy.guiReduced.__controllers as SelectionFieldController[]).find((o) => o.property === "Keep Settings");
   if (btn?.getValue()) {
     const controllers = ispy.subfoldersReduced["Controllers"];
     controllers.forEach((c) => {

@@ -1,9 +1,9 @@
 import { Easing, Tween } from "@tweenjs/tween.js";
 import { SphereGeometry, MeshBasicMaterial, Mesh } from "three";
 
-import { ispy } from "./config";
-import { resetView } from "./controls";
-import { showObject } from "./tree-view";
+import { ispy } from "./config.js";
+import { resetView } from "./controls.js";
+import { showObject } from "./tree-view.js";
 
 // This is particular to the sequence below:
 // - Colliding bunch crossings

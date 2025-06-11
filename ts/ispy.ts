@@ -1,8 +1,8 @@
-import { addKeyboardListeners } from "./display";
-import { loadWebFiles } from "./files-load";
-import { event_description } from "./objects-config";
-import { init, initLight, initControlPanel, run } from "./setup";
-import { addGroups } from "./tree-view";
+import { addKeyboardListeners } from "./display.js";
+import { loadWebFiles } from "./files-load.js";
+import { event_description } from "./objects-config.js";
+import { init, initLight, initControlPanel, run } from "./setup.js";
+import { addGroups } from "./tree-view.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   init();

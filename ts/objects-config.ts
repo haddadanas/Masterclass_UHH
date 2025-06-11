@@ -9,7 +9,7 @@ import {
   SHAPE,
   TEXT,
   STACKEDTOWER,
-} from "./config";
+} from "./config.js";
 import {
   makeCaloClusters,
   makeCaloTower,
@@ -72,8 +72,8 @@ import {
   makeTracksRZ,
   makeVertex,
   makeVertexCompositeCandidate,
-} from "./objects-draw";
-import { addControllers, addInfo } from "./tree-view";
+} from "./objects-draw.js";
+import { addControllers, addInfo } from "./tree-view.js";
 
 // skipcq: JS-0323
 const detector_description: Record<string, Record<string, any>> = {

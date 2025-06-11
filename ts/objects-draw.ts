@@ -24,10 +24,10 @@ import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 
-import { ispy } from "./config";
-import { getHTMLObject } from "./utils";
+import { ispy } from "./config.js";
+import { getHTMLObject } from "./utils.js";
 
-import { Selection } from "./ispy.interfaces";
+import { Selection } from "./ispy.interfaces.js";
 
 // helpful type definition
 type DetectorCollectionEntry = [number, ...(number[] | number[][])];

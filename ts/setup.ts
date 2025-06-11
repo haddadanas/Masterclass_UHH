@@ -23,15 +23,15 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import dat from "dat.gui";
 import { update } from "@tweenjs/tween.js";
 
-import { getHTMLObject } from "./utils";
-import { ispy } from "./config";
-import { importDetector, loadDroppedFile } from "./files-load";
-import { data_groups } from "./objects-config";
-import { onMouseDown, onMouseMove, onWindowResize } from "./display";
-import { CHARGE_MAP, SELEC_NAME_MAP } from "./analysis_config";
-import { checkCurrentSelection } from "./uhh_selection";
+import { getHTMLObject } from "./utils.js";
+import { ispy } from "./config.js";
+import { importDetector, loadDroppedFile } from "./files-load.js";
+import { data_groups } from "./objects-config.js";
+import { onMouseDown, onMouseMove, onWindowResize } from "./display.js";
+import { CHARGE_MAP, SELEC_NAME_MAP } from "./analysis_config.js";
+import { checkCurrentSelection } from "./uhh_selection.js";
 
-import { SelectionFieldController } from "./ispy.interfaces";
+import { SelectionFieldController } from "./ispy.interfaces.js";
 
 function lookAtOrigin() {
   ispy.camera?.lookAt(new Vector3(0, 0, 0));
@@ -140,6 +140,10 @@ function useRenderer(type: string) {
 }
 
 function setupClipping() {
+  if (!ispy.renderer) {
+    console.error("Renderer is not initialized");
+    return;
+  }
   ispy.clipgui = new dat.GUI({
     name: "Clipping Controls",
     hideable: false,
@@ -206,7 +210,7 @@ function setupClipping() {
     new Plane(new Vector3(0, -1, 0), global_params.planeY.constant),
     new Plane(new Vector3(0, 0, -1), global_params.planeZ.constant),
   ];
-
+  ispy.renderer = ispy.renderer as WebGLRenderer;
   ispy.renderer.clippingPlanes = ispy.global_planes;
   ispy.renderer.localClippingEnabled = true;
 
@@ -424,16 +428,20 @@ function handleToggles() {
 }
 
 function handleDragAndDrop() {
-  const canvas = ispy.renderer.domElement;
+  if (!ispy.renderer || !ispy.renderer.domElement) {
+    console.error("Renderer or its DOM element is not initialized");
+    return;
+  }
+  const canvas = ispy.renderer.domElement as HTMLCanvasElement;
 
-  canvas.ondragover = function () {
-    this.classList.add("hover");
+  canvas.ondragover = function (_e: Event) {
+    (this as HTMLElement).classList.add("hover");
     return false;
   };
 
   canvas.ondrop = function (e: DragEvent) {
     e.preventDefault();
-    this.classList.remove("hover");
+    (this as HTMLElement).classList.remove("hover");
     if (e.dataTransfer == null) {
       console.error("No data transfer object");
       return false;
@@ -444,8 +452,8 @@ function handleDragAndDrop() {
     return false;
   };
 
-  canvas.addEventListener("ondragover", canvas.ondragover);
-  canvas.addEventListener("ondrop", canvas.ondrop);
+  canvas.addEventListener("ondragover", canvas.ondragover as EventListener);
+  canvas.addEventListener("ondrop", canvas.ondrop as EventListener);
 }
 
 function init() {
@@ -491,7 +499,7 @@ function init() {
   // ispy.tcontrols.noRotate = false;
   // ispy.tcontrols.noPan = false;
 
-  const ocontrols = new OrbitControls(ispy.camera!, ispy.renderer.domElement);
+  const ocontrols = new OrbitControls(ispy.camera!, ispy.renderer!.domElement as HTMLCanvasElement);
   ocontrols.enableRotate = true;
 
   ispy.controls = ocontrols;
@@ -513,8 +521,8 @@ function init() {
 
   ispy.raycaster.layers.set(2);
 
-  ispy.renderer.domElement.addEventListener("pointermove", onMouseMove, false);
-  ispy.renderer.domElement.addEventListener("pointerdown", onMouseDown, false);
+  ispy.renderer!.domElement.addEventListener("pointermove", (e) => onMouseMove(e as MouseEvent), false);
+  ispy.renderer!.domElement.addEventListener("pointerdown", (e) => onMouseDown(e as MouseEvent), false);
 
   // Are we running an animation?
   ispy.animating = false;
@@ -561,7 +569,7 @@ function initControlPanel() {
 }
 
 function createCheckboxContainer(cont: dat.GUIController) {
-  const selectionField = cont as SelectionFieldController;
+  const selectionField = cont as unknown as SelectionFieldController;
   // check if not __input
   const inputField = selectionField.domElement.querySelector("input") as HTMLInputElement;
 
@@ -667,17 +675,19 @@ function initSelectionFields() {
 }
 
 function render() {
-  if (ispy.renderer !== null) {
-    ispy.renderer.render(ispy.scene, ispy.camera);
+  if (!ispy.renderer) {
+    console.error("Renderer is not initialized");
+    return;
+  }
+  ispy.renderer.render(ispy.scene!, ispy.camera!);
 
-    if (ispy.get_image_data) {
-      ispy.image_data = ispy.renderer.domElement.toDataURL();
-      ispy.get_image_data = false;
-    }
+  if (ispy.get_image_data) {
+    ispy.image_data = (ispy.renderer.domElement as HTMLCanvasElement).toDataURL();
+    ispy.get_image_data = false;
   }
 
   if (ispy.inset_renderer !== null) {
-    ispy.inset_renderer.render(ispy.inset_scene, ispy.inset_camera);
+    ispy.inset_renderer!.render(ispy.inset_scene, ispy.inset_camera!);
   }
 }
 
@@ -689,7 +699,10 @@ function run() {
     console.error("Camera is not initialized");
     return;
   }
-
+  if (!ispy.controls) {
+    console.error("Controls are not initialized");
+    return;
+  }
   ispy.stats.update();
 
   ispy.controls.update();

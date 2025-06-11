@@ -1,10 +1,10 @@
 // import { Data, newPlot } from "plotly.js";
 import swal from "sweetalert";
 
-import { ispy, analysis } from "./config";
-import { getCurrentEvent, EventCollection, getCurrentIndex } from "./utils";
+import { ispy, analysis } from "./config.js";
+import { getCurrentEvent, EventCollection, getCurrentIndex } from "./utils.js";
 
-import { Particle, FourVector, MET } from "./ispy.interfaces";
+import { Particle, FourVector, MET } from "./ispy.interfaces.js";
 
 // Helper functions to check the selection
 function checkMinMET(met: MET, cut: number): boolean {
@@ -99,7 +99,7 @@ function getCurrentSelectionMessage(): [string, string] {
 
 function checkCurrentSelection(): void {
   const [Msgtext, symbol] = getCurrentSelectionMessage();
-  swal({ text: Msgtext, title: "Selection Results", icon: symbol, buttons: false, timer: 3000 } as SweetAlert.Settings);
+  swal({ text: Msgtext, title: "Selection Results", icon: symbol, buttons: [false], timer: 3000 });  // TODO check if no buttons
   if (symbol === "error") return;
   const nSelected = ispy.subfoldersReduced["Selection"].find((e) => e.property === "nSelected");
   if (nSelected) {
@@ -118,8 +118,8 @@ function checkCurrentSelection(): void {
 
 function getSceneObjects(): { [key: string]: string } {
   return [
-    ...(ispy.scenes?.["3D"]?.getObjectByName("Physics")?.children.map((o) => o.name) || []),
-    ...(ispy.scenes?.["3D"]?.getObjectByName("Tracking")?.children.map((o) => o.name) || []),
+    ...(ispy.scenes?.["3D"]?.getObjectByName("Physics")?.children.map((o: any) => o.name) || []),
+    ...(ispy.scenes?.["3D"]?.getObjectByName("Tracking")?.children.map((o: any) => o.name) || []),
   ].reduce((dic: { [key: string]: string }, o) => {
     dic[o.replace(/^(?:PAT|PF)?(.*?)_V\d$/, "$1")] = o;
     return dic;

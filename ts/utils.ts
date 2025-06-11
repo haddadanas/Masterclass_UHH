@@ -3,9 +3,9 @@
 import JSZip from "jszip";
 import { Material } from "three";
 
-import { ispy } from "./config";
+import { ispy } from "./config.js";
 
-import { Particle, EventObject, EventSummary, MET, FourVector } from "./ispy.interfaces";
+import { Particle, EventObject, EventSummary, MET, FourVector } from "./ispy.interfaces.js";
 
 const mMuon2 = 0.10566 * 0.10566;
 const mElectron2 = 0.511e-3 * 0.511e-3;

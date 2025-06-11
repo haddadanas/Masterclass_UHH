@@ -1,12 +1,17 @@
 import { Vector3 } from "three";
 import { OBJExporter } from "three/examples/jsm/exporters/OBJExporter";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-import { ispy } from "./config";
-import { initCamera, lookAtOrigin, render } from "./setup";
-import { getHTMLObject } from "./utils";
+import { ispy } from "./config.js";
+import { initCamera, lookAtOrigin, render } from "./setup.js";
+import { getHTMLObject } from "./utils.js";
 
 function resetView() {
+  if (!ispy.controls) {
+    console.error("Controls are not defined");
+    return;
+  }
   setPerspective();
   initCamera();
 
@@ -76,6 +81,10 @@ function setOrthographic() {
     console.error("Orthographic or Perspective camera is not defined");
     return;
   }
+  if (!ispy.controls) {
+    console.error("Controls are not defined");
+    return;
+  }
   getHTMLObject("perspective").classList.remove("active");
   getHTMLObject("orthographic").classList.add("active");
 
@@ -118,6 +127,10 @@ function setPerspective() {
     console.error("Orthographic or Perspective camera is not defined");
     return;
   }
+  if (!ispy.controls) {
+    console.error("Controls are not defined");
+    return;
+  }
   getHTMLObject("perspective").classList.add("active");
   getHTMLObject("orthographic").classList.remove("active");
 
@@ -140,6 +153,10 @@ function setPerspective() {
 }
 
 function showView(view: string) {
+  if (!ispy.controls) {
+    console.error("Controls are not defined");
+    return;
+  }
   switch (view) {
     case "3D":
       getHTMLObject("3d").classList.add("active");
@@ -153,7 +170,7 @@ function showView(view: string) {
       getHTMLObject("yz").removeAttribute("disabled");
       getHTMLObject("xz").removeAttribute("disabled");
 
-      ispy.controls.enableRotate = true;
+      (ispy.controls as OrbitControls).enableRotate = true;
 
       if (ispy.current_view !== "3D") setPerspective();
 
@@ -173,7 +190,7 @@ function showView(view: string) {
       getHTMLObject("yz").setAttribute("disabled", "");
       getHTMLObject("xz").setAttribute("disabled", "");
 
-      ispy.controls.enableRotate = false;
+      (ispy.controls as OrbitControls).enableRotate = false;
       ispy.controls.reset();
 
       setOrthographic();
@@ -195,7 +212,7 @@ function showView(view: string) {
       getHTMLObject("yz").setAttribute("disabled", "");
       getHTMLObject("xz").setAttribute("disabled", "");
 
-      ispy.controls.enableRotate = false;
+      (ispy.controls as OrbitControls).enableRotate = false;
       ispy.controls.reset();
 
       setOrthographic();
