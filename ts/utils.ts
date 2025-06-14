@@ -199,8 +199,10 @@ export function getHTMLObject(id: string): HTMLElement {
   return obj;
 }
 
-export function changeMeshMaterials(materials: Material | Material[], func: (m: Material) => void) {
-  console.log("Changing materials", materials);
+export function changeMeshMaterials(materials: Material | Material[] | undefined, func: (m: Material) => void) {
+  if (!materials) {
+    return;
+  }
   if (!Array.isArray(materials)) {
     func(materials);
     return;

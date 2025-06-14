@@ -73,7 +73,7 @@ function setYZ() {
 function autoRotate() {
   ispy.autoRotating = !ispy.autoRotating;
 
-  getHTMLObject("autorotate").classList.toggle("active");
+  getHTMLObject("js-autorotate").classList.toggle("active");
 }
 
 function setOrthographic() {

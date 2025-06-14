@@ -71,15 +71,15 @@ function updateEventList() {
 
 function enableNextPrev() {
   if (ispy.event_index > 0) {
-    getHTMLObject("prev-event-button").classList.remove("disabled");
+    getHTMLObject("js-prev-event-button").classList.remove("disabled");
   } else {
-    getHTMLObject("prev-event-button").classList.add("disabled");
+    getHTMLObject("js-prev-event-button").classList.add("disabled");
   }
 
   if (ispy.event_list && ispy.event_list.length - 1 > ispy.event_index) {
-    getHTMLObject("next-event-button").classList.remove("disabled");
+    getHTMLObject("js-next-event-button").classList.remove("disabled");
   } else {
-    getHTMLObject("next-event-button").classList.add("disabled");
+    getHTMLObject("js-next-event-button").classList.add("disabled");
   }
 }
 
@@ -280,7 +280,7 @@ function loadLocalFiles() {
   getHTMLObject("selected-event").innerHTML = "Selected event";
   //$('#selected-event').html("Selected event");
 
-  const files = (getHTMLObject("local-files") as HTMLInputElement).files;
+  const files = (getHTMLObject("js-local-files-btn") as HTMLInputElement).files;
   if (!files || files.length === 0) {
     alert("Please select a file to load!");
     return;

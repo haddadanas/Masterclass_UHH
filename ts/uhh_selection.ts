@@ -155,7 +155,7 @@ function getPassingEvents(): string[] {
 
 function buildFileSummary(): void {
   let event_summary: EventCollection;
-  let analysisBtn = document.getElementById("analysis_btn");
+  let analysisBtn = document.getElementById("js-analysis-btn");
   const downloadBtn = document.getElementById("save-csv-btn");
   if (!analysisBtn) {
     analysisBtn = document.createElement("button");

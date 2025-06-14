@@ -94,87 +94,81 @@
           </div>
 
           <div class="btn-group" role="group">
-            <button type="button" class="btn btn-default" onclick="ispy.reload();" title="Reload page">
+            <button type="button" id="js-reload" class="btn btn-default" title="Reload page">
               <i class="fa fa-redo"></i>
             </button>
           </div>
 
           <div class="btn-group" role="group">
-            <button type="button" class="btn btn-default disabled" id="prev-event-button" onclick="ispy.prevEvent();"
+            <button type="button" class="btn btn-default disabled" id="js-prev-event-button"
               title="Previous Event [Left Arrow]">
               <i class="fa fa-step-backward"></i>
             </button>
-            <button type="button" class="btn btn-default disabled" id="next-event-button" onclick="ispy.nextEvent();"
+            <button type="button" class="btn btn-default disabled" id="js-next-event-button"
               title="Next Event [Right Arrow]">
               <i class="fa fa-step-forward"></i>
             </button>
           </div>
 
           <div class="btn-group" role="group">
-            <button type="button" class="btn btn-default" onclick="ispy.resetView();" title="Return to Start View">
+            <button type="button" class="btn btn-default" id="js-reset-view" title="Return to Start View">
               <i class="fa fa-home"></i>
             </button>
           </div>
 
           <div class="btn-group" role="group">
-            <button type="button" class="btn btn-default" onclick="ispy.zoomIn();" title="Zoom In [Shift + Up Arrow]">
+            <button type="button" class="btn btn-default" id="js-zoom-in" title="Zoom In [Shift + Up Arrow]">
               <i class="fa fa-search-plus"></i>
             </button>
-            <button type="button" class="btn btn-default" onclick="ispy.zoomOut();"
-              title="Zoom Out [Shift + Down Arrow]">
+            <button type="button" class="btn btn-default" id="js-zoom-out" title="Zoom Out [Shift + Down Arrow]">
               <i class="fa fa-search-minus"></i>
             </button>
           </div>
 
           <div class="btn-group" role="group">
-            <button type="button" id="autorotate" class="btn btn-default" onclick="ispy.autoRotate();"
-              title="Autorotate about Y axis">
+            <button type="button" id="js-autorotate" class="btn btn-default" title="Autorotate about Y axis">
               <i class="fa fa-undo"></i>
             </button>
           </div>
 
           <div class="btn-group" role="group">
-            <button type="button" id="3d" class="btn btn-default active" onclick="ispy.showView('3D');" title="3d view">
+            <button type="button" id="3d" class="btn btn-default active" title="3d view">
               3D
             </button>
-            <button type="button" id="rphi" class="btn btn-default" onclick="ispy.showView('RPhi');" title="rphi view">
+            <button type="button" id="rphi" class="btn btn-default" title="rphi view">
               r&phi;
             </button>
-            <button type="button" id="rhoz" class="btn btn-default" onclick="ispy.showView('RhoZ');" title="rhoz view">
+            <button type="button" id="rhoz" class="btn btn-default" title="rhoz view">
               &rho;z
             </button>
           </div>
 
           <div class="btn-group" role="group">
-            <button type="button" id="xy" class="btn btn-default" onclick="ispy.setXY();" title="YX Plane">
+            <button type="button" id="xy" class="btn btn-default" title="YX Plane">
               <img src="./graphics/yx_small.png" class="img-responsive" alt="yx-view" />
             </button>
-            <button type="button" id="yz" class="btn btn-default" onclick="ispy.setYZ();" title="YZ plane">
+            <button type="button" id="yz" class="btn btn-default" title="YZ plane">
               <img src="./graphics/yz_small.png" class="img-responsive" alt="yz-view" />
             </button>
-            <button type="button" id="xz" class="btn btn-default" onclick="ispy.setZX();" title="XZ plane">
+            <button type="button" id="xz" class="btn btn-default" title="XZ plane">
               <img src="./graphics/xz_small.png" class="img-responsive" alt="xz-view" />
             </button>
           </div>
 
           <div class="btn-group" role="group">
-            <button type="button" id="perspective" class="btn btn-default active" onclick="ispy.setPerspective();"
-              title="Perspective Projection">
+            <button type="button" id="perspective" class="btn btn-default active" title="Perspective Projection">
               <i class="fa fa-cube"></i>
             </button>
-            <button type="button" id="orthographic" class="btn btn-default" onclick="ispy.setOrthographic();"
-              title="Orthographic Projection">
+            <button type="button" id="orthographic" class="btn btn-default" title="Orthographic Projection">
               <i class="fa fa-dice-d6"></i>
             </button>
           </div>
 
           <div class="btn-group" role="group">
-            <button type="button" id="enterFullscreen" class="btn btn-default" onclick="ispy.enterFullscreen();"
-              title="Expand to Fullscreen">
+            <button type="button" id="enterFullscreen" class="btn btn-default" title="Expand to Fullscreen">
               <i class="fa fa-expand"></i>
             </button>
-            <button type="button" id="exitFullscreen" class="btn btn-default active" onclick="ispy.exitFullscreen();"
-              title="Exit Fullscreen">
+            <button type="button" id="exitFullscreen" class="btn btn-default active" title="Exit Fullscreen">
               <i class="fa fa-compress"></i>
             </button>
           </div>
@@ -187,7 +181,7 @@
 
           <div class="btn-group" role="group">
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#statistics"
-              onclick="ispy.updateRendererInfo();" title="Stats">
+              id="js-render-info" title="Stats">
               <i class="fa fa-heartbeat"></i>
             </button>
           </div>
@@ -198,21 +192,19 @@
               <i class="fa fa-file-csv"></i>
             </button>
             <ul class="dropdown-menu">
-              <li><a href="#" onclick="analysis.createCSV('Higgs');">Higgs</a></li>
-              <li><a href="#" onclick="analysis.createCSV('Z');">Z</a></li>
-              <li><a href="#" onclick="analysis.createCSV('Wp');">W+</a></li>
-              <li><a href="#" onclick="analysis.createCSV('Wm');">W-</a></li>
+              <li><a href="#" id="js-csv-higgs">Higgs</a></li>
+              <li><a href="#" id="js-csv-z">Z</a></li>
+              <li><a href="#" id="js-csv-wp">W+</a></li>
+              <li><a href="#" id="js-csv-wm">W-</a></li>
             </ul>
-            <button type="button" id="analysis_btn" class="btn btn-default" disabled data-toggle="modal"
-              data-target="#analysis" onclick="analysis.getSelectionResults();" title="Run Analysis">
+            <button type="button" id="js-analysis-btn" class="btn btn-default" disabled data-toggle="modal"
+              data-target="#analysis" title="Run Analysis">
               <i class="fa fa-chart-bar"></i>
             </button>
-            <button id="prev-sel-event" class="btn btn-default disabled" type="button" title="Previous Selected Event"
-              onclick="ispy.prevSelectedEvent();">
+            <button id="prev-sel-event" class="btn btn-default disabled" type="button" title="Previous Selected Event">
               <i class="fa fa-angle-double-left"></i>
             </button>
-            <button id="next-sel-event" class="btn btn-default disabled" type="button" title="Next Selected Event"
-              onclick="ispy.nextSelectedEvent();">
+            <button id="next-sel-event" class="btn btn-default disabled" type="button" title="Next Selected Event">
               <i class="fa fa-angle-double-right"></i>
             </button>
           </div>
@@ -227,21 +219,20 @@
           </div>
 
           <div class="btn-group" role="group">
-            <button type="button" class="btn btn-default" onclick="ispy.printImage();" title="Print Image to File">
+            <button type="button" class="btn btn-default" id="js-print-btn" title="Print Image to File">
               <i class="fa fa-camera"></i>
             </button>
           </div>
 
           <div class="btn-group" role="group">
-            <button type="button" id="animate" class="btn btn-default" onclick="ispy.toggleAnimation();"
-              title="Start/Stop Animation [Shift + A]">
+            <button type="button" id="animate" class="btn btn-default" title="Start/Stop Animation [Shift + A]">
               <i class="fa fa-film"></i>
             </button>
           </div>
 
           <!--
           <div class="btn-group" role="group">
-            <button type="button" id="record" class="btn btn-default" onclick="ispy.toggleRecording();" title="Start/Stop Recording">
+            <button type="button" id="record" class="btn btn-default" onclick="toggleRecording();" title="Start/Stop Recording">
               <i class="fa fa-video-camera"></i>
             </button>
           </div>
@@ -328,14 +319,13 @@ piwikTracker.enableLinkTracking();
       <div class="modal-body">
         <table>
           <p>
-            <button type="button" class="btn btn-default" onclick="ispy.showWebFiles();">
+            <button type="button" class="btn btn-default" id="js-show-webfiles-btn">
               Open file(s) from the Web
             </button>
           </p>
           <p>
             Open local file(s):
-            <input type="file" id="local-files" onchange="ispy.loadLocalFiles();"
-              onclick="$('#open-files').modal('hide');" multiple />
+            <input type="file" id="js-local-files-btn" onclick="$('#open-files').modal('hide');" multiple />
           </p>
         </table>
       </div>
@@ -379,8 +369,7 @@ piwikTracker.enableLinkTracking();
           <button type="button" class="btn btn-default" data-dismiss="modal">
             Close
           </button>
-          <button type="button" id="load-event" class="btn btn-default disabled"
-            onclick="$('#files').modal('hide'); analysis.buildFileSummary(); ispy.loadEvent();">
+          <button type="button" id="load-event" class="btn btn-default disabled">
             Load
           </button>
         </div>
@@ -443,7 +432,7 @@ piwikTracker.enableLinkTracking();
       <div class="modal-body">
         <p>
           <label for="invert-colors">Invert colors:</label>
-          <input id="invert-colors" type="checkbox" onchange="ispy.invertColors();" />
+          <input id="invert-colors" type="checkbox" />
         </p>
         <p>
           <label for="clipping">Show clipping plane controls:</label>
@@ -468,20 +457,17 @@ piwikTracker.enableLinkTracking();
         <p>
           <label for="vh-slider">Set vertical extent of display:</label>
           <span id="vh"></span> %
-          <input type="range" min="75" max="100" value="90" id="vh-slider" step="1"
-            oninput="ispy.setDisplayVerticalHeight(value);" />
+          <input type="range" min="75" max="100" value="90" id="vh-slider" step="1" />
         </p>
         <p>
           <label for="fps-slider">Set maximum frame rate:</label>
           <span id="fr"></span> fps
-          <input type="range" min="1" max="60" value="30" id="fps-slider" step="1"
-            oninput="ispy.setFramerate(value);" />
+          <input type="range" min="1" max="60" value="30" id="fps-slider" step="1" />
         </p>
         <p>
           <label for="transparency-slider">Set imported geometry transparency:</label>
           <span id="trspy"></span>
-          <input type="range" min="0.0" max="1.0" value="1.0" id="transparency-slider" step="0.05"
-            oninput="ispy.setTransparency(value);" />
+          <input type="range" min="0.0" max="1.0" value="1.0" id="transparency-slider" step="0.05" />
         </p>
         <div class="btn-group">
           <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-expanded="false">
@@ -489,10 +475,10 @@ piwikTracker.enableLinkTracking();
           </button>
           <ul class="dropdown-menu" role="menu">
             <li>
-              <a href="#" onclick="ispy.updateRenderer('WebGLRenderer');">WebGLRenderer</a>
+              <a href="#" id="js-webgl-renderer">WebGLRenderer</a>
             </li>
             <li>
-              <a href="#" onclick="ispy.updateRenderer('SVGRenderer');">SVGRenderer</a>
+              <a href="#" id="js-svg-renderer">SVGRenderer</a>
             </li>
           </ul>
         </div>
@@ -564,16 +550,16 @@ piwikTracker.enableLinkTracking();
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
               <li>
-                <a href="#" onclick="analysis.createCSV('Higgs');">Higgs</a>
+                <a href="#">Higgs</a>
               </li>
               <li>
-                <a href="#" onclick="analysis.createCSV('Wp');">W+ Boson</a>
+                <a href="#">W+ Boson</a>
               </li>
               <li>
-                <a href="#" onclick="analysis.createCSV('Wm');">W- Boson</a>
+                <a href="#">W- Boson</a>
               </li>
               <li>
-                <a href="#" onclick="analysis.createCSV('Z');">Z Boson</a>
+                <a href="#">Z Boson</a>
               </li>
             </ul>
           </div>
@@ -841,7 +827,7 @@ piwikTracker.enableLinkTracking();
           To use with the viewer, rotate the phone to landscape, press the button below, and insert into the viewer. The view automatically
           pans forward in the direction of view. To exit, tap the screen.
         </p>
-        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="ispy.setStereo();">Start</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="setStereo();">Start</button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -865,12 +851,12 @@ piwikTracker.enableLinkTracking();
             Select export format <span class="caret"></span>
           </button>
           <ul class="dropdown-menu" role="menu">
-            <li><a href="#" onclick="ispy.exportOBJ();">Export OBJ</a></li>
+            <li><a href="#" id="js-export-obj">Export OBJ</a></li>
             <li>
-              <a href="#" onclick="ispy.exportGLTF_text();">Export GLTF (text)</a>
+              <a href="#" id="js-export-gltf-text">Export GLTF (text)</a>
             </li>
             <li>
-              <a href="#" onclick="ispy.exportGLTF_binary();">Export GLTF (binary)</a>
+              <a href="#" id="js-export-gltf-binary">Export GLTF (binary)</a>
             </li>
           </ul>
         </div>
@@ -910,14 +896,13 @@ piwikTracker.enableLinkTracking();
         </p>
         <table>
           <p>
-            <button type="button" class="btn btn-default"
-              onclick="ispy.openDialog('#geometry-files'); ispy.loadObjFiles(); $('#import-model').modal('hide');">
+            <button type="button" class="btn btn-default" id="js-import-web">
               Open file(s) from the Web
             </button>
           </p>
           <p>
             Open local file(s):
-            <input type="file" id="import-file" onchange="ispy.importModel();" multiple />
+            <input type="file" id="import-file" multiple />
           </p>
         </table>
       </div>
@@ -957,8 +942,7 @@ piwikTracker.enableLinkTracking();
           <button type="button" class="btn btn-default" data-dismiss="modal">
             Close
           </button>
-          <button type="button" id="load-obj" class="btn btn-default disabled"
-            onclick="$('#geometry-files').modal('hide'); ispy.loadSelectedObj();">
+          <button type="button" id="load-obj" class="btn btn-default disabled">
             Load
           </button>
         </div>
