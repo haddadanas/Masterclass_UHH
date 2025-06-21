@@ -29,10 +29,15 @@ import {
   STACKEDTOWER,
   ispy,
 } from "./config.js";
-import { data_groups, detector_description, disabled, event_description, reduced_data_groups } from "./objects-config.js";
+import {
+  data_groups,
+  detector_description,
+  disabled,
+  event_description,
+  reduced_data_groups,
+} from "./objects-config.js";
 import { addSelectionRow, applySavedSettings, clearSubfolders, saveCutSettings } from "./tree-view.js";
 import { showView } from "./controls.js";
-
 
 function addToSceneObject(key: string, obj: any): void {
   const groupObject = ispy.scene?.getObjectByName(key);

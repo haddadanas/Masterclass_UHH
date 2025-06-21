@@ -39,14 +39,6 @@ import { addGroups } from "./tree-view.js";
 import { buildFileSummary, createCSV, getSelectionResults } from "./uhh_selection.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  init();
-  addGroups();
-  initLight();
-  initControlPanel();
-  addKeyboardListeners();
-  loadWebFiles();
-  run();
-
   console.log(event_description);
 
   // connect functions to the buttons
@@ -112,4 +104,11 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("js-csv-z")?.addEventListener("click", () => createCSV("Z"));
   document.getElementById("js-csv-wp")?.addEventListener("click", () => createCSV("Wp"));
   document.getElementById("js-csv-wm")?.addEventListener("click", () => createCSV("Wm"));
+  init();
+  addGroups();
+  initLight();
+  initControlPanel();
+  addKeyboardListeners();
+  loadWebFiles();
+  run();
 });

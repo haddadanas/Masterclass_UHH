@@ -9,13 +9,14 @@ import {
   changeMeshMaterials,
 } from "./utils.js";
 import { ispy } from "./config.js";
-import { useRenderer, render } from "./setup.js";
+import { useRenderer, render, updateClipping } from "./setup.js";
 import { toggleAnimation } from "./animate.js";
 import { nextEvent, prevEvent } from "./files-load.js";
 import { exportScene, zoomIn, zoomOut } from "./controls.js";
 import { event_description } from "./objects-config.js";
 
 import { TrackLine } from "./ispy.interfaces.js";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 function invertColors() {
   if (!ispy.renderer) {
@@ -118,6 +119,22 @@ function updateRendererInfo() {
   getHTMLObject("renderer-info").innerHTML = html;
 }
 
+function updateControls(redererClass: string, camera: Camera, rendererDom: HTMLCanvasElement) {
+  let controls: OrbitControls | TrackballControls;
+  if (redererClass === "WebGLRenderer") {
+    controls = new OrbitControls(camera, rendererDom);
+    controls.enableRotate = true;
+  }
+  else if (redererClass === "SVGRenderer") {
+    controls = new TrackballControls(camera, rendererDom);
+    controls.rotateSpeed = 3.0;
+    controls.zoomSpeed = 0.5;
+  } else {
+    throw new Error(`Unknown controls class: ${redererClass}`);
+  }
+  ispy.controls = controls;
+}
+
 function updateRenderer(type: string) {
   if (type === ispy.renderer_name) {
     alert(`${type} is already in use`);
@@ -136,13 +153,9 @@ function updateRenderer(type: string) {
   getHTMLObject("axes").removeChild(ispy.inset_renderer.domElement);
 
   useRenderer(type);
-
-  const controls = new TrackballControls(ispy.camera, ispy.renderer.domElement as HTMLCanvasElement);
-  controls.rotateSpeed = 3.0;
-  controls.zoomSpeed = 0.5;
-  ispy.controls = controls;
-
+  updateControls(type, ispy.camera, ispy.renderer.domElement as HTMLCanvasElement);
   updateRendererInfo();
+  updateClipping();
 }
 
 function onWindowResize() {

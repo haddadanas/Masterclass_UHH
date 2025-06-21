@@ -221,7 +221,7 @@ function selectLocalFile(index: number) {
     alert("No local files loaded!");
     return;
   }
-  let reader = new FileReader();
+  const reader = new FileReader();
   ispy.file_name = ispy.local_files[index].name;
 
   reader.onload = function (e: ProgressEvent<FileReader>) {
@@ -342,8 +342,7 @@ function loadDroppedFile(file: File) {
 function selectFile(filename: string) {
   clearTable("browser-events");
 
-  let new_file_name = filename.split("/")[2]; // of course this isn't a general case for files
-  ispy.file_name = new_file_name;
+  ispy.file_name = filename.split("/")[2]; // of course this isn't a general case for files
 
   //getHTMLObject('progress').style.display = 'block';
   $("#progress").modal("show");

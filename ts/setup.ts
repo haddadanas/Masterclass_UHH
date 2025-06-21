@@ -139,11 +139,15 @@ function useRenderer(type: string) {
   settings.style.display = "none";
 }
 
-function setupClipping() {
-  if (!ispy.renderer) {
-    console.error("Renderer is not initialized");
+function updateClipping() {
+  if (!ispy.renderer || !(ispy.renderer instanceof WebGLRenderer)) {
     return;
   }
+  ispy.renderer.clippingPlanes = ispy.global_planes;
+  ispy.renderer.localClippingEnabled = true;
+}
+
+function setupClippingGUI() {
   ispy.clipgui = new dat.GUI({
     name: "Clipping Controls",
     hideable: false,
@@ -210,9 +214,6 @@ function setupClipping() {
     new Plane(new Vector3(0, -1, 0), global_params.planeY.constant),
     new Plane(new Vector3(0, 0, -1), global_params.planeZ.constant),
   ];
-  ispy.renderer = ispy.renderer as WebGLRenderer;
-  ispy.renderer.clippingPlanes = ispy.global_planes;
-  ispy.renderer.localClippingEnabled = true;
 
   local_planeX
     .add(local_params.planeX, "constant")
@@ -483,7 +484,8 @@ function init() {
   useRenderer("WebGLRenderer");
   
   setupGUIs();
-  setupClipping();
+  setupClippingGUI();
+  updateClipping();
   handleToggles();
   handleDragAndDrop();
   
@@ -748,4 +750,5 @@ export {
   initSelectionFields,
   initCamera,
   render,
+  updateClipping,
 };
