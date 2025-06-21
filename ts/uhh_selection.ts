@@ -164,6 +164,9 @@ function buildFileSummary(): void {
   $("#loading").modal("hide");
   $("#building").modal("show");
   try {
+    if (!ispy.ig_data) {
+      throw new Error("No event data loaded!");
+    }
     // get the event data
     event_summary = new EventCollection(ispy.event_list, ispy.ig_data);
 

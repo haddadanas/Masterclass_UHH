@@ -1,14 +1,8 @@
-import {
-  Line,
-  LineSegments,
-  Material,
-  Mesh,
-  Object3D,
-} from "three";
+import { Line, LineSegments, Material, Mesh, Object3D } from "three";
 import JSZip from "jszip";
-import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader.js';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 import { addEvent, addDetector } from "./objects-add.js";
 import { addSelectionRow } from "./tree-view.js";
@@ -65,7 +59,10 @@ function updateEventList() {
     const row = tbl.insertRow(tbl.rows.length);
     const cell = row.insertCell(0);
 
-    cell.innerHTML = `<a id="browser-event-${i}" class="event" onclick="selectEvent('${i}');">${e}</a>`;
+    cell.innerHTML = `<a id="browser-event-${i}" class="event">${e}</a>`;
+    cell.firstChild!.addEventListener("click", () => {
+      selectEvent(i);
+    });
   }
 }
 
@@ -114,34 +111,42 @@ function loadEvent() {
   }
 
   let event;
-
-  try {
-    event = JSON.parse(cleanupData(ispy.ig_data.file(ispy.event_list[ispy.event_index]).asText()));
-  } catch (err) {
-    alert(err);
+  const fileEntry = ispy.ig_data?.file(ispy.event_list[ispy.event_index]);
+  if (!fileEntry) {
+    alert("No event data loaded or file not found!");
+    return;
   }
-  //getHTMLObject('loading').style.display = 'none';
-  $("#loading").modal("hide");
+  fileEntry.async("string").then(
+    function (content) {
+      event = JSON.parse(cleanupData(content));
 
-  if (ispy.isGeometry) {
-    $.extend(ispy.detector, event);
-    addDetector();
-    ispy.isGeometry = false;
-  } else {
-    addEvent(event);
-    enableNextPrev();
-    enableNextPrevSelected();
+      //getHTMLObject('loading').style.display = 'none';
+      $("#loading").modal("hide");
 
-    const ievent = Number(ispy.event_index) + 1; // JavaScript!
+      if (ispy.isGeometry) {
+        $.extend(ispy.detector, event);
+        addDetector();
+        ispy.isGeometry = false;
+      } else {
+        addEvent(event);
+        enableNextPrev();
+        enableNextPrevSelected();
 
-    getHTMLObject("event-loaded").innerHTML = `${ispy.file_name}:${ispy.event_list[ispy.event_index]}  [${ievent} of ${
-      ispy.event_list.length
-    }]`;
-    //$("#event-loaded").html(ispy.file_name + ":" + ispy.event_list[ispy.event_index] + "  [" + ievent + " of " + ispy.event_list.length + "]");
+        const ievent = Number(ispy.event_index) + 1; // JavaScript!
 
-    console.log(ispy.current_event.Types);
-    console.log(ispy.current_event.Collections.Products_V1);
-  }
+        getHTMLObject("event-loaded").innerHTML = `${ispy.file_name}:${
+          ispy.event_list[ispy.event_index]
+        }  [${ievent} of ${ispy.event_list.length}]`;
+        //$("#event-loaded").html(ispy.file_name + ":" + ispy.event_list[ispy.event_index] + "  [" + ievent + " of " + ispy.event_list.length + "]");
+
+        console.log(ispy.current_event.Types);
+        console.log(ispy.current_event.Collections.Products_V1);
+      }
+    },
+    (err) => {
+      alert(`Error loading event data: ${err}`);
+    },
+  );
 }
 
 function nextEvent() {
@@ -257,7 +262,10 @@ function updateLocalFileList(list: FileList) {
     const cell = row.insertCell(0);
     const cls = "file";
 
-    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}" onclick="selectLocalFile('${i}');">${name}</a>`;
+    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}">${name}</a>`;
+    cell.firstChild!.addEventListener("click", () => {
+      selectLocalFile(i);
+    });
   }
 }
 
@@ -377,7 +385,7 @@ function selectFile(filename: string) {
       const event_list: string[] = [];
       JSZip.loadAsync(xhr.responseText).then((zip) => {
         $.each(zip.files, (_index, zipEntry) => {
-          if (zipEntry.dir && zipEntry.name !== "Header") {
+          if (!zipEntry.dir && zipEntry.name !== "Header") {
             event_list.push(zipEntry.name);
           }
         });
@@ -421,7 +429,11 @@ function loadWebFiles() {
     const cell = row.insertCell(0);
     const cls = "file";
 
-    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}" onclick="selectFile('${e}');">${name}</a>`;
+    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}">${name}</a>`;
+    // add onclick handler to the link
+    cell.firstChild!.addEventListener("click", () => {
+      selectFile(e);
+    });
   }
 }
 
@@ -479,7 +491,10 @@ function loadGLTFFiles() {
     const cell = row.insertCell(0);
     const cls = "file";
 
-    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}" onclick="selectGLTF('${name}');">${name}</a>`;
+    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}">${name}</a>`;
+    cell.firstChild!.addEventListener("click", () => {
+      selectGLTF(name);
+    });
   }
 }
 
@@ -519,7 +534,10 @@ function loadObjFiles() {
     const cell = row.insertCell(0);
     const cls = "file";
 
-    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}" onclick="selectObj('${name}');">${name}</a>`;
+    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}">${name}</a>`;
+    cell.firstChild!.addEventListener("click", () => {
+      selectObj(name);
+    });
   }
 }
 
@@ -1010,36 +1028,33 @@ function importDetector() {
   $("#loading").modal("show");
 
   for (const g of gltf_objs) {
-    gltf_loader.load(
-      g.file,
-      (gltf) => {
-        const object = gltf.scene.children[0] as Object3D & {
-          view?: string;
-        };
+    gltf_loader.load(g.file, (gltf) => {
+      const object = gltf.scene.children[0] as Object3D & {
+        view?: string;
+      };
 
-        object.name = g.id;
-        object.visible = g.show;
-        object.view = g.view;
+      object.name = g.id;
+      object.visible = g.show;
+      object.view = g.view;
 
-        // Set render order for geometries
-        // Otherwise they won't appear "in-front" of Imported geometries
-        (object.children as LineSegments[]).forEach((c) => {
-          c.renderOrder = 1;
-          changeMeshMaterials(c.material, (m: Material) => {
-            m.clippingPlanes = ispy.local_planes;
-          });
+      // Set render order for geometries
+      // Otherwise they won't appear "in-front" of Imported geometries
+      (object.children as LineSegments[]).forEach((c) => {
+        c.renderOrder = 1;
+        changeMeshMaterials(c.material, (m: Material) => {
+          m.clippingPlanes = ispy.local_planes;
         });
+      });
 
-        disabled[object.name] = !g.show;
-        ispy.scenes[object.view].getObjectByName(g.group)!.add(object);
+      disabled[object.name] = !g.show;
+      ispy.scenes[object.view].getObjectByName(g.group)!.add(object);
 
-        // For now do not add RPhi and RhoZ selection options to
-        // the controls GUI
+      // For now do not add RPhi and RhoZ selection options to
+      // the controls GUI
 
-        if (!(object.name === "RPhi" || object.name === "RhoZ"))
-          addSelectionRow(g.group, object.name, g.name, [], g.show);
-      },
-    );
+      if (!(object.name === "RPhi" || object.name === "RhoZ"))
+        addSelectionRow(g.group, object.name, g.name, [], g.show);
+    });
   }
 
   //getHTMLObject('loading').style.display = 'none';

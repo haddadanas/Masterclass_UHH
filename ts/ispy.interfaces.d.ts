@@ -13,6 +13,7 @@ import {
   LineBasicMaterial,
   Vector3,
 } from "three";
+import JSZip from "jszip";
 
 interface SubFolderReduced {
   Detector: string[];
@@ -67,7 +68,7 @@ interface Ispy {
   event_index: number;
   current_event?: any;
   event_list: string[];
-  ig_data: any;
+  ig_data: JSZip | null;
   ievent: number;
   loaded_local: boolean;
 

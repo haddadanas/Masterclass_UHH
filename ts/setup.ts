@@ -370,8 +370,9 @@ function setupInset(height: number) {
 
 function handleToggles() {
   // On page load hide the stats
-  const stats = getHTMLObject("stats");
-  stats.style.display = "none";
+  const stats = ispy.stats.dom;
+  stats.id = "stats";
+  stats.style = "display: none";
 
   const show_stats = getHTMLObject("show-stats") as HTMLInputElement;
 
@@ -458,7 +459,6 @@ function handleDragAndDrop() {
 
 function init() {
   const display = getHTMLObject("display");
-  //   const inset = getHTMLObject("axes");
 
   ispy.scenes = {
     "3D": new Scene(),
@@ -481,14 +481,13 @@ function init() {
   setupInset(height);
 
   useRenderer("WebGLRenderer");
-
-  display.appendChild(ispy.stats.domElement || ispy.stats.dom);
-
+  
   setupGUIs();
   setupClipping();
   handleToggles();
   handleDragAndDrop();
-
+  
+  display.appendChild(ispy.stats.dom);
   // The second argument is necessary to make sure that mouse events are
   // handled only when in the canvas
   // TODO check if needed
@@ -625,7 +624,7 @@ function initSelectionFields() {
   };
 
   //   var help_map = analysis.selection_fields_help;
-  let cont = null;
+  let cont: dat.GUIController | null = null;
   (Object.keys(row_obj) as (keyof typeof row_obj)[]).forEach((key) => {
     const elem_name = SELEC_NAME_MAP[key];
     // let help_info = help_map[key] || false;

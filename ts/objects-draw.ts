@@ -854,7 +854,7 @@ function makeTrackPointsRZ(data: any[], extra: number[][][], assoc: number[][][]
   const tcolor = new Color(style.color);
   const transp = true;
 
-  const lines = [];
+  const lines: Line[] = [];
 
   for (let k = 0; k < positions.length; k++) {
     // if (ispy.use_line2) {
@@ -920,7 +920,7 @@ function makeTrackPoints(data: any[], extra: number[][][], assoc: number[][][], 
   const tcolor = new Color(style.color);
   const transp = true;
 
-  const lines = [];
+  const lines: Line[] = [];
 
   for (let k = 0; k < positions.length; k++) {
     // if (ispy.use_line2) {
@@ -967,7 +967,7 @@ function makeTracks(tracks: any[], extras: any[], assocs: any[], style: any, sel
   let p1, d1, p2, d2;
   let p3, p4;
   let distance, scale, curve;
-  const curves = [];
+  const curves: Line[] = [];
 
   const tcolor = new Color();
   tcolor.setStyle(style.color);
@@ -1033,7 +1033,7 @@ function makeTracksRZ(tracks: any[], extras: any[], assocs: any[], style: any, s
   let p1, d1, p2, d2;
   let p3, p4;
   let distance, scale, curve;
-  const curves = [];
+  const curves: Line[] = [];
 
   const tcolor = new Color();
   tcolor.setStyle(style.color);
@@ -1101,7 +1101,7 @@ function makeThickTracks(tracks: any[], extras: any[], assocs: any[], style: any
   let p1, d1, p2, d2;
   let p3, p4;
   let distance, scale, curve;
-  const curves = [];
+  const curves: Object3D[] = [];
 
   const tcolor = new Color();
   tcolor.setStyle(style.color);
@@ -1193,7 +1193,7 @@ function makeThickTracksRZ(tracks: any[], extras: any[], assocs: any[], style: a
   let p1, d1, p2, d2;
   let p3, p4;
   let distance, scale, curve;
-  const curves = [];
+  const curves: Object3D[] = [];
 
   const tcolor = new Color();
   tcolor.setStyle(style.color);
@@ -1344,7 +1344,7 @@ function makeCaloClusters(_data: any[], extra: any[], assoc: any[], style: any, 
   }
 
   let ri = 0;
-  const boxes = [];
+  const boxes: BufferGeometry[] = [];
 
   for (let j = 0; j < assoc.length; j++) {
     ri = assoc[j][1][1];
@@ -1359,7 +1359,7 @@ function makeCaloClusters(_data: any[], extra: any[], assoc: any[], style: any, 
     transp = true;
   }
 
-  const clusters = [];
+  const clusters: Mesh[] = [];
 
   for (const box of boxes) {
     clusters.push(
@@ -1508,7 +1508,7 @@ function makeCaloTower(data: any, egeometry: any[], hgeometry: any[], scale: num
     all_positions = [];
 
     if (hscale > 0) {
-      const v = [];
+      const v: Vector3[] = [];
 
       if (escale > 0) {
         v.push(b1e);
