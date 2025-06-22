@@ -134,23 +134,23 @@ export function toggleAnimation() {
       .to({ x: xs, y: ys, z: zs }, animation.zoom.time)
       .easing(Easing.Sinusoidal.In);
 
-    const r = animation.rotation.radius;
+    const rotationRadius = animation.rotation.radius;
 
     const zoom2 = new Tween(ispy.camera.position)
-      .to({ x: 0, y: 0, z: r }, animation.zoom.time)
+      .to({ x: 0, y: 0, z: rotationRadius }, animation.zoom.time)
       .easing(Easing.Sinusoidal.In);
 
     const ns = animation.rotation.nsteps;
-    const s = animation.rotation.angle / ns;
+    const angleStep = animation.rotation.angle / ns;
 
     const cx = [];
     const cy = [];
     const cz = [];
 
     for (let i = 1; i <= ns; i++) {
-      cx.push(r * Math.sin(s * i));
+      cx.push(rotationRadius * Math.sin(angleStep * i));
       cy.push(0.0);
-      cz.push(r * Math.cos(s * i));
+      cz.push(rotationRadius * Math.cos(angleStep * i));
     }
 
     let bs = 0;

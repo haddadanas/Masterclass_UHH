@@ -31,8 +31,11 @@ import { Selection } from "./ispy.interfaces.js";
 
 // helpful type definition
 type DetectorCollectionEntry = [number, ...(number[] | number[][])];
+type DataArray = Array<any>;
+type StyleType = { color: string; opacity: number, linewidth: number, radius: number, scale: number };
+type SelectionType = {min_energy: number, min_pt: number, index: number, min_et: number}
 
-function makeWireframeBox(data: any, ci: number) {
+function makeWireframeBox(data: DataArray, ci: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -71,7 +74,7 @@ function makeWireframeBox(data: any, ci: number) {
   return box;
 }
 
-function makeWireFace(data: any, ci: number) {
+function makeWireFace(data: DataArray, ci: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -89,7 +92,7 @@ function makeWireFace(data: any, ci: number) {
   return box;
 }
 
-function makeSolidFace(data: any, ci: number) {
+function makeSolidFace(data: DataArray, ci: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -105,7 +108,7 @@ function makeSolidFace(data: any, ci: number) {
   return box_buffer;
 }
 
-function makeSolidBox(data: any, ci: number) {
+function makeSolidBox(data: DataArray, ci: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -144,7 +147,7 @@ function makeSolidBox(data: any, ci: number) {
   return [box_buffer, box_edges];
 }
 
-function makeSolidBoxRZ(data: any, ci: number) {
+function makeSolidBoxRZ(data: DataArray, ci: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -205,7 +208,7 @@ function makeSolidBoxRZ(data: any, ci: number) {
   return [box_buffer, box_edges];
 }
 
-function makeScaledSolidBox(data: any, boxes: any[], ci: number, energy: number, scale: number) {
+function makeScaledSolidBox(data: DataArray, boxes: DataArray, ci: number, energy: number, scale: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -287,7 +290,7 @@ function makeScaledSolidBox(data: any, boxes: any[], ci: number, energy: number,
   boxes.push(box);
 }
 
-function makeScaledSolidBoxRZ(data: any, boxes: any[], ci: number, energy: number, scale: number) {
+function makeScaledSolidBoxRZ(data: DataArray, boxes: DataArray, ci: number, energy: number, scale: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -405,7 +408,7 @@ function makeScaledSolidBoxRZ(data: any, boxes: any[], ci: number, energy: numbe
   boxes.push(box);
 }
 
-function makeScaledSolidTower(data: any, towers: any[], ci: number, energy: number, scale: number) {
+function makeScaledSolidTower(data: DataArray, towers: DataArray, ci: number, energy: number, scale: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -471,7 +474,7 @@ function makeScaledSolidTower(data: any, towers: any[], ci: number, energy: numb
   towers.push(tower);
 }
 
-function makePFCandidateTowersRZ(data: any, towers: any[], ci: number, energy: number, scale: number) {
+function makePFCandidateTowersRZ(data: DataArray, towers: DataArray, ci: number, energy: number, scale: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -574,7 +577,7 @@ function makePFCandidateTowersRZ(data: any, towers: any[], ci: number, energy: n
   towers.push(tower);
 }
 
-function makePFCandidateTowers(data: any, towers: any[], ci: number, energy: number, scale: number) {
+function makePFCandidateTowers(data: DataArray, towers: DataArray, ci: number, energy: number, scale: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: Vector3Tuple[]) => {
@@ -640,7 +643,7 @@ function makePFCandidateTowers(data: any, towers: any[], ci: number, energy: num
   towers.push(tower);
 }
 
-function makeEcalPFCandidateTowers(data: DetectorCollectionEntry, towers: any[], scale: number, selection: Selection) {
+function makeEcalPFCandidateTowers(data: DetectorCollectionEntry, towers: DataArray, scale: number, selection: Selection) {
   const energy = data[0];
 
   if (energy > (selection.min_energy ?? 0)) {
@@ -650,7 +653,7 @@ function makeEcalPFCandidateTowers(data: DetectorCollectionEntry, towers: any[],
 
 function makeEcalPFCandidateTowersRZ(
   data: DetectorCollectionEntry,
-  towers: any[],
+  towers: DataArray,
   scale: number,
   selection: Selection,
 ) {
@@ -662,7 +665,7 @@ function makeEcalPFCandidateTowersRZ(
 }
 function makeHcalPFCandidateTowersRZ(
   data: DetectorCollectionEntry,
-  towers: any[],
+  towers: DataArray,
   scale: number,
   selection: Selection,
 ) {
@@ -673,7 +676,7 @@ function makeHcalPFCandidateTowersRZ(
   }
 }
 
-function makeHcalPFCandidateTowers(data: DetectorCollectionEntry, towers: any[], scale: number, selection: Selection) {
+function makeHcalPFCandidateTowers(data: DetectorCollectionEntry, towers: DataArray, scale: number, selection: Selection) {
   const energy = data[0];
 
   if (energy > (selection.min_energy ?? 0)) {
@@ -684,7 +687,7 @@ function makeHcalPFCandidateTowers(data: DetectorCollectionEntry, towers: any[],
 // Transform energy towers in R-Z view:
 // All hits above XZ plane go up, below - down.
 
-function makeScaledSolidTowerRZ(data: any, towers: any[], ci: number, energy: number, scale: number) {
+function makeScaledSolidTowerRZ(data: DataArray, towers: DataArray, ci: number, energy: number, scale: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -787,7 +790,7 @@ function makeScaledSolidTowerRZ(data: any, towers: any[], ci: number, energy: nu
   towers.push(tower);
 }
 
-function makeTrackerPiece(data: any): EdgesGeometry {
+function makeTrackerPiece(data: DataArray): EdgesGeometry {
   return makeWireFace(data, 1);
 }
 
@@ -807,7 +810,7 @@ function projectPoint(v: number[], s: number[]): number[] {
   return [0, size, v[2]];
 }
 
-function makeTrackPointsRZ(data: any[], extra: number[][][], assoc: number[][][], style: any, selection: any) {
+function makeTrackPointsRZ(data: DataArray, extra: number[][][], assoc: number[][][], style: StyleType, selection: SelectionType) {
   if (!assoc) {
     throw "No association!";
   }
@@ -892,7 +895,7 @@ function makeTrackPointsRZ(data: any[], extra: number[][][], assoc: number[][][]
   return lines;
 }
 
-function makeTrackPoints(data: any[], extra: number[][][], assoc: number[][][], style: any, selection: any) {
+function makeTrackPoints(data: DataArray, extra: number[][][], assoc: number[][][], style: StyleType, selection: SelectionType) {
   if (!assoc) {
     throw "No association!";
   }
@@ -958,7 +961,7 @@ function makeTrackPoints(data: any[], extra: number[][][], assoc: number[][][], 
   return lines;
 }
 
-function makeTracks(tracks: any[], extras: any[], assocs: any[], style: any, selection: any) {
+function makeTracks(tracks: DataArray, extras: DataArray, assocs: DataArray, style: StyleType, selection: SelectionType) {
   if (!assocs) {
     throw "No association!";
   }
@@ -1024,7 +1027,7 @@ function makeTracks(tracks: any[], extras: any[], assocs: any[], style: any, sel
   return curves;
 }
 
-function makeTracksRZ(tracks: any[], extras: any[], assocs: any[], style: any, selection: any) {
+function makeTracksRZ(tracks: DataArray, extras: DataArray, assocs: DataArray, style: StyleType, selection: SelectionType) {
   if (!assocs) {
     throw "No association!";
   }
@@ -1092,7 +1095,7 @@ function makeTracksRZ(tracks: any[], extras: any[], assocs: any[], style: any, s
   return curves;
 }
 
-function makeThickTracks(tracks: any[], extras: any[], assocs: any[], style: any, selection: any) {
+function makeThickTracks(tracks: DataArray, extras: DataArray, assocs: DataArray, style: StyleType, selection: SelectionType) {
   if (!assocs) {
     throw "No association!";
   }
@@ -1184,7 +1187,7 @@ function makeThickTracks(tracks: any[], extras: any[], assocs: any[], style: any
   return curves;
 }
 
-function makeThickTracksRZ(tracks: any[], extras: any[], assocs: any[], style: any, selection: any) {
+function makeThickTracksRZ(tracks: DataArray, extras: DataArray, assocs: DataArray, style: StyleType, selection: SelectionType) {
   if (!assocs) {
     throw "No association!";
   }
@@ -1278,7 +1281,7 @@ function makeThickTracksRZ(tracks: any[], extras: any[], assocs: any[], style: a
   return curves;
 }
 
-function makeVertex(data: any, style: any) {
+function makeVertex(data: DataArray, style: StyleType) {
   const geometry = new SphereGeometry(style.radius, 32, 32);
   const hcolor = new Color(style.color);
   const transp = true;
@@ -1297,7 +1300,7 @@ function makeVertex(data: any, style: any) {
   return vertex;
 }
 
-function makeVertexCompositeCandidate(data: any, style: any) {
+function makeVertexCompositeCandidate(data: DataArray, style: StyleType) {
   const geometry = new SphereGeometry(style.radius, 32, 32);
   const hcolor = new Color(style.color);
   const transp = true;
@@ -1316,7 +1319,7 @@ function makeVertexCompositeCandidate(data: any, style: any) {
   return vertex;
 }
 
-function makeSimVertex(data: any, style: any) {
+function makeSimVertex(data: DataArray, style: StyleType) {
   if (data[1] !== -1) return null;
 
   const geometry = new SphereGeometry(0.005, 32, 32);
@@ -1338,7 +1341,7 @@ function makeSimVertex(data: any, style: any) {
   return vertex;
 }
 
-function makeCaloClusters(_data: any[], extra: any[], assoc: any[], style: any, _selection: any) {
+function makeCaloClusters(_data: DataArray, extra: DataArray, assoc: DataArray, style: StyleType, _selection: SelectionType) {
   if (!assoc) {
     throw "No association!";
   }
@@ -1378,7 +1381,7 @@ function makeCaloClusters(_data: any[], extra: any[], assoc: any[], style: any, 
   return clusters;
 }
 
-function makeEcalDigi(data: any, boxes: any[], scale: number, selection: any) {
+function makeEcalDigi(data: DataArray, boxes: DataArray, scale: number, selection: SelectionType) {
   const energy = data[0];
 
   if (energy > selection.min_energy) {
@@ -1386,7 +1389,7 @@ function makeEcalDigi(data: any, boxes: any[], scale: number, selection: any) {
   }
 }
 
-function makeERecHit_V2(data: any, boxes: any[], scale: number, selection: any) {
+function makeERecHit_V2(data: DataArray, boxes: DataArray, scale: number, selection: SelectionType) {
   const energy = data[0];
 
   if (energy > selection.min_energy) {
@@ -1394,7 +1397,7 @@ function makeERecHit_V2(data: any, boxes: any[], scale: number, selection: any) 
   }
 }
 
-function makeHRecHit_V2(data: any, geometry: any[], scale: number, selection: any) {
+function makeHRecHit_V2(data: DataArray, geometry: DataArray, scale: number, selection: SelectionType) {
   const energy = data[0];
 
   if (energy > selection.min_energy) {
@@ -1402,7 +1405,7 @@ function makeHRecHit_V2(data: any, geometry: any[], scale: number, selection: an
   }
 }
 
-function makeERecHit_RZ(data: any, boxes: any[], scale: number, selection: any) {
+function makeERecHit_RZ(data: DataArray, boxes: DataArray, scale: number, selection: SelectionType) {
   const energy = data[0];
 
   if (energy > selection.min_energy) {
@@ -1410,7 +1413,7 @@ function makeERecHit_RZ(data: any, boxes: any[], scale: number, selection: any) 
   }
 }
 
-function makeHRecHit_RZ(data: any, geometry: any[], scale: number, selection: any) {
+function makeHRecHit_RZ(data: DataArray, geometry: DataArray, scale: number, selection: SelectionType) {
   const energy = data[0];
 
   if (energy > selection.min_energy) {
@@ -1418,7 +1421,7 @@ function makeHRecHit_RZ(data: any, geometry: any[], scale: number, selection: an
   }
 }
 
-function makeHGCRecHit(data: any, geometry: any[], scale: number, selection: any) {
+function makeHGCRecHit(data: DataArray, geometry: DataArray, scale: number, selection: SelectionType) {
   const energy = data[0];
 
   if (energy > selection.min_energy) {
@@ -1426,7 +1429,7 @@ function makeHGCRecHit(data: any, geometry: any[], scale: number, selection: any
   }
 }
 
-function makeCaloTower(data: any, egeometry: any[], hgeometry: any[], scale: number, selection: any) {
+function makeCaloTower(data: DataArray, egeometry: DataArray, hgeometry: DataArray, scale: number, selection: SelectionType) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -1508,18 +1511,18 @@ function makeCaloTower(data: any, egeometry: any[], hgeometry: any[], scale: num
     all_positions = [];
 
     if (hscale > 0) {
-      const v: Vector3[] = [];
+      const vectorList: Vector3[] = [];
 
       if (escale > 0) {
-        v.push(b1e);
-        v.push(b2e);
-        v.push(b3e);
-        v.push(b4e);
+        vectorList.push(b1e);
+        vectorList.push(b2e);
+        vectorList.push(b3e);
+        vectorList.push(b4e);
       } else {
-        v.push(f1);
-        v.push(f2);
-        v.push(f3);
-        v.push(f4);
+        vectorList.push(f1);
+        vectorList.push(f2);
+        vectorList.push(f3);
+        vectorList.push(f4);
       }
 
       b1h.normalize();
@@ -1544,29 +1547,29 @@ function makeCaloTower(data: any, egeometry: any[], hgeometry: any[], scale: num
         b4h.addVectors(f4, b4h);
       }
 
-      v.push(b1h);
-      v.push(b2h);
-      v.push(b3h);
-      v.push(b4h);
+      vectorList.push(b1h);
+      vectorList.push(b2h);
+      vectorList.push(b3h);
+      vectorList.push(b4h);
 
       // front
-      addFace3(v[0].toArray(), v[1].toArray(), v[2].toArray());
-      addFace3(v[2].toArray(), v[3].toArray(), v[1].toArray());
+      addFace3(vectorList[0].toArray(), vectorList[1].toArray(), vectorList[2].toArray());
+      addFace3(vectorList[2].toArray(), vectorList[3].toArray(), vectorList[1].toArray());
       //back
-      addFace3(v[4].toArray(), v[5].toArray(), v[6].toArray());
-      addFace3(v[6].toArray(), v[7].toArray(), v[4].toArray());
+      addFace3(vectorList[4].toArray(), vectorList[5].toArray(), vectorList[6].toArray());
+      addFace3(vectorList[6].toArray(), vectorList[7].toArray(), vectorList[4].toArray());
       //top
-      addFace3(v[4].toArray(), v[5].toArray(), v[1].toArray());
-      addFace3(v[1].toArray(), v[0].toArray(), v[4].toArray());
+      addFace3(vectorList[4].toArray(), vectorList[5].toArray(), vectorList[1].toArray());
+      addFace3(vectorList[1].toArray(), vectorList[0].toArray(), vectorList[4].toArray());
       //bottom
-      addFace3(v[7].toArray(), v[6].toArray(), v[2].toArray());
-      addFace3(v[2].toArray(), v[3].toArray(), v[7].toArray());
+      addFace3(vectorList[7].toArray(), vectorList[6].toArray(), vectorList[2].toArray());
+      addFace3(vectorList[2].toArray(), vectorList[3].toArray(), vectorList[7].toArray());
       //left
-      addFace3(v[0].toArray(), v[3].toArray(), v[7].toArray());
-      addFace3(v[7].toArray(), v[4].toArray(), v[0].toArray());
+      addFace3(vectorList[0].toArray(), vectorList[3].toArray(), vectorList[7].toArray());
+      addFace3(vectorList[7].toArray(), vectorList[4].toArray(), vectorList[0].toArray());
       //right
-      addFace3(v[1].toArray(), v[5].toArray(), v[6].toArray());
-      addFace3(v[6].toArray(), v[2].toArray(), v[1].toArray());
+      addFace3(vectorList[1].toArray(), vectorList[5].toArray(), vectorList[6].toArray());
+      addFace3(vectorList[6].toArray(), vectorList[2].toArray(), vectorList[1].toArray());
 
       const hbox = new BufferGeometry();
       hbox.attributes.position = new BufferAttribute(new Float32Array(all_positions), 3);
@@ -1576,40 +1579,40 @@ function makeCaloTower(data: any, egeometry: any[], hgeometry: any[], scale: num
   }
 }
 
-function makeDT(dt: any) {
+function makeDT(dt: DataArray) {
   return makeWireframeBox(dt, 1);
 }
 
-function makeCSC(csc: any) {
+function makeCSC(csc: DataArray) {
   return makeWireframeBox(csc, 1);
 }
 
-function makeGEM(gem: any) {
+function makeGEM(gem: DataArray) {
   //return makeSolidBox(gem, 1);
   return makeWireframeBox(gem, 1);
 }
 
-function makeMuonChamber(chamber: any) {
+function makeMuonChamber(chamber: DataArray) {
   return makeSolidBox(chamber, 1);
 }
 
-function makeMuonChamberRZ(chamber: any) {
+function makeMuonChamberRZ(chamber: DataArray) {
   return makeSolidBoxRZ(chamber, 1);
 }
 
-function makeHcal(hb: any) {
+function makeHcal(hb: DataArray) {
   return makeWireframeBox(hb, 1);
 }
 
-function makeEcal(ecal: any) {
+function makeEcal(ecal: DataArray) {
   return makeWireframeBox(ecal, 1);
 }
 
-function makeRPC(rpc: any) {
+function makeRPC(rpc: DataArray) {
   return makeWireFace(rpc, 1);
 }
 
-function makePointCloud(data: any[], index: number) {
+function makePointCloud(data: DataArray, index: number) {
   const geometry = new BufferGeometry();
   const positions = new Float32Array(data.length * 3);
 
@@ -1625,7 +1628,7 @@ function makePointCloud(data: any[], index: number) {
   return geometry;
 }
 
-function makePointCloudRZ(data: any[], index: number) {
+function makePointCloudRZ(data: DataArray, index: number) {
   const geometry = new BufferGeometry();
   const positions = new Float32Array(data.length * 3);
 
@@ -1645,19 +1648,19 @@ function makePointCloudRZ(data: any[], index: number) {
   return geometry;
 }
 
-function makeTrackingRecHits(data: any[]) {
+function makeTrackingRecHits(data: DataArray) {
   return makePointCloud(data, 0);
 }
 
-function makeTrackingClusters(data: any[]) {
+function makeTrackingClusters(data: DataArray) {
   return makePointCloud(data, 1);
 }
 
-function makeTrackingRecHitsRZ(data: any[]) {
+function makeTrackingRecHitsRZ(data: DataArray) {
   return makePointCloudRZ(data, 0);
 }
 
-function makeTrackingClustersRZ(data: any[]) {
+function makeTrackingClustersRZ(data: DataArray) {
   return makePointCloudRZ(data, 1);
 }
 
@@ -1718,7 +1721,7 @@ function makeArrowThick(dir: Vector3, origin: Vector3, length: number, color: Co
   return arrow;
 }
 
-function makeMET(data: any, style: any, selection: any) {
+function makeMET(data: DataArray, style: StyleType, selection: SelectionType) {
   /*
       "METs_V1": [["phi", "double"],["pt", "double"],["px", "double"],["py", "double"],["pz", "double"]]
     */
@@ -1731,11 +1734,11 @@ function makeMET(data: any, style: any, selection: any) {
   const px = data[2];
   const py = data[3];
 
-  const d = 1.45; // ECAL barrel radius
+  const rad = 1.45; // ECAL barrel radius
   let length = pt * style.scale;
 
   // Clamp length of MET
-  length = length + d > 5 ? 5 : length;
+  length = length + rad > 5 ? 5 : length;
 
   const dir = new Vector3(px, py, 0);
   dir.normalize();
@@ -1751,11 +1754,11 @@ function makeMET(data: any, style: any, selection: any) {
       origin,
       length,
       color,
-      d, // displace out to ECAL barrel radius
+      rad, // displace out to ECAL barrel radius
     );
   } else {
     origin.add(dir);
-    origin.multiplyScalar(d); // see comment above
+    origin.multiplyScalar(rad); // see comment above
 
     met = makeArrow(dir, origin, length, color);
   }
@@ -1777,7 +1780,7 @@ function projectThetaPhi(theta: number, phi: number) {
   return [Math.acos(z), Math.atan2(sign * size, 0)];
 }
 
-function makeJet(data: any, style: any, selection: any) {
+function makeJet(data: DataArray, style: StyleType, selection: SelectionType) {
   const et = data[0];
   //   const eta = data[1];
 
@@ -1833,7 +1836,7 @@ function makeJet(data: any, style: any, selection: any) {
   return jet;
 }
 
-function makeJetRZ(data: any, style: any, selection: any) {
+function makeJetRZ(data: DataArray, style: StyleType, selection: SelectionType) {
   const et = data[0];
   //   const eta = data[1];
 
@@ -1895,7 +1898,7 @@ function makeJetRZ(data: any, style: any, selection: any) {
   return jet;
 }
 
-function makeJetWithVertex(data: any, style: any, selection: any) {
+function makeJetWithVertex(data: DataArray, style: StyleType, selection: SelectionType) {
   const et = data[0];
   //   const eta = data[1];
 
@@ -1957,7 +1960,7 @@ function makeJetWithVertex(data: any, style: any, selection: any) {
   return jet;
 }
 
-function makeJetWithVertexRZ(data: any, style: any, selection: any) {
+function makeJetWithVertexRZ(data: DataArray, style: StyleType, selection: SelectionType) {
   const et = data[0];
   //   const eta = data[1];
 
@@ -2024,7 +2027,7 @@ function makeJetWithVertexRZ(data: any, style: any, selection: any) {
   return jet;
 }
 
-function makePhoton(data: any, style: any, selection: any) {
+function makePhoton(data: DataArray, style: StyleType, selection: SelectionType) {
   /*
       Draw a line representing the inferred photon trajectory from the vertex (IP?) to the extent of the ECAL
       "Photons_V1": [["energy", "double"],["et", "double"],["eta", "double"],["phi", "double"],["pos", "v3d"]
@@ -2104,7 +2107,7 @@ function makePhoton(data: any, style: any, selection: any) {
   return photon;
 }
 
-function makePhotonRZ(data: any, style: any, selection: any) {
+function makePhotonRZ(data: DataArray, style: StyleType, selection: SelectionType) {
   /*
       Draw a line representing the inferred photon trajectory from the vertex (IP?) to the extent of the ECAL
       "Photons_V1": [["energy", "double"],["et", "double"],["eta", "double"],["phi", "double"],["pos", "v3d"]
@@ -2185,7 +2188,7 @@ function makePhotonRZ(data: any, style: any, selection: any) {
   return photon;
 }
 
-function makeProtons(data: any, style: any, _selection: any) {
+function makeProtons(data: DataArray, style: StyleType, _selection: SelectionType) {
   /*
       Draw a line representing the inferred photon trajectory from the vertex 
       "ForwardProtons_V1": [["xi", "double"],["thetax", "double"],["thetay", "double"],["vertex", "v3d"],
@@ -2251,7 +2254,7 @@ function makeProtons(data: any, style: any, _selection: any) {
   return proton;
 }
 
-function makeDTRecHits(data: any) {
+function makeDTRecHits(data: DataArray) {
   /*
       ["wireId", "int"],["layerId", "int"],["superLayerId", "int"],["sectorId", "int"],["stationId", "int"],["wheelId", "int"],
       ["digitime", "double"],["wirePos", "v3d"],
@@ -2311,7 +2314,7 @@ function makeDTRecHits(data: any) {
   return [box];
 }
 
-function makeDTRecHitsRZ(data: any) {
+function makeDTRecHitsRZ(data: DataArray) {
   /*
       ["wireId", "int"],["layerId", "int"],["superLayerId", "int"],["sectorId", "int"],["stationId", "int"],["wheelId", "int"],
       ["digitime", "double"],["wirePos", "v3d"],
@@ -2373,7 +2376,7 @@ function makeDTRecHitsRZ(data: any) {
   return [box];
 }
 
-function makeRPCRecHits(data: any) {
+function makeRPCRecHits(data: DataArray) {
   let u, v, w;
 
   if (ispy.use_line2) {
@@ -2401,7 +2404,7 @@ function makeRPCRecHits(data: any) {
   return [u, v, w];
 }
 
-function makeRPCRecHitsRZ(data: any) {
+function makeRPCRecHitsRZ(data: DataArray) {
   let u, v, w;
 
   if (ispy.use_line2) {
@@ -2431,23 +2434,23 @@ function makeRPCRecHitsRZ(data: any) {
   return [u, v, w];
 }
 
-function makeCSCRecHit2Ds_V2(data: any, _descr: any) {
+function makeCSCRecHit2Ds_V2(data: DataArray, _descr: unknown) {
   return makeRPCRecHits(data);
 }
 
-function makeGEMRecHits_V2(data: any, _descr: any) {
+function makeGEMRecHits_V2(data: DataArray, _descr: unknown) {
   return makeRPCRecHits(data);
 }
 
-function makeCSCRecHit2DsRZ(data: any, _descr: any) {
+function makeCSCRecHit2DsRZ(data: DataArray, _descr: unknown) {
   return makeRPCRecHitsRZ(data);
 }
 
-function makeGEMRecHitsRZ(data: any, _descr: any) {
+function makeGEMRecHitsRZ(data: DataArray, _descr: unknown) {
   return makeRPCRecHitsRZ(data);
 }
 
-function makeDTRecSegments(data: any) {
+function makeDTRecSegments(data: DataArray) {
   let geometry;
 
   if (ispy.use_line2) {
@@ -2460,7 +2463,7 @@ function makeDTRecSegments(data: any) {
   return [geometry];
 }
 
-function makeDTRecSegmentsRZ(data: any) {
+function makeDTRecSegmentsRZ(data: DataArray) {
   let geometry;
 
   if (ispy.use_line2) {
@@ -2476,19 +2479,19 @@ function makeDTRecSegmentsRZ(data: any) {
   return [geometry];
 }
 
-function makeCSCSegments(data: any, _geometry: any) {
+function makeCSCSegments(data: DataArray, _geometry: unknown) {
   return makeDTRecSegments(data);
 }
 
-function makeCSCSegmentsRZ(data: any, _geometry: any) {
+function makeCSCSegmentsRZ(data: DataArray, _geometry: unknown) {
   return makeDTRecSegmentsRZ(data);
 }
 
-function makeGEMSegments_V2(data: any, _geometry: any) {
+function makeGEMSegments_V2(data: DataArray, _geometry: unknown) {
   return makeDTRecSegments(data);
 }
 
-function makeCSCDigis(data: any, w: number, d: number, rotate: number) {
+function makeCSCDigis(data: DataArray, w: number, d: number, rotate: number) {
   let all_positions: number[] = [];
 
   const addFace3 = (...vectors: number[][]) => {
@@ -2541,7 +2544,7 @@ function makeCSCDigis(data: any, w: number, d: number, rotate: number) {
   return [box];
 }
 
-function makeCSCDigis_V2(data: any) {
+function makeCSCDigis_V2(data: DataArray) {
   let geometry;
 
   if (ispy.use_line2) {
@@ -2554,7 +2557,7 @@ function makeCSCDigis_V2(data: any) {
   return [geometry];
 }
 
-function makeGEMDigis_V2(data: any) {
+function makeGEMDigis_V2(data: DataArray) {
   let geometry;
 
   if (ispy.use_line2) {
@@ -2572,19 +2575,19 @@ function makeGEMDigis_V2(data: any) {
   "CSCWireDigis_V1": [["pos", "v3d"],["length", "double"],["endcap", "int"],["station", "int"],["ring", "int"],["chamber", "int"]]
 */
 
-function makeCSCWireDigis(data: any) {
+function makeCSCWireDigis(data: DataArray) {
   return makeCSCDigis(data, 0.02, 0.01, Math.PI * 0.5);
 }
 
-function makeCSCStripDigis(data: any) {
+function makeCSCStripDigis(data: DataArray) {
   return makeCSCDigis(data, 0.01, 0.01, 0.0);
 }
 
-function makeCSCLCTDigis(data: any) {
+function makeCSCLCTDigis(data: DataArray) {
   return makePointCloud(data, 0);
 }
 
-function makeCSCLCTCorrelatedLCTDigis(data: any) {
+function makeCSCLCTCorrelatedLCTDigis(data: DataArray) {
   let l1, l2;
 
   if (ispy.use_line2) {
@@ -2602,7 +2605,7 @@ function makeCSCLCTCorrelatedLCTDigis(data: any) {
   return [l1, l2];
 }
 
-function makeEvent(data: any) {
+function makeEvent(data: DataArray) {
   /*
       "Event_V2": [["run", "int"],["event", "int"],["ls", "int"],["orbit", "int"],["bx", "int"],["time", "string"],["localtime", "string"]]
       for what we do here, Event_V1 is the same, i.e. we don't show localtime

@@ -38,8 +38,9 @@ import {
 } from "./objects-config.js";
 import { addSelectionRow, applySavedSettings, clearSubfolders, saveCutSettings } from "./tree-view.js";
 import { showView } from "./controls.js";
+import { EventObject } from "./ispy.interfaces.js";
 
-function addToSceneObject(key: string, obj: any): void {
+function addToSceneObject(key: string, obj: Object3D): void {
   const groupObject = ispy.scene?.getObjectByName(key);
   if (groupObject) {
     groupObject.add(obj);
@@ -493,7 +494,7 @@ function addToScene(event: any, view: string) {
   }
 }
 
-function addEvent(event: any) {
+function addEvent(event: EventObject) {
   ispy.current_event = event;
   // Clear table from last event and show default caption
 

@@ -55,12 +55,12 @@ function updateEventList() {
   const tbl = getHTMLObject("browser-events") as HTMLTableElement;
 
   for (let i = 0; i < ispy.event_list.length; i++) {
-    const e = ispy.event_list[i];
+    const event = ispy.event_list[i];
     const row = tbl.insertRow(tbl.rows.length);
     const cell = row.insertCell(0);
 
-    cell.innerHTML = `<a id="browser-event-${i}" class="event">${e}</a>`;
-    cell.firstChild!.addEventListener("click", () => {
+    cell.innerHTML = `<a id="browser-event-${i}" class="event">${event}</a>`;
+    cell.firstChild?.addEventListener("click", () => {
       selectEvent(i);
     });
   }
@@ -117,7 +117,7 @@ function loadEvent() {
     return;
   }
   fileEntry.async("string").then(
-    function (content) {
+    (content) => {
       event = JSON.parse(cleanupData(content));
 
       //getHTMLObject('loading').style.display = 'none';
@@ -225,7 +225,12 @@ function selectLocalFile(index: number) {
   ispy.file_name = ispy.local_files[index].name;
 
   reader.onload = function (e: ProgressEvent<FileReader>) {
-    const data = e.target!.result as ArrayBuffer;
+    const target = e.target;
+    if (!target || !target.result) {
+      alert("Error reading file!");
+      return;
+    }
+    const data = target.result as ArrayBuffer;
     const event_list: string[] = [];
     JSZip.loadAsync(data).then((zip) => {
       $.each(zip.files, (_index, zipEntry) => {
@@ -263,7 +268,7 @@ function updateLocalFileList(list: FileList) {
     const cls = "file";
 
     cell.innerHTML = `<a id="browser-file-${i}" class="${cls}">${name}</a>`;
-    cell.firstChild!.addEventListener("click", () => {
+    cell.firstChild?.addEventListener("click", () => {
       selectLocalFile(i);
     });
   }
@@ -307,7 +312,12 @@ function loadDroppedFile(file: File) {
   $("#loading").modal("show");
 
   reader.onload = function (e) {
-    const data = e.target!.result as ArrayBuffer;
+    const target = e.target;
+    if (!target || !target.result) {
+      alert("Error reading file!");
+      return;
+    }
+    const data = target.result as ArrayBuffer;
     const event_list: string[] = [];
     JSZip.loadAsync(data).then((zip) => {
       $.each(zip.files, (_index, zipEntry) => {
@@ -422,16 +432,16 @@ function loadWebFiles() {
   const tbl = getHTMLObject("browser-files") as HTMLTableElement;
 
   for (let i = 0; i < web_files.length; i++) {
-    const e = web_files[i];
-    const name = e.split("/")[2];
+    const event = web_files[i];
+    const name = event.split("/")[2];
     const row = tbl.insertRow(tbl.rows.length);
     const cell = row.insertCell(0);
     const cls = "file";
 
     cell.innerHTML = `<a id="browser-file-${i}" class="${cls}">${name}</a>`;
     // add onclick handler to the link
-    cell.firstChild!.addEventListener("click", () => {
-      selectFile(e);
+    cell.firstChild?.addEventListener("click", () => {
+      selectFile(event);
     });
   }
 }
@@ -484,14 +494,14 @@ function loadGLTFFiles() {
   const tbl = getHTMLObject("obj-files") as HTMLTableElement;
 
   for (let i = 0; i < gltf_files.length; i++) {
-    const e = gltf_files[i];
-    const name = e.split("/")[3];
+    const event = gltf_files[i];
+    const name = event.split("/")[3];
     const row = tbl.insertRow(tbl.rows.length);
     const cell = row.insertCell(0);
     const cls = "file";
 
     cell.innerHTML = `<a id="browser-file-${i}" class="${cls}">${name}</a>`;
-    cell.firstChild!.addEventListener("click", () => {
+    cell.firstChild?.addEventListener("click", () => {
       selectGLTF(name);
     });
   }
@@ -527,14 +537,14 @@ function loadObjFiles() {
   const tbl = getHTMLObject("obj-files") as HTMLTableElement;
 
   for (let i = 0; i < obj_files.length; i++) {
-    const e = obj_files[i];
-    const name = e.split("/")[3];
+    const event = obj_files[i];
+    const name = event.split("/")[3];
     const row = tbl.insertRow(tbl.rows.length);
     const cell = row.insertCell(0);
     const cls = "file";
 
     cell.innerHTML = `<a id="browser-file-${i}" class="${cls}">${name}</a>`;
-    cell.firstChild!.addEventListener("click", () => {
+    cell.firstChild?.addEventListener("click", () => {
       selectObj(name);
     });
   }
@@ -546,7 +556,8 @@ function readOBJ(file: File, cb: (contents: string, name: string) => void) {
   reader.onload = function (e) {
     //getHTMLObject('loading').style.display = 'none';
     $("#loading").modal("hide");
-    cb(e.target!.result as string, file.name);
+    // skipcq: JS-0255
+    cb(e.target?.result as string, file.name);
   };
 
   reader.onerror = function (e) {
@@ -566,8 +577,9 @@ function loadOBJ(contents: string, name: string) {
       m.opacity = ispy.importTransparency;
     });
   });
-  if (ispy.scene) {
-    ispy.scene.getObjectByName("Imported")!.add(object);
+  let imported;
+  if (imported = ispy.scene?.getObjectByName("Imported")) {
+    imported.add(object);
   }
   addSelectionRow("Imported", object.name, object.name, [], true);
 }
@@ -576,7 +588,8 @@ function readOBJMTL(file: File, mtl_file: File, cb: (obj: string, mtl_file: File
   const reader = new FileReader();
 
   reader.onload = function (e) {
-    cb(e.target!.result as string, mtl_file, file.name);
+    // skipcq: JS-0255
+    cb(e.target?.result as string, mtl_file, file.name);
   };
 
   reader.onerror = function (e) {
@@ -592,7 +605,7 @@ function loadOBJMTL(obj: string, mtl_file: File, name: string) {
 
   reader.onload = function (e) {
     // let mtl = e.target.result;
-    const materials_creator = new MTLLoader().parse(e.target!.result as string, "");
+    const materials_creator = new MTLLoader().parse(e.target?.result as string, "");
     materials_creator.preload();
 
     object.traverse((o) => {
@@ -615,8 +628,9 @@ function loadOBJMTL(obj: string, mtl_file: File, name: string) {
     object.visible = true;
     disabled[name] = false;
 
-    if (ispy.scene) {
-      ispy.scene.getObjectByName("Imported")!.add(object);
+    let imported;
+    if (imported = ispy.scene?.getObjectByName("Imported")) {
+      imported.add(object);
     }
     addSelectionRow("Imported", name, name, [], true);
   };
@@ -645,7 +659,7 @@ function importModel() {
     // If one file we assume it's an obj file and load it
 
     file_name = files[0].name;
-    extension = file_name.split(".").pop()!.toLowerCase();
+    extension = file_name.split(".").pop()?.toLowerCase();
 
     if (extension !== "obj") {
       alert(
@@ -666,8 +680,8 @@ function importModel() {
 
     let obj_file, mtl_file;
 
-    const ext1 = files[0].name.split(".").pop()!.toLowerCase();
-    const ext2 = files[1].name.split(".").pop()!.toLowerCase();
+    const ext1 = files[0].name.split(".").pop()?.toLowerCase();
+    const ext2 = files[1].name.split(".").pop()?.toLowerCase();
 
     if (ext1 === "obj" && ext2 === "mtl") {
       obj_file = files[0];
@@ -721,8 +735,9 @@ function loadSelectedGLTF() {
       });
     });
 
-    if (ispy.scene) {
-      ispy.scene.getObjectByName("Imported")!.add(object);
+    let imported;
+    if (imported = ispy.scene?.getObjectByName("Imported")) {
+      imported.add(object);
     }
     addSelectionRow("Imported", name, name, [], true);
   });
@@ -754,7 +769,7 @@ function loadOBJMTL_new(obj_file: string, mtl_file: string, id: string, name: st
 
     const obj_loader = new OBJLoader();
     obj_loader.setMaterials(materials);
-
+    let groupObject;
     obj_loader.load(obj_file, (object) => {
       object.name = id;
       object.visible = show;
@@ -768,8 +783,8 @@ function loadOBJMTL_new(obj_file: string, mtl_file: string, id: string, name: st
         });
       });
 
-      if (ispy.scene) {
-        ispy.scene.getObjectByName(group)!.add(object);
+      if (groupObject = ispy.scene?.getObjectByName(group)) {
+        groupObject.add(object);
       }
       addSelectionRow(group, object.name, name, [], show);
     });
@@ -1046,7 +1061,7 @@ function importDetector() {
       });
 
       disabled[object.name] = !g.show;
-      ispy.scenes[object.view].getObjectByName(g.group)!.add(object);
+      ispy.scenes[object.view].getObjectByName(g.group)?.add(object);
 
       // For now do not add RPhi and RhoZ selection options to
       // the controls GUI

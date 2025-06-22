@@ -104,14 +104,14 @@ function updateRendererInfo() {
   html += "<dl>";
   html += "<dt><strong> render </strong></dt>";
 
-  for (const prop in info.render) {
+  for (const prop of Object.keys(info.render)) {
     html += `<dd>${prop}: ${(info.render as Record<string, number>)[prop]}</dd>`;
   }
 
   if ("memory" in info && info.memory) {
     html += "<dt><strong> memory </strong></dt>";
 
-    for (const prop in info.memory) {
+    for (const prop of Object.keys(info.memory)) {
       html += `<dd>${prop}: ${(info.memory as Record<string, number>)[prop]}</dd>`;
     }
   }
@@ -217,7 +217,8 @@ function onMouseMove(e: MouseEvent) {
   pointer.y = -((e.clientY - offsetY) / h) * 2 + 1;
 
   ispy.raycaster.setFromCamera(pointer, ispy.camera as Camera);
-  const intersects = ispy.raycaster.intersectObject(ispy.scene!.getObjectByName("Physics")!, true);
+  const physicsObject = ispy.scene?.getObjectByName("Physics");
+  const intersects = physicsObject ? ispy.raycaster.intersectObject(physicsObject, true) : [];
 
   if (ispy.intersected) {
     document.body.style.cursor = "auto";
@@ -258,8 +259,7 @@ function onMouseMove(e: MouseEvent) {
         const chargeIndex = ispy.current_event.Types[intersectedObject.name].findIndex(
           (type: [string, string]) => type[0] === "charge",
         );
-        const bubbleText =
-          `Charge: ${matchingTrack[chargeIndex]}` + "\n" + `Pt: ${intersectedObject.userData.pt.toFixed(2)}`;
+        const bubbleText = `Charge: ${matchingTrack[chargeIndex]}\nPt: ${intersectedObject.userData.pt.toFixed(2)}`;
 
         removeExistingBubble();
         showInfoBubble(bubbleText, pointer);

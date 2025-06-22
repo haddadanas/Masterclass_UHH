@@ -469,7 +469,7 @@ function init() {
 
   ispy.views = ["3D", "RPhi", "RhoZ"];
 
-  for (const key in ispy.scenes) {
+  for (const key of Object.keys(ispy.scenes)) {
     ispy.scenes[key].name = key;
   }
 
@@ -499,8 +499,11 @@ function init() {
   // ispy.tcontrols.dynamicDampingFactor = 1.0;
   // ispy.tcontrols.noRotate = false;
   // ispy.tcontrols.noPan = false;
-
-  const ocontrols = new OrbitControls(ispy.camera!, ispy.renderer!.domElement as HTMLCanvasElement);
+  if (!ispy.camera || !ispy.renderer) {
+    console.error("Camera or Renderer is not initialized");
+    return;
+  }
+  const ocontrols = new OrbitControls(ispy.camera, ispy.renderer.domElement as HTMLCanvasElement);
   ocontrols.enableRotate = true;
 
   ispy.controls = ocontrols;
@@ -522,8 +525,8 @@ function init() {
 
   ispy.raycaster.layers.set(2);
 
-  ispy.renderer!.domElement.addEventListener("pointermove", (e) => onMouseMove(e as MouseEvent), false);
-  ispy.renderer!.domElement.addEventListener("pointerdown", (e) => onMouseDown(e as MouseEvent), false);
+  ispy.renderer.domElement.addEventListener("pointermove", (e) => onMouseMove(e as MouseEvent), false);
+  ispy.renderer.domElement.addEventListener("pointerdown", (e) => onMouseDown(e as MouseEvent), false);
 
   // Are we running an animation?
   ispy.animating = false;
@@ -676,14 +679,10 @@ function initSelectionFields() {
 }
 
 function render() {
-  if (!ispy.renderer) {
-    console.error("Renderer is not initialized");
-    return;
-  }
-  ispy.renderer.render(ispy.scene!, ispy.camera!);
+  ispy.renderer!.render(ispy.scene!, ispy.camera!);
 
   if (ispy.get_image_data) {
-    ispy.image_data = (ispy.renderer.domElement as HTMLCanvasElement).toDataURL();
+    ispy.image_data = (ispy.renderer!.domElement as HTMLCanvasElement).toDataURL();
     ispy.get_image_data = false;
   }
 
