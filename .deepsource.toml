@@ -10,10 +10,3 @@ name = "javascript"
     "nodejs",
     "jquery"
   ]
-
-# Suppress explicit-any errors
-[[transformations]]
-ignore_patterns = ["**"]
-
-  [transformations.suppress]
-  issues = ["explicit-any", "JS-0240", "JS-C1002"]

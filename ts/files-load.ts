@@ -570,6 +570,7 @@ function readOBJ(file: File, cb: (contents: string, name: string) => void) {
 function loadOBJ(contents: string, name: string) {
   const object = new OBJLoader().parse(contents);
   object.name = name;
+  const imported = ispy.scene?.getObjectByName("Imported");
 
   (object.children as Mesh[]).forEach((c) => {
     changeMeshMaterials(c.material, (m) => {
@@ -577,8 +578,7 @@ function loadOBJ(contents: string, name: string) {
       m.opacity = ispy.importTransparency;
     });
   });
-  let imported;
-  if (imported = ispy.scene?.getObjectByName("Imported")) {
+  if (imported) {
     imported.add(object);
   }
   addSelectionRow("Imported", object.name, object.name, [], true);
@@ -602,6 +602,7 @@ function readOBJMTL(file: File, mtl_file: File, cb: (obj: string, mtl_file: File
 function loadOBJMTL(obj: string, mtl_file: File, name: string) {
   const object = new OBJLoader().parse(obj);
   const reader = new FileReader();
+  const imported = ispy.scene?.getObjectByName("Imported");
 
   reader.onload = function (e) {
     // let mtl = e.target.result;
@@ -628,8 +629,7 @@ function loadOBJMTL(obj: string, mtl_file: File, name: string) {
     object.visible = true;
     disabled[name] = false;
 
-    let imported;
-    if (imported = ispy.scene?.getObjectByName("Imported")) {
+    if (imported) {
       imported.add(object);
     }
     addSelectionRow("Imported", name, name, [], true);
@@ -723,6 +723,7 @@ function selectGLTF(gltf_file: string) {
 function loadSelectedGLTF() {
   const name = ispy.selected_gltf.split(".")[0];
   const gltf_file = `./geometry/gltf/${ispy.selected_gltf}`;
+  const imported = ispy.scene?.getObjectByName("Imported");
 
   const gltf_loader = new GLTFLoader();
 
@@ -735,8 +736,7 @@ function loadSelectedGLTF() {
       });
     });
 
-    let imported;
-    if (imported = ispy.scene?.getObjectByName("Imported")) {
+    if (imported) {
       imported.add(object);
     }
     addSelectionRow("Imported", name, name, [], true);
@@ -763,13 +763,13 @@ function loadSelectedObj() {
 
 function loadOBJMTL_new(obj_file: string, mtl_file: string, id: string, name: string, group: string, show: boolean) {
   const mtl_loader = new MTLLoader();
+  const groupObject = ispy.scene?.getObjectByName(group);
 
   mtl_loader.load(mtl_file, (materials) => {
     materials.preload();
 
     const obj_loader = new OBJLoader();
     obj_loader.setMaterials(materials);
-    let groupObject;
     obj_loader.load(obj_file, (object) => {
       object.name = id;
       object.visible = show;
@@ -783,7 +783,7 @@ function loadOBJMTL_new(obj_file: string, mtl_file: string, id: string, name: st
         });
       });
 
-      if (groupObject = ispy.scene?.getObjectByName(group)) {
+      if (groupObject) {
         groupObject.add(object);
       }
       addSelectionRow(group, object.name, name, [], show);
