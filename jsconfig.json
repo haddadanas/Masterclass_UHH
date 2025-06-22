@@ -1,15 +1,12 @@
 {
     "compilerOptions": {
+        "target": "es2022",
         "module": "commonjs",
-        "moduleResolution": "node10",
-        "target": "ES2022",
+        "moduleResolution": "node",
         "jsx": "preserve",
         "allowImportingTsExtensions": true,
         "strictNullChecks": true,
+        "esModuleInterop": true,
         "strictFunctionTypes": true
     },
-    "exclude": [
-        "node_modules",
-        "**/node_modules/*"
-    ]
 }

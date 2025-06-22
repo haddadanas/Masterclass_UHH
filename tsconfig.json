@@ -3,40 +3,62 @@
     /* Visit https://aka.ms/tsconfig to read more about this file */
     /* Language and Environment */
     "target": "es2022", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "module": "es2022", /* Specify what module code is generated. */
+    "module": "commonjs", /* Specify what module code is generated. */
     "moduleResolution": "node", /* Specify how TypeScript looks up a file from a given module specifier. */
+    "pretty": true,
+    "removeComments": true,
+    "rewriteRelativeImportExtensions": true,
     "baseUrl": "./",
     "rootDir": "./ts", /* Specify the root folder within your source files. */
     "outDir": "./dist", /* Specify an output folder for all emitted files. */
     "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
-    "skipLibCheck": true, /* Skip type checking all .d.ts files. */
     "resolveJsonModule": true, /* Include modules imported with .json extension. */
     "allowJs": true,
+    "skipLibCheck": true,
+    /* Source Maps */
+    "sourceMap": false, /* Generates corresponding '.map' file. */
+    "declaration": false, /* Generates corresponding '.d.ts' file. */
+    "declarationMap": false, /* Generates a sourcemap for each corresponding '.d.ts' file. */
+    "plugins": [
+      {
+        "transform": "typescript-transform-paths",
+        "afterDeclarations": true
+      }
+    ],
+    "typeRoots": [
+      "./node_modules/@types",
+    ],
     "paths": {
-      "@types/*": [
-        "node_modules/@types/*"
+      "@tweenjs/*": [
+        "node_modules/@tweenjs/tween.js"
       ],
-      "three": [
-        "node_modules/three/src/Three"
-      ],
-      "three/examples/jsm/*": [
-        "node_modules/three/examples/jsm/*"
-      ],
-      "dat.gui": [
-        "node_modules/dat.gui/build/dat.gui"
-      ],
-      "jquery": [
-        "node_modules/jquery/dist/jquery"
-      ],
-      "sweetalert": [
-        "node_modules/sweetalert/dist/sweetalert"
-      ],
-      "stupid-table-plugin": [
-        "node_modules/stupid-table-plugin/stupidtable.min"
-      ],
-      "stats.js": [
-        "node_modules/stats.js/build/stats.min"
-      ]
+    //   "@types/*": [
+    //     "node_modules/@types/*"
+    //   ],
+    //   "three": [
+    //     // "node_modules/@types/three/src/Three.d.ts",
+    //     "node_modules/three/src/Three",
+    //   ],
+    //   "three/examples/jsm/*": [
+    //     // "node_modules/@types/three/examples/jsm/*",
+    //     "node_modules/three/examples/jsm/*"
+    //   ],
+    //   "dat.gui": [
+    //     // "node_modules/@types/dat.gui/index.d.ts",
+    //     "node_modules/dat.gui/build/dat.gui"
+    //   ],
+    //   "jquery": [
+    //     "node_modules/jquery/dist/jquery"
+    //   ],
+    //   "sweetalert": [
+    //     "node_modules/sweetalert/dist/sweetalert"
+    //   ],
+    //   "stupid-table-plugin": [
+    //     "node_modules/stupid-table-plugin/stupidtable.min"
+    //   ],
+    //   "stats.js": [
+    //     "node_modules/stats.js/build/stats.min"
+    //   ]
     },
     // Type Checking
     "strict": true,
@@ -63,10 +85,25 @@
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": [
-    "ts/**/*.ts",
+  "files": [
+    "ts/analysis_config.ts",
+    "ts/animate.ts",
+    "ts/config.ts",
+    "ts/controls.ts",
+    "ts/display.ts",
+    "ts/files-load.ts",
+    "ts/ispy.interfaces.d.ts",
+    "ts/ispy.ts",
+    "ts/objects-add.ts",
+    "ts/objects-config.ts",
+    "ts/objects-draw.ts",
+    "ts/setup.ts",
+    "ts/tree-view.ts",
+    "ts/uhh_selection.ts",
+    "ts/utils.ts",
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "**/*.spec.ts"
   ],
 }
