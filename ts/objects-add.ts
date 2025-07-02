@@ -37,7 +37,7 @@ import {
   reduced_data_groups,
 } from "./objects-config.js";
 import { addSelectionRow, applySavedSettings, clearSubfolders, saveCutSettings } from "./tree-view.js";
-import { showView } from "./controls.js";
+import { showView } from "./display.js";
 import { EventObject } from "./ispy.interfaces.js";
 
 function addToSceneObject(key: string, obj: Object3D): void {

@@ -1,5 +1,5 @@
-import { Camera, Color, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, Vector2 } from "three";
-import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
+import { Camera, Color, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, Vector2, Vector3 } from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import {
   getFourVectorByIndex,
@@ -9,14 +9,58 @@ import {
   changeMeshMaterials,
 } from "./utils.js";
 import { ispy } from "./config.js";
-import { useRenderer, render, updateClipping } from "./setup.js";
-import { toggleAnimation } from "./animate.js";
-import { nextEvent, prevEvent } from "./files-load.js";
-import { exportScene, zoomIn, zoomOut } from "./controls.js";
 import { event_description } from "./objects-config.js";
 
 import { TrackLine } from "./ispy.interfaces.js";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { render } from "./renderer.js";
+
+function lookAtOrigin() {
+  ispy.camera?.lookAt(new Vector3(0, 0, 0));
+}
+
+function initCamera() {
+  const display = getHTMLObject("display");
+  const width = display.clientWidth;
+  const height = display.clientHeight;
+
+  ispy.p_camera = new PerspectiveCamera(75, width / height, 0.1, 100);
+
+  ispy.p_camera.name = "PerspectiveCamera";
+
+  ispy.o_camera = new OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 0.1, 100);
+
+  ispy.o_camera.name = "OrthographicCamera";
+
+  ispy.is_perspective = true;
+  ispy.camera = ispy.is_perspective ? ispy.p_camera : ispy.o_camera;
+  ispy.camera.position.x = 9.5;
+  ispy.camera.position.y = 9.5;
+  ispy.camera.position.z = 13.0;
+
+  ispy.camera.zoom = 2.0;
+  ispy.camera.up = new Vector3(0, 1, 0);
+
+  ispy.camera.updateProjectionMatrix();
+  lookAtOrigin();
+}
+
+function zoomIn() {
+  if (!ispy.camera) {
+    console.error("Camera is not defined");
+    return;
+  }
+  ispy.camera.zoom += 0.5;
+  ispy.camera.updateProjectionMatrix();
+}
+
+function zoomOut() {
+  if (!ispy.camera) {
+    console.error("Camera is not defined");
+    return;
+  }
+  ispy.camera.zoom -= 0.5;
+  ispy.camera.updateProjectionMatrix();
+}
 
 function invertColors() {
   if (!ispy.renderer) {
@@ -90,72 +134,6 @@ function setTransparency(t: number) {
       });
     });
   });
-}
-
-function updateRendererInfo() {
-  if (!ispy.renderer) {
-    console.error("Renderer is not defined");
-    return;
-  }
-  const info = ispy.renderer.info;
-
-  let html = `<strong>${ispy.renderer_name} info: </strong>`;
-
-  html += "<dl>";
-  html += "<dt><strong> render </strong></dt>";
-
-  for (const prop of Object.keys(info.render)) {
-    html += `<dd>${prop}: ${(info.render as Record<string, number>)[prop]}</dd>`;
-  }
-
-  if ("memory" in info && info.memory) {
-    html += "<dt><strong> memory </strong></dt>";
-
-    for (const prop of Object.keys(info.memory)) {
-      html += `<dd>${prop}: ${(info.memory as Record<string, number>)[prop]}</dd>`;
-    }
-  }
-
-  getHTMLObject("renderer-info").innerHTML = html;
-}
-
-function updateControls(redererClass: string, camera: Camera, rendererDom: HTMLCanvasElement) {
-  let controls: OrbitControls | TrackballControls;
-  if (redererClass === "WebGLRenderer") {
-    controls = new OrbitControls(camera, rendererDom);
-    controls.enableRotate = true;
-  }
-  else if (redererClass === "SVGRenderer") {
-    controls = new TrackballControls(camera, rendererDom);
-    controls.rotateSpeed = 3.0;
-    controls.zoomSpeed = 0.5;
-  } else {
-    throw new Error(`Unknown controls class: ${redererClass}`);
-  }
-  ispy.controls = controls;
-}
-
-function updateRenderer(type: string) {
-  if (type === ispy.renderer_name) {
-    alert(`${type} is already in use`);
-    return;
-  }
-  if (!ispy.camera) {
-    console.error("Camera is not defined");
-    return;
-  }
-  if (!ispy.renderer || !ispy.inset_renderer) {
-    console.error("Renderer is not defined");
-    return;
-  }
-
-  getHTMLObject("display").removeChild(ispy.renderer.domElement);
-  getHTMLObject("axes").removeChild(ispy.inset_renderer.domElement);
-
-  useRenderer(type);
-  updateControls(type, ispy.camera, ispy.renderer.domElement as HTMLCanvasElement);
-  updateRendererInfo();
-  updateClipping();
 }
 
 function onWindowResize() {
@@ -293,81 +271,6 @@ function onMouseDown(_e: MouseEvent) {
   }
 }
 
-function addKeyboardListeners() {
-  // document.addEventListener("keyup", function (e) {
-  //   if (e.shiftKey || e.key === "Shift") {
-  //     ispy.shift_pressed = false;
-  //   }
-  // });
-
-  document.addEventListener("keydown", (e: KeyboardEvent) => {
-    // Instead of a button, make output of 3D to JSON a "secret" key binding
-    // If shift + e then export
-    if (e.which === 69 && e.shiftKey) {
-      exportScene();
-    }
-
-    // up arrow
-    if (e.which === 38 && e.shiftKey) {
-      zoomIn();
-    }
-
-    // down
-    if (e.which === 40 && e.shiftKey) {
-      zoomOut();
-    }
-
-    // right
-    if (e.which === 39) {
-      nextEvent();
-    }
-
-    // left
-    if (e.which === 37) {
-      prevEvent();
-    }
-
-    // shift+a to toggle animation
-    if (e.which === 65 && e.shiftKey) {
-      toggleAnimation();
-    }
-
-    // if (e.shiftKey || e.key === "Shift") {
-    //   ispy.shift_pressed = true;
-    // }
-
-    // M
-    if (e.which === 77) {
-      showMass();
-    }
-
-    // H
-    if (e.which === 72) {
-      ispy.hide = true;
-
-      if (ispy.intersected?.name.includes("Jet")) {
-        ispy.intersected.material.color = new Color(
-          event_description[ispy.current_view][ispy.intersected.name].style.color,
-        );
-
-        ispy.intersected.visible = false;
-        ispy.hidden_objects.push(ispy.intersected);
-      }
-    }
-
-    // S
-    if (e.which === 83) {
-      ispy.show = true;
-
-      const hidden_object = ispy.hidden_objects.pop();
-
-      if (hidden_object) {
-        hidden_object.visible = true;
-      }
-    }
-  });
-}
-
 function showMass() {
   let mass = 0;
   let sumE = 0;
@@ -451,18 +354,238 @@ function unHighlightObject() {
   }
 }
 
+function resetView() {
+  if (!ispy.controls) {
+    console.error("Controls are not defined");
+    return;
+  }
+  setPerspective();
+  initCamera();
+
+  ispy.controls.reset();
+
+  getHTMLObject("3d").classList.add("active");
+  getHTMLObject("rphi").classList.remove("active");
+  getHTMLObject("rhoz").classList.remove("active");
+
+  ispy.current_view = "3D";
+  ispy.scene = ispy.scenes["3D"];
+}
+
+function setXY() {
+  if (!ispy.camera) {
+    console.error("Camera is not defined");
+    return;
+  }
+  const length = ispy.camera.position.length();
+
+  ispy.camera.position.x = 0;
+  ispy.camera.position.y = 0;
+  ispy.camera.position.z = length;
+  ispy.camera.up = new Vector3(0, 1, 0);
+
+  lookAtOrigin();
+}
+
+function setZX() {
+  if (!ispy.camera) {
+    console.error("Camera is not defined");
+    return;
+  }
+  const length = ispy.camera.position.length();
+
+  ispy.camera.position.x = 0;
+  ispy.camera.position.y = length;
+  ispy.camera.position.z = 0;
+  ispy.camera.up = new Vector3(1, 0, 0);
+
+  lookAtOrigin();
+}
+
+function setYZ() {
+  if (!ispy.camera) {
+    console.error("Camera is not defined");
+    return;
+  }
+  const length = ispy.camera.position.length();
+
+  ispy.camera.position.x = -length;
+  ispy.camera.position.y = 0;
+  ispy.camera.position.z = 0;
+  ispy.camera.up = new Vector3(0, 1, 0);
+
+  lookAtOrigin();
+}
+
+function setOrthographic() {
+  if (!ispy.o_camera || !ispy.p_camera) {
+    console.error("Orthographic or Perspective camera is not defined");
+    return;
+  }
+  if (!ispy.controls) {
+    console.error("Controls are not defined");
+    return;
+  }
+  getHTMLObject("perspective").classList.remove("active");
+  getHTMLObject("orthographic").classList.add("active");
+
+  ispy.is_perspective = false;
+  ispy.camera = ispy.o_camera;
+
+  ispy.camera.position.x = ispy.p_camera.position.x;
+  ispy.camera.position.y = ispy.p_camera.position.y;
+  ispy.camera.position.z = ispy.p_camera.position.z;
+
+  ispy.camera.zoom = ispy.p_camera.zoom;
+  ispy.camera.up = ispy.p_camera.up;
+
+  const fov = ispy.p_camera.fov;
+  const aspect = ispy.p_camera.aspect;
+  const near = ispy.p_camera.near;
+  const far = ispy.p_camera.far;
+
+  const focus = (near + far) / 2;
+
+  let half_height = Math.tan((fov * Math.PI) / 180 / 2) * focus;
+  let half_width = half_height * aspect;
+
+  half_height /= ispy.p_camera.zoom;
+  half_width /= ispy.p_camera.zoom;
+
+  ispy.camera.left = -half_width;
+  ispy.camera.right = half_width;
+  ispy.camera.top = half_height;
+  ispy.camera.bottom = -half_height;
+
+  ispy.camera.updateProjectionMatrix();
+
+  ispy.controls.object = ispy.camera;
+  ispy.controls.update();
+}
+
+function setPerspective() {
+  if (!ispy.o_camera || !ispy.p_camera) {
+    console.error("Orthographic or Perspective camera is not defined");
+    return;
+  }
+  if (!ispy.controls) {
+    console.error("Controls are not defined");
+    return;
+  }
+  getHTMLObject("perspective").classList.add("active");
+  getHTMLObject("orthographic").classList.remove("active");
+
+  ispy.is_perspective = true;
+  ispy.camera = ispy.p_camera;
+
+  ispy.camera.position.x = ispy.o_camera.position.x;
+  ispy.camera.position.y = ispy.o_camera.position.y;
+  ispy.camera.position.z = ispy.o_camera.position.z;
+
+  ispy.camera.zoom = ispy.o_camera.zoom;
+  ispy.camera.up = ispy.o_camera.up;
+
+  ispy.camera.aspect = ispy.o_camera.right / ispy.o_camera.top;
+
+  ispy.camera.updateProjectionMatrix();
+
+  ispy.controls.object = ispy.camera;
+  ispy.controls.update();
+}
+
+function showView(view: string) {
+  if (!ispy.controls) {
+    console.error("Controls are not defined");
+    return;
+  }
+  switch (view) {
+    case "3D":
+      getHTMLObject("3d").classList.add("active");
+      getHTMLObject("rphi").classList.remove("active");
+      getHTMLObject("rhoz").classList.remove("active");
+
+      getHTMLObject("perspective").removeAttribute("disabled");
+      getHTMLObject("orthographic").removeAttribute("disabled");
+
+      getHTMLObject("xy").removeAttribute("disabled");
+      getHTMLObject("yz").removeAttribute("disabled");
+      getHTMLObject("xz").removeAttribute("disabled");
+
+      (ispy.controls as OrbitControls).enableRotate = true;
+
+      if (ispy.current_view !== "3D") setPerspective();
+
+      ispy.current_view = "3D";
+      ispy.scene = ispy.scenes["3D"];
+      break;
+
+    case "RPhi":
+      getHTMLObject("3d").classList.remove("active");
+      getHTMLObject("rphi").classList.add("active");
+      getHTMLObject("rhoz").classList.remove("active");
+
+      getHTMLObject("perspective").setAttribute("disabled", "");
+      getHTMLObject("orthographic").setAttribute("disabled", "");
+
+      getHTMLObject("xy").setAttribute("disabled", "");
+      getHTMLObject("yz").setAttribute("disabled", "");
+      getHTMLObject("xz").setAttribute("disabled", "");
+
+      (ispy.controls as OrbitControls).enableRotate = false;
+      ispy.controls.reset();
+
+      setOrthographic();
+      setXY();
+
+      ispy.current_view = "RPhi";
+      ispy.scene = ispy.scenes["RPhi"];
+      break;
+
+    case "RhoZ":
+      getHTMLObject("3d").classList.remove("active");
+      getHTMLObject("rphi").classList.remove("active");
+      getHTMLObject("rhoz").classList.add("active");
+
+      getHTMLObject("perspective").setAttribute("disabled", "");
+      getHTMLObject("orthographic").setAttribute("disabled", "");
+
+      getHTMLObject("xy").setAttribute("disabled", "");
+      getHTMLObject("yz").setAttribute("disabled", "");
+      getHTMLObject("xz").setAttribute("disabled", "");
+
+      (ispy.controls as OrbitControls).enableRotate = false;
+      ispy.controls.reset();
+
+      setOrthographic();
+      setYZ();
+
+      ispy.current_view = "RhoZ";
+      ispy.scene = ispy.scenes["RhoZ"];
+      break;
+    default:
+      console.error(`Invalid view: ${view}`);
+      break;
+  }
+}
+
 export {
+  initCamera,
+  zoomIn,
+  zoomOut,
   invertColors,
   setTransparency,
-  updateRendererInfo,
-  updateRenderer,
   onWindowResize,
   getObjectIds,
   onMouseMove,
   onMouseDown,
-  showMass,
-  displayEventObjectData,
   highlightObject,
   unHighlightObject,
-  addKeyboardListeners,
+  showMass,
+  resetView,
+  setXY,
+  setZX,
+  setYZ,
+  showView,
+  setOrthographic,
+  setPerspective,
 };

@@ -86,7 +86,7 @@
     "forceConsistentCasingInFileNames": true
   },
   "files": [
-    "ts/analysis_config.ts",
+    "ts/analysis-config.ts",
     "ts/animate.ts",
     "ts/config.ts",
     "ts/controls.ts",
@@ -97,6 +97,7 @@
     "ts/objects-add.ts",
     "ts/objects-config.ts",
     "ts/objects-draw.ts",
+    "ts/renderer.ts",
     "ts/setup.ts",
     "ts/tree-view.ts",
     "ts/uhh_selection.ts",

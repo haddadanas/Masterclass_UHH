@@ -3,8 +3,7 @@ import { GUIController } from "dat.gui/index.js";
 
 import { ispy } from "./config.js";
 import { data_groups, detector_description, disabled, event_description, reduced_data_groups } from "./objects-config.js";
-import { getHTMLObject, removeExistingBubble } from "./utils.js";
-import { getSceneObjects } from "./uhh_selection.js";
+import { getHTMLObject } from "./utils.js";
 import { SelectionFieldController } from "./ispy.interfaces.js";
 
 function addGroups() {
@@ -318,158 +317,6 @@ function addSelectionRow(group: string, key: string, name: string, _objectIds: a
   });
 }
 
-function addControllers(group: string) {
-  //   let color = new Color();
-  //   let linewidth = 1;
-  const row_obj = {
-    number: 0,
-    min_pt: 1.0,
-    Electrons: true,
-    Muons: true,
-    Photons: true,
-    Jets: false,
-    MET: false,
-    "Jet: min Et": 1.0,
-    "Additional Tracks": true,
-  };
-
-  const gui_elem = ispy.guiReduced;
-
-  const folder = gui_elem.__folders[group];
-
-  const names = getSceneObjects();
-
-  if (group.includes("Momentum Cut (GeV)")) {
-    folder
-      .add(row_obj, "min_pt", 0, 100)
-      .name("min. p<sub>T, visible</sub>")
-      .onChange(() => {
-        ispy.views.forEach((v) => {
-          const physic_objs = [
-            ...ispy.scenes[v].getObjectByName("Physics")!.children,
-            ...ispy.scenes[v].getObjectByName("Tracking")!.children,
-          ].filter((o) => o.visible && o.children[0].userData.hasOwnProperty("pt"));
-
-          if (!physic_objs.length) return;
-
-          physic_objs.forEach((obj) => {
-            obj.children.forEach((o) => {
-              o.visible = o.userData.pt < row_obj.min_pt ? false : true;
-            });
-          });
-        });
-      });
-
-    folder
-      .add(row_obj, "Jet: min Et", 0, 200)
-      .name("min. E<sub>T, Jets</sub>")
-      .onChange(() => {
-        ispy.views.forEach((v) => {
-          const physic_objs = ispy.scenes[v].getObjectByName(names["Jets"])!.children;
-
-          if (!physic_objs.length) return;
-
-          physic_objs.forEach((o) => {
-            o.visible = o.userData.et < row_obj["Jet: min Et"] ? false : true;
-          });
-        });
-      });
-  }
-
-  if (group.includes("Show/Hide")) {
-    // Helper function to toggle physics objects
-    const togglePhysicsObjects = (leptongroup: string[], visibility: boolean) => {
-      ispy.views.forEach((v) => {
-        leptongroup.forEach((lepton) => {
-          const obj = ispy.scenes[v].getObjectByName(names[lepton]);
-          if (!obj) return;
-          obj.visible = visibility;
-        });
-      });
-    };
-
-    const pt_controller = ispy.subfoldersReduced.Controllers.filter((o) => o.property === "min_pt")[0];
-    const jet_controller = ispy.subfoldersReduced.Controllers.filter((o) => o.property === "Jet: min Et")[0];
-
-    folder.add(row_obj, "Electrons").onChange(function (this: SelectionFieldController) {
-      togglePhysicsObjects(["GsfElectrons"], this.getValue());
-      // retoggle the pt controller to update the visibility
-      pt_controller.setValue(pt_controller.getValue());
-    });
-
-    folder.add(row_obj, "Muons").onChange(function (this: SelectionFieldController) {
-      togglePhysicsObjects(["GlobalMuons", "TrackerMuons"], this.getValue());
-      // retoggle the pt controller to update the visibility
-      pt_controller.setValue(pt_controller.getValue());
-    });
-
-    folder.add(row_obj, "Photons").onChange(function (this: SelectionFieldController) {
-      togglePhysicsObjects(["Photons"], this.getValue());
-    });
-
-    folder.add(row_obj, "Jets").onChange(function (this: SelectionFieldController) {
-      togglePhysicsObjects(["Jets"], this.getValue());
-      // retoggle the jet controller to update the visibility
-      jet_controller.setValue(jet_controller.getValue());
-    });
-
-    folder.add(row_obj, "MET").onChange(function (this: SelectionFieldController) {
-      togglePhysicsObjects(["METs"], this.getValue());
-    });
-
-    folder.add(row_obj, "Additional Tracks").onChange(function (this: SelectionFieldController) {
-      togglePhysicsObjects(["Tracks"], this.getValue());
-    });
-  }
-
-  // add all controllers to the reduced subfolders for convenience
-  (folder.__controllers as SelectionFieldController[]).forEach((c) => {
-    ispy.subfoldersReduced["Controllers"].push(c);
-  });
-}
-
-function addInfo(group: string) {
-  const gui_elem = ispy.guiReduced;
-
-  const folder = gui_elem.__folders[group];
-
-  const names = getSceneObjects();
-  // pt is element 1 in the collection object (inconvinient definition by design)
-  const met_pt = ispy.current_event.Collections[names["METs"]][0][1];
-
-  const row_obj = {
-    MET: `${met_pt.toFixed(2)} GeV`,
-    Sel: "0",
-    track: false,
-  };
-
-  folder.add(row_obj, "MET").onFinishChange(function (this: SelectionFieldController) {
-    // reset to original value
-    this.setValue(this.initialValue);
-  });
-
-  folder
-    .add(row_obj, "Sel")
-    .name("Selected Tracks")
-    .onFinishChange(function (this: SelectionFieldController) {
-      // reset to original value
-      this.setValue(ispy.selected_objects.size);
-    });
-
-  folder
-    .add(row_obj, "track")
-    .name("Track Info")
-    .onChange(function (this: SelectionFieldController) {
-      ispy.showTrackInfo = this.getValue();
-      removeExistingBubble();
-    });
-
-  // add all controllers to the reduced subfolders for convenience
-  (folder.__controllers as SelectionFieldController[]).forEach((c) => {
-    ispy.subfoldersReduced["Info"].push(c);
-  });
-}
-
 function saveCutSettings() {
   const settings: Record<string, any> = {};
   const btn = (ispy.guiReduced.__controllers as SelectionFieldController[]).find((o) => o.property === "Keep Settings");
@@ -500,8 +347,6 @@ export {
   toggle,
   showObject,
   addSelectionRow,
-  addControllers,
-  addInfo,
   saveCutSettings,
   applySavedSettings,
 };

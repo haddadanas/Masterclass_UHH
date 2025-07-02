@@ -116,16 +116,6 @@ function checkCurrentSelection(): void {
   }
 }
 
-function getSceneObjects(): { [key: string]: string } {
-  return [
-    ...(ispy.scenes?.["3D"]?.getObjectByName("Physics")?.children.map((o: any) => o.name) || []),
-    ...(ispy.scenes?.["3D"]?.getObjectByName("Tracking")?.children.map((o: any) => o.name) || []),
-  ].reduce((dic: { [key: string]: string }, o) => {
-    dic[o.replace(/^(?:PAT|PF)?(.*?)_V\d$/, "$1")] = o;
-    return dic;
-  }, {});
-}
-
 function getSelectionCuts(): { [key: string]: number } {
   const cuts: { [key: string]: number } = {};
   ispy.subfoldersReduced["Selection"].forEach((e) => {
@@ -347,7 +337,6 @@ function getSelectionResults(): void {
 
 export {
   checkCurrentSelection,
-  getSceneObjects,
   getSelectionResults,
   getSelectionCuts,
   getPassingEvents,

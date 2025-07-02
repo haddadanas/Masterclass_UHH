@@ -6,8 +6,16 @@ import {
   exportGLTF_binary,
   exportGLTF_text,
   exportOBJ,
+  exportScene,
   printImage,
   reload,
+} from "./controls.js";
+import {
+  invertColors,
+  setTransparency,
+  showMass,
+  zoomIn,
+  zoomOut,
   resetView,
   setOrthographic,
   setPerspective,
@@ -15,10 +23,7 @@ import {
   setYZ,
   setZX,
   showView,
-  zoomIn,
-  zoomOut,
-} from "./controls.js";
-import { addKeyboardListeners, invertColors, setTransparency, updateRenderer, updateRendererInfo } from "./display.js";
+} from "./display.js";
 import {
   importModel,
   loadEvent,
@@ -34,6 +39,7 @@ import {
   showWebFiles,
 } from "./files-load.js";
 import { event_description } from "./objects-config.js";
+import { updateRenderer, updateRendererInfo } from "./renderer.js";
 import { init, initLight, initControlPanel, run, setDisplayVerticalHeight, setFramerate } from "./setup.js";
 import { addGroups } from "./tree-view.js";
 import { buildFileSummary, createCSV, getSelectionResults } from "./uhh_selection.js";
@@ -104,11 +110,55 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("js-csv-z")?.addEventListener("click", () => createCSV("Z"));
   document.getElementById("js-csv-wp")?.addEventListener("click", () => createCSV("Wp"));
   document.getElementById("js-csv-wm")?.addEventListener("click", () => createCSV("Wm"));
+
   init();
   addGroups();
   initLight();
   initControlPanel();
-  addKeyboardListeners();
+
+  // Add keyboard listeners for shortcuts
+  document.addEventListener("keydown", (e: KeyboardEvent) => {
+    // Instead of a button, make output of 3D to JSON a "secret" key binding
+    // If shift + e then export
+    if (e.which === 69 && e.shiftKey) {
+      exportScene();
+    }
+
+    // up arrow
+    if (e.which === 38 && e.shiftKey) {
+      zoomIn();
+    }
+
+    // down
+    if (e.which === 40 && e.shiftKey) {
+      zoomOut();
+    }
+
+    // right
+    if (e.which === 39) {
+      nextEvent();
+    }
+
+    // left
+    if (e.which === 37) {
+      prevEvent();
+    }
+
+    // shift+a to toggle animation
+    if (e.which === 65 && e.shiftKey) {
+      toggleAnimation();
+    }
+
+    // if (e.shiftKey || e.key === "Shift") {
+    //   ispy.shift_pressed = true;
+    // }
+
+    // M
+    if (e.which === 77) {
+      showMass();
+    }
+  });
+
   loadWebFiles();
   run();
 });

@@ -73,7 +73,7 @@ import {
   makeVertex,
   makeVertexCompositeCandidate,
 } from "./objects-draw.js";
-import { addControllers, addInfo } from "./tree-view.js";
+import { addControllers, addInfo } from "./utils.js";
 
 // skipcq: JS-0323
 const detector_description: Record<string, Record<string, any>> = {

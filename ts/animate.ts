@@ -2,7 +2,7 @@ import { Easing, Tween } from "@tweenjs/tween.js";
 import { SphereGeometry, MeshBasicMaterial, Mesh } from "three";
 
 import { ispy } from "./config.js";
-import { resetView } from "./controls.js";
+import { resetView } from "./display.js";
 import { showObject } from "./tree-view.js";
 
 // This is particular to the sequence below:

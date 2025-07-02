@@ -1,7 +1,6 @@
 import {
   Vector3,
   Plane,
-  Color,
   PerspectiveCamera,
   OrthographicCamera,
   Object3D,
@@ -9,7 +8,6 @@ import {
   MeshBasicMaterial,
   FontLoader,
   TextGeometry,
-  WebGLRenderer,
   ArrowHelper,
   Mesh,
   Font,
@@ -18,24 +16,22 @@ import {
   REVISION,
   Scene,
 } from "three";
-import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import dat from "dat.gui";
 import { update } from "@tweenjs/tween.js";
 
 import { getHTMLObject } from "./utils.js";
 import { ispy } from "./config.js";
+import { useRenderer, updateClipping, render } from "./renderer.js";
 import { importDetector, loadDroppedFile } from "./files-load.js";
 import { data_groups } from "./objects-config.js";
-import { onMouseDown, onMouseMove, onWindowResize } from "./display.js";
-import { CHARGE_MAP, SELEC_NAME_MAP } from "./analysis_config.js";
+import { initCamera, onMouseDown, onMouseMove, onWindowResize } from "./display.js";
+import { CHARGE_MAP, SELEC_NAME_MAP } from "./analysis-config.js";
 import { checkCurrentSelection } from "./uhh_selection.js";
 
 import { SelectionFieldController } from "./ispy.interfaces.js";
 
-function lookAtOrigin() {
-  ispy.camera?.lookAt(new Vector3(0, 0, 0));
-}
+
 
 function setDisplayVerticalHeight(vh: number) {
   if (!ispy.camera) {
@@ -73,78 +69,6 @@ function setFramerate(fr: number) {
   ispy.framerate = fr;
   const fr_obj = getHTMLObject("fr");
   fr_obj.innerHTML = fr.toString();
-}
-
-function initCamera() {
-  const display = getHTMLObject("display");
-  const width = display.clientWidth;
-  const height = display.clientHeight;
-
-  ispy.p_camera = new PerspectiveCamera(75, width / height, 0.1, 100);
-
-  ispy.p_camera.name = "PerspectiveCamera";
-
-  ispy.o_camera = new OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 0.1, 100);
-
-  ispy.o_camera.name = "OrthographicCamera";
-
-  ispy.is_perspective = true;
-  ispy.camera = ispy.is_perspective ? ispy.p_camera : ispy.o_camera;
-  ispy.camera.position.x = 9.5;
-  ispy.camera.position.y = 9.5;
-  ispy.camera.position.z = 13.0;
-
-  ispy.camera.zoom = 2.0;
-  ispy.camera.up = new Vector3(0, 1, 0);
-
-  ispy.camera.updateProjectionMatrix();
-  lookAtOrigin();
-}
-
-function useRenderer(type: string) {
-  const display = document.getElementById("display");
-  if (!display) {
-    console.error("Display element not found");
-    return;
-  }
-  const width = display.clientWidth;
-  const height = display.clientHeight;
-
-  const rendererTypes: Record<string, typeof WebGLRenderer | typeof SVGRenderer> = {
-    WebGLRenderer: WebGLRenderer,
-    SVGRenderer: SVGRenderer,
-  };
-
-  const renderer = new rendererTypes[type]({ antialias: true, alpha: true });
-  const inset_renderer = new rendererTypes[type]({ antialias: true, alpha: true });
-
-  renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
-  inset_renderer.setPixelRatio(window.devicePixelRatio ? window.devicePixelRatio : 1);
-
-  renderer.setClearColor(new Color(0x232323), 1);
-  inset_renderer.setClearColor(new Color(0x232323), 0);
-
-  renderer.setSize(width, height);
-  inset_renderer.setSize(height / 5, height / 5);
-
-  ispy.renderer = renderer;
-  ispy.renderer_name = type;
-  ispy.inset_renderer = inset_renderer;
-
-  display.appendChild(ispy.renderer.domElement);
-  const axes_html = getHTMLObject("axes");
-  axes_html.appendChild(ispy.inset_renderer.domElement);
-
-  const settings = getHTMLObject("settings");
-  settings.style.display = "none";
-}
-
-function updateClipping() {
-  if (!ispy.renderer || !(ispy.renderer instanceof WebGLRenderer)) {
-    return;
-  }
-  ispy.renderer.clippingPlanes = ispy.global_planes;
-  ispy.renderer.localClippingEnabled = true;
 }
 
 function setupClippingGUI() {
@@ -678,19 +602,6 @@ function initSelectionFields() {
   });
 }
 
-function render() {
-  ispy.renderer!.render(ispy.scene!, ispy.camera!);
-
-  if (ispy.get_image_data) {
-    ispy.image_data = (ispy.renderer!.domElement as HTMLCanvasElement).toDataURL();
-    ispy.get_image_data = false;
-  }
-
-  if (ispy.inset_renderer !== null) {
-    ispy.inset_renderer!.render(ispy.inset_scene, ispy.inset_camera!);
-  }
-}
-
 function run() {
   setTimeout(() => {
     requestAnimationFrame(run);
@@ -738,16 +649,11 @@ export {
   initControlPanel,
   setDisplayVerticalHeight,
   setFramerate,
-  useRenderer,
   setupGUIs,
   setupInset,
   handleToggles,
   handleDragAndDrop,
-  lookAtOrigin,
   createCheckboxContainer,
   run,
   initSelectionFields,
-  initCamera,
-  render,
-  updateClipping,
 };
