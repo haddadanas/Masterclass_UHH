@@ -151,7 +151,7 @@ interface Particle extends FourVector {
   ptype: string;
   index?: number;
   // [key: string]: number | string;
-}
+};
 
 type Selection = Partial<{
   min_energy: number;
