@@ -7,16 +7,34 @@ import { getCurrentEvent, EventCollection, getCurrentIndex } from "./utils.js";
 import { Particle, FourVector, MET } from "./ispy.interfaces.js";
 
 // Helper functions to check the selection
+/**
+ * Checks if the minimum MET cut is passed.
+ * @param met The MET object to check.
+ * @param cut The minimum cut value.
+ * @returns True if the cut is passed, false otherwise.
+ */
 function checkMinMET(met: MET, cut: number): boolean {
   if (cut === -1) return true;
   return met["Et"] >= cut;
 }
 
+/**
+ * Checks if the maximum MET cut is passed.
+ * @param met The MET object to check.
+ * @param cut The maximum cut value.
+ * @returns True if the cut is passed, false otherwise.
+ */
 function checkMaxMET(met: MET, cut: number): boolean {
   if (cut === -1) return true;
   return met["Et"] <= cut;
 }
 
+/**
+ * Checks if the charge cut is passed.
+ * @param leptons The leptons to check.
+ * @param cut The charge cut value.
+ * @returns True if the cut is passed, false otherwise.
+ */
 function checkCharge(leptons: Particle[], cut: number): boolean {
   if (cut === undefined) return true;
   if (leptons.length === 0) return true;
@@ -27,10 +45,21 @@ function checkCharge(leptons: Particle[], cut: number): boolean {
   return Math.sign(chargeSum) === cut;
 }
 
+/**
+ * Filters the leptons based on the transverse momentum (pt) cut.
+ * @param leptons The leptons to check.
+ * @param cut The pt cut value.
+ * @returns The leptons that pass the pt cut.
+ */
 function getPtPassingLeptons(leptons: Particle[], cut: number): Particle[] {
   return leptons.filter((lepton) => lepton["pt"] >= cut);
 }
 
+/**
+ * Sums up a list of particles' four-vectors.
+ * @param particles The particles to sum.
+ * @returns The sum of the four-vectors.
+ */
 function sumFourVectors(particles: Map<string, Particle[]>): FourVector {
   if (particles.size < 1) {
     return { E: 0, px: 0, py: 0, pz: 0 };
@@ -50,9 +79,12 @@ function sumFourVectors(particles: Map<string, Particle[]>): FourVector {
   return { E: sumE, px: sumPx, py: sumPy, pz: sumPz };
 }
 
-function checkIfEventPassing(
-  event_index: number | string = -1,
-): boolean | undefined {
+/**
+ * Checks if the event is passing the selection criteria.
+ * @param event_index The index of the event to check.
+ * @returns True if the event is passing, false otherwise.
+ */
+function checkIfEventPassing(event_index: number | string = -1): boolean | undefined {
   if (!getCurrentEvent()) {
     return undefined;
   }
@@ -84,8 +116,12 @@ function checkIfEventPassing(
     }
   }
   return pass;
-};
+}
 
+/**
+ * Gets the content of the selection message for the current event.
+ * @returns A message indicating whether the current event passes the selection criteria.
+ */
 function getCurrentSelectionMessage(): [string, string] {
   const pass = checkIfEventPassing();
   if (pass === undefined) {
@@ -95,11 +131,15 @@ function getCurrentSelectionMessage(): [string, string] {
   html += `${pass ? "passes" : "does not pass"} the selection!`;
   const symbol = pass ? "success" : "warning";
   return [html, symbol];
-};
+}
 
+/**
+ * Checks if the current selection passes the criteria and displays a message.
+ * @returns void
+ */
 function checkCurrentSelection(): void {
   const [Msgtext, symbol] = getCurrentSelectionMessage();
-  swal({ text: Msgtext, title: "Selection Results", icon: symbol, buttons: [false], timer: 3000 });  // TODO check if no buttons
+  swal({ text: Msgtext, title: "Selection Results", icon: symbol, buttons: [false], timer: 3000 }); // TODO check if no buttons
   if (symbol === "error") return;
   const nSelected = ispy.subfoldersReduced["Selection"].find((e) => e.property === "nSelected");
   if (nSelected) {
@@ -116,6 +156,10 @@ function checkCurrentSelection(): void {
   }
 }
 
+/**
+ * Gets the values of the selection fields.
+ * @returns The current selection cuts.
+ */
 function getSelectionCuts(): { [key: string]: number } {
   const cuts: { [key: string]: number } = {};
   ispy.subfoldersReduced["Selection"].forEach((e) => {
@@ -129,6 +173,10 @@ function getSelectionCuts(): { [key: string]: number } {
   return cuts;
 }
 
+/**
+ * Gets an array of event indices that pass the selection criteria.
+ * @returns An array of event indices that pass the selection criteria.
+ */
 function getPassingEvents(): string[] {
   if (!getCurrentEvent()) {
     return [];
@@ -143,6 +191,9 @@ function getPassingEvents(): string[] {
   return passing_events;
 }
 
+/**
+ * Builds a summary of the file events and enables the analysis button.
+ */
 function buildFileSummary(): void {
   let event_summary: EventCollection;
   let analysisBtn = document.getElementById("js-analysis-btn");
@@ -181,6 +232,11 @@ function buildFileSummary(): void {
   $("#loading").modal("show");
 }
 
+/**
+ * Gets the selection particles for a specific event.
+ * @param event_index The index of the event to get the particles for.
+ * @returns The selection particles for the event.
+ */
 function getSelectionParticles(event_index: string): {
   index: string;
   parts: Map<string, Particle[]>;
@@ -211,7 +267,11 @@ function getSelectionParticles(event_index: string): {
   return results;
 }
 
-// Calculate the invariant mass of a list of particles
+/**
+ * Calculates the invariant mass of a sum of four-vectors.
+ * @param sumVector The sum of four-vectors.
+ * @returns The invariant mass.
+ */
 function getInvariantMass(sumVector: FourVector): number {
   let mass = 0;
   const sumPx: number = sumVector.px;
@@ -226,7 +286,12 @@ function getInvariantMass(sumVector: FourVector): number {
   return mass;
 }
 
-// Calculate the transverse mass of a list of particles
+/**
+ * Calculates the transverse mass of a sum of four-vectors.
+ * @param sumVector The sum of four-vectors.
+ * @param met The missing transverse energy.
+ * @returns The transverse mass.
+ */
 function getTransverseMass(sumVector: FourVector, met: MET): number {
   let transverseMass = 0;
   const invariantMass = getInvariantMass(sumVector);
@@ -259,6 +324,14 @@ function getTransverseMass(sumVector: FourVector, met: MET): number {
 //   return hist;
 // }
 
+/**
+ * Creates a histogram from an array of numbers (Not used).
+ * @param array The array to create a histogram from.
+ * @param _start The start of the histogram range.
+ * @param _end The end of the histogram range.
+ * @param bins The number of bins for the histogram.
+ * @returns The histogram data.
+ */
 function createHistogramData(
   array: number[],
   _start: number,
@@ -273,6 +346,10 @@ function createHistogramData(
   };
 }
 
+/**
+ * Gets the invariant and transverse masses for each event.
+ * @returns An Array containing the invariant and transverse masses for each event.
+ */
 function getMassesArray(): { m: Map<number, number>; mt: Map<number, number> } {
   const masses = new Map();
   const massesT = new Map();
@@ -289,6 +366,11 @@ function getMassesArray(): { m: Map<number, number>; mt: Map<number, number> } {
   return { m: masses, mt: massesT };
 }
 
+/**
+ * Creates a CSV file from the invariant and transverse masses.
+ * @param category The category of the CSV file to create.
+ * @returns The CSV data as a string.
+ */
 function createCSV(category: string): string {
   const file_name = ispy.file_name ? ispy.file_name.replace(/\.ig$/, "") : "";
   const masses = getMassesArray();
@@ -309,6 +391,10 @@ function createCSV(category: string): string {
   return csv;
 }
 
+/**
+ * Gets the selection results of the whole file and updates the event statistics display.
+ * @returns void
+ */
 function getSelectionResults(): void {
   const event_stats = document.getElementById("event-statistics");
   if (!event_stats) {

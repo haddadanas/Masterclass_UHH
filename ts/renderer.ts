@@ -21,6 +21,10 @@ function updateControls(redererClass: string, camera: Camera, rendererDom: HTMLC
   ispy.controls = controls;
 }
 
+/**
+ * Updates the renderer information display.
+ * @returns void
+ */
 export function updateRendererInfo() {
   if (!ispy.renderer) {
     console.error("Renderer is not defined");
@@ -47,6 +51,11 @@ export function updateRendererInfo() {
 
   getHTMLObject("renderer-info").innerHTML = html;
 }
+
+/**
+ * Updates the clipping planes for the renderer.
+ * @returns void
+ */
 export function updateClipping() {
   if (!ispy.renderer || !(ispy.renderer instanceof WebGLRenderer)) {
     return;
@@ -55,6 +64,11 @@ export function updateClipping() {
   ispy.renderer.localClippingEnabled = true;
 }
 
+/**
+ * Creates a new renderer of the specified type.
+ * @param type The type of renderer to use, either "WebGLRenderer" or "SVGRenderer".
+ * @returns void
+ */
 export function useRenderer(type: string) {
   const display = document.getElementById("display");
   if (!display) {
@@ -93,6 +107,11 @@ export function useRenderer(type: string) {
   settings.style.display = "none";
 }
 
+/**
+ * Updates the renderer to the specified type.
+ * @param type The type of renderer to update to, either "WebGLRenderer" or "SVGRenderer".
+ * @returns void
+ */
 export function updateRenderer(type: string) {
   if (type === ispy.renderer_name) {
     alert(`${type} is already in use`);
@@ -116,6 +135,10 @@ export function updateRenderer(type: string) {
   updateClipping();
 }
 
+/**
+ * Initializes the renderer and sets up event listeners.
+ * @returns void
+ */
 export function render() {
   ispy.renderer!.render(ispy.scene!, ispy.camera!);
 

@@ -10,14 +10,29 @@ import { Particle, EventObject, EventSummary, MET, FourVector, SelectionFieldCon
 const mMuon2 = 0.10566 * 0.10566;
 const mElectron2 = 0.511e-3 * 0.511e-3;
 
+/**
+ * Gets the current event index.
+ * @returns current event index
+ */
 export function getCurrentIndex(): number {
   return ispy.event_index;
 }
 
+/**
+ * Gets the current event object.
+ * @returns the current event object
+ */
 export function getCurrentEvent(): EventObject {
   return ispy.current_event;
 }
 
+/**
+ * Gets the particle information (kinematics and charge) for a specific particle.
+ * @param key The key of the particle.
+ * @param type The type information of the particle.
+ * @param eventObjectData The event object data.
+ * @returns The particle information.
+ */
 export function getParticleInfo(key: string, type: [string, string][], eventObjectData: number[]): Particle {
   const isMuon = key.includes("Muon");
   const isElectron = key.includes("Electron");
@@ -77,6 +92,12 @@ export function getParticleInfo(key: string, type: [string, string][], eventObje
   return { E: E, px: px, py: py, pz: pz, pt: pt, charge: charge, ptype: ptype };
 }
 
+/**
+ * Gets the four-momentum vector for a specific particle by its index.
+ * @param key The key of the particle.
+ * @param objectUserData The user data associated with the particle.
+ * @returns The four-momentum vector and particle type.
+ */
 export function getFourVectorByIndex(
   key: string,
   objectUserData: { originalIndex: number; [key: string]: any },
@@ -89,6 +110,12 @@ export function getFourVectorByIndex(
   return [{ px: result.px, py: result.py, pz: result.pz, E: result.E }, result.ptype];
 }
 
+/**
+ * Gets the missing transverse energy (MET) information for a specific event.
+ * @param type The type information of the MET.
+ * @param eventObjectData The event object data.
+ * @returns The MET information.
+ */
 export function getMetInformation(type: [string, string][], eventObjectData: number[]): MET {
   let pt: number, px: number, py: number;
 
@@ -107,6 +134,11 @@ export function getMetInformation(type: [string, string][], eventObjectData: num
   return { Et: pt, px: px, py: py };
 }
 
+/**
+ * Cleans up the data string by removing non-standard JSON bits.
+ * @param d The data string to clean up.
+ * @returns The cleaned-up data string.
+ */
 export function cleanupData(d: string): string {
   // rm non-standard json bits
   // newer files will not have this problem
@@ -146,6 +178,13 @@ export class EventCollection {
   constructor();
   constructor(eventList: string[], igData: JSZip);
 
+  /**
+   * constructor for EventCollection.
+   * If no parameters are provided, it initializes an empty collection.
+   * @param eventList List of event paths to load.
+   * @param igData The JSZip instance containing the event data.
+   * @returns void
+   */
   constructor(eventList?: string[], igData?: JSZip) {
     if (eventList === undefined || igData === undefined) {
       return;
@@ -173,6 +212,11 @@ export class EventCollection {
   }
 }
 
+/**
+ * Shows an info bubble with the specified text at the given pointer position.
+ * @param bubbleText The text to display in the info bubble.
+ * @param pointer The position to display the bubble at.
+ */
 export function showInfoBubble(bubbleText: string, pointer: { x: number; y: number }): void {
   const bubble = document.createElement("div");
   bubble.className = "bubble";
@@ -184,6 +228,9 @@ export function showInfoBubble(bubbleText: string, pointer: { x: number; y: numb
   bubble.style.top = `${(-pointer.y * window.innerHeight) / 2 + window.innerHeight / 2}px`;
 }
 
+/**
+ * Removes any existing info bubble from the document.
+ */
 export function removeExistingBubble(): void {
   const existingBubble = document.querySelector(".bubble");
   if (existingBubble) {
@@ -191,6 +238,11 @@ export function removeExistingBubble(): void {
   }
 }
 
+/**
+ * Retrieves an HTML object by its ID if it exists else throws an error.
+ * @param id The ID of the HTML object to retrieve.
+ * @returns The HTML object with the specified ID.
+ */
 export function getHTMLObject(id: string): HTMLElement {
   const obj = document.getElementById(id);
   if (obj === null) {
@@ -199,6 +251,12 @@ export function getHTMLObject(id: string): HTMLElement {
   return obj;
 }
 
+/**
+ * Applies a function to each material in a mesh.
+ * @param materials Materials to change.
+ * @param func Function to apply to each material.
+ * @returns void
+ */
 export function changeMeshMaterials(materials: Material | Material[] | undefined, func: (m: Material) => void) {
   if (!materials) {
     return;
@@ -212,6 +270,10 @@ export function changeMeshMaterials(materials: Material | Material[] | undefined
   });
 }
 
+/**
+ * Toggles the collapse state of a GUI folder.
+ * @param key The key of the group to toggle.
+ */
 export function toggleCollapse(key: string) {
   const guis = [ispy.gui];
   if (key === "Detector") {
@@ -225,6 +287,10 @@ export function toggleCollapse(key: string) {
   });
 }
 
+/**
+ * Retrieves the names of the objects in the 3D scene.
+ * @returns An object containing the names of the objects in the 3D scene.
+ */
 function getSceneObjects(): { [key: string]: string } {
   return [
     ...(ispy.scenes?.["3D"]?.getObjectByName("Physics")?.children.map((o: any) => o.name) || []),
@@ -235,6 +301,10 @@ function getSceneObjects(): { [key: string]: string } {
   }, {});
 }
 
+/**
+ * Adds controllers for the specified group.
+ * @param group The group name to add controllers for.
+ */
 export function addControllers(group: string) {
   //   let color = new Color();
   //   let linewidth = 1;
@@ -345,6 +415,10 @@ export function addControllers(group: string) {
   });
 }
 
+/**
+ * Adds info controllers for the specified group.
+ * @param group The group name to add info controllers for.
+ */
 export function addInfo(group: string) {
   const gui_elem = ispy.guiReduced;
 
@@ -387,6 +461,10 @@ export function addInfo(group: string) {
   });
 }
 
+/**
+ * Asserts that a value is defined (not null or undefined).
+ * @param value The value to assert is defined.
+ */
 export function assertDefined<T>(value: T | undefined | null): asserts value is T {
   if (value === undefined || value === null) {
     throw new Error("Value is undefined or null");

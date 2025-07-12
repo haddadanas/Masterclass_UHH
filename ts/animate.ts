@@ -104,6 +104,10 @@ const animation = {
   },
 };
 
+/**
+ * Toggles the animation state.
+ * @returns void
+ */
 export function toggleAnimation() {
   if (!ispy.camera) {
     console.error("Camera is not defined");

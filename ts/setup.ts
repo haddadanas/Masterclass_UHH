@@ -31,8 +31,11 @@ import { checkCurrentSelection } from "./uhh_selection.js";
 
 import { SelectionFieldController } from "./ispy.interfaces.js";
 
-
-
+/**
+ * Sets the display vertical height.
+ * @param vh The vertical height in viewport height units.
+ * @returns void
+ */
 function setDisplayVerticalHeight(vh: number) {
   if (!ispy.camera) {
     console.error("Camera is not initialized");
@@ -65,12 +68,19 @@ function setDisplayVerticalHeight(vh: number) {
   ispy.renderer.setSize(w, h);
 }
 
+/**
+ * Sets the framerate for the rendering loop.
+ * @param fr The framerate to set.
+ */
 function setFramerate(fr: number) {
   ispy.framerate = fr;
   const fr_obj = getHTMLObject("fr");
   fr_obj.innerHTML = fr.toString();
 }
 
+/**
+ * Animation configuration for the ispy application.
+ */
 function setupClippingGUI() {
   ispy.clipgui = new dat.GUI({
     name: "Clipping Controls",
@@ -218,6 +228,9 @@ function setupClippingGUI() {
   global_planeZ.open();
 }
 
+/**
+ * Initializes the application.
+ */
 function setupGUIs() {
   ispy.gui.domElement.id = "treegui";
   ispy.guiReduced.domElement.id = "treegui-reduced";
@@ -234,6 +247,10 @@ function setupGUIs() {
   // ispy.subfoldersReduced = {};
 }
 
+/**
+ * Sets up the inset camera.
+ * @param height The height of the inset camera.
+ */
 function setupInset(height: number) {
   // fov, aspect, near, far
   const inset_width = height / 5;
@@ -293,6 +310,9 @@ function setupInset(height: number) {
   });
 }
 
+/**
+ * Initializes the application.
+ */
 function handleToggles() {
   // On page load hide the stats
   const stats = ispy.stats.dom;
@@ -353,6 +373,10 @@ function handleToggles() {
   });
 }
 
+/**
+ * Handles drag and drop events for the renderer.
+ * @returns void
+ */
 function handleDragAndDrop() {
   if (!ispy.renderer || !ispy.renderer.domElement) {
     console.error("Renderer or its DOM element is not initialized");
@@ -382,6 +406,10 @@ function handleDragAndDrop() {
   canvas.addEventListener("ondrop", canvas.ondrop as EventListener);
 }
 
+/**
+ * Initializes ispy and all its components.
+ * @returns void
+ */
 function init() {
   const display = getHTMLObject("display");
 
@@ -406,13 +434,13 @@ function init() {
   setupInset(height);
 
   useRenderer("WebGLRenderer");
-  
+
   setupGUIs();
   setupClippingGUI();
   updateClipping();
   handleToggles();
   handleDragAndDrop();
-  
+
   display.appendChild(ispy.stats.dom);
   // The second argument is necessary to make sure that mouse events are
   // handled only when in the canvas
@@ -468,6 +496,10 @@ function init() {
   getHTMLObject("display").appendChild(getHTMLObject("event-info"));
 }
 
+/**
+ * Initializes the lighting for the scene.
+ * @returns void
+ */
 function initLight() {
   if (!ispy.scene) {
     console.error("Scene is not initialized");
@@ -491,11 +523,18 @@ function initLight() {
   ispy.scene.add(lights);
 }
 
+/**
+ * Initializes the control panel.
+ */
 function initControlPanel() {
   importDetector();
   initSelectionFields();
 }
 
+/**
+ * Creates a checkbox container for a given GUI controller.
+ * @param cont The GUI controller to create the checkbox container for.
+ */
 function createCheckboxContainer(cont: dat.GUIController) {
   const selectionField = cont as unknown as SelectionFieldController;
   // check if not __input
@@ -527,6 +566,10 @@ function createCheckboxContainer(cont: dat.GUIController) {
   });
 }
 
+/**
+ * Initializes the selection fields in the control panel.
+ * @returns void
+ */
 function initSelectionFields() {
   const gui_elem = ispy.guiReduced;
 
@@ -602,6 +645,10 @@ function initSelectionFields() {
   });
 }
 
+/**
+ * Runs the application.
+ * @returns void
+ */
 function run() {
   setTimeout(() => {
     requestAnimationFrame(run);

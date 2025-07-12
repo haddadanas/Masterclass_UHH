@@ -5,12 +5,20 @@ import { ispy } from "./config.js";
 import { getHTMLObject } from "./utils.js";
 import { render } from "./renderer.js";
 
+/**
+ * Toggles the auto-rotation state.
+ * @returns void
+ */
 function autoRotate() {
   ispy.autoRotating = !ispy.autoRotating;
 
   getHTMLObject("js-autorotate").classList.toggle("active");
 }
 
+/**
+ * Enters full screen mode.
+ * @returns void
+ */
 function enterFullscreen() {
   const container = document.getElementById("ispy");
   if (!container) {
@@ -30,6 +38,10 @@ function enterFullscreen() {
   }
 }
 
+/**
+ * Exits full screen mode.
+ * @returns void
+ */
 function exitFullscreen() {
   if (document.exitFullscreen) {
     document.exitFullscreen();
@@ -44,6 +56,10 @@ function exitFullscreen() {
   }
 }
 
+/**
+ * Toggles full screen mode.
+ * @returns void
+ */
 function toggleFullscreen() {
   getHTMLObject("enterFullscreen").classList.toggle("active");
   getHTMLObject("exitFullscreen").classList.toggle("active");
@@ -54,12 +70,18 @@ document.addEventListener("mozfullscreenchange", toggleFullscreen, false);
 document.addEventListener("fullscreenchange", toggleFullscreen, false);
 document.addEventListener("MSFullscreenChange", toggleFullscreen, false);
 
+/**
+ * Reloads the page.
+ * @returns void
+ */
 function reload() {
   location.reload();
 }
 
-
-
+/**
+ * Prints the current display as Image.
+ * @returns void
+ */
 function printImage() {
   if (!ispy.image_data) {
     alert("Image data is not defined");
@@ -70,6 +92,10 @@ function printImage() {
   window.open(ispy.image_data, "toDataURL() image", "width=1600, height=900");
 }
 
+/**
+ * Exports the current scene as a GLTF file.
+ * @returns void
+ */
 function exportScene() {
   if (!ispy.scene) {
     alert("Scene is not defined");
@@ -93,6 +119,11 @@ function exportScene() {
   alert("scene.glb created");
 }
 
+/**
+ * Exports a string as a file.
+ * @param output The string content to export.
+ * @param filename The name of the file to create.
+ */
 function exportString(output: BlobPart, filename: string) {
   const blob = new Blob([output], { type: "text/plain" });
   const objectURL = URL.createObjectURL(blob);
@@ -113,6 +144,11 @@ function exportString(output: BlobPart, filename: string) {
   //window.focus();
 }
 
+/**
+ * Exports a binary array buffer as a file.
+ * @param output The binary content to export.
+ * @param filename The name of the file to create.
+ */
 function exportArrayBuffer(output: BlobPart, filename: string) {
   const blob = new Blob([output], { type: "application/octect-stream" });
   const objectURL = URL.createObjectURL(blob);
@@ -128,14 +164,24 @@ function exportArrayBuffer(output: BlobPart, filename: string) {
   link.click();
 }
 
+/**
+ * Exports the scene as a GLTF file in binary format.
+ */
 function exportGLTF_binary() {
   exportGLTF(true);
 }
 
+/**
+ * Exports the scene as a GLTF file in text format.
+ */
 function exportGLTF_text() {
   exportGLTF(false);
 }
 
+/**
+ * Exports the scene as a GLTF file.
+ * @param binary If true, exports in binary format; otherwise, exports in text format.
+ */
 function exportGLTF(binary: boolean) {
   if (!ispy.scene) {
     alert("Scene is not defined");
@@ -172,6 +218,10 @@ function exportGLTF(binary: boolean) {
   });
 }
 
+/**
+ * Exports the scene as a GLTF file.
+ * @returns void
+ */
 function exportOBJ() {
   if (!ispy.scene) {
     alert("Scene is not defined");

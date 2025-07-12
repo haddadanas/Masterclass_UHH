@@ -11,14 +11,27 @@ import { ispy } from "./config.js";
 import { buildFileSummary, getPassingEvents } from "./uhh_selection.js";
 import { disabled } from "./objects-config.js";
 
+/**
+ * Toggles the visibility of the specified dialog object.
+ * @param object The object's HTML id to toggle.
+ * @returns void
+ */
 function openDialog(id: string) {
   $(id).modal("show");
 }
 
+/**
+ * Closes the specified dialog object.
+ * @param id The HTML id of the dialog to close.
+ */
 function closeDialog(id: string) {
   $(id).modal("hide");
 }
 
+/**
+ * Checks if the File API is supported by the browser.
+ * @returns boolean
+ */
 function hasFileAPI(): boolean {
   if (window.FileReader) {
     return true;
@@ -32,6 +45,10 @@ function hasFileAPI(): boolean {
   }
 }
 
+/**
+ * Clears the files table.
+ * @param id The HTML id of the table to clear.
+ */
 function clearTable(id: string) {
   const tbl = getHTMLObject(id) as HTMLTableElement;
 
@@ -40,6 +57,11 @@ function clearTable(id: string) {
   }
 }
 
+/**
+ * Selects the specified file and displayes its events.
+ * @param index The index of the file to select.
+ * @returns void
+ */
 function selectEvent(index: number) {
   getHTMLObject("selected-event").innerHTML = `${ispy.file_name}: ${ispy.event_list[index]}`;
   //$("#selected-event").html(ispy.file_name+': '+ispy.event_list[index]);
@@ -50,6 +72,9 @@ function selectEvent(index: number) {
   //$('#load-event').removeClass('disabled');
 }
 
+/**
+ * Loads the events of a specified file.
+ */
 function updateEventList() {
   clearTable("browser-events");
   const tbl = getHTMLObject("browser-events") as HTMLTableElement;
@@ -66,6 +91,9 @@ function updateEventList() {
   }
 }
 
+/**
+ * Enables the next/previous event button
+ */
 function enableNextPrev() {
   if (ispy.event_index > 0) {
     getHTMLObject("js-prev-event-button").classList.remove("disabled");
@@ -80,6 +108,9 @@ function enableNextPrev() {
   }
 }
 
+/**
+ * Enables the next/previous selected event button
+ */
 function enableNextPrevSelected() {
   const selectedEvents = getPassingEvents() || [];
 
@@ -96,6 +127,10 @@ function enableNextPrevSelected() {
   }
 }
 
+/**
+ * Loads the events of a specified file and adds the content to the detector.
+ * @returns void
+ */
 function loadEvent() {
   getHTMLObject("event-loaded").innerHTML = "";
   //getHTMLObject('loading').style.display = 'block';
@@ -149,6 +184,9 @@ function loadEvent() {
   );
 }
 
+/**
+ * Loads the next event in the file.
+ */
 function nextEvent() {
   if (ispy.event_list && ispy.event_list.length - 1 > ispy.event_index) {
     ispy.event_index++;
@@ -156,6 +194,9 @@ function nextEvent() {
   }
 }
 
+/**
+ * Loads the previous event in the file.
+ */
 function prevEvent() {
   if (ispy.event_list && ispy.event_index > 0) {
     ispy.event_index--;
@@ -163,6 +204,10 @@ function prevEvent() {
   }
 }
 
+/**
+ * Loads the next event in the file, passing the selection.
+ * @returns void
+ */
 function nextSelectedEvent() {
   const selectedEvents = getPassingEvents();
   if (selectedEvents.length === 0) {
@@ -189,6 +234,10 @@ function nextSelectedEvent() {
   }
 }
 
+/**
+ * Loads the previous event in the file, passing the selection.
+ * @returns void
+ */
 function prevSelectedEvent() {
   const selectedEvents = getPassingEvents();
   if (selectedEvents.length === 0) {
@@ -216,6 +265,11 @@ function prevSelectedEvent() {
   }
 }
 
+/**
+ * Loads the events of a specified file.
+ * @param index The index of the file to select.
+ * @returns void
+ */
 function selectLocalFile(index: number) {
   if (!ispy.local_files) {
     alert("No local files loaded!");
@@ -257,6 +311,10 @@ function selectLocalFile(index: number) {
   reader.readAsArrayBuffer(ispy.local_files[index]);
 }
 
+/**
+ * Updates the list of local files in the browser.
+ * @param list The list of local files to update.
+ */
 function updateLocalFileList(list: FileList) {
   clearTable("browser-files");
   const tbl = getHTMLObject("browser-files") as HTMLTableElement;
@@ -274,6 +332,10 @@ function updateLocalFileList(list: FileList) {
   }
 }
 
+/**
+ * Loads the local files.
+ * @returns void
+ */
 function loadLocalFiles() {
   if (!hasFileAPI()) {
     let err_msg = "Sorry. You seeem to be using a browser that does not support FileReader API. ";
@@ -304,6 +366,10 @@ function loadLocalFiles() {
   openDialog("#files");
 }
 
+/**
+ * Handles the dropped file.
+ * @param file The file to load.
+ */
 function loadDroppedFile(file: File) {
   const reader = new FileReader();
   ispy.file_name = file.name;
@@ -349,6 +415,10 @@ function loadDroppedFile(file: File) {
   reader.readAsArrayBuffer(file);
 }
 
+/**
+ * Selects a file from the browser.
+ * @param filename The name of the file to select.
+ */
 function selectFile(filename: string) {
   clearTable("browser-events");
 
@@ -410,6 +480,9 @@ function selectFile(filename: string) {
   xhr.send();
 }
 
+/**
+ * Loads the web files.
+ */
 function loadWebFiles() {
   const web_files = [
     "./data/Hto4l_120-130GeV.ig",
@@ -446,6 +519,9 @@ function loadWebFiles() {
   }
 }
 
+/**
+ * Shows the web files dialog.
+ */
 function showWebFiles() {
   openDialog("#files");
 
@@ -464,6 +540,9 @@ function showWebFiles() {
   $("#open-files").modal("hide");
 }
 
+/**
+ * Loads the geometry files.
+ */
 function loadGLTFFiles() {
   const gltf_files = [
     "./geometry/gltf/EB.glb",
@@ -507,6 +586,9 @@ function loadGLTFFiles() {
   }
 }
 
+/**
+ * Loads a GLTF file from the browser.
+ */
 function loadObjFiles() {
   const obj_files = [
     "./geometry/obj/EB.obj",
@@ -550,6 +632,11 @@ function loadObjFiles() {
   }
 }
 
+/**
+ * Reads an OBJ file.
+ * @param file The OBJ file to read.
+ * @param cb The callback to call with the file contents.
+ */
 function readOBJ(file: File, cb: (contents: string, name: string) => void) {
   const reader = new FileReader();
 
@@ -567,6 +654,11 @@ function readOBJ(file: File, cb: (contents: string, name: string) => void) {
   reader.readAsText(file);
 }
 
+/**
+ * Loads an OBJ file.
+ * @param contents The contents of the OBJ file.
+ * @param name The name of the OBJ file.
+ */
 function loadOBJ(contents: string, name: string) {
   const object = new OBJLoader().parse(contents);
   object.name = name;
@@ -584,6 +676,12 @@ function loadOBJ(contents: string, name: string) {
   addSelectionRow("Imported", object.name, object.name, [], true);
 }
 
+/**
+ * Reads an OBJ file and its associated MTL file.
+ * @param file The OBJ file to read.
+ * @param mtl_file The MTL file to read.
+ * @param cb The callback to call with the file contents.
+ */
 function readOBJMTL(file: File, mtl_file: File, cb: (obj: string, mtl_file: File, name: string) => void) {
   const reader = new FileReader();
 
@@ -599,6 +697,12 @@ function readOBJMTL(file: File, mtl_file: File, cb: (obj: string, mtl_file: File
   reader.readAsText(file);
 }
 
+/**
+ * Loads an OBJ file and its associated MTL file.
+ * @param obj The contents of the OBJ file.
+ * @param mtl_file The MTL file to read.
+ * @param name The name of the OBJ file.
+ */
 function loadOBJMTL(obj: string, mtl_file: File, name: string) {
   const object = new OBJLoader().parse(obj);
   const reader = new FileReader();
@@ -638,6 +742,9 @@ function loadOBJMTL(obj: string, mtl_file: File, name: string) {
   reader.readAsText(mtl_file);
 }
 
+/**
+ * Imports a model from the browser.
+ */
 function importModel() {
   if (!hasFileAPI()) {
     let err_msg = "Sorry. You seeem to be using a browser that does not support FileReader API. ";
@@ -710,6 +817,10 @@ function importModel() {
   }
 }
 
+/**
+ * Selects a GLTF file and updates the UI.
+ * @param gltf_file The GLTF file to select.
+ */
 function selectGLTF(gltf_file: string) {
   getHTMLObject("selected-obj").innerHTML = gltf_file;
   getHTMLObject("load-obj").classList.remove("disabled");
@@ -720,6 +831,10 @@ function selectGLTF(gltf_file: string) {
   ispy.selected_gltf = gltf_file;
 }
 
+/**
+ * Loads the selected GLTF file.
+ * @returns void
+ */
 function loadSelectedGLTF() {
   const name = ispy.selected_gltf.split(".")[0];
   const gltf_file = `./geometry/gltf/${ispy.selected_gltf}`;
@@ -743,6 +858,10 @@ function loadSelectedGLTF() {
   });
 }
 
+/**
+ * Selects an OBJ file and updates the UI.
+ * @param obj_file The OBJ file to select.
+ */
 function selectObj(obj_file: string) {
   getHTMLObject("selected-obj").innerHTML = obj_file;
   getHTMLObject("load-obj").classList.remove("disabled");
@@ -753,6 +872,9 @@ function selectObj(obj_file: string) {
   ispy.selected_obj = obj_file;
 }
 
+/**
+ * Loads the selected OBJ file.
+ */
 function loadSelectedObj() {
   const name = ispy.selected_obj.split(".")[0];
   const obj_file = `./geometry/obj/${ispy.selected_obj}`;
@@ -761,6 +883,15 @@ function loadSelectedObj() {
   loadOBJMTL_new(obj_file, mtl_file, name, name, "Imported", true);
 }
 
+/**
+ * Loads an OBJ file and its associated MTL file.
+ * @param obj_file The OBJ file to load.
+ * @param mtl_file The MTL file to load.
+ * @param id The ID to assign to the loaded object.
+ * @param name The name to assign to the loaded object.
+ * @param group The group to add the loaded object to.
+ * @param show Whether to show the loaded object.
+ */
 function loadOBJMTL_new(obj_file: string, mtl_file: string, id: string, name: string, group: string, show: boolean) {
   const mtl_loader = new MTLLoader();
   const groupObject = ispy.scene?.getObjectByName(group);
@@ -793,6 +924,9 @@ function loadOBJMTL_new(obj_file: string, mtl_file: string, id: string, name: st
   return;
 }
 
+/**
+ * Imports the beampipe geometry.
+ */
 function importBeampipe() {
   loadOBJMTL_new(
     "./geometry/obj/beampipe.obj",
@@ -804,6 +938,9 @@ function importBeampipe() {
   );
 }
 
+/**
+ * Imports the detector geometry.
+ */
 function importDetector() {
   if (!ispy.scenes) {
     alert("No scene(s) loaded!");

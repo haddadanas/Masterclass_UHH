@@ -40,6 +40,12 @@ import { addSelectionRow, applySavedSettings, clearSubfolders, saveCutSettings }
 import { showView } from "./display.js";
 import { EventObject } from "./ispy.interfaces.js";
 
+/**
+ * Adds an object to the specified scene group.
+ * @param key The key of the group to add the object to.
+ * @param obj The object to add.
+ * @return void
+ */
 function addToSceneObject(key: string, obj: Object3D): void {
   const groupObject = ispy.scene?.getObjectByName(key);
   if (groupObject) {
@@ -49,6 +55,9 @@ function addToSceneObject(key: string, obj: Object3D): void {
   }
 }
 
+/**
+ * Adds the detector geometry to the scene. (Deprecated)
+ */
 function addDetector() {
   for (const key of Object.keys(detector_description)) {
     // TODO: check if same as before!
@@ -153,6 +162,12 @@ function addDetector() {
   }
 }
 
+/**
+ * Adds the event data to the specified scene view.
+ * @param event The event data to add.
+ * @param view The view to add the event data to.
+ * @return void
+ */
 function addToScene(event: any, view: string) {
   if (ispy.scenes === undefined) {
     console.error("No scenes found");
@@ -498,6 +513,10 @@ function addToScene(event: any, view: string) {
   }
 }
 
+/**
+ * Adds the event data to the current event.
+ * @param event The event data to add.
+ */
 function addEvent(event: EventObject) {
   ispy.current_event = event;
   // Clear table from last event and show default caption

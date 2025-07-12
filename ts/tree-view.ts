@@ -2,10 +2,19 @@ import { Color, LineBasicMaterial, Material, MeshBasicMaterial } from "three";
 import { GUIController } from "dat.gui/index.js";
 
 import { ispy } from "./config.js";
-import { data_groups, detector_description, disabled, event_description, reduced_data_groups } from "./objects-config.js";
+import {
+  data_groups,
+  detector_description,
+  disabled,
+  event_description,
+  reduced_data_groups,
+} from "./objects-config.js";
 import { getHTMLObject } from "./utils.js";
 import { SelectionFieldController } from "./ispy.interfaces.js";
 
+/**
+ * Adds groups and subfolders to the GUI for better organization.
+ */
 function addGroups() {
   // Add option to keep user cuts and preferences when switching between events
   ispy.guiReduced.add({ "Keep Settings": false }, "Keep Settings");
@@ -35,6 +44,9 @@ function addGroups() {
   });
 }
 
+/**
+ * Clears all subfolders in the GUI.
+ */
 function clearSubfolders() {
   data_groups.forEach((g) => {
     const folder = ispy.gui.__folders[g];
@@ -54,6 +66,10 @@ function clearSubfolders() {
   });
 }
 
+/**
+ *
+ * @param key The key to toggle visibility for.
+ */
 function toggle(key: string) {
   disabled[key] = !disabled[key];
 
@@ -87,6 +103,12 @@ function toggle(key: string) {
   });
 }
 
+/**
+ * Shows or hides an object in the scene.
+ * @param key The key of the object to show or hide.
+ * @param view The view to show or hide the object in.
+ * @param show Whether to show or hide the object.
+ */
 function showObject(key: string, view: string, show: boolean) {
   const obj = ispy.scenes[view].getObjectByName(key);
 
@@ -100,6 +122,14 @@ function showObject(key: string, view: string, show: boolean) {
   }
 }
 
+/**
+ * Adds an object to the selection GUI.
+ * @param group The group the object belongs to.
+ * @param key The key of the object to show or hide.
+ * @param name The name of the object to show or hide.
+ * @param _objectIds The object IDs to show or hide.
+ * @param visible Whether to show or hide the object.
+ */
 function addSelectionRow(group: string, key: string, name: string, _objectIds: any[], visible: boolean) {
   let opacity = 1.0;
   const color = new Color();
@@ -302,9 +332,7 @@ function addSelectionRow(group: string, key: string, name: string, _objectIds: a
             if (oc.type === "ArrowHelper" || key.includes("MET") || key.includes("Proton")) {
               oc.children.forEach((og) => {
                 if (!("material" in og)) return;
-                (og.material as LineBasicMaterial | MeshBasicMaterial).color = new Color(
-                  row_obj.color,
-                );
+                (og.material as LineBasicMaterial | MeshBasicMaterial).color = new Color(row_obj.color);
               });
             } else {
               if (!("material" in oc)) return;
@@ -317,6 +345,10 @@ function addSelectionRow(group: string, key: string, name: string, _objectIds: a
   });
 }
 
+/**
+ * Saves the current cut settings.
+ * @returns The settings saved by the user.
+ */
 function saveCutSettings() {
   const settings: Record<string, any> = {};
   const btn = (ispy.guiReduced.__controllers as SelectionFieldController[]).find((o) => o.property === "Keep Settings");
@@ -329,6 +361,11 @@ function saveCutSettings() {
   return settings;
 }
 
+/**
+ * Applies the saved settings to the GUI.
+ * @param settings The settings to apply.
+ * @returns void
+ */
 function applySavedSettings(settings: any) {
   if (!Object.keys(settings).length) {
     return;
@@ -341,12 +378,4 @@ function applySavedSettings(settings: any) {
   });
 }
 
-export {
-  addGroups,
-  clearSubfolders,
-  toggle,
-  showObject,
-  addSelectionRow,
-  saveCutSettings,
-  applySavedSettings,
-};
+export { addGroups, clearSubfolders, toggle, showObject, addSelectionRow, saveCutSettings, applySavedSettings };

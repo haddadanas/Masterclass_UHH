@@ -14,10 +14,18 @@ import { event_description } from "./objects-config.js";
 import { TrackLine } from "./ispy.interfaces.js";
 import { render } from "./renderer.js";
 
+/**
+ * Resets the view to the origin (0, 0, 0) from the current camera position.
+ * @returns void
+ */
 function lookAtOrigin() {
   ispy.camera?.lookAt(new Vector3(0, 0, 0));
 }
 
+/**
+ * Initializes the camera object, saved to ispy.camera.
+ * @returns void
+ */
 function initCamera() {
   const display = getHTMLObject("display");
   const width = display.clientWidth;
@@ -44,6 +52,10 @@ function initCamera() {
   lookAtOrigin();
 }
 
+/**
+ * Zooms in the camera view.
+ * @returns void
+ */
 function zoomIn() {
   if (!ispy.camera) {
     console.error("Camera is not defined");
@@ -53,6 +65,10 @@ function zoomIn() {
   ispy.camera.updateProjectionMatrix();
 }
 
+/**
+ * Zooms out the camera view.
+ * @returns void
+ */
 function zoomOut() {
   if (!ispy.camera) {
     console.error("Camera is not defined");
@@ -62,6 +78,10 @@ function zoomOut() {
   ispy.camera.updateProjectionMatrix();
 }
 
+/**
+ * Inverts the colors of the scene.
+ * @returns void
+ */
 function invertColors() {
   if (!ispy.renderer) {
     console.error("Renderer is not defined");
@@ -111,6 +131,11 @@ function invertColors() {
   });
 }
 
+/**
+ * Sets the transparency for imported objects.
+ * @param t The transparency value to set for the imported objects.
+ * @returns void
+ */
 function setTransparency(t: number) {
   if (!ispy.scene) {
     console.error("Scene is not defined");
@@ -136,6 +161,9 @@ function setTransparency(t: number) {
   });
 }
 
+/**
+ * Adjusts the configuration to the new window size.
+ */
 function onWindowResize() {
   if (!ispy.camera) {
     console.error("Camera is not defined");
@@ -165,6 +193,11 @@ function onWindowResize() {
   render();
 }
 
+/**
+ * Gets the IDs of all child objects of the given Object3D.
+ * @param obj The Object3D to get the IDs from.
+ * @returns An array of child object IDs.
+ */
 function getObjectIds(obj: Object3D): number[] {
   const ids: number[] = [];
 
@@ -175,6 +208,10 @@ function getObjectIds(obj: Object3D): number[] {
   return ids;
 }
 
+/**
+ * Handles mouse movement events.
+ * @param e The mouse event to handle.
+ */
 function onMouseMove(e: MouseEvent) {
   e.preventDefault();
 
@@ -248,6 +285,10 @@ function onMouseMove(e: MouseEvent) {
   }
 }
 
+/**
+ * Handles mouse clicks.
+ * @param e The mouse event to handle.
+ */
 function onMouseDown(_e: MouseEvent) {
   if (ispy.intersected?.visible) {
     if (ispy.intersected.name.includes("Muon") || ispy.intersected.name.includes("Electron")) {
@@ -271,6 +312,10 @@ function onMouseDown(_e: MouseEvent) {
   }
 }
 
+/**
+ * Shows the invariant mass of selected objects in a modal dialog.
+ * @returns void
+ */
 function showMass() {
   let mass = 0;
   let sumE = 0;
@@ -308,6 +353,10 @@ function showMass() {
   ispy.subfoldersReduced["Info"][1].setValue(0);
 }
 
+/**
+ * Displays the data of the intersected object in the event object data modal.
+ * @returns void
+ */
 function displayEventObjectData() {
   if (!ispy.intersected) {
     return;
@@ -323,6 +372,11 @@ function displayEventObjectData() {
   ispy.selected_objects.set(ispy.intersected.id, ispy.intersected);
 }
 
+/**
+ * Highlights the object with the given ID.
+ * @param objectId The ID of the object to highlight.
+ * @returns void
+ */
 function highlightObject(objectId: number) {
   if (!ispy.scene) {
     console.error("Scene is not defined");
@@ -345,6 +399,10 @@ function highlightObject(objectId: number) {
   }
 }
 
+/**
+ * Unhighlights the currently highlighted object.
+ * @returns void
+ */
 function unHighlightObject() {
   document.body.style.cursor = "default";
 
@@ -354,6 +412,10 @@ function unHighlightObject() {
   }
 }
 
+/**
+ * Resets the view to the origin (0, 0, 0), reinitializes the camera, and resets controls.
+ * @returns void
+ */
 function resetView() {
   if (!ispy.controls) {
     console.error("Controls are not defined");
@@ -372,6 +434,10 @@ function resetView() {
   ispy.scene = ispy.scenes["3D"];
 }
 
+/**
+ * Sets the camera position to the XY plane.
+ * @returns void
+ */
 function setXY() {
   if (!ispy.camera) {
     console.error("Camera is not defined");
@@ -387,6 +453,10 @@ function setXY() {
   lookAtOrigin();
 }
 
+/**
+ * Sets the camera position to the ZX plane.
+ * @returns void
+ */
 function setZX() {
   if (!ispy.camera) {
     console.error("Camera is not defined");
@@ -402,6 +472,10 @@ function setZX() {
   lookAtOrigin();
 }
 
+/**
+ * Sets the camera position to the YZ plane.
+ * @returns void
+ */
 function setYZ() {
   if (!ispy.camera) {
     console.error("Camera is not defined");
@@ -417,6 +491,10 @@ function setYZ() {
   lookAtOrigin();
 }
 
+/**
+ * Sets the orthographic camera view.
+ * @returns void
+ */
 function setOrthographic() {
   if (!ispy.o_camera || !ispy.p_camera) {
     console.error("Orthographic or Perspective camera is not defined");
@@ -463,6 +541,10 @@ function setOrthographic() {
   ispy.controls.update();
 }
 
+/**
+ * Sets the perspective camera view.
+ * @returns void
+ */
 function setPerspective() {
   if (!ispy.o_camera || !ispy.p_camera) {
     console.error("Orthographic or Perspective camera is not defined");
@@ -493,6 +575,11 @@ function setPerspective() {
   ispy.controls.update();
 }
 
+/**
+ * Shows the specified view.
+ * @param view The view to show: "3D", "RPhi", or "RhoZ".
+ * @returns void
+ */
 function showView(view: string) {
   if (!ispy.controls) {
     console.error("Controls are not defined");
