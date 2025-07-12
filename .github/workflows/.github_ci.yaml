@@ -44,3 +44,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           publish_dir: ./ # Adjust the path to the downloaded artifact folder
+          github_token: ${{ secrets.GITHUB_TOKEN }}
