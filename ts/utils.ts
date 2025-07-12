@@ -20,7 +20,6 @@ export function hasProperty<T extends object, K extends PropertyKey>(obj: T, pro
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-
 /**
  * Asserts that a value is defined (not null or undefined).
  * @param value The value to assert is defined.
@@ -43,12 +42,8 @@ export function getCurrentIndex(): number {
  * Gets the current event object.
  * @returns the current event object
  */
-export function getCurrentEvent(): EventObject {
-  const current_event = ispy.current_event;
-  if (!current_event) {
-    throw new Error("Current event is not defined.");
-  }
-  return current_event;
+export function getCurrentEvent(): EventObject | undefined {
+  return ispy.current_event;
 }
 
 /**
@@ -127,8 +122,12 @@ export function getFourVectorByIndex(
   key: string,
   objectUserData: { originalIndex: number; [key: string]: unknown },
 ): [FourVector, string?] {
-  const type = getCurrentEvent().Types[key];
-  const eventObjectData = getCurrentEvent().Collections[key][objectUserData.originalIndex];
+  const currentEvent = getCurrentEvent();
+  if (!currentEvent) {
+    throw new Error("Current event is not defined.");
+  }
+  const type = currentEvent.Types[key];
+  const eventObjectData = currentEvent.Collections[key][objectUserData.originalIndex];
 
   const result = getParticleInfo(key, type, eventObjectData as number[]);
 
@@ -260,6 +259,25 @@ export function removeExistingBubble(): void {
   const existingBubble = document.querySelector(".bubble");
   if (existingBubble) {
     existingBubble.remove();
+  }
+}
+
+/**
+ * Shows a track info bubble for the intersected object.
+ * @param intersectedObject The object that was intersected.
+ * @param pointer The pointer position for the bubble.
+ */
+export function showTrackInfoBubble(intersectedObject: Object3D, pointer: { x: number; y: number }): void {
+  if (intersectedObject.name.match(/Muon|Electron/i) && intersectedObject.parent && intersectedObject.parent.visible) {
+    const current_event = getCurrentEvent()!;
+    const matchingTrack = current_event.Collections[intersectedObject.name][intersectedObject.userData.originalIndex];
+    const chargeIndex = current_event.Types[intersectedObject.name].findIndex(
+      (type: [string, string]) => type[0] === "charge",
+    );
+    const bubbleText = `Charge: ${matchingTrack[chargeIndex]}\nPt: ${intersectedObject.userData.pt.toFixed(2)}`;
+
+    removeExistingBubble();
+    showInfoBubble(bubbleText, pointer);
   }
 }
 
@@ -451,7 +469,11 @@ export function addInfo(group: string) {
 
   const names = getSceneObjects();
   // pt is element 1 in the collection object (inconvinient definition by design)
-  const met_pt = getCurrentEvent().Collections[names["METs"]][0][1] as number;
+  const currentEvent = getCurrentEvent();
+  if (!currentEvent) {
+    throw new Error("Current event is not defined.");
+  }
+  const met_pt = currentEvent.Collections[names["METs"]][0][1] as number;
 
   const row_obj = {
     MET: `${met_pt.toFixed(2)} GeV`,

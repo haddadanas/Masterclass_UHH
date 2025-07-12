@@ -5,9 +5,8 @@ import {
   getFourVectorByIndex,
   getHTMLObject,
   removeExistingBubble,
-  showInfoBubble,
   changeMeshMaterials,
-  getCurrentEvent,
+  showTrackInfoBubble,
 } from "./utils.js";
 import { ispy } from "./config.js";
 import { event_description } from "./objects-config.js";
@@ -265,24 +264,9 @@ function onMouseMove(e: MouseEvent) {
 
     if (ispy.showTrackInfo) {
       const intersectedObject = intersects[0].object;
-      if (
-        intersectedObject.name.match(/Muon|Electron/i) &&
-        intersectedObject.parent &&
-        intersectedObject.parent.visible
-      ) {
-        const current_event = getCurrentEvent();
-        const matchingTrack =
-          current_event.Collections[intersectedObject.name][intersectedObject.userData.originalIndex];
-        const chargeIndex = current_event.Types[intersectedObject.name].findIndex(
-          (type: [string, string]) => type[0] === "charge",
-        );
-        const bubbleText = `Charge: ${matchingTrack[chargeIndex]}\nPt: ${intersectedObject.userData.pt.toFixed(2)}`;
-
-        removeExistingBubble();
-        showInfoBubble(bubbleText, pointer);
-      } else {
-        removeExistingBubble();
-      }
+      showTrackInfoBubble(intersectedObject, pointer);
+    } else {
+      removeExistingBubble();
     }
   }
 }
