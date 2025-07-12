@@ -2,7 +2,7 @@ name: Build and Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ typescript ] # or your default branch
+    branches: [ stable ] # or your default branch
 
 jobs:
   build:
