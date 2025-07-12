@@ -38,7 +38,9 @@ import {
 } from "./objects-config.js";
 import { addSelectionRow, applySavedSettings, clearSubfolders, saveCutSettings } from "./tree-view.js";
 import { showView } from "./display.js";
-import { EventObject } from "./ispy.interfaces.js";
+import { EventObject, Description } from "./ispy.interfaces.js";
+
+type DataArray = (number | number[] | string)[][];
 
 /**
  * Adds an object to the specified scene group.
@@ -162,13 +164,314 @@ function addDetector() {
   }
 }
 
+function addBoxToScene(data: DataArray, key: string, descr: Description, ocolor: Color, transp: boolean) {
+  const boxes = [];
+
+  for (const entry of Object.values(data)) {
+    boxes.push(descr.fn(entry));
+  }
+
+  const line = new LineSegments(
+    BufferGeometryUtils.mergeBufferGeometries(boxes),
+    new LineBasicMaterial({
+      color: ocolor,
+      transparent: transp,
+      linewidth: descr.style.linewidth,
+      opacity: descr.style.opacity,
+    }),
+  );
+
+  line.name = key;
+  addToSceneObject(key, line);
+}
+
+function addSolidBoxToScene(data: DataArray, key: string, descr: Description, ocolor: Color, transp: boolean) {
+  const sboxes = [];
+  const slines = [];
+
+  for (const entry of Object.values(data)) {
+    const bl = descr.fn(entry);
+
+    if (bl.length === 1) {
+      sboxes.push(bl[0]);
+    }
+
+    if (bl.length === 2) {
+      sboxes.push(bl[0]);
+      slines.push(bl[1]);
+    }
+  }
+
+  const solidbox_material = new MeshBasicMaterial({
+    color: ocolor,
+    transparent: transp,
+    opacity: descr.style.opacity,
+    depthTest: false,
+    depthWrite: false,
+  });
+
+  solidbox_material.side = DoubleSide;
+
+  const smeshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(sboxes), solidbox_material);
+
+  smeshes.name = key;
+  addToSceneObject(key, smeshes);
+
+  if (slines.length > 0) {
+    const sline_material = new LineBasicMaterial({
+      color: 0xcccccc,
+      transparent: false,
+      linewidth: 1,
+      depthTest: false,
+    });
+    const sline_mesh = new LineSegments(BufferGeometryUtils.mergeBufferGeometries(slines), sline_material);
+    sline_mesh.name = key;
+    addToSceneObject(key, sline_mesh);
+  }
+}
+
+function addScaledSolidBoxToScene(
+  data: DataArray,
+  key: string,
+  descr: Description,
+  ocolor: Color,
+  transp: boolean,
+) {
+  const ss_boxes: BufferGeometry[] = [];
+  let maxEnergy = 0.0;
+
+  for (const entry of Object.values(data)) {
+    if (Array.isArray(entry)) {
+      const energy = entry[0] as number;
+
+      if (energy > maxEnergy) maxEnergy = energy;
+    }
+  }
+
+  for (const entry of Object.values(data)) {
+    descr.fn(entry, ss_boxes, maxEnergy, descr.selection);
+  }
+
+  if (ss_boxes.length > 0) {
+    const ssb_material = new MeshBasicMaterial({
+      color: ocolor,
+      transparent: transp,
+      opacity: descr.style.opacity,
+    });
+    ssb_material.side = DoubleSide;
+    const ssb_meshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(ss_boxes), ssb_material);
+    ssb_meshes.name = key;
+    addToSceneObject(key, ssb_meshes);
+  }
+}
+
+function addScaledSolidTowerToScene(
+  data: DataArray,
+  key: string,
+  descr: Description,
+  ocolor: Color,
+  transp: boolean,
+) {
+  const sst_boxes: BufferGeometry[] = [];
+  let maxE = 0.0;
+
+  for (const entry of Object.values(data)) {
+    if (Array.isArray(entry)) {
+      const energy = entry[0] as number;
+
+      if (energy > maxE) maxE = energy;
+    }
+  }
+
+  for (const entry of Object.values(data)) {
+    descr.fn(entry, sst_boxes, maxE, descr.selection);
+  }
+
+  if (sst_boxes.length > 0) {
+    const sst_material = new MeshBasicMaterial({
+      color: ocolor,
+      transparent: transp,
+      opacity: descr.style.opacity,
+    });
+
+    sst_material.side = DoubleSide;
+
+    const sst_meshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(sst_boxes), sst_material);
+
+    sst_meshes.name = key;
+    addToSceneObject(key, sst_meshes);
+  }
+}
+
+function addStackedTowerToScene(
+  data: DataArray,
+  key: string,
+  descr: Description,
+  transp: boolean,
+  is_physics_obj: boolean,
+  visible: boolean,
+) {
+  const eboxes: BufferGeometry[] = [];
+  const hboxes: BufferGeometry[] = [];
+
+  for (const entry of Object.values(data)) {
+    descr.fn(entry, eboxes, hboxes, descr.scale, descr.selection);
+  }
+
+  const ematerial = new MeshBasicMaterial({
+    color: new Color(descr.style.ecolor),
+    transparent: transp,
+    opacity: descr.style.opacity,
+  });
+
+  const hmaterial = new MeshBasicMaterial({
+    color: new Color(descr.style.hcolor),
+    transparent: transp,
+    opacity: descr.style.opacity,
+  });
+
+  ematerial.side = DoubleSide;
+  hmaterial.side = DoubleSide;
+
+  const emeshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(eboxes), ematerial);
+
+  const hmeshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(hboxes), hmaterial);
+
+  emeshes.name = key;
+  hmeshes.name = key;
+
+  if (is_physics_obj && visible) {
+    emeshes.layers.enable(2);
+    hmeshes.layers.enable(2);
+  }
+
+  addToSceneObject(key, emeshes);
+  addToSceneObject(key, hmeshes);
+}
+
+function addAssocToScene(
+  data: DataArray,
+  key: string,
+  descr: Description,
+  extra: (number | number[])[][] | null,
+  assoc: [number, number][],
+  is_physics_obj: boolean,
+  visible: boolean,
+  objectIds: number[],
+) {
+  const objs = descr.fn(data, extra, assoc, descr.style, descr.selection);
+
+  if (objs !== undefined) {
+    objs.forEach((obj: Object3D, index: number) => {
+      obj.name = key;
+
+      if (is_physics_obj && visible) {
+        obj.layers.enable(2);
+      }
+
+      obj.userData.originalIndex = index;
+      objectIds.push(obj.id);
+      addToSceneObject(key, obj);
+    });
+  }
+}
+
+function addLinesToScene(
+  data: DataArray,
+  key: string,
+  descr: Description,
+  ocolor: Color,
+  transp: boolean,
+  objectIds: number[],
+) {
+  for (let li = 0; li < data.length; li++) {
+    descr.fn(data[li]).forEach((g: LineGeometry) => {
+      if (ispy.use_line2) {
+        const line2 = new Line2(
+          g,
+          new LineMaterial({
+            color: ocolor.getHex(),
+            transparent: transp,
+            linewidth: descr.style.linewidth * 0.001,
+            opacity: descr.style.opacity,
+          }),
+        );
+
+        line2.name = key;
+        line2.computeLineDistances();
+
+        line2.userData.originalIndex = li;
+        objectIds.push(line2.id);
+        addToSceneObject(key, line2);
+      } else {
+        const line = new Line(
+          g,
+          new LineBasicMaterial({
+            color: ocolor,
+            transparent: transp,
+            opacity: descr.style.opacity,
+          }),
+        );
+
+        line.name = key;
+
+        line.userData.originalIndex = li;
+        objectIds.push(line.id);
+        addToSceneObject(key, line);
+      }
+    });
+  }
+}
+
+function addShapesToScene(
+  data: DataArray,
+  key: string,
+  descr: Description,
+  is_physics_obj: boolean,
+  visible: boolean,
+  objectIds: number[],
+) {
+  for (let si = 0; si < data.length; si++) {
+    const shape = descr.fn(data[si], descr.style, descr.selection);
+
+    if (shape !== null) {
+      shape.name = key;
+
+      shape.traverse((s: Object3D) => {
+        s.name = key;
+
+        if (is_physics_obj && visible) {
+          s.layers.enable(2);
+        }
+      });
+
+      shape.userData.originalIndex = si;
+      objectIds.push(shape.id);
+      addToSceneObject(key, shape);
+    }
+  }
+}
+
+function addPointsToScene(data: DataArray, key: string, descr: Description, ocolor: Color) {
+  const points = new Points(
+    descr.fn(data),
+    new PointsMaterial({
+      color: ocolor,
+      size: descr.style.size,
+    }),
+  );
+
+  points.name = key;
+  addToSceneObject(key, points);
+}
+
 /**
  * Adds the event data to the specified scene view.
  * @param event The event data to add.
  * @param view The view to add the event data to.
  * @return void
  */
-function addToScene(event: any, view: string) {
+function addToScene(event: EventObject, view: string) {
   if (ispy.scenes === undefined) {
     console.error("No scenes found");
     return;
@@ -203,7 +506,7 @@ function addToScene(event: any, view: string) {
       if (!assoc || assoc.length === 0) continue;
     }
 
-    const objectIds = [];
+    const objectIds: number[] = [];
     const visible = !disabled[key] ? (descr.on = true) : (descr.on = false);
 
     const obj = new Object3D();
@@ -226,275 +529,39 @@ function addToScene(event: any, view: string) {
 
     switch (descr.type) {
       case BOX: {
-        const boxes = [];
-
-        for (const entry of Object.values(data)) {
-          boxes.push(descr.fn(entry));
-        }
-
-        const line = new LineSegments(
-          BufferGeometryUtils.mergeBufferGeometries(boxes),
-          new LineBasicMaterial({
-            color: ocolor,
-            transparent: transp,
-            linewidth: descr.style.linewidth,
-            opacity: descr.style.opacity,
-          }),
-        );
-
-        line.name = key;
-        addToSceneObject(key, line);
-
+        addBoxToScene(data, key, descr, ocolor, transp);
         break;
       }
       case SOLIDBOX: {
-        const sboxes = [];
-        const slines = [];
-
-        for (const entry of Object.values(data)) {
-          const bl = descr.fn(entry);
-
-          if (bl.length === 1) {
-            sboxes.push(bl[0]);
-          }
-
-          if (bl.length === 2) {
-            sboxes.push(bl[0]);
-            slines.push(bl[1]);
-          }
-        }
-
-        const solidbox_material = new MeshBasicMaterial({
-          color: ocolor,
-          transparent: transp,
-          opacity: descr.style.opacity,
-          depthTest: false,
-          depthWrite: false,
-        });
-
-        solidbox_material.side = DoubleSide;
-
-        const smeshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(sboxes), solidbox_material);
-
-        smeshes.name = key;
-        addToSceneObject(key, smeshes);
-
-        if (slines.length > 0) {
-          const sline_material = new LineBasicMaterial({
-            color: 0xcccccc,
-            transparent: false,
-            linewidth: 1,
-            depthTest: false,
-          });
-
-          const sline_mesh = new LineSegments(BufferGeometryUtils.mergeBufferGeometries(slines), sline_material);
-
-          sline_mesh.name = key;
-          addToSceneObject(key, sline_mesh);
-        }
-
+        addSolidBoxToScene(data, key, descr, ocolor, transp);
         break;
       }
       case SCALEDSOLIDBOX: {
-        const ss_boxes: BufferGeometry[] = [];
-        let maxEnergy = 0.0;
-
-        for (const entry of Object.values(data)) {
-          if (Array.isArray(entry)) {
-            const energy = entry[0];
-
-            if (energy > maxEnergy) maxEnergy = energy;
-          }
-        }
-
-        for (const entry of Object.values(data)) {
-          descr.fn(entry, ss_boxes, maxEnergy, descr.selection);
-        }
-
-        if (ss_boxes.length > 0) {
-          const ssb_material = new MeshBasicMaterial({
-            color: ocolor,
-            transparent: transp,
-            opacity: descr.style.opacity,
-          });
-
-          ssb_material.side = DoubleSide;
-
-          const ssb_meshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(ss_boxes), ssb_material);
-
-          ssb_meshes.name = key;
-          addToSceneObject(key, ssb_meshes);
-        }
-
+        addScaledSolidBoxToScene(data, key, descr, ocolor, transp);
         break;
       }
       case SCALEDSOLIDTOWER: {
-        const sst_boxes: BufferGeometry[] = [];
-        let maxE = 0.0;
-
-        for (const entry of Object.values(data)) {
-          if (Array.isArray(entry)) {
-            const energy = entry[0];
-
-            if (energy > maxE) maxE = energy;
-          }
-        }
-
-        for (const entry of Object.values(data)) {
-          descr.fn(entry, sst_boxes, maxE, descr.selection);
-        }
-
-        if (sst_boxes.length > 0) {
-          const sst_material = new MeshBasicMaterial({
-            color: ocolor,
-            transparent: transp,
-            opacity: descr.style.opacity,
-          });
-
-          sst_material.side = DoubleSide;
-
-          const sst_meshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(sst_boxes), sst_material);
-
-          sst_meshes.name = key;
-          addToSceneObject(key, sst_meshes);
-        }
-
+        addScaledSolidTowerToScene(data, key, descr, ocolor, transp);
         break;
       }
       case STACKEDTOWER: {
-        const eboxes: BufferGeometry[] = [];
-        const hboxes: BufferGeometry[] = [];
-
-        for (const entry of Object.values(data)) {
-          descr.fn(entry, eboxes, hboxes, descr.scale, descr.selection);
-        }
-
-        const ematerial = new MeshBasicMaterial({
-          color: new Color(descr.style.ecolor),
-          transparent: transp,
-          opacity: descr.style.opacity,
-        });
-
-        const hmaterial = new MeshBasicMaterial({
-          color: new Color(descr.style.hcolor),
-          transparent: transp,
-          opacity: descr.style.opacity,
-        });
-
-        ematerial.side = DoubleSide;
-        hmaterial.side = DoubleSide;
-
-        const emeshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(eboxes), ematerial);
-
-        const hmeshes = new Mesh(BufferGeometryUtils.mergeBufferGeometries(hboxes), hmaterial);
-
-        emeshes.name = key;
-        hmeshes.name = key;
-
-        if (is_physics_obj && visible) {
-          emeshes.layers.enable(2);
-          hmeshes.layers.enable(2);
-        }
-
-        addToSceneObject(key, emeshes);
-        addToSceneObject(key, hmeshes);
-
+        addStackedTowerToScene(data, key, descr, transp, is_physics_obj, visible);
         break;
       }
       case ASSOC: {
-        const objs = descr.fn(data, extra, assoc, descr.style, descr.selection);
-
-        if (objs !== undefined) {
-          objs.forEach((obj: Object3D, index: number) => {
-            obj.name = key;
-
-            if (is_physics_obj && visible) {
-              obj.layers.enable(2);
-            }
-
-            obj.userData.originalIndex = index;
-            objectIds.push(obj.id);
-            addToSceneObject(key, obj);
-          });
-        }
-
+        addAssocToScene(data, key, descr, extra, assoc, is_physics_obj, visible, objectIds);
         break;
       }
       case POINT: {
-        const points = new Points(
-          descr.fn(data),
-          new PointsMaterial({
-            color: ocolor,
-            size: descr.style.size,
-          }),
-        );
-
-        points.name = key;
-        addToSceneObject(key, points);
+        addPointsToScene(data, key, descr, ocolor);
         break;
       }
       case SHAPE: {
-        for (let si = 0; si < data.length; si++) {
-          const shape = descr.fn(data[si], descr.style, descr.selection);
-
-          if (shape !== null) {
-            shape.name = key;
-
-            shape.traverse((s: Object3D) => {
-              s.name = key;
-
-              if (is_physics_obj && visible) {
-                s.layers.enable(2);
-              }
-            });
-
-            shape.userData.originalIndex = si;
-            objectIds.push(shape.id);
-            addToSceneObject(key, shape);
-          }
-        }
-
+        addShapesToScene(data, key, descr, is_physics_obj, visible, objectIds);
         break;
       }
       case LINE: {
-        for (let li = 0; li < data.length; li++) {
-          descr.fn(data[li]).forEach((g: LineGeometry) => {
-            if (ispy.use_line2) {
-              const line2 = new Line2(
-                g,
-                new LineMaterial({
-                  color: ocolor.getHex(),
-                  transparent: transp,
-                  linewidth: descr.style.linewidth * 0.001,
-                  opacity: descr.style.opacity,
-                }),
-              );
-
-              line2.name = key;
-              line2.computeLineDistances();
-
-              line2.userData.originalIndex = li;
-              objectIds.push(line2.id);
-              addToSceneObject(key, line2);
-            } else {
-              const line = new Line(
-                g,
-                new LineBasicMaterial({
-                  color: ocolor,
-                  transparent: transp,
-                  opacity: descr.style.opacity,
-                }),
-              );
-
-              line.name = key;
-
-              line.userData.originalIndex = li;
-              objectIds.push(line.id);
-              addToSceneObject(key, line);
-            }
-          });
-        }
-
+        addLinesToScene(data, key, descr, ocolor, transp, objectIds);
         break;
       }
       case TEXT: {

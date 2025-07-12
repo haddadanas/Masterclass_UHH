@@ -30,8 +30,8 @@ import { getHTMLObject } from "./utils.js";
 import { Selection } from "./ispy.interfaces.js";
 
 // helpful type definition
+type DataArray = Array<any>; // skipcq: JS-0323
 type DetectorCollectionEntry = [number, ...(number[] | number[][])];
-type DataArray = Array<any>;
 type StyleType = { color: string; opacity: number; linewidth: number; radius: number; scale: number };
 type SelectionType = { min_energy: number; min_pt: number; index: number; min_et: number };
 

@@ -7,6 +7,7 @@ import {
   removeExistingBubble,
   showInfoBubble,
   changeMeshMaterials,
+  getCurrentEvent,
 } from "./utils.js";
 import { ispy } from "./config.js";
 import { event_description } from "./objects-config.js";
@@ -269,9 +270,10 @@ function onMouseMove(e: MouseEvent) {
         intersectedObject.parent &&
         intersectedObject.parent.visible
       ) {
+        const current_event = getCurrentEvent();
         const matchingTrack =
-          ispy.current_event.Collections[intersectedObject.name][intersectedObject.userData.originalIndex];
-        const chargeIndex = ispy.current_event.Types[intersectedObject.name].findIndex(
+          current_event.Collections[intersectedObject.name][intersectedObject.userData.originalIndex];
+        const chargeIndex = current_event.Types[intersectedObject.name].findIndex(
           (type: [string, string]) => type[0] === "charge",
         );
         const bubbleText = `Charge: ${matchingTrack[chargeIndex]}\nPt: ${intersectedObject.userData.pt.toFixed(2)}`;

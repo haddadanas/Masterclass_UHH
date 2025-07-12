@@ -17,7 +17,7 @@ import {
   Scene,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import dat from "dat.gui";
+import { GUI, GUIController } from "dat.gui";
 import { update } from "@tweenjs/tween.js";
 
 import { getHTMLObject } from "./utils.js";
@@ -82,7 +82,7 @@ function setFramerate(fr: number) {
  * Animation configuration for the ispy application.
  */
 function setupClippingGUI() {
-  ispy.clipgui = new dat.GUI({
+  ispy.clipgui = new GUI({
     name: "Clipping Controls",
     hideable: false,
     autoPlace: false,
@@ -535,7 +535,7 @@ function initControlPanel() {
  * Creates a checkbox container for a given GUI controller.
  * @param cont The GUI controller to create the checkbox container for.
  */
-function createCheckboxContainer(cont: dat.GUIController) {
+function createCheckboxContainer(cont: GUIController) {
   const selectionField = cont as unknown as SelectionFieldController;
   // check if not __input
   const inputField = selectionField.domElement.querySelector("input") as HTMLInputElement;
@@ -596,7 +596,7 @@ function initSelectionFields() {
   };
 
   //   var help_map = analysis.selection_fields_help;
-  let cont: dat.GUIController | null = null;
+  let cont: GUIController | null = null;
   (Object.keys(row_obj) as (keyof typeof row_obj)[]).forEach((key) => {
     const elem_name = SELEC_NAME_MAP[key];
     // let help_info = help_map[key] || false;
@@ -671,10 +671,11 @@ function run() {
   ispy.inset_camera.position.setLength(10);
   ispy.inset_camera.lookAt(ispy.inset_scene.position);
 
-  if (ispy.inset_scene.getObjectByName("xtext")) {
-    ispy.inset_scene.getObjectByName("xtext")!.quaternion.copy(ispy.inset_camera.quaternion);
-    ispy.inset_scene.getObjectByName("ytext")!.quaternion.copy(ispy.inset_camera.quaternion);
-    ispy.inset_scene.getObjectByName("ztext")!.quaternion.copy(ispy.inset_camera.quaternion);
+  for (const text of ["xtext", "ytext", "ztext"]) {
+    const textObj = ispy.inset_scene.getObjectByName(text);
+    if (textObj) {
+      textObj.quaternion.copy(ispy.inset_camera.quaternion);
+    }
   }
 
   render();

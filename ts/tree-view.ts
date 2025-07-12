@@ -1,5 +1,5 @@
 import { Color, LineBasicMaterial, Material, MeshBasicMaterial } from "three";
-import { GUIController } from "dat.gui/index.js";
+import { GUI, GUIController } from "dat.gui";
 
 import { ispy } from "./config.js";
 import {
@@ -9,7 +9,7 @@ import {
   event_description,
   reduced_data_groups,
 } from "./objects-config.js";
-import { getHTMLObject } from "./utils.js";
+import { getHTMLObject, hasProperty } from "./utils.js";
 import { SelectionFieldController } from "./ispy.interfaces.js";
 
 /**
@@ -123,6 +123,57 @@ function showObject(key: string, view: string, show: boolean) {
 }
 
 /**
+ * Helper function to apply thicker lines for specific objects.
+ * @param key The key of the object to apply thicker lines to.
+ * @param sf The GUI folder to add the line width control to.
+ * @param row_obj The row object containing the line width information.
+ */
+function applyThickerLines(
+  key: string,
+  sf: GUI,
+  row_obj: Record<string, any> // skipcq: JS-0323
+) {
+  if (
+    key.includes("GEMDigis") ||
+    key.includes("GEMSegments") ||
+    key.includes("GEMRec") ||
+    key.includes("CSCStrip") ||
+    key.includes("CSCSegments") ||
+    key.includes("CSCRec") ||
+    key.includes("CSCWire") ||
+    key.includes("RPCRec") ||
+    key.includes("DTRecSegment")
+  ) {
+    sf.add(row_obj, "linewidth", 1, 5).onChange(() => {
+      ispy.views.forEach((v) => {
+        const obj = ispy.scenes[v].getObjectByName(key);
+
+        if (!obj) return;
+
+        obj.children.forEach((o) => {
+          if (!("material" in o)) return;
+          (o.material as LineBasicMaterial).linewidth = row_obj.linewidth * 0.001;
+        });
+      });
+    });
+  }
+  if (key.includes("GlobalMuon") || key.includes("Electron") || key.includes("Photon")) {
+    sf.add(row_obj, "linewidth", 1, 5).onChange(() => {
+      ispy.views.forEach((v) => {
+        const obj = ispy.scenes[v].getObjectByName(key);
+
+        if (!obj) return;
+
+        obj.children.forEach((o) => {
+          if (!("material" in o)) return;
+          (o.material as LineBasicMaterial).linewidth = row_obj.linewidth * 0.001;
+        });
+      });
+    });
+  }
+}
+
+/**
  * Adds an object to the selection GUI.
  * @param group The group the object belongs to.
  * @param key The key of the object to show or hide.
@@ -130,7 +181,13 @@ function showObject(key: string, view: string, show: boolean) {
  * @param _objectIds The object IDs to show or hide.
  * @param visible Whether to show or hide the object.
  */
-function addSelectionRow(group: string, key: string, name: string, _objectIds: any[], visible: boolean) {
+function addSelectionRow(
+  group: string,
+  key: string,
+  name: string,
+  _objectIds: any[], // skipcq: JS-0323 --- IGNORE --- objectIds not used
+  visible: boolean,
+) {
   let opacity = 1.0;
   const color = new Color();
   let linewidth = 1;
@@ -138,24 +195,24 @@ function addSelectionRow(group: string, key: string, name: string, _objectIds: a
 
   const view = "3D";
   let style;
-  if (detector_description[view].hasOwnProperty(key)) {
+  if (hasProperty(detector_description[view], key)) {
     style = detector_description[view][key].style;
     opacity = style.opacity;
     color.set(style.color);
   }
 
-  if (event_description[view].hasOwnProperty(key)) {
+  if (hasProperty(event_description[view], key)) {
     style = event_description[view][key].style;
 
-    if (style.hasOwnProperty("opacity")) {
+    if (hasProperty(style, "opacity")) {
       opacity = style.opacity;
     }
 
-    if (style.hasOwnProperty("color")) {
+    if (hasProperty(style, "color")) {
       color.set(style.color);
     }
 
-    if (style.hasOwnProperty("linewidth")) {
+    if (hasProperty(style, "linewidth")) {
       linewidth = style.linewidth;
     }
 
@@ -228,47 +285,7 @@ function addSelectionRow(group: string, key: string, name: string, _objectIds: a
 
     if (ispy.use_line2) {
       // This conditional could / should be improved
-      if (
-        key.includes("GEMDigis") ||
-        key.includes("GEMSegments") ||
-        key.includes("GEMRec") ||
-        key.includes("CSCStrip") ||
-        key.includes("CSCSegments") ||
-        key.includes("CSCRec") ||
-        key.includes("CSCWire") ||
-        key.includes("RPCRec") ||
-        key.includes("DTRecSegment")
-      ) {
-        sf.add(row_obj, "linewidth", 1, 5).onChange(() => {
-          ispy.views.forEach((v) => {
-            const obj = ispy.scenes[v].getObjectByName(key);
-
-            if (!obj) return;
-
-            obj.children.forEach((o) => {
-              if (!("material" in o)) return;
-              (o.material as LineBasicMaterial).linewidth = row_obj.linewidth * 0.001;
-            });
-          });
-        });
-      }
-    }
-
-    if (ispy.use_line2) {
-      if (key.includes("GlobalMuon") || key.includes("Electron") || key.includes("Photon")) {
-        sf.add(row_obj, "linewidth", 1, 5).onChange(() => {
-          ispy.views.forEach((v) => {
-            const obj = ispy.scenes[v].getObjectByName(key);
-
-            if (!obj) return;
-
-            obj.children.forEach((o) => {
-              if (!("material" in o)) return;
-              (o.material as LineBasicMaterial).linewidth = row_obj.linewidth * 0.001;
-            });
-          });
-        });
-      }
+      applyThickerLines(key, sf, row_obj);
     }
 
     if (key.includes("Muons_") || key.includes("Electron") || key.includes("Tracks_")) {
@@ -350,7 +367,7 @@ function addSelectionRow(group: string, key: string, name: string, _objectIds: a
  * @returns The settings saved by the user.
  */
 function saveCutSettings() {
-  const settings: Record<string, any> = {};
+  const settings: Record<string, number | string | boolean> = {};
   const btn = (ispy.guiReduced.__controllers as SelectionFieldController[]).find((o) => o.property === "Keep Settings");
   if (btn?.getValue()) {
     const controllers = ispy.subfoldersReduced["Controllers"];
@@ -366,7 +383,7 @@ function saveCutSettings() {
  * @param settings The settings to apply.
  * @returns void
  */
-function applySavedSettings(settings: any) {
+function applySavedSettings(settings: Record<string, number | string | boolean>) {
   if (!Object.keys(settings).length) {
     return;
   }

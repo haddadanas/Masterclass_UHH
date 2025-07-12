@@ -28,14 +28,14 @@ interface SelectionFieldController extends GUIController {
   initialValue: string;
   checkbox: boolean;
   property: string;
-  getValue: () => any;
-  setValue: (value: any) => GUIController;
+  getValue: () => number | string | boolean;
+  setValue: (value: number | string | boolean) => GUIController;
 }
 
 interface EventObject {
   Collections: Record<string, Array<Array<number | number[]>>>;
   Types: Record<string, [string, string][]>;
-  [key: string]: any;
+  [key: string]: any; // skipcq: JS-0323
 }
 
 interface TrackLine extends Line {
@@ -66,7 +66,7 @@ interface Ispy {
   file_name?: string;
   version: string;
   event_index: number;
-  current_event?: any;
+  current_event?: EventObject;
   event_list: string[];
   ig_data: JSZip | null;
   ievent: number;
@@ -114,7 +114,7 @@ interface Ispy {
   inverted_colors: boolean;
 
   // Detector and Data
-  detector: { Collections: Record<string, any> };
+  detector: { Collections: Record<string, any> }; // skipcq: JS-0323
 
   // Stats and Physics
   stats: Stats;
@@ -173,6 +173,26 @@ type Style = {
   hcolor: string;
 }>;
 
+type Description = {
+  group: string;
+  name: string;
+  type: number;
+  on?: boolean;
+  fn: (...args: any[]) => any; // skipcq: JS-0323
+  style: {
+    color: Color;
+    linewidth: number;
+    opacity: number;
+    ecolor?: Color;
+    hcolor?: Color;
+    size?: number;
+  };
+  selection?: string;
+  scale?: number;
+  extra?: string;
+  assoc?: string;
+};
+
 export {
   EventObject,
   Particle,
@@ -184,4 +204,5 @@ export {
   TrackLine,
   SelectionFieldController,
   MET,
+  Description,
 };

@@ -11,6 +11,27 @@ const mMuon2 = 0.10566 * 0.10566;
 const mElectron2 = 0.511e-3 * 0.511e-3;
 
 /**
+ * Checks if property exists on a given object
+ * @param obj The object to check.
+ * @param prop The property to check for.
+ * @returns True if the property exists, false otherwise.
+ */
+export function hasProperty<T extends object, K extends PropertyKey>(obj: T, prop: K): obj is T & Record<K, unknown> {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+
+/**
+ * Asserts that a value is defined (not null or undefined).
+ * @param value The value to assert is defined.
+ */
+export function assertDefined<T>(value: T | undefined | null): asserts value is T {
+  if (value === undefined || value === null) {
+    throw new Error("Value is undefined or null");
+  }
+}
+
+/**
  * Gets the current event index.
  * @returns current event index
  */
@@ -23,7 +44,11 @@ export function getCurrentIndex(): number {
  * @returns the current event object
  */
 export function getCurrentEvent(): EventObject {
-  return ispy.current_event;
+  const current_event = ispy.current_event;
+  if (!current_event) {
+    throw new Error("Current event is not defined.");
+  }
+  return current_event;
 }
 
 /**
@@ -100,7 +125,7 @@ export function getParticleInfo(key: string, type: [string, string][], eventObje
  */
 export function getFourVectorByIndex(
   key: string,
-  objectUserData: { originalIndex: number; [key: string]: any },
+  objectUserData: { originalIndex: number; [key: string]: unknown },
 ): [FourVector, string?] {
   const type = getCurrentEvent().Types[key];
   const eventObjectData = getCurrentEvent().Collections[key][objectUserData.originalIndex];
@@ -335,7 +360,7 @@ export function addControllers(group: string) {
           const physic_objs = [
             ...ispy.scenes[v].getObjectByName("Physics")!.children,
             ...ispy.scenes[v].getObjectByName("Tracking")!.children,
-          ].filter((o) => o.visible && o.children[0].userData.hasOwnProperty("pt"));
+          ].filter((o) => o.visible && hasProperty(o.children[0].userData, "pt"));
 
           if (!physic_objs.length) return;
 
@@ -379,33 +404,33 @@ export function addControllers(group: string) {
     const jet_controller = ispy.subfoldersReduced.Controllers.filter((o) => o.property === "Jet: min Et")[0];
 
     folder.add(row_obj, "Electrons").onChange(function (this: SelectionFieldController) {
-      togglePhysicsObjects(["GsfElectrons"], this.getValue());
+      togglePhysicsObjects(["GsfElectrons"], Boolean(this.getValue()));
       // retoggle the pt controller to update the visibility
       pt_controller.setValue(pt_controller.getValue());
     });
 
     folder.add(row_obj, "Muons").onChange(function (this: SelectionFieldController) {
-      togglePhysicsObjects(["GlobalMuons", "TrackerMuons"], this.getValue());
+      togglePhysicsObjects(["GlobalMuons", "TrackerMuons"], Boolean(this.getValue()));
       // retoggle the pt controller to update the visibility
       pt_controller.setValue(pt_controller.getValue());
     });
 
     folder.add(row_obj, "Photons").onChange(function (this: SelectionFieldController) {
-      togglePhysicsObjects(["Photons"], this.getValue());
+      togglePhysicsObjects(["Photons"], Boolean(this.getValue()));
     });
 
     folder.add(row_obj, "Jets").onChange(function (this: SelectionFieldController) {
-      togglePhysicsObjects(["Jets"], this.getValue());
+      togglePhysicsObjects(["Jets"], Boolean(this.getValue()));
       // retoggle the jet controller to update the visibility
       jet_controller.setValue(jet_controller.getValue());
     });
 
     folder.add(row_obj, "MET").onChange(function (this: SelectionFieldController) {
-      togglePhysicsObjects(["METs"], this.getValue());
+      togglePhysicsObjects(["METs"], Boolean(this.getValue()));
     });
 
     folder.add(row_obj, "Additional Tracks").onChange(function (this: SelectionFieldController) {
-      togglePhysicsObjects(["Tracks"], this.getValue());
+      togglePhysicsObjects(["Tracks"], Boolean(this.getValue()));
     });
   }
 
@@ -426,7 +451,7 @@ export function addInfo(group: string) {
 
   const names = getSceneObjects();
   // pt is element 1 in the collection object (inconvinient definition by design)
-  const met_pt = ispy.current_event.Collections[names["METs"]][0][1];
+  const met_pt = getCurrentEvent().Collections[names["METs"]][0][1] as number;
 
   const row_obj = {
     MET: `${met_pt.toFixed(2)} GeV`,
@@ -451,7 +476,7 @@ export function addInfo(group: string) {
     .add(row_obj, "track")
     .name("Track Info")
     .onChange(function (this: SelectionFieldController) {
-      ispy.showTrackInfo = this.getValue();
+      ispy.showTrackInfo = Boolean(this.getValue());
       removeExistingBubble();
     });
 
@@ -459,14 +484,4 @@ export function addInfo(group: string) {
   (folder.__controllers as SelectionFieldController[]).forEach((c) => {
     ispy.subfoldersReduced["Info"].push(c);
   });
-}
-
-/**
- * Asserts that a value is defined (not null or undefined).
- * @param value The value to assert is defined.
- */
-export function assertDefined<T>(value: T | undefined | null): asserts value is T {
-  if (value === undefined || value === null) {
-    throw new Error("Value is undefined or null");
-  }
 }
