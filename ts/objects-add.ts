@@ -91,7 +91,7 @@ function addDetector() {
 
         const box_geometries = [];
 
-        for (const entry of data) {
+        for (const entry of Object.values(data)) {
           box_geometries.push(descr.fn(entry));
         }
 
@@ -117,8 +117,8 @@ function addDetector() {
         const boxes = [];
         const lines = [];
 
-        for (const entry of data) {
-          const bl = descr.fn(data[entry]);
+        for (const entry of Object.values(data)) {
+          const bl = descr.fn(entry);
 
           if (bl.length === 0) continue;
 
@@ -213,8 +213,8 @@ function addToScene(event: any, view: string) {
       case BOX: {
         const boxes = [];
 
-        for (const entry of data) {
-          boxes.push(descr.fn(data[entry]));
+        for (const entry of Object.values(data)) {
+          boxes.push(descr.fn(entry));
         }
 
         const line = new LineSegments(
@@ -236,7 +236,7 @@ function addToScene(event: any, view: string) {
         const sboxes = [];
         const slines = [];
 
-        for (const entry of data) {
+        for (const entry of Object.values(data)) {
           const bl = descr.fn(entry);
 
           if (bl.length === 1) {
@@ -284,13 +284,15 @@ function addToScene(event: any, view: string) {
         const ss_boxes: BufferGeometry[] = [];
         let maxEnergy = 0.0;
 
-        for (const entry of data) {
-          const energy = entry[0];
+        for (const entry of Object.values(data)) {
+          if (Array.isArray(entry)) {
+            const energy = entry[0];
 
-          if (energy > maxEnergy) maxEnergy = energy;
+            if (energy > maxEnergy) maxEnergy = energy;
+          }
         }
 
-        for (const entry of data) {
+        for (const entry of Object.values(data)) {
           descr.fn(entry, ss_boxes, maxEnergy, descr.selection);
         }
 
@@ -315,13 +317,15 @@ function addToScene(event: any, view: string) {
         const sst_boxes: BufferGeometry[] = [];
         let maxE = 0.0;
 
-        for (const entry of data) {
-          const energy = entry[0];
+        for (const entry of Object.values(data)) {
+          if (Array.isArray(entry)) {
+            const energy = entry[0];
 
-          if (energy > maxE) maxE = energy;
+            if (energy > maxE) maxE = energy;
+          }
         }
 
-        for (const entry of data) {
+        for (const entry of Object.values(data)) {
           descr.fn(entry, sst_boxes, maxE, descr.selection);
         }
 
@@ -346,7 +350,7 @@ function addToScene(event: any, view: string) {
         const eboxes: BufferGeometry[] = [];
         const hboxes: BufferGeometry[] = [];
 
-        for (const entry of data) {
+        for (const entry of Object.values(data)) {
           descr.fn(entry, eboxes, hboxes, descr.scale, descr.selection);
         }
 

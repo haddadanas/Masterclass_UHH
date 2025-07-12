@@ -377,7 +377,7 @@ function selectFile(filename: string) {
     if (this.readyState === 4) {
       //getHTMLObject('progress').style.display = 'none';
 
-      const progress_bars = document.querySelectorAll("progress-bar");
+      const progress_bars = document.querySelectorAll("div.progress-bar");
       progress_bars.forEach((pb) => {
         (pb as HTMLDivElement).style.width = "0%";
         pb.innerHTML = "0%";
