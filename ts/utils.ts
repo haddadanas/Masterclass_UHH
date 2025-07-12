@@ -1,7 +1,7 @@
 // Type: TypeScript file
 // Description: This file contains utility functions that are used in the analysis code.
 import JSZip from "jszip";
-import { Material } from "three";
+import { Material, Object3D } from "three";
 
 import { ispy } from "./config.js";
 
@@ -318,8 +318,8 @@ export function toggleCollapse(key: string) {
  */
 function getSceneObjects(): { [key: string]: string } {
   return [
-    ...(ispy.scenes?.["3D"]?.getObjectByName("Physics")?.children.map((o: any) => o.name) || []),
-    ...(ispy.scenes?.["3D"]?.getObjectByName("Tracking")?.children.map((o: any) => o.name) || []),
+    ...(ispy.scenes?.["3D"]?.getObjectByName("Physics")?.children.map((o: Object3D) => o.name) || []),
+    ...(ispy.scenes?.["3D"]?.getObjectByName("Tracking")?.children.map((o: Object3D) => o.name) || []),
   ].reduce((dic: { [key: string]: string }, o) => {
     dic[o.replace(/^(?:PAT|PF)?(.*?)_V\d$/, "$1")] = o;
     return dic;
