@@ -1,8 +1,9 @@
 name: Build and Deploy to GitHub Pages
 
 on:
+  workflow_dispatch:
   push:
-    branches: [ stable ] # or your default branch
+  pull_request:
 
 jobs:
   build:
