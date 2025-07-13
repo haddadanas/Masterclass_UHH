@@ -15,7 +15,7 @@ Publication: [T McCauley 2017 J. Phys.: Conf. Ser. 898 072030](https://doi.org/1
 
 iSpy WebGL ist ein browserbasiertes Event Display für das CMS Experiment am LHC. Es ermöglicht die Visualisierung von Ereignisdaten, die von den [iSpy Analyzers](https://github.com/cms-outreach/ispy-analyzers)
 
-<img src="./graphics/ispy-webgl-screenshot-1.0.0.png"></img>
+<img src="./assets/ispy-webgl-screenshot-1.0.0.png"></img>
 
 ## Erste Schritte
 
@@ -34,8 +34,6 @@ Nachdem ein file geöffnet wurde, können durch die Events dieses files navigier
 ### Ansichten wechseln
 
 Ein Event kann in verschiedenen Ansichten dargestellt werden. Die Ansichten können über die Knöpfe <span style="border: 1px solid black; padding: 3px; display: inline-block;">3D</span>, <span style="border: 1px solid black; padding: 3px; display: inline-block;">r&phi;</span> oder <span style="border: 1px solid black; padding: 3px; display: inline-block;">&rho;z</span> aus der oberen Leiste gewechselt werden. Um auf die Anfangsansicht zurückzukehren, kann auf den Knopf <i class="fa fa-home" style="border: 1px solid black; padding: 6px; display: inline-block;"></i> geklickt werden.
-
-In der 3D Ansicht lässt sich das Event auch entlang einer Achse anzeigen. Dazu können die Knöpfe <img src="./graphics/yx_small.png" style="background-color: grey;"/>, <img src="./graphics/xz_small.png" style="background-color: grey;"/>  und <img src="./graphics/yz_small.png" style="background-color: grey;"/> verwenden werden. Dies kann bei der Bestimmun der Teilchenladung und die Beobachtung der Spurkrümmung hilfreich sein.
 
 ### Detektor Elemente ein- und ausblenden
 
@@ -65,7 +63,7 @@ Spuren von Muonen und Elektronen können durch das Draufklicken selektiert werde
 
 ### Selektionschnitte auf einem bestimmten Event Testen
 
-<img src="./graphics/selection_gui.png"></img>
+<img src="./assets/selection_gui.png"></img>
 
 Unter dem Reiter "Event Selection" können die Schnitte auf die verschiedenen Teilchenvariablen anwenden. Wie im Bild zu sehen, sind 3 unterschiedliche Arten von Schnitten möglich:
 
