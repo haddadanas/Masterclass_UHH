@@ -1,7 +1,7 @@
 {
   "name": "masterclass-uhh",
   "type": "commonjs",
-  "version": "v1.2.0-UHH",
+  "version": "v2.0.0-UHH",
   "description": "A browser-based event display for the CMS experiment at the LHC, adjusted for the Masterclass at University of Hamburg.",
   "scripts": {
     "build": "tsc -p tsconfig.json && webpack  --config webpack.config.js --mode production",
