@@ -1,6 +1,7 @@
 .vscode/*
 node_modules/*
 dist/*
+js/*
 .DS_Store
 *.bsdesign
 package-lock.json

@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
   // Dynamically set entry points for all .ts files in the ts folder
-  entry: "./dist/ispy.js",
+  entry: "./js/ispy.js",
   mode: "development",
   // module: {
   //   rules: [

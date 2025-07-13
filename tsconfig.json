@@ -10,7 +10,7 @@
     "rewriteRelativeImportExtensions": true,
     "baseUrl": "./",
     "rootDir": "./ts", /* Specify the root folder within your source files. */
-    "outDir": "./dist", /* Specify an output folder for all emitted files. */
+    "outDir": "./js", /* Specify an output folder for all emitted files. */
     "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
     "resolveJsonModule": true, /* Include modules imported with .json extension. */
     "allowJs": true,
