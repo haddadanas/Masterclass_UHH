@@ -124,11 +124,13 @@ function checkIfEventPassing(event_index: number | string = -1): boolean | undef
  */
 function getCurrentSelectionMessage(): [string, string] {
   const pass = checkIfEventPassing();
+  const numPassing = getPassingEvents().length;
   if (pass === undefined) {
     return ["No event file is loaded!", "error"];
   }
   let html = "This Event ";
   html += `${pass ? "passes" : "does not pass"} the selection!`;
+  html += `\nThere are currently ${numPassing} events passing this selection.`;
   const symbol = pass ? "success" : "warning";
   return [html, symbol];
 }
