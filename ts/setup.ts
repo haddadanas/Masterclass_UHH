@@ -20,7 +20,7 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GUI, GUIController } from "dat.gui";
 import { update } from "@tweenjs/tween.js";
 
-import { getHTMLObject } from "./utils.js";
+import { assertDefined, getHTMLObject } from "./utils.js";
 import { ispy } from "./config.js";
 import { useRenderer, updateClipping, render } from "./renderer.js";
 import { importDetector, loadDroppedFile } from "./files-load.js";
@@ -37,14 +37,8 @@ import { SelectionFieldController } from "./ispy.interfaces.js";
  * @returns void
  */
 function setDisplayVerticalHeight(vh: number) {
-  if (!ispy.camera) {
-    console.error("Camera is not initialized");
-    return;
-  }
-  if (!ispy.renderer) {
-    console.error("Renderer is not initialized");
-    return;
-  }
+  assertDefined(ispy.camera, "Camera is not initialized");
+  assertDefined(ispy.renderer, "Renderer is not initialized");
   ispy.vh = vh;
 
   const vh_obj = getHTMLObject("vh");
@@ -378,10 +372,9 @@ function handleToggles() {
  * @returns void
  */
 function handleDragAndDrop() {
-  if (!ispy.renderer || !ispy.renderer.domElement) {
-    console.error("Renderer or its DOM element is not initialized");
-    return;
-  }
+  assertDefined(ispy.renderer, "Renderer is not initialized");
+  assertDefined(ispy.renderer.domElement, "Renderer DOM element is not initialized");
+
   const canvas = ispy.renderer.domElement as HTMLCanvasElement;
 
   canvas.ondragover = function (_e: Event) {
@@ -451,10 +444,8 @@ function init() {
   // ispy.tcontrols.dynamicDampingFactor = 1.0;
   // ispy.tcontrols.noRotate = false;
   // ispy.tcontrols.noPan = false;
-  if (!ispy.camera || !ispy.renderer) {
-    console.error("Camera or Renderer is not initialized");
-    return;
-  }
+  assertDefined(ispy.camera, "Camera is not initialized");
+  assertDefined(ispy.renderer, "Renderer is not initialized");
   const ocontrols = new OrbitControls(ispy.camera, ispy.renderer.domElement as HTMLCanvasElement);
   ocontrols.enableRotate = true;
 
@@ -501,10 +492,7 @@ function init() {
  * @returns void
  */
 function initLight() {
-  if (!ispy.scene) {
-    console.error("Scene is not initialized");
-    return;
-  }
+  assertDefined(ispy.scene, "Scene is not initialized");
   const intensity = 1.0;
   const length = 15.0;
 
@@ -653,14 +641,10 @@ function run() {
   setTimeout(() => {
     requestAnimationFrame(run);
   }, 1000 / ispy.framerate);
-  if (!ispy.camera || !ispy.inset_camera) {
-    console.error("Camera is not initialized");
-    return;
-  }
-  if (!ispy.controls) {
-    console.error("Controls are not initialized");
-    return;
-  }
+  assertDefined(ispy.camera, "Camera is not initialized");
+  assertDefined(ispy.inset_camera, "Inset camera is not initialized");
+  assertDefined(ispy.controls, "Controls are not initialized");
+
   ispy.stats.update();
 
   ispy.controls.update();

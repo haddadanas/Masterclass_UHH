@@ -39,6 +39,7 @@ import {
 import { addSelectionRow, applySavedSettings, clearSubfolders, saveCutSettings } from "./tree-view.js";
 import { showView } from "./display.js";
 import { EventObject, Description } from "./ispy.interfaces.js";
+import { assertDefined } from "./utils.js";
 
 type DataArray = (number | number[] | string)[][];
 
@@ -80,10 +81,7 @@ function addDetector() {
     const obj = new Object3D();
     obj.name = key;
     obj.visible = visible;
-    if (!ispy.scene) {
-      console.error("No scene found");
-      return;
-    }
+    assertDefined(ispy.scene, "Scene is not defined");
     addToSceneObject(descr.group, obj);
 
     const ocolor = new Color(descr.style.color);

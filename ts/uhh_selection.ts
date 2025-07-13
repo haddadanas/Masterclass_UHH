@@ -2,7 +2,7 @@
 import swal from "sweetalert";
 
 import { ispy, analysis } from "./config.js";
-import { getCurrentEvent, EventCollection, getCurrentIndex } from "./utils.js";
+import { getCurrentEvent, EventCollection, getCurrentIndex, assertDefined } from "./utils.js";
 
 import { Particle, FourVector, MET } from "./ispy.interfaces.js";
 
@@ -207,9 +207,7 @@ function buildFileSummary(): void {
   $("#loading").modal("hide");
   $("#building").modal("show");
   try {
-    if (!ispy.ig_data) {
-      throw new Error("No event data loaded!");
-    }
+    assertDefined(ispy.ig_data, "No event data is loaded!");
     // get the event data
     event_summary = new EventCollection(ispy.event_list, ispy.ig_data);
 

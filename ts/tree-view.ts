@@ -116,9 +116,10 @@ function showObject(key: string, view: string, show: boolean) {
     obj.visible = show;
     disabled[key] = !show;
 
-    const elem = getHTMLObject(key) as HTMLInputElement;
+    // use getElementById to toggle since some objects from the config are checked, which have no HTML element
+    const elem = document.getElementById(key) as HTMLInputElement;
 
-    if (elem != null) elem.checked = show;
+    if (elem !== null) elem.checked = show;
   }
 }
 
@@ -131,7 +132,7 @@ function showObject(key: string, view: string, show: boolean) {
 function applyThickerLines(
   key: string,
   sf: GUI,
-  row_obj: Record<string, any> // skipcq: JS-0323
+  row_obj: Record<string, any>, // skipcq: JS-0323
 ) {
   if (
     key.includes("GEMDigis") ||

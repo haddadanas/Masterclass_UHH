@@ -3,7 +3,7 @@ import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-import { getHTMLObject } from "./utils";
+import { assertDefined, getHTMLObject } from "./utils";
 import { ispy } from "./config";
 
 function updateControls(redererClass: string, camera: Camera, rendererDom: HTMLCanvasElement) {
@@ -26,10 +26,7 @@ function updateControls(redererClass: string, camera: Camera, rendererDom: HTMLC
  * @returns void
  */
 export function updateRendererInfo() {
-  if (!ispy.renderer) {
-    console.error("Renderer is not defined");
-    return;
-  }
+  assertDefined(ispy.renderer, "Renderer is not defined");
   const info = ispy.renderer.info;
 
   let html = `<strong>${ispy.renderer_name} info: </strong>`;
@@ -117,14 +114,9 @@ export function updateRenderer(type: string) {
     alert(`${type} is already in use`);
     return;
   }
-  if (!ispy.camera) {
-    console.error("Camera is not defined");
-    return;
-  }
-  if (!ispy.renderer || !ispy.inset_renderer) {
-    console.error("Renderer is not defined");
-    return;
-  }
+  assertDefined(ispy.camera, "Camera is not defined");
+  assertDefined(ispy.renderer, "Renderer is not defined");
+  assertDefined(ispy.inset_renderer, "Inset renderer is not defined");
 
   getHTMLObject("display").removeChild(ispy.renderer.domElement);
   getHTMLObject("axes").removeChild(ispy.inset_renderer.domElement);
