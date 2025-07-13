@@ -25,7 +25,7 @@ export function hasProperty<T extends object, K extends PropertyKey>(obj: T, pro
  */
 export function assertDefined<T>(
   value: T | undefined | null,
-  msg: string = "Value is undefined or null",
+  msg = "Value is undefined or null",
 ): asserts value is T {
   if (value === undefined || value === null) {
     throw new Error(msg);
