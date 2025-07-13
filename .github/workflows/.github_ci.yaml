@@ -31,12 +31,12 @@ jobs:
           path: ./dist # Adjust the path to your build output folder, e.g., "dist" or "build"
 
   deploy:
-    needs:
-      build
+    needs: build
 
-    permissions:
-      pages: write      # to deploy to Pages
-      id-token: write   # to verify the deployment originates from an appropriate source
+  permissions:
+    contents: read
+    pages: write
+    id-token: write
 
     environment:
       name: github-pages
@@ -53,4 +53,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           publish_dir: ./ # Adjust the path to the downloaded artifact folder
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # github_token: ${{ secrets.GITHUB_TOKEN }}
