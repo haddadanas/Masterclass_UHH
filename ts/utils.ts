@@ -4,7 +4,6 @@ import JSZip from "jszip";
 import { Material, Object3D } from "three";
 
 import { ispy } from "./config.js";
-
 import { Particle, EventObject, EventSummary, MET, FourVector, SelectionFieldController } from "./ispy.interfaces.js";
 
 const mMuon2 = 0.10566 * 0.10566;

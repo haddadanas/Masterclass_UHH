@@ -21,19 +21,16 @@ import {
   RingGeometry,
 } from "three";
 import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
-import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
+import { Line2 } from "three/examples/jsm/lines/Line2.js";
 
 import { ispy } from "./config.js";
 import { getHTMLObject } from "./utils.js";
-
-import { Selection } from "./ispy.interfaces.js";
+import { Selection, SelectionType, StyleType } from "./ispy.interfaces.js";
 
 // helpful type definition
 type DataArray = Array<any>; // skipcq: JS-0323
 type DetectorCollectionEntry = [number, ...(number[] | number[][])];
-type StyleType = { color: string; opacity: number; linewidth: number; radius: number; scale: number };
-type SelectionType = { min_energy: number; min_pt: number; index: number; min_et: number };
 
 /**
  * Creates a wireframe box geometry from the provided data.

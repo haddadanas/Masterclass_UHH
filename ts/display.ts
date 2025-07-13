@@ -11,7 +11,6 @@ import {
 } from "./utils.js";
 import { ispy } from "./config.js";
 import { event_description } from "./objects-config.js";
-
 import { TrackLine } from "./ispy.interfaces.js";
 import { render } from "./renderer.js";
 

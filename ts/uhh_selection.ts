@@ -1,9 +1,7 @@
-// import { Data, newPlot } from "plotly.js";
 import swal from "sweetalert";
 
 import { ispy, analysis } from "./config.js";
 import { getCurrentEvent, EventCollection, getCurrentIndex, assertDefined } from "./utils.js";
-
 import { Particle, FourVector, MET } from "./ispy.interfaces.js";
 
 // Helper functions to check the selection
