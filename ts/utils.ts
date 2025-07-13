@@ -166,7 +166,7 @@ export function getMetInformation(type: [string, string][], eventObjectData: num
 export function cleanupData(d: string): string {
   // rm non-standard json bits
   // newer files will not have this problem
-  d = d.replace(/\(/g, "[").replace(/\)/g, "]").replace(/'/g, '"').replace(/nan/g, "0");
+  d = d.replace(/\(/g, "[").replace(/\)/g, "]").replace(/'/g, "\"").replace(/nan/g, "0");
 
   return d;
 }
@@ -356,11 +356,11 @@ export function addControllers(group: string) {
     min_pt: 1.0,
     Electrons: true,
     Muons: true,
-    Photons: true,
+    Photons: false,
     Jets: false,
     MET: false,
     "Jet: min Et": 1.0,
-    "Additional Tracks": true,
+    "Additional Tracks": false,
   };
 
   const gui_elem = ispy.guiReduced;

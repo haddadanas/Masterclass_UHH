@@ -585,7 +585,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Tracks_V1: {
       type: ASSOC,
-      on: true,
+      on: false,
       group: "Tracking",
       name: "Tracks (reco.)",
       extra: "Extras_V1",
@@ -601,7 +601,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Tracks_V2: {
       type: ASSOC,
-      on: true,
+      on: false,
       group: "Tracking",
       name: "Tracks (reco.)",
       extra: "Extras_V1",
@@ -617,7 +617,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Tracks_V3: {
       type: ASSOC,
-      on: true,
+      on: false,
       group: "Tracking",
       name: "Tracks (reco.)",
       extra: "Extras_V1",
@@ -633,7 +633,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Tracks_V4: {
       type: ASSOC,
-      on: true,
+      on: false,
       group: "Tracking",
       name: "Tracks (reco.)",
       extra: "Extras_V1",
@@ -977,7 +977,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Photons_V1: {
       type: SHAPE,
-      on: true,
+      on: false,
       group: "Physics",
       name: "Photons (Reco)",
       fn: makePhoton,
@@ -986,7 +986,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     PATPhotons_V1: {
       type: SHAPE,
-      on: true,
+      on: false,
       group: "Physics",
       name: "Photons (PAT)",
       fn: makePhoton,
@@ -1285,7 +1285,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Tracks_V1: {
       type: ASSOC,
-      on: true,
+      on: false,
       group: "Tracking",
       name: "Tracks (reco.)",
       extra: "Extras_V1",
@@ -1301,7 +1301,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Tracks_V2: {
       type: ASSOC,
-      on: true,
+      on: false,
       group: "Tracking",
       name: "Tracks (reco.)",
       extra: "Extras_V1",
@@ -1317,7 +1317,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Tracks_V3: {
       type: ASSOC,
-      on: true,
+      on: false,
       group: "Tracking",
       name: "Tracks (reco.)",
       extra: "Extras_V1",
@@ -1333,7 +1333,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Tracks_V4: {
       type: ASSOC,
-      on: true,
+      on: false,
       group: "Tracking",
       name: "Tracks (reco.)",
       extra: "Extras_V1",
@@ -1677,7 +1677,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Photons_V1: {
       type: SHAPE,
-      on: true,
+      on: false,
       group: "Physics",
       name: "Photons (Reco)",
       fn: makePhoton,
@@ -2023,7 +2023,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Tracks_V1: {
       type: ASSOC,
-      on: true,
+      on: false,
       group: "Tracking",
       name: "Tracks (reco.)",
       extra: "Extras_V1",
@@ -2039,7 +2039,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Tracks_V2: {
       type: ASSOC,
-      on: true,
+      on: false,
       group: "Tracking",
       name: "Tracks (reco.)",
       extra: "Extras_V1",
@@ -2055,7 +2055,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Tracks_V3: {
       type: ASSOC,
-      on: true,
+      on: false,
       group: "Tracking",
       name: "Tracks (reco.)",
       extra: "Extras_V1",
@@ -2071,7 +2071,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Tracks_V4: {
       type: ASSOC,
-      on: true,
+      on: false,
       group: "Tracking",
       name: "Tracks (reco.)",
       extra: "Extras_V1",
@@ -2399,7 +2399,7 @@ const event_description: Record<string, Record<string, any>> = {
     },
     Photons_V1: {
       type: SHAPE,
-      on: true,
+      on: false,
       group: "Physics",
       name: "Photons (Reco)",
       fn: makePhotonRZ,
