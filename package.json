@@ -4,11 +4,12 @@
   "version": "v1.0.0-UHH",
   "description": "A browser-based event display for the CMS experiment at the LHC, adjusted for the Masterclass at University of Hamburg.",
   "scripts": {
+    "build": "tsc -p tsconfig.json && webpack  --config webpack.config.js --mode production",
     "build:dev": "tsc -p tsconfig_dev.json && webpack --config webpack.config.js --mode development",
     "test": "http-server ./dist -p 8080 -c10 ",
     "start": "http-server -p 8080 -c10",
-    "build": "tsc -p tsconfig.json && webpack  --config webpack.config.js --mode production",
-    "analyze": "webpack --profile --json > stats.json && webpack-bundle-analyzer stats.json"
+    "analyze": "webpack --profile --json > stats.json && webpack-bundle-analyzer stats.json",
+    "lint": "eslint --ext .ts,.js ts/"
   },
   "repository": {
     "type": "git",
