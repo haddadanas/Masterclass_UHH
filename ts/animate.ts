@@ -116,9 +116,7 @@ export function toggleAnimation() {
   ispy.animating = !ispy.animating;
 
   const animateElement = getHTMLObject("animate");
-  if (animateElement) {
-    animateElement.classList.toggle("active");
-  }
+  animateElement.classList.toggle("active");
 
   if (ispy.animating) {
     resetView();
@@ -182,9 +180,7 @@ export function toggleAnimation() {
     const zoom3 = new Tween(ispy.camera.position)
       .to({ x: home.x, y: home.y, z: home.z }, 5000)
       .onComplete(() => {
-        if (animateElement) {
-          animateElement.classList.toggle("active");
-        }
+        animateElement.classList.toggle("active");
       })
       .easing(Easing.Sinusoidal.In);
 
