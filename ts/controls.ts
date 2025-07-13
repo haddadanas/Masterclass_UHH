@@ -2,7 +2,7 @@ import { OBJExporter } from "three/examples/jsm/exporters/OBJExporter";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
 
 import { ispy } from "./config.js";
-import { getHTMLObject } from "./utils.js";
+import { assertDefined, getHTMLObject } from "./utils.js";
 import { render } from "./renderer.js";
 
 /**
@@ -83,10 +83,7 @@ function reload() {
  * @returns void
  */
 function printImage() {
-  if (!ispy.image_data) {
-    alert("Image data is not defined");
-    return;
-  }
+  assertDefined(ispy.image_data);
   ispy.get_image_data = true;
   render();
   window.open(ispy.image_data, "toDataURL() image", "width=1600, height=900");
@@ -97,10 +94,7 @@ function printImage() {
  * @returns void
  */
 function exportScene() {
-  if (!ispy.scene) {
-    alert("Scene is not defined");
-    return;
-  }
+  assertDefined(ispy.scene);
   const exporter = new GLTFExporter();
 
   const options = {
@@ -183,10 +177,7 @@ function exportGLTF_text() {
  * @param binary If true, exports in binary format; otherwise, exports in text format.
  */
 function exportGLTF(binary: boolean) {
-  if (!ispy.scene) {
-    alert("Scene is not defined");
-    return;
-  }
+  assertDefined(ispy.scene);
   getHTMLObject("export-model").style.display = "none";
   //$('#export-model').hide();
 
@@ -223,10 +214,7 @@ function exportGLTF(binary: boolean) {
  * @returns void
  */
 function exportOBJ() {
-  if (!ispy.scene) {
-    alert("Scene is not defined");
-    return;
-  }
+  assertDefined(ispy.scene);
   getHTMLObject("export-model").style.display = "none";
   //$('#export-model').hide();
 

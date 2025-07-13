@@ -4,7 +4,6 @@ import JSZip from "jszip";
 import { Material, Object3D } from "three";
 
 import { ispy } from "./config.js";
-
 import { Particle, EventObject, EventSummary, MET, FourVector, SelectionFieldController } from "./ispy.interfaces.js";
 
 const mMuon2 = 0.10566 * 0.10566;
@@ -24,9 +23,12 @@ export function hasProperty<T extends object, K extends PropertyKey>(obj: T, pro
  * Asserts that a value is defined (not null or undefined).
  * @param value The value to assert is defined.
  */
-export function assertDefined<T>(value: T | undefined | null): asserts value is T {
+export function assertDefined<T>(
+  value: T | undefined | null,
+  msg = "Value is undefined or null",
+): asserts value is T {
   if (value === undefined || value === null) {
-    throw new Error("Value is undefined or null");
+    throw new Error(msg);
   }
 }
 
@@ -166,7 +168,7 @@ export function getMetInformation(type: [string, string][], eventObjectData: num
 export function cleanupData(d: string): string {
   // rm non-standard json bits
   // newer files will not have this problem
-  d = d.replace(/\(/g, "[").replace(/\)/g, "]").replace(/'/g, '"').replace(/nan/g, "0");
+  d = d.replace(/\(/g, "[").replace(/\)/g, "]").replace(/'/g, "\"").replace(/nan/g, "0");
 
   return d;
 }
@@ -356,11 +358,11 @@ export function addControllers(group: string) {
     min_pt: 1.0,
     Electrons: true,
     Muons: true,
-    Photons: true,
+    Photons: false,
     Jets: false,
     MET: false,
     "Jet: min Et": 1.0,
-    "Additional Tracks": true,
+    "Additional Tracks": false,
   };
 
   const gui_elem = ispy.guiReduced;

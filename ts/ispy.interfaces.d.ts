@@ -12,7 +12,9 @@ import {
   Line,
   LineBasicMaterial,
   Vector3,
+  Color,
 } from "three";
+import Stats from "stats.js";
 import JSZip from "jszip";
 
 interface SubFolderReduced {
@@ -160,6 +162,21 @@ type Selection = Partial<{
   index: number;
 }>;
 
+interface SelectionType {
+  min_energy: number;
+  min_pt: number;
+  index: number;
+  min_et: number;
+}
+
+interface StyleType {
+  color: string;
+  opacity: number;
+  linewidth: number;
+  radius: number;
+  scale: number;
+}
+
 type Style = {
   color: string;
 } & Partial<{
@@ -173,7 +190,7 @@ type Style = {
   hcolor: string;
 }>;
 
-type Description = {
+interface Description {
   group: string;
   name: string;
   type: number;
@@ -191,7 +208,7 @@ type Description = {
   scale?: number;
   extra?: string;
   assoc?: string;
-};
+}
 
 export {
   EventObject,
@@ -201,6 +218,9 @@ export {
   Analysis,
   EventSummary,
   Selection,
+  SelectionType,
+  Style,
+  StyleType,
   TrackLine,
   SelectionFieldController,
   MET,

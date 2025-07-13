@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Add keyboard listeners for shortcuts
   document.addEventListener("keydown", (e: KeyboardEvent) => {
     // Instead of a button, make output of 3D to JSON a "secret" key binding
-    if (e.key === "E" && e.shiftKey) {
+    if (e.key === "E") {
       exportScene();
     }
     if (e.key === "ArrowUp" && e.shiftKey) {
@@ -179,10 +179,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.key === "ArrowLeft") {
       prevEvent();
     }
-    if (e.key === "A" && e.shiftKey) {
+    if (e.key === "A") {
       toggleAnimation();
     }
-    if (e.key === "M") {
+    if (e.key === "m") {
       showMass();
     }
   });

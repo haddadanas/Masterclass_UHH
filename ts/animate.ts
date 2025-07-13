@@ -4,6 +4,7 @@ import { SphereGeometry, MeshBasicMaterial, Mesh } from "three";
 import { ispy } from "./config.js";
 import { resetView } from "./display.js";
 import { showObject } from "./tree-view.js";
+import { assertDefined, getHTMLObject } from "./utils.js";
 
 // This is particular to the sequence below:
 // - Colliding bunch crossings
@@ -109,20 +110,13 @@ const animation = {
  * @returns void
  */
 export function toggleAnimation() {
-  if (!ispy.camera) {
-    console.error("Camera is not defined");
-    return;
-  }
-  if (!ispy.scene) {
-    console.error("Scene is not defined");
-    return;
-  }
+  assertDefined(ispy.camera);
+  assertDefined(ispy.scene);
+
   ispy.animating = !ispy.animating;
 
-  const animateElement = document.getElementById("animate");
-  if (animateElement) {
-    animateElement.classList.toggle("active");
-  }
+  const animateElement = getHTMLObject("animate");
+  animateElement.classList.toggle("active");
 
   if (ispy.animating) {
     resetView();
@@ -186,9 +180,7 @@ export function toggleAnimation() {
     const zoom3 = new Tween(ispy.camera.position)
       .to({ x: home.x, y: home.y, z: home.z }, 5000)
       .onComplete(() => {
-        if (animateElement) {
-          animateElement.classList.toggle("active");
-        }
+        animateElement.classList.toggle("active");
       })
       .easing(Easing.Sinusoidal.In);
 

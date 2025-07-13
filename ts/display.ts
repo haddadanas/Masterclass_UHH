@@ -7,10 +7,10 @@ import {
   removeExistingBubble,
   changeMeshMaterials,
   showTrackInfoBubble,
+  assertDefined,
 } from "./utils.js";
 import { ispy } from "./config.js";
 import { event_description } from "./objects-config.js";
-
 import { TrackLine } from "./ispy.interfaces.js";
 import { render } from "./renderer.js";
 
@@ -57,10 +57,7 @@ function initCamera() {
  * @returns void
  */
 function zoomIn() {
-  if (!ispy.camera) {
-    console.error("Camera is not defined");
-    return;
-  }
+  assertDefined(ispy.camera, "Camera is not defined");
   ispy.camera.zoom += 0.5;
   ispy.camera.updateProjectionMatrix();
 }
@@ -70,10 +67,7 @@ function zoomIn() {
  * @returns void
  */
 function zoomOut() {
-  if (!ispy.camera) {
-    console.error("Camera is not defined");
-    return;
-  }
+  assertDefined(ispy.camera, "Camera is not defined");
   ispy.camera.zoom -= 0.5;
   ispy.camera.updateProjectionMatrix();
 }
@@ -83,10 +77,7 @@ function zoomOut() {
  * @returns void
  */
 function invertColors() {
-  if (!ispy.renderer) {
-    console.error("Renderer is not defined");
-    return;
-  }
+  assertDefined(ispy.renderer, "Renderer is not defined");
   ispy.inverted_colors = !ispy.inverted_colors;
 
   if (!ispy.inverted_colors) {
@@ -96,10 +87,7 @@ function invertColors() {
   }
 
   const body = document.querySelector("body");
-  if (!body) {
-    console.error("Body element not found");
-    return;
-  }
+  assertDefined(body, "Body element not found");
   body.classList.toggle("white");
   body.classList.toggle("black");
 
@@ -137,10 +125,7 @@ function invertColors() {
  * @returns void
  */
 function setTransparency(t: number) {
-  if (!ispy.scene) {
-    console.error("Scene is not defined");
-    return;
-  }
+  assertDefined(ispy.scene, "Scene is not defined");
   ispy.importTransparency = t;
 
   getHTMLObject("trspy").innerHTML = t.toString();
@@ -165,14 +150,8 @@ function setTransparency(t: number) {
  * Adjusts the configuration to the new window size.
  */
 function onWindowResize() {
-  if (!ispy.camera) {
-    console.error("Camera is not defined");
-    return;
-  }
-  if (!ispy.renderer) {
-    console.error("Renderer is not defined");
-    return;
-  }
+  assertDefined(ispy.camera, "Camera is not defined");
+  assertDefined(ispy.renderer, "Renderer is not defined");
   const display = getHTMLObject("display");
   display.removeAttribute("style");
 
@@ -364,10 +343,7 @@ function displayEventObjectData() {
  * @returns void
  */
 function highlightObject(objectId: number) {
-  if (!ispy.scene) {
-    console.error("Scene is not defined");
-    return;
-  }
+  assertDefined(ispy.scene, "Scene is not defined");
   const selected = ispy.scene.getObjectById(Number(objectId));
 
   document.body.style.cursor = "pointer";
@@ -403,10 +379,7 @@ function unHighlightObject() {
  * @returns void
  */
 function resetView() {
-  if (!ispy.controls) {
-    console.error("Controls are not defined");
-    return;
-  }
+  assertDefined(ispy.controls, "Controls are not defined");
   setPerspective();
   initCamera();
 
@@ -425,10 +398,7 @@ function resetView() {
  * @returns void
  */
 function setXY() {
-  if (!ispy.camera) {
-    console.error("Camera is not defined");
-    return;
-  }
+  assertDefined(ispy.camera, "Camera is not defined");
   const length = ispy.camera.position.length();
 
   ispy.camera.position.x = 0;
@@ -444,10 +414,7 @@ function setXY() {
  * @returns void
  */
 function setZX() {
-  if (!ispy.camera) {
-    console.error("Camera is not defined");
-    return;
-  }
+  assertDefined(ispy.camera, "Camera is not defined");
   const length = ispy.camera.position.length();
 
   ispy.camera.position.x = 0;
@@ -463,10 +430,7 @@ function setZX() {
  * @returns void
  */
 function setYZ() {
-  if (!ispy.camera) {
-    console.error("Camera is not defined");
-    return;
-  }
+  assertDefined(ispy.camera, "Camera is not defined");
   const length = ispy.camera.position.length();
 
   ispy.camera.position.x = -length;
@@ -482,14 +446,9 @@ function setYZ() {
  * @returns void
  */
 function setOrthographic() {
-  if (!ispy.o_camera || !ispy.p_camera) {
-    console.error("Orthographic or Perspective camera is not defined");
-    return;
-  }
-  if (!ispy.controls) {
-    console.error("Controls are not defined");
-    return;
-  }
+  assertDefined(ispy.o_camera, "Orthographic camera is not defined");
+  assertDefined(ispy.p_camera, "Perspective camera is not defined");
+  assertDefined(ispy.controls, "Controls are not defined");
   getHTMLObject("perspective").classList.remove("active");
   getHTMLObject("orthographic").classList.add("active");
 
@@ -532,14 +491,9 @@ function setOrthographic() {
  * @returns void
  */
 function setPerspective() {
-  if (!ispy.o_camera || !ispy.p_camera) {
-    console.error("Orthographic or Perspective camera is not defined");
-    return;
-  }
-  if (!ispy.controls) {
-    console.error("Controls are not defined");
-    return;
-  }
+  assertDefined(ispy.o_camera, "Orthographic camera is not defined");
+  assertDefined(ispy.p_camera, "Perspective camera is not defined");
+  assertDefined(ispy.controls, "Controls are not defined");
   getHTMLObject("perspective").classList.add("active");
   getHTMLObject("orthographic").classList.remove("active");
 
@@ -567,10 +521,7 @@ function setPerspective() {
  * @returns void
  */
 function showView(view: string) {
-  if (!ispy.controls) {
-    console.error("Controls are not defined");
-    return;
-  }
+  assertDefined(ispy.controls, "Controls are not defined");
   switch (view) {
     case "3D":
       getHTMLObject("3d").classList.add("active");

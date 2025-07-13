@@ -1,9 +1,7 @@
-// import { Data, newPlot } from "plotly.js";
 import swal from "sweetalert";
 
 import { ispy, analysis } from "./config.js";
-import { getCurrentEvent, EventCollection, getCurrentIndex } from "./utils.js";
-
+import { getCurrentEvent, EventCollection, getCurrentIndex, assertDefined } from "./utils.js";
 import { Particle, FourVector, MET } from "./ispy.interfaces.js";
 
 // Helper functions to check the selection
@@ -124,11 +122,13 @@ function checkIfEventPassing(event_index: number | string = -1): boolean | undef
  */
 function getCurrentSelectionMessage(): [string, string] {
   const pass = checkIfEventPassing();
+  const numPassing = getPassingEvents().length;
   if (pass === undefined) {
     return ["No event file is loaded!", "error"];
   }
   let html = "This Event ";
   html += `${pass ? "passes" : "does not pass"} the selection!`;
+  html += `\nThere are currently ${numPassing} events passing this selection.`;
   const symbol = pass ? "success" : "warning";
   return [html, symbol];
 }
@@ -205,9 +205,7 @@ function buildFileSummary(): void {
   $("#loading").modal("hide");
   $("#building").modal("show");
   try {
-    if (!ispy.ig_data) {
-      throw new Error("No event data loaded!");
-    }
+    assertDefined(ispy.ig_data, "No event data is loaded!");
     // get the event data
     event_summary = new EventCollection(ispy.event_list, ispy.ig_data);
 
