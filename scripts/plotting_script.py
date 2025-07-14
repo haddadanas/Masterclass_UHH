@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import argparse
-from glob import glob
 from collections import defaultdict
+from datetime import datetime
+from glob import glob
 
 import matplotlib.pyplot as plt
 import mplhep as hep  # type: ignore
@@ -11,10 +12,10 @@ import mplhep as hep  # type: ignore
 def parser_setup() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="plotting_script.py", description="Plotting script")
     parser.add_argument("--input", "-i", type=str, help="Input Folder; defaults to './'", default="./")
-    parser.add_argument("--output", "-o", type=str, help="Output file with extension; defaults to './output.png'", default="./output.png")
+    parser.add_argument("--output", "-o", type=str, help="Output file with extension; defaults to './*current date*.png'", default=None)
     parser.add_argument(
-        "--channel", "-c", type=str, nargs="*", choices=["Higgs", "W", "Z", "all"], default=["Higgs", "Z"],
-        help="Channel to plot; default plots all channels.",
+        "--channel", "-c", type=str, nargs="*", choices=["Higgs", "W", "Z", "all"], default=None,
+        help="Channel(s) to plot; defaults to Higgs and Z channels.",
     )
     parser.add_argument("--min", "-m", type=float, default=10.0, help="minimum value for the histogram; default is 10.0")
     parser.add_argument("--unstack", "-u", action='store_true', default=False, help="Unstack the histograms; default is stacked")
@@ -24,7 +25,12 @@ def parser_setup() -> argparse.ArgumentParser:
 
 
 def get_files_by_channel(channel: str, input_folder: str) -> dict[str, list[str]]:
-    channels = ["Higgs", "W", "Z"] if channel == "all" else [channel]
+    if not channel:
+        channels = ["Higgs", "Z"]
+    elif channel == "all":
+        channels = ["Higgs", "W", "Z"]
+    else:
+        channels = list(channel)
     if "W" in channels:
         channels.extend(["Wp", "Wm"])
         channels.remove("W")
@@ -151,6 +157,8 @@ def plot_masses(reader: MassReader, unstack: bool, output: str, **kwargs):
 def main():
     parser = parser_setup()
     args = parser.parse_args()
+    if args.output is None:
+        args.output = f"./{datetime.now().strftime('%d%m%Y')}.png"
     files = get_files_by_channel(args.channel, args.input)
     if not files:
         raise Exception(f"No files found for channel '{args.channel}' in folder '{args.input}'")
