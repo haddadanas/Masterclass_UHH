@@ -442,11 +442,11 @@ ispy.addControllers = function(group) {
     min_pt: min_pt,
     Electrons: visible,
     Muons: visible,
-    Photons: visible,
+    Photons: false,
     Jets: hidden,
     MET: hidden,
     "Jet: min Et": jet_min_et,
-    "Additional Tracks": visible
+    "Additional Tracks": false,
   };
 
   gui_elem = ispy.guiReduced;

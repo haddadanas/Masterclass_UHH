@@ -277,28 +277,28 @@ ispy.event_description = {
 	    selection: {"min_energy": 0.01}
     },
     "Tracks_V1": {
-	    type: ispy.ASSOC, on: true, group: "Tracking", name: "Tracks (reco.)",
+	    type: ispy.ASSOC, on: false, group: "Tracking", name: "Tracks (reco.)",
 	    extra: "Extras_V1", assoc: "TrackExtras_V1",
 	    fn: ispy.makeTracks, style: {color: "rgb(100%, 100%, 0%)",
 					 opacity: 0.5, lineCaps: "square", linewidth: 1},
 	    selection: {"min_pt": 1.0, index: 2}
     },
     "Tracks_V2": {
-	    type: ispy.ASSOC, on: true, group: "Tracking", name: "Tracks (reco.)",
+	    type: ispy.ASSOC, on: false, group: "Tracking", name: "Tracks (reco.)",
 	    extra: "Extras_V1", assoc: "TrackExtras_V1",
 	    fn: ispy.makeTracks, style: {color: "rgb(100%, 100%, 0%)",
 					 opacity: 0.5, lineCaps: "square", linewidth: 1},
 	    selection: {"min_pt": 1.0, "index": 2}
     },
     "Tracks_V3": {
-	    type: ispy.ASSOC, on: true, group: "Tracking", name: "Tracks (reco.)",
+	    type: ispy.ASSOC, on: false, group: "Tracking", name: "Tracks (reco.)",
 	    extra: "Extras_V1", assoc: "TrackExtras_V1",
 	    fn: ispy.makeTracks, style: {color: "rgb(100%, 100%, 0%)",
 					 opacity: 0.5, lineCaps: "square", linewidth: 1},
 	    selection: {"min_pt": 1.0, "index": 2}
     },
     "Tracks_V4": {
-	    type: ispy.ASSOC, on: true, group: "Tracking", name: "Tracks (reco.)",
+	    type: ispy.ASSOC, on: false, group: "Tracking", name: "Tracks (reco.)",
 	    extra: "Extras_V1", assoc: "TrackExtras_V1",
 	    fn: ispy.makeTracks, style: {color: "rgb(100%, 100%, 0%)",
 					 opacity: 0.5, lineCaps: "square", linewidth: 1},
@@ -460,11 +460,11 @@ ispy.event_description = {
 	    fn: ispy.makeJet, style: {color: "rgb(100%, 50%, 0%)", opacity: 0.3}, selection: {"min_et": 10.0}
     },
     "Photons_V1": {
-	    type: ispy.SHAPE, on: true, group: "Physics", name: "Photons (Reco)",
+	    type: ispy.SHAPE, on: false, group: "Physics", name: "Photons (Reco)",
 	    fn: ispy.makePhoton, style: {color: "rgb(67%, 0%, 100%)", opacity: 1.0, linewidth: 2}, selection: {"min_energy": 10.0}
     },
     "PATPhotons_V1": {
-	    type: ispy.SHAPE, on: true, group: "Physics", name: "Photons (PAT)",
+	    type: ispy.SHAPE, on: false, group: "Physics", name: "Photons (PAT)",
 	    fn: ispy.makePhoton, style: {color: "rgb(67%, 0%, 100%)", opacity: 1.0, linewidth: 2}, selection: {"min_energy":10.0}
     },
     "GlobalMuons_V1": {
@@ -627,28 +627,28 @@ ispy.event_description = {
 	    selection: {"min_energy": 0.01}
     },
     "Tracks_V1": {
-	    type: ispy.ASSOC, on: true, group: "Tracking", name: "Tracks (reco.)",
+	    type: ispy.ASSOC, on: false, group: "Tracking", name: "Tracks (reco.)",
 	    extra: "Extras_V1", assoc: "TrackExtras_V1",
 	    fn: ispy.makeTracks, style: {color: "rgb(100%, 100%, 0%)",
 					 opacity: 0.5, lineCaps: "square", linewidth: 1},
 	    selection: {"min_pt": 1.0, index: 2}
     },
     "Tracks_V2": {
-	    type: ispy.ASSOC, on: true, group: "Tracking", name: "Tracks (reco.)",
+	    type: ispy.ASSOC, on: false, group: "Tracking", name: "Tracks (reco.)",
 	    extra: "Extras_V1", assoc: "TrackExtras_V1",
 	    fn: ispy.makeTracks, style: {color: "rgb(100%, 100%, 0%)",
 					 opacity: 0.5, lineCaps: "square", linewidth: 1},
 	    selection: {"min_pt": 1.0, "index": 2}
     },
     "Tracks_V3": {
-	    type: ispy.ASSOC, on: true, group: "Tracking", name: "Tracks (reco.)",
+	    type: ispy.ASSOC, on: false, group: "Tracking", name: "Tracks (reco.)",
 	    extra: "Extras_V1", assoc: "TrackExtras_V1",
 	    fn: ispy.makeTracks, style: {color: "rgb(100%, 100%, 0%)",
 					 opacity: 0.5, lineCaps: "square", linewidth: 1},
 	    selection: {"min_pt": 1.0, "index": 2}
     },
     "Tracks_V4": {
-	    type: ispy.ASSOC, on: true, group: "Tracking", name: "Tracks (reco.)",
+	    type: ispy.ASSOC, on: false, group: "Tracking", name: "Tracks (reco.)",
 	    extra: "Extras_V1", assoc: "TrackExtras_V1",
 	    fn: ispy.makeTracks, style: {color: "rgb(100%, 100%, 0%)",
 					 opacity: 0.5, lineCaps: "square", linewidth: 1},
@@ -810,7 +810,7 @@ ispy.event_description = {
 	    fn: ispy.makeJet, style: {color: "rgb(100%, 50%, 0%)", opacity: 0.3}, selection: {"min_et": 10.0}
     },
     "Photons_V1": {
-	    type: ispy.SHAPE, on: true, group: "Physics", name: "Photons (Reco)",
+	    type: ispy.SHAPE, on: false, group: "Physics", name: "Photons (Reco)",
 	    fn: ispy.makePhoton, style: {color: "rgb(67%, 0%, 100%)", opacity: 1.0, linewidth: 2}, selection: {"min_energy": 10.0}
     },
     "PATPhotons_V1": {
@@ -997,28 +997,28 @@ ispy.event_description = {
 	    selection: {"min_energy": 0.01}
     },
     "Tracks_V1": {
-	    type: ispy.ASSOC, on: true, group: "Tracking", name: "Tracks (reco.)",
+	    type: ispy.ASSOC, on: false, group: "Tracking", name: "Tracks (reco.)",
 	    extra: "Extras_V1", assoc: "TrackExtras_V1",
 	    fn: ispy.makeTracksRZ, style: {color: "rgb(100%, 100%, 0%)",
 					 opacity: 0.5, lineCaps: "square", linewidth: 1},
 	    selection: {"min_pt": 1.0, index: 2}
     },
     "Tracks_V2": {
-	    type: ispy.ASSOC, on: true, group: "Tracking", name: "Tracks (reco.)",
+	    type: ispy.ASSOC, on: false, group: "Tracking", name: "Tracks (reco.)",
 	    extra: "Extras_V1", assoc: "TrackExtras_V1",
 	    fn: ispy.makeTracksRZ, style: {color: "rgb(100%, 100%, 0%)",
 					 opacity: 0.5, lineCaps: "square", linewidth: 1},
 	    selection: {"min_pt": 1.0, "index": 2}
     },
     "Tracks_V3": {
-	    type: ispy.ASSOC, on: true, group: "Tracking", name: "Tracks (reco.)",
+	    type: ispy.ASSOC, on: false, group: "Tracking", name: "Tracks (reco.)",
 	    extra: "Extras_V1", assoc: "TrackExtras_V1",
 	    fn: ispy.makeTracksRZ, style: {color: "rgb(100%, 100%, 0%)",
 					 opacity: 0.5, lineCaps: "square", linewidth: 1},
 	    selection: {"min_pt": 1.0, "index": 2}
     },
     "Tracks_V4": {
-	    type: ispy.ASSOC, on: true, group: "Tracking", name: "Tracks (reco.)",
+	    type: ispy.ASSOC, on: false, group: "Tracking", name: "Tracks (reco.)",
 	    extra: "Extras_V1", assoc: "TrackExtras_V1",
 	    fn: ispy.makeTracksRZ, style: {color: "rgb(100%, 100%, 0%)",
 					 opacity: 0.5, lineCaps: "square", linewidth: 1},
@@ -1172,7 +1172,7 @@ ispy.event_description = {
 	    fn: ispy.makeJetRZ, style: {color: "rgb(100%, 50%, 0%)", opacity: 0.3}, selection: {"min_et": 10.0}
     },
     "Photons_V1": {
-	    type: ispy.SHAPE, on: true, group: "Physics", name: "Photons (Reco)",
+	    type: ispy.SHAPE, on: false, group: "Physics", name: "Photons (Reco)",
 	    fn: ispy.makePhotonRZ, style: {color: "rgb(67%, 0%, 100%)", opacity: 1.0, linewidth: 2}, selection: {"min_energy": 10.0}
     },
     "PATPhotons_V1": {
