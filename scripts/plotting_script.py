@@ -30,7 +30,7 @@ def get_files_by_channel(channel: str, input_folder: str) -> dict[str, list[str]
     elif channel == "all":
         channels = ["Higgs", "W", "Z"]
     else:
-        channels = list(channel)
+        channels = channel if isinstance(channel, list) else [channel]
     if "W" in channels:
         channels.extend(["Wp", "Wm"])
         channels.remove("W")
