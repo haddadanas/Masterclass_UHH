@@ -95,16 +95,18 @@ class MassReader:
     def w_ratio(self):
         """ Calculates the ratio of W+ to W- events.
         """
-        wp = self.data["Wp"]
-        wm = self.data["Wm"]
+        wp = len(self.data["Wp"])
+        wm = len(self.data["Wm"])
 
         print(40 * "*")
         print("***\tCalculating W+ to W- ratio...")
-        if len(wm) == 0:
+        if wm == 0:
             print("!!!\tNo W- events found. Skipping W+ to W- ratio calculation.")
         else:
-            print(f"***\tFound: {len(wp)} W+ events and {len(wm)} W- events.")
-            print(f"***\tW+ to W- ratio: {len(wp) / len(wm)}")
+            w_ratio = wp / wm
+            w_error = np.sqrt(w_ratio / wm * (1 + w_ratio))
+            print(f"***\tFound: {wp} W+ events and {wm} W- events.")
+            print(f"***\tW+ to W- ratio: {w_ratio} ± {w_error} (stat)")
         print(40 * "*")
 
     def items(self) -> tuple[list[str], list[list[float]]]:

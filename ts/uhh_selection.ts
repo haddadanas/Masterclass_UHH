@@ -188,7 +188,7 @@ function getPassingEvents(): string[] {
     }
   }
 
-  return passing_events;
+  return passing_events.sort((a, b) => Number(a) - Number(b));
 }
 
 /**
