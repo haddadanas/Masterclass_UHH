@@ -624,6 +624,12 @@ function initSelectionFields() {
     if (["TrackerMuons", "GsfElectrons", "Photons", "maxMETs"].includes(key)) {
       createCheckboxContainer(cont);
     }
+    if (key === "pt") {
+      cont.onFinishChange(function (this: SelectionFieldController, value: number) {
+        if (value < 0) this.setValue(0);
+        ispy.subfoldersReduced.Controllers.find((c) => c.property === "min_pt")?.setValue(value);
+      });
+    }
   });
 
   // add all controllers to the reduced subfolders for convenience
