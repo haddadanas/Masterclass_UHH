@@ -24,7 +24,7 @@ def parser_setup() -> argparse.ArgumentParser:
     return parser
 
 
-def get_files_by_channel(channel: str, input_folder: str) -> dict[str, list[str]]:
+def get_files_by_channel(channel: str | list[str] | None, input_folder: str) -> dict[str, list[str]]:
     if not channel:
         channels = ["Higgs", "Z"]
     elif channel == "all":
