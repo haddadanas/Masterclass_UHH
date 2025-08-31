@@ -173,7 +173,7 @@ class WReader(BaseReader):
         print(40 * "*")
         print("***\tCalculating W+ to W- ratio...")
         print(f"***\tFound: {self.wp} W+ events and {self.wm} W- events.")
-        print(f"***\tW+ to W- ratio: {self.w_ratio} ± {self.w_error} (stat)")
+        print(f"***\tW+ to W- ratio: {self.w_ratio:.5f} ± {self.w_error:.5f} (stat)")
         print(40 * "*")
 
 
