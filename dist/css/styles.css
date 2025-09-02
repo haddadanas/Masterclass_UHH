@@ -1,0 +1,108 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.toolbar {
+  background-color: initial;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  height: 8%;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+}
+
+.btn {
+  border-radius: 32px;
+  object-fit: contain;
+  overflow: hidden;
+  text-size-adjust: auto;
+  padding-left: 0.8vw;
+  font-size: medium;
+  padding-right: 0.8vw;
+  text-align: center;
+  justify-content: center;
+  background-color: white;
+  color: var(--bs-primary);
+  border-color: var(--bs-blue);
+}
+
+.btn.disabled {
+  background-color: var(--bs-gray);
+  color: var(--bs-gray-700);
+}
+
+.btn.active {
+  background-color: var(--bs-secondary-bg-subtle);
+  color: var(--bs-primary);
+}
+
+.dropdown-menu {
+  min-width: auto;
+  width: auto;
+  white-space: nowrap;
+}
+
+canvas.hover {
+  border: 5px dashed #cccccc;
+}
+
+.strikethrough {
+  position: relative;
+}
+
+.strikethrough:before {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: 50%;
+  right: 0;
+  border-top: 1px solid;
+  border-color: inherit;
+  -webkit-transform: rotate(-45deg);
+  -moz-transform: rotate(-45deg);
+  -ms-transform: rotate(-45deg);
+  -o-transform: rotate(-45deg);
+  transform: rotate(-45deg);
+}
+
+#stats {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+#fsp-slider {
+  width: 200px;
+}
+
+.bubble {
+  position: absolute;
+  background-color: #333;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  pointer-events: none;
+  z-index: 1000;
+  white-space: nowrap;
+}
+

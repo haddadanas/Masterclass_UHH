@@ -1,0 +1,60 @@
+header {
+  height: 5vh;
+  background-color: #1aa0dc;
+  font-family: monospace;
+  width: 100%;
+  display: flex;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+
+header span {
+  height: 100%;
+  top: 5%;
+  display: inline-block;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+header .btn-toolbar {
+  justify-self: right;
+  float: right;
+  display: flex;
+  margin-left: auto;
+  width: auto;
+}
+
+header .btn {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  height: 100%;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: 2px;
+  margin-left: 2px;
+}
+
+header a {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  height: 100%;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-right: 2px;
+  margin-left: 2px;
+  justify-content: center;
+  align-content: center;
+}
+
+header .btn-group {
+  height: 90%;
+  margin-top: initial;
+  margin-bottom: 0;
+  padding-right: 3px;
+  padding-left: 3px;
+  align-self: center;
+  justify-content: center;
+  display: flex;
+}
+

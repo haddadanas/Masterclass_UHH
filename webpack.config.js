@@ -32,6 +32,10 @@ module.exports = {
           to: "lib/bootstrap.min.js",
         },
         {
+          from: "node_modules/bootstrap/dist/css/bootstrap.min.css",
+          to: "css/bootstrap.min.css",
+        },
+        {
           from: "node_modules/jquery/dist/jquery.min.js",
           to: "lib/jquery.min.js",
         },

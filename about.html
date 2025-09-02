@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html data-bs-theme="light" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>About Masterclasses @ UHH</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/container.css">
+    <link rel="stylesheet" href="assets/css/gui_elements.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/modal.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body class="text-body bg-body">
+    <div class="container py-5">
+        <h1 class="mb-4">About</h1>
+        <h4>Masterclasses @ UHH (iSpy WebGL) <span id="version"></span></h4>
+        <p> This repository contains a modified version of the iSpy WebGL Event Display for the <a href="https://home.cern/science/experiments/cms">CMS Experiment</a>, adapted for the Masterclasses at the University of Hamburg. The original version was developed by <a href="https://github.com/9inpachi">F. Ali</a>, <a href="https://github.com/lukebarnard">L. Barnard</a>, <a href="https://github.com/hategan">M. Hategan</a>, <a href="https://github.com/SeungJunLee0">S. Lee</a>, <a href="https://github.com/carpppa">C. Logrén</a>, <a href="https://github.com/tpmccauley">T. McCauley</a>, <a href="https://github.com/phongn">P. Nguyen</a>, <a href="https://github.com/msaunby">M. Saunby</a>. </p>
+        <p><a href="https://github.com/haddadanas/Masterclass_UHH" target="_blank">Source Code</a></p>
+        <p> Reference: <a href="https://doi.org/10.1088/1742-6596/898/7/072030" target="_blank"> T McCauley 2017 J. Phys.: Conf. Ser. 898 072030 </a></p>
+        <h5>This application uses:</h5>
+        <ul>
+            <li><a href="https://threejs.org" target="_blank">three.js</a><span id="threejs"></span></li>
+            <li><a href="https://sweetalert.js.org/" target="_blank">sweetalert.js</a><span id="sweetalert"></span></li>
+            <li><a href="https://plotly.com/javascript/" target="_blank">plotly.js</a><span id="plotly"></span></li>
+        </ul>
+    </div><script>
+    // if you want to populate the version numbers dynamically:
+    document.getElementById('version').textContent = window.iSpyVersion || '';
+    // similar for #threejs, #sweetalert, #plotly...
+  </script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>

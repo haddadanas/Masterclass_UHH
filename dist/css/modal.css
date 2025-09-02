@@ -1,0 +1,206 @@
+.modal.in .modal-dialog {
+  margin: 0 auto;
+  top: 40%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+}
+
+#progress .modal-content {
+  transform: translateY(+100%);
+  -webkit-transform: translateY(+100%);
+  -ms-transform: translateY(+100%);
+  -moz-transform: translateY(+100%);
+}
+
+#progress .modal-content.black {
+  background-color: var(--bs-gray-700);
+}
+
+#progress .modal-content.white {
+  background-color: #cccccc;
+}
+
+.progress-bar {
+  background-color: #1aa0dc;
+  color: #1aa0dc;
+}
+
+#settings label {
+  padding-right: 5px;
+  background-color: var(--bs-border-color-translucent);
+}
+
+#setting :is(label.black, input.black) {
+  color: white;
+}
+
+#setting :is(label.white, input.white) {
+  color: black;
+}
+
+.modal-dialog button.close {
+  color: red;
+  text-shadow: none;
+  opacity: 1.0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: var(--bs-border-color-translucent);
+  border: none;
+  padding: 10px;
+  margin-right: 10px;
+}
+
+.modal-content.black {
+  color: white;
+  background-color: black;
+}
+
+.modal-content.white {
+  color: black;
+  background-color: #cccccc;
+}
+
+.modal-content div {
+  border: none;
+}
+
+#loading .modal-content {
+  width: 50%;
+  text-align: center;
+  transform: translateX(50%);
+  -webkit-transform: translateX(50%);
+  -ms-transform: translateX(50%);
+  -moz-transform: translateX(50%);
+  background-color: #1aa0dc;
+}
+
+#building .modal-content {
+  width: 70%;
+  text-align: center;
+  transform: translateX(30%);
+  -webkit-transform: translateX(30%);
+  -ms-transform: translateX(30%);
+  -moz-transform: translateX(30%);
+  background-color: #1aa0dc;
+}
+
+#browser-events td.black {
+  background-color: #303030;
+}
+
+#browser-events td.white {
+  background-color: white;
+}
+
+#files .modal-body {
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
+#files a {
+  cursor: pointer;
+}
+
+#files td.black {
+  color: white;
+}
+
+#files td.white {
+  color: black;
+}
+
+#data-EventObjects .modal-content {
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
+#data-EventObjects a {
+  cursor: pointer;
+}
+
+#data-EventObjects .black {
+  color: white;
+  background-color: black;
+}
+
+#data-EventObjects .white {
+  color: black;
+  background-color: white;
+}
+
+#data-EventObjects .group {
+  background-color: black;
+  color: white;
+}
+
+#geometry-files .modal-body {
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
+#geometry-files .td.black {
+  color: white;
+}
+
+#geometry-files .td.white {
+  color: black;
+}
+
+#selected-event, #selected-obj {
+  border: 1px solid #ccc;
+  width: 100%;
+  text-align: left;
+  padding-left: 20px;
+}
+
+#event-buttons {
+  padding-top: 10px;
+}
+
+#browser-table.white, #obj-table.white {
+  background-color: white;
+  color: black;
+}
+
+#browser-table.black, #obj-table.black {
+  background-color: black;
+  color: white;
+}
+
+#browser-table th.black, #obj-table th.black {
+  background-color: #202020;
+  color: white;
+}
+
+#browser-table th.white, #obj-table th.white {
+  background-color: #cccccc;
+  color: black;
+}
+
+#browser-table.black td, #obj-table.black td {
+  background-color: #303030;
+}
+
+#browser-table.white td, #obj-table.white td {
+  background-color: white;
+}
+
+#browser-table.black td > a, #obj-table.black td > a {
+  color: white;
+}
+
+#browser-table.white td > a, #obj-table.white td > a {
+  color: black;
+}
+
+#browser-files td, #obj-files td {
+  border: 0;
+}
+
+#browser-events td {
+  border: 0;
+}
+
