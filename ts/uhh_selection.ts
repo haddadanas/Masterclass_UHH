@@ -1,7 +1,7 @@
 import swal from "sweetalert";
 
 import { ispy, analysis } from "./config.js";
-import { getCurrentEvent, EventCollection, getCurrentIndex, assertDefined } from "./utils.js";
+import { getCurrentEvent, EventCollection, getCurrentIndex, assertDefined, getHTMLObject } from "./utils.js";
 import { Particle, FourVector, MET } from "./ispy.interfaces.js";
 
 // Helper functions to check the selection
@@ -196,11 +196,7 @@ function getPassingEvents(): string[] {
  */
 function buildFileSummary(): void {
   let event_summary: EventCollection;
-  let analysisBtn = document.getElementById("js-analysis-btn");
-  const downloadBtn = document.getElementById("save-csv-btn");
-  if (!analysisBtn) {
-    analysisBtn = document.createElement("button");
-  }
+  const downloadBtn = getHTMLObject("js-save-csv-btn");
 
   $("#loading").modal("hide");
   $("#building").modal("show");
@@ -213,10 +209,8 @@ function buildFileSummary(): void {
     analysis.file_events_summary = event_summary.events;
 
     // enable the analysis button
-    (analysisBtn as HTMLButtonElement).disabled = false;
     (downloadBtn as HTMLButtonElement).disabled = false;
   } catch (err) {
-    (analysisBtn as HTMLButtonElement).disabled = true;
     (downloadBtn as HTMLButtonElement).disabled = true;
 
     // create and display an error message

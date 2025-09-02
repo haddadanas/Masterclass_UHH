@@ -385,9 +385,9 @@ function resetView() {
 
   ispy.controls.reset();
 
-  getHTMLObject("3d").classList.add("active");
-  getHTMLObject("rphi").classList.remove("active");
-  getHTMLObject("rhoz").classList.remove("active");
+  getHTMLObject("js-3d").classList.add("active");
+  getHTMLObject("js-rphi").classList.remove("active");
+  getHTMLObject("js-rhoz").classList.remove("active");
 
   ispy.current_view = "3D";
   ispy.scene = ispy.scenes["3D"];
@@ -449,8 +449,8 @@ function setOrthographic() {
   assertDefined(ispy.o_camera, "Orthographic camera is not defined");
   assertDefined(ispy.p_camera, "Perspective camera is not defined");
   assertDefined(ispy.controls, "Controls are not defined");
-  getHTMLObject("perspective").classList.remove("active");
-  getHTMLObject("orthographic").classList.add("active");
+  getHTMLObject("js-perspective").classList.remove("active");
+  getHTMLObject("js-orthographic").classList.add("active");
 
   ispy.is_perspective = false;
   ispy.camera = ispy.o_camera;
@@ -494,8 +494,8 @@ function setPerspective() {
   assertDefined(ispy.o_camera, "Orthographic camera is not defined");
   assertDefined(ispy.p_camera, "Perspective camera is not defined");
   assertDefined(ispy.controls, "Controls are not defined");
-  getHTMLObject("perspective").classList.add("active");
-  getHTMLObject("orthographic").classList.remove("active");
+  getHTMLObject("js-perspective").classList.add("active");
+  getHTMLObject("js-orthographic").classList.remove("active");
 
   ispy.is_perspective = true;
   ispy.camera = ispy.p_camera;
@@ -524,16 +524,16 @@ function showView(view: string) {
   assertDefined(ispy.controls, "Controls are not defined");
   switch (view) {
     case "3D":
-      getHTMLObject("3d").classList.add("active");
-      getHTMLObject("rphi").classList.remove("active");
-      getHTMLObject("rhoz").classList.remove("active");
+      getHTMLObject("js-3d").classList.add("active");
+      getHTMLObject("js-rphi").classList.remove("active");
+      getHTMLObject("js-rhoz").classList.remove("active");
 
-      getHTMLObject("perspective").removeAttribute("disabled");
-      getHTMLObject("orthographic").removeAttribute("disabled");
+      getHTMLObject("js-perspective").removeAttribute("disabled");
+      getHTMLObject("js-orthographic").removeAttribute("disabled");
 
-      getHTMLObject("xy").removeAttribute("disabled");
-      getHTMLObject("yz").removeAttribute("disabled");
-      getHTMLObject("xz").removeAttribute("disabled");
+      getHTMLObject("js-xy").removeAttribute("disabled");
+      getHTMLObject("js-yz").removeAttribute("disabled");
+      getHTMLObject("js-xz").removeAttribute("disabled");
 
       (ispy.controls as OrbitControls).enableRotate = true;
 
@@ -544,16 +544,16 @@ function showView(view: string) {
       break;
 
     case "RPhi":
-      getHTMLObject("3d").classList.remove("active");
-      getHTMLObject("rphi").classList.add("active");
-      getHTMLObject("rhoz").classList.remove("active");
+      getHTMLObject("js-3d").classList.remove("active");
+      getHTMLObject("js-rphi").classList.add("active");
+      getHTMLObject("js-rhoz").classList.remove("active");
 
-      getHTMLObject("perspective").setAttribute("disabled", "");
-      getHTMLObject("orthographic").setAttribute("disabled", "");
+      getHTMLObject("js-perspective").setAttribute("disabled", "");
+      getHTMLObject("js-orthographic").setAttribute("disabled", "");
 
-      getHTMLObject("xy").setAttribute("disabled", "");
-      getHTMLObject("yz").setAttribute("disabled", "");
-      getHTMLObject("xz").setAttribute("disabled", "");
+      getHTMLObject("js-xy").setAttribute("disabled", "");
+      getHTMLObject("js-yz").setAttribute("disabled", "");
+      getHTMLObject("js-xz").setAttribute("disabled", "");
 
       (ispy.controls as OrbitControls).enableRotate = false;
       ispy.controls.reset();
@@ -566,16 +566,16 @@ function showView(view: string) {
       break;
 
     case "RhoZ":
-      getHTMLObject("3d").classList.remove("active");
-      getHTMLObject("rphi").classList.remove("active");
-      getHTMLObject("rhoz").classList.add("active");
+      getHTMLObject("js-3d").classList.remove("active");
+      getHTMLObject("js-rphi").classList.remove("active");
+      getHTMLObject("js-rhoz").classList.add("active");
 
-      getHTMLObject("perspective").setAttribute("disabled", "");
-      getHTMLObject("orthographic").setAttribute("disabled", "");
+      getHTMLObject("js-perspective").setAttribute("disabled", "");
+      getHTMLObject("js-orthographic").setAttribute("disabled", "");
 
-      getHTMLObject("xy").setAttribute("disabled", "");
-      getHTMLObject("yz").setAttribute("disabled", "");
-      getHTMLObject("xz").setAttribute("disabled", "");
+      getHTMLObject("js-xy").setAttribute("disabled", "");
+      getHTMLObject("js-yz").setAttribute("disabled", "");
+      getHTMLObject("js-xz").setAttribute("disabled", "");
 
       (ispy.controls as OrbitControls).enableRotate = false;
       ispy.controls.reset();

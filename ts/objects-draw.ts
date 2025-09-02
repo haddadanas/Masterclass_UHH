@@ -3198,7 +3198,7 @@ function makeEvent(data: DataArray) {
   et += `Data recorded: ${time}</br>`;
   et += `Run / Event / LS: ${run} / ${event} / ${ls}</br>`;
 
-  const eventText = getHTMLObject("event-text");
+  const eventText = getHTMLObject("js-event-text");
   eventText.innerHTML = et;
   getHTMLObject("display").appendChild(getHTMLObject("event-info"));
 }
