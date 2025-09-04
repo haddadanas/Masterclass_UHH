@@ -76,7 +76,7 @@ function toggle(key: string) {
   // For event information we display as simple HTML
   // so therefore not part of the scene
   if (key.includes("Event")) {
-    const event_text = getHTMLObject("js-event-text");
+    const event_text = getHTMLObject("event-text");
     if (disabled[key]) {
       event_text.style.display = "none";
     } else {

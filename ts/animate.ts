@@ -115,7 +115,7 @@ export function toggleAnimation() {
 
   ispy.animating = !ispy.animating;
 
-  const animateElement = getHTMLObject("js-animate");
+  const animateElement = getHTMLObject("animate");
   animateElement.classList.toggle("active");
 
   if (ispy.animating) {

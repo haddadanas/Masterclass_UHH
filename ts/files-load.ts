@@ -115,15 +115,15 @@ function enableNextPrevSelected() {
   const selectedEvents = getPassingEvents() || [];
 
   if (selectedEvents.length > 0 && ispy.event_index > Number(selectedEvents[0])) {
-    getHTMLObject("js-prev-sel-event").classList.remove("disabled");
+    getHTMLObject("prev-sel-event").classList.remove("disabled");
   } else {
-    getHTMLObject("js-prev-sel-event").classList.add("disabled");
+    getHTMLObject("prev-sel-event").classList.add("disabled");
   }
 
   if (selectedEvents.length > 0 && ispy.event_index < Number(selectedEvents[selectedEvents.length - 1])) {
-    getHTMLObject("js-next-sel-event").classList.remove("disabled");
+    getHTMLObject("next-sel-event").classList.remove("disabled");
   } else {
-    getHTMLObject("js-next-sel-event").classList.add("disabled");
+    getHTMLObject("next-sel-event").classList.add("disabled");
   }
 }
 

@@ -13,6 +13,7 @@ import {
   Font,
   DirectionalLight,
   Group,
+  REVISION,
   Scene,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -324,7 +325,7 @@ function handleToggles() {
   show_logo.checked = true;
 
   show_logo.addEventListener("change", (event: Event) => {
-    const cms_logo = getHTMLObject("js-cms-logo");
+    const cms_logo = getHTMLObject("cms-logo");
     return (event.target as HTMLInputElement).checked
       ? (cms_logo.style.display = "block")
       : (cms_logo.style.display = "none");
@@ -457,9 +458,9 @@ function init() {
     });
   });
 
-  // getHTMLObject("version").innerHTML = ispy.version;
-  // getHTMLObject("threejs").innerHTML = `r${REVISION}`;
-  // getHTMLObject("sweetalert").innerHTML = "2.1.0";
+  getHTMLObject("version").innerHTML = ispy.version;
+  getHTMLObject("threejs").innerHTML = `r${REVISION}`;
+  getHTMLObject("sweetalert").innerHTML = "2.1.0";
   // getHTMLObject("plotly").innerHTML = Plotly.version;
 
   window.addEventListener("resize", onWindowResize, false);

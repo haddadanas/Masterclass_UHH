@@ -1,13 +1,14 @@
 import { toggleAnimation } from "./animate.js";
 import {
   autoRotate,
+  enterFullscreen,
+  exitFullscreen,
   exportGLTF_binary,
   exportGLTF_text,
   exportOBJ,
   exportScene,
   printImage,
   reload,
-  toggleFullscreen,
 } from "./controls.js";
 import {
   invertColors,
@@ -41,7 +42,7 @@ import { event_description } from "./objects-config.js";
 import { updateRenderer, updateRendererInfo } from "./renderer.js";
 import { init, initLight, initControlPanel, run, setDisplayVerticalHeight, setFramerate } from "./setup.js";
 import { addGroups } from "./tree-view.js";
-import { buildFileSummary, createCSV } from "./uhh_selection.js";
+import { buildFileSummary, createCSV, getSelectionResults } from "./uhh_selection.js";
 import { getHTMLObject } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -55,20 +56,22 @@ document.addEventListener("DOMContentLoaded", () => {
   const jsZoomIn = getHTMLObject("js-zoom-in");
   const jsZoomOut = getHTMLObject("js-zoom-out");
   const jsAutorotate = getHTMLObject("js-autorotate");
-  const js3D = getHTMLObject("js-3d");
-  const jsRPhi = getHTMLObject("js-rphi");
-  const jsRhoZ = getHTMLObject("js-rhoz");
-  const jsXY = getHTMLObject("js-xy");
-  const jsYZ = getHTMLObject("js-yz");
-  const jsZX = getHTMLObject("js-xz");
-  const jsPerspective = getHTMLObject("js-perspective");
-  const jsOrthographic = getHTMLObject("js-orthographic");
-  const jsToggleFullscreen = getHTMLObject("js-toggle-fullscreen");
+  const js3D = getHTMLObject("3d");
+  const jsRPhi = getHTMLObject("rphi");
+  const jsRhoZ = getHTMLObject("rhoz");
+  const jsXY = getHTMLObject("xy");
+  const jsYZ = getHTMLObject("yz");
+  const jsZX = getHTMLObject("xz");
+  const jsPerspective = getHTMLObject("perspective");
+  const jsOrthographic = getHTMLObject("orthographic");
+  const jsEnterFullscreen = getHTMLObject("enterFullscreen");
+  const jsExitFullscreen = getHTMLObject("exitFullscreen");
   const jsRenderInfo = getHTMLObject("js-render-info");
-  const prevSelEvent = getHTMLObject("js-prev-sel-event");
-  const nextSelEvent = getHTMLObject("js-next-sel-event");
+  const jsAnalysisBtn = getHTMLObject("js-analysis-btn");
+  const prevSelEvent = getHTMLObject("prev-sel-event");
+  const nextSelEvent = getHTMLObject("next-sel-event");
   const jsPrintBtn = getHTMLObject("js-print-btn");
-  const jsAnimate = getHTMLObject("js-animate");
+  const jsAnimate = getHTMLObject("animate");
   const jsShowWebFilesBtn = getHTMLObject("js-show-webfiles-btn");
   const jsLocalFilesBtn = getHTMLObject("js-local-files-btn");
   const importFile = getHTMLObject("import-file");
@@ -105,8 +108,10 @@ document.addEventListener("DOMContentLoaded", () => {
   jsZX.addEventListener("click", setZX);
   jsPerspective.addEventListener("click", setPerspective);
   jsOrthographic.addEventListener("click", setOrthographic);
-  jsToggleFullscreen.addEventListener("click", toggleFullscreen);
+  jsEnterFullscreen.addEventListener("click", enterFullscreen);
+  jsExitFullscreen.addEventListener("click", exitFullscreen);
   jsRenderInfo.addEventListener("click", updateRendererInfo);
+  jsAnalysisBtn.addEventListener("click", getSelectionResults);
   prevSelEvent.addEventListener("click", prevSelectedEvent);
   nextSelEvent.addEventListener("click", nextSelectedEvent);
   jsPrintBtn.addEventListener("click", printImage);
