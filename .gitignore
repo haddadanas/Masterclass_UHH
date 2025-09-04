@@ -1,8 +1,6 @@
 .vscode/*
 node_modules/*
-dist/**/*.js
 dist/**/*.html
-dist/**/*.min.css
 js/*
 .DS_Store
 *.bsdesign

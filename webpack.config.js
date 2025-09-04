@@ -28,24 +28,16 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: "node_modules/bootstrap/dist/js/bootstrap.min.js",
-          to: "lib/bootstrap.min.js",
-        },
-        {
-          from: "node_modules/bootstrap/dist/css/bootstrap.min.css",
-          to: "css/bootstrap.min.css",
-        },
-        {
           from: "node_modules/jquery/dist/jquery.min.js",
-          to: "lib/jquery.min.js",
+          to: "js/jquery.min.js",
         },
         {
           from: "node_modules/stupid-table-plugin/stupidtable.min.js",
-          to: "lib/stupidtable.min.js",
+          to: "js/stupidtable.min.js",
         },
         {
           from: "node_modules/jquery.scrollintoview/jquery.scrollintoview.js",
-          to: "lib/jquery.scrollintoview.js",
+          to: "js/jquery.scrollintoview.js",
         },
       ],
     }),
