@@ -1,0 +1,27 @@
+.header-nav {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.header-event {
+  flex: 1 1 auto;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+#application-name {
+  flex: 0 0 auto;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+html[data-bs-theme="light"] #js-display-mode .fa-moon {
+  display: none;
+}
+
+html[data-bs-theme="dark"] #js-display-mode .fa-sun {
+  display: none;
+}
+
