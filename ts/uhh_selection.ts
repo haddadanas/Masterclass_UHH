@@ -1,7 +1,7 @@
 import swal from "sweetalert";
 
 import { ispy, analysis } from "./config.js";
-import { getCurrentEvent, EventCollection, getCurrentIndex, assertDefined } from "./utils.js";
+import { getCurrentEvent, EventCollection, getCurrentIndex, assertDefined, downloadData } from "./utils.js";
 import { Particle, FourVector, MET } from "./ispy.interfaces.js";
 
 // Helper functions to check the selection
@@ -378,13 +378,8 @@ function createCSV(category: string): string {
     csv += `${index},${m},${mt}\r\n`;
   });
   const encodedUri = encodeURI(csv);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
   const timestamp = new Date().toISOString().replace(/[:.]/g, "");
-  link.setAttribute("download", `${category}_results_${file_name}_${timestamp}.csv`);
-  document.body.appendChild(link); // Required for FF
-  link.click();
-  document.body.removeChild(link);
+  downloadData(encodedUri, `${category}_results_${file_name}_${timestamp}.csv`);
 
   return csv;
 }

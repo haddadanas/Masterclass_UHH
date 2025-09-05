@@ -25,3 +25,14 @@ html[data-bs-theme="dark"] #js-display-mode .fa-sun {
   display: none;
 }
 
+#js-toggle-fullscreen .fa-compress {
+  display: none;
+}
+
+#js-toggle-fullscreen.pressed .fa-expand {
+  display: none;
+}
+
+#js-toggle-fullscreen.pressed .fa-compress {
+  display: inline;
+}

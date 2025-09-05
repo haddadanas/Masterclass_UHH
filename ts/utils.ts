@@ -5,6 +5,7 @@ import { Material, Object3D } from "three";
 
 import { ispy } from "./config.js";
 import { Particle, EventObject, EventSummary, MET, FourVector, SelectionFieldController } from "./ispy.interfaces.js";
+import bootstrap from "bootstrap";
 
 const mMuon2 = 0.10566 * 0.10566;
 const mElectron2 = 0.511e-3 * 0.511e-3;
@@ -23,10 +24,7 @@ export function hasProperty<T extends object, K extends PropertyKey>(obj: T, pro
  * Asserts that a value is defined (not null or undefined).
  * @param value The value to assert is defined.
  */
-export function assertDefined<T>(
-  value: T | undefined | null,
-  msg = "Value is undefined or null",
-): asserts value is T {
+export function assertDefined<T>(value: T | undefined | null, msg = "Value is undefined or null"): asserts value is T {
   if (value === undefined || value === null) {
     throw new Error(msg);
   }
@@ -288,12 +286,12 @@ export function showTrackInfoBubble(intersectedObject: Object3D, pointer: { x: n
  * @param id The ID of the HTML object to retrieve.
  * @returns The HTML object with the specified ID.
  */
-export function getHTMLObject(id: string): HTMLElement {
+export function getHTMLObject<T extends HTMLElement>(id: string): T {
   const obj = document.getElementById(id);
   if (obj === null) {
     throw new Error(`Object with id ${id} not found.`);
   }
-  return obj;
+  return obj as T;
 }
 
 /**
@@ -330,6 +328,50 @@ export function toggleCollapse(key: string) {
       folder.close();
     }
   });
+}
+
+/**
+ * Toggle a dialog modal by its ID.
+ * @param id The ID of the dialog modal to toggle.
+ */
+export function toggleDialog(id: string) {
+  const dlg = bootstrap.Modal.getOrCreateInstance(getHTMLObject<HTMLDialogElement>(id));
+  dlg.toggle();
+}
+
+/**
+ * Toggle a dialog modal by its ID.
+ * @param id The ID of the dialog modal to toggle.
+ */
+export function showDialog(id: string) {
+  const dlg = bootstrap.Modal.getOrCreateInstance(getHTMLObject<HTMLDialogElement>(id));
+  dlg.show();
+}
+
+/**
+ * Toggle a dialog modal by its ID.
+ * @param id The ID of the dialog modal to toggle.
+ */
+export function hideDialog(id: string) {
+  const dlg = bootstrap.Modal.getOrCreateInstance(getHTMLObject<HTMLDialogElement>(id));
+  dlg.hide();
+}
+
+/**
+ * Create Download link for an ArrayBuffer and trigger the download.
+ * @param data The ArrayBuffer data to download.
+ * @param filename The name of the file to download.
+ * @returns void
+ */
+export function downloadData(content: string, filename: string) {
+  const link = document.createElement("a");
+  link.style.display = "none";
+  link.setAttribute("href", content);
+  link.setAttribute("download", filename);
+  link.setAttribute("target", "_blank");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 /**

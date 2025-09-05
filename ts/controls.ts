@@ -2,7 +2,7 @@ import { OBJExporter } from "three/examples/jsm/exporters/OBJExporter";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
 
 import { ispy } from "./config.js";
-import { assertDefined, getHTMLObject } from "./utils.js";
+import { assertDefined, downloadData, getHTMLObject } from "./utils.js";
 import { render } from "./renderer.js";
 
 /**
@@ -12,7 +12,7 @@ import { render } from "./renderer.js";
 function autoRotate() {
   ispy.autoRotating = !ispy.autoRotating;
 
-  getHTMLObject("js-autorotate").classList.toggle("active");
+  getHTMLObject<HTMLButtonElement>("js-autorotate").classList.toggle("active");
 }
 
 /**
@@ -20,7 +20,7 @@ function autoRotate() {
  * @returns void
  */
 function enterFullscreen() {
-  const container = document.getElementById("ispy");
+  const container = document.body;
   if (!container) {
     alert("Cannot find container element!");
     return;
@@ -60,15 +60,20 @@ function exitFullscreen() {
  * Toggles full screen mode.
  * @returns void
  */
-function toggleFullscreen() {
-  getHTMLObject("enterFullscreen").classList.toggle("active");
-  getHTMLObject("exitFullscreen").classList.toggle("active");
+function toggleFullscreen() { // TODO check if works properly
+  const fullscreenBtn = getHTMLObject<HTMLButtonElement>("js-toggle-fullscreen");
+  if (fullscreenBtn.classList.contains("pressed")) {
+    exitFullscreen();
+  } else {
+    enterFullscreen();
+  }
+  fullscreenBtn.classList.toggle("pressed");
 }
 
-document.addEventListener("webkitfullscreenchange", toggleFullscreen, false);
-document.addEventListener("mozfullscreenchange", toggleFullscreen, false);
-document.addEventListener("fullscreenchange", toggleFullscreen, false);
-document.addEventListener("MSFullscreenChange", toggleFullscreen, false);
+// document.addEventListener("webkitfullscreenchange", toggleFullscreen, false);
+// document.addEventListener("mozfullscreenchange", toggleFullscreen, false);
+// document.addEventListener("fullscreenchange", toggleFullscreen, false);
+// document.addEventListener("MSFullscreenChange", toggleFullscreen, false);
 
 /**
  * Reloads the page.
@@ -123,15 +128,7 @@ function exportString(output: BlobPart, filename: string) {
   const objectURL = URL.createObjectURL(blob);
 
   console.log(filename);
-
-  // Use this to output to file:
-  const link = document.createElement("a");
-  link.style.display = "none";
-  document.body.appendChild(link);
-  link.href = objectURL;
-  link.download = filename;
-  link.target = "_blank";
-  link.click();
+  downloadData(objectURL, filename);
 
   // Use this to output to tab:
   //window.open(objectURL, '_blank');
@@ -148,14 +145,7 @@ function exportArrayBuffer(output: BlobPart, filename: string) {
   const objectURL = URL.createObjectURL(blob);
 
   console.log(filename);
-
-  const link = document.createElement("a");
-  link.style.display = "none";
-  document.body.appendChild(link);
-  link.href = objectURL;
-  link.download = filename;
-  link.target = "_blank";
-  link.click();
+  downloadData(objectURL, filename);
 }
 
 /**
@@ -178,8 +168,6 @@ function exportGLTF_text() {
  */
 function exportGLTF(binary: boolean) {
   assertDefined(ispy.scene);
-  getHTMLObject("export-model").style.display = "none";
-  //$('#export-model').hide();
 
   const exporter = new GLTFExporter();
 
@@ -215,8 +203,6 @@ function exportGLTF(binary: boolean) {
  */
 function exportOBJ() {
   assertDefined(ispy.scene);
-  getHTMLObject("export-model").style.display = "none";
-  //$('#export-model').hide();
 
   const exporter = new OBJExporter();
 

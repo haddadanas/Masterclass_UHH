@@ -1,390 +1,246 @@
 <!DOCTYPE html>
-<html data-bs-theme="light" lang="en" data-bss-forced-theme="light" style="width:100%;height:100%;">
+<html data-bs-theme="dark" lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>masterclass_uhh</title>
-    <link rel="shortcut icon" href="./img/cms-favicon.png" type="image/png" />
-    <link rel="apple-touch-icon" href="./img/cms-favicon.png" type="image/png" />
+    <title>Masterclass: CMS Event Display</title>
+    <meta name="description" content="CMS Event Display adapted for the Masterclasses">
+    <link rel="shortcut icon" href="./img/cms-favicon.png" type="image/png">
+    <link rel="apple-touch-icon" href="./img/cms-favicon.png">
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <link rel="stylesheet" href="./fonts/fontawesome-all.min.css">
-    <link rel="stylesheet" href="./fonts/font-awesome.min.css">
-    <link rel="stylesheet" href="./fonts/fontawesome5-overrides.min.css">
-    <link rel="stylesheet" href="./css/container.css">
-    <link rel="stylesheet" href="./css/gui_elements.css">
-    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="./css/bss-overrides.css">
     <link rel="stylesheet" href="./css/modal.css">
+    <link rel="stylesheet" href="./css/header_toolbar.css">
     <link rel="stylesheet" href="./css/styles.css">
 </head>
 
-<body class="text-body bg-body" id="ispy">
-    <header class="text-nowrap" id="titlebar"><span id="application-name"
-            style="margin-right:2%;margin-left:5px;font-size:16px;">Masterclass @ UHH/DESY</span><span id="event-loaded"
-            style="margin-left:5%;height:90%;padding-left:0;"></span>
+<body>
+    <header class="bg-primary" id="js-titlebar"><span id="application-name">REMOVEME</span><span id="js-event-loaded" class="header-event">REMOVEME</span>
         <div class="btn-toolbar">
-            <div class="btn-group btn-group-sm" role="group"><a class="btn" role="button" title="Info" href="about.html"
-                    rel="author" target="_blank"><i class="fas fa-info-circle"></i></a><button
-                    class="btn btn-primary active" id="js-event-display" type="button"><i
-                        class="fas fa-cubes"></i></button><a class="btn" role="button" title="Help" href="help.html"
-                    target="_blank" rel="help"><i class="fas fa-question-circle"></i></a></div>
-            <div class="btn-group btn-group-sm" role="group"><button class="btn btn-primary" id="js-render-info"
-                    type="button" data-bs-toggle="modal" data-bs-target="#statistics" title="Display Statistics"><i
-                        class="fas fa-tachometer-alt"></i></button></div>
-            <div class="btn-group btn-group-sm" role="group" id="fullscreen"><button class="btn btn-primary"
-                    id="js-toggle-fullscreen" type="button" title="toggle Fullscreen"><i
-                        class="fas fa-expand"></i></button></div>
+            <div class="btn-group btn-group-sm" role="group"><a class="btn btn-info" role="button" title="Info" href="about.html" rel="author" target="_blank"><i class="fas fa-info-circle"></i></a><button class="btn btn-primary active" id="js-event-display" type="button"><i class="fas fa-cubes"></i></button><a class="btn btn-info" role="button" title="Help" href="help.html" target="_blank" rel="help"><i class="fas fa-question-circle"></i></a></div>
+            <div class="btn-group btn-group-sm" role="group"><button class="btn btn-primary display-mode" id="js-display-mode" type="button" title="Toggle Light/Dark Mode"><i class="fas fa-sun"></i><i class="fas fa-moon"></i></button><button class="btn btn-primary" id="js-toggle-fullscreen" type="button" title="toggle Fullscreen"><i class="fas fa-expand"></i><i class="fas fa-compress"></i></button></div>
         </div>
     </header>
-    <div class="container-fluid black">
-        <div class="row">
-            <div class="col-lg-12 boarderd black" id="toolbar">
-                <div class="button-toolbar" role="toolbar">
-                    <div class="btn-group" role="group"><button class="btn btn-primary" type="button"
-                            data-bs-toggle="modal" data-bs-target="#open-files" title="Open Files"><i
-                                class="fas fa-folder-open"></i></button></div>
-                    <div class="btn-group" role="group"><button class="btn btn-primary" id="js-reload" type="button"
-                            title="Reload Page"><i class="fas fa-redo"></i></button></div>
-                    <div class="btn-group" role="group"><button class="btn btn-primary disabled"
-                            id="js-prev-event-button" type="button" title="Previous Event [Left Arrow]"><i
-                                class="fas fa-chevron-left"></i></button><button class="btn btn-primary disabled"
-                            id="js-next-event-button" type="button" title="Next Event [Right Arrow]"><i
-                                class="fas fa-chevron-right"></i></button></div>
-                    <div class="btn-group" role="group"><button class="btn btn-primary" id="js-reset-view" type="button"
-                            title="Return to Start View"><i class="fas fa-home"></i></button></div>
-                    <div class="btn-group" role="group"><button class="btn btn-primary" id="js-zoom-out" type="button"
-                            title="Zoom Out [Shift + Down Arrow]"><i class="fas fa-search-minus"></i></button><button
-                            class="btn btn-primary" id="js-zoom-in" type="button" title="Zoom In [Shift + Up Arrow]"><i
-                                class="fas fa-search-plus"></i></button></div>
-                    <div class="btn-group" role="group"><button class="btn btn-primary" id="js-autorotate" type="button"
-                            title="Autorotate about Y axis"><i class="fas fa-play-circle"></i></button><button
-                            class="btn btn-primary" id="js-print-btn" type="button" title="Print Image to File"><i
-                                class="fas fa-camera"></i></button><button class="btn btn-primary" id="js-animate"
-                            type="button" title="Start/Stop Animation [Shift + A]"><i class="fas fa-film"></i></button>
-                    </div>
-                    <div class="btn-group" role="group"><button class="btn btn-primary active" id="js-3d" type="button"
-                            title="3D View">3D</button><button class="btn btn-primary" id="js-rphi" type="button"
-                            title="R-Phi View">rφ</button><button class="btn btn-primary" id="js-rhoz" type="button"
-                            title="Rho-Z View">ρz</button></div>
-                    <div class="btn-group" role="group"><button class="btn btn-primary" id="js-xy" type="button"
-                            title="XY Plane"><img class="img-fluid" src="./img/yx_small.png"></button><button
-                            class="btn btn-primary" id="js-yz" type="button" title="YZ Plane"><img class="img-fluid"
-                                src="./img/yz_small.png"></button><button class="btn btn-primary" id="js-xz"
-                            type="button" title="ZX Plane"><img class="img-fluid" src="./img/xz_small.png"></button>
-                    </div>
-                    <div class="btn-group" role="group"><button class="btn btn-primary active" id="js-perspective"
-                            type="button" title="Perspective Projection"><i class="fas fa-cube"></i></button><button
-                            class="btn btn-primary" id="js-orthographic" type="button" title="Perspective Projection"><i
-                                class="fas fa-dice-d6"></i></button></div>
-                    <div class="btn-group" role="group">
-                        <div class="dropdown btn-group btn-group" role="group"><button
-                                class="btn btn-primary disabled dropdown-toggle disabled" aria-expanded="false"
-                                data-bs-toggle="dropdown" disabled="" id="js-save-csv-btn"
-                                title="Save Selected Events to CSV" type="button"><i
-                                    class="fas fa-file-csv"></i></button>
-                            <div class="dropdown-menu"><a class="dropdown-item" href="#" id="js-csv-higgs">Higgs</a><a
-                                    class="dropdown-item" href="#" id="js-csv-z">Z</a><a class="dropdown-item" href="#"
-                                    id="js-csv-wp">W<sup>+</sup></a><a class="dropdown-item" href="#"
-                                    id="js-csv-wm">W<sup>-</sup></a></div>
-                        </div><button class="btn disabled" id="js-prev-sel-event" type="button"
-                            title="Previous Selected Event"><i class="fas fa-angle-double-left"></i></button><button
-                            class="btn disabled" id="js-next-sel-event" type="button" title="Next Selected Event"><i
-                                class="fas fa-angle-double-right"></i></button>
-                    </div>
-                    <div class="btn-group" role="group"><button class="btn" type="button" data-bs-toggle="modal"
-                            title="Settings" data-bs-target="#settings"><i class="fas fa-cog"></i></button></div>
-                    <div class="btn-group" role="group"><button class="btn" type="button" data-bs-toggle="modal"
-                            title="Export 3D Model" data-bs-target="#export-model"><i
-                                class="fas fa-upload"></i></button><button class="btn" type="button"
-                            title="Import 3D Model (obj format)" data-bs-toggle="model"
-                            data-bs-target="#import-model"><i class="fas fa-download"></i></button></div>
-                </div>
-            </div>
+    <div class="bg-secondary toolbar" id="js-toolbar" role="toolbar">
+        <div id="js-primary-toolbar" class="primary-toolbar">
+            <div class="btn-group" role="group"><button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#open-files" title="Open Files"><i class="fas fa-folder-open"></i></button></div>
+            <div class="btn-group" role="group"><button class="btn btn-primary" id="js-reload" type="button" title="Reload Page"><i class="fas fa-redo"></i></button></div>
+            <div class="btn-group" role="group"><button class="btn btn-primary disabled" id="js-prev-event-button" type="button" title="Previous Event [Left Arrow]"><i class="fas fa-chevron-left"></i></button><button class="btn btn-primary disabled" id="js-next-event-button" type="button" title="Next Event [Right Arrow]"><i class="fas fa-chevron-right"></i></button></div>
+            <div class="btn-group" role="group"><button class="btn btn-primary" id="js-reset-view" type="button" title="Return to Start View"><i class="fas fa-home"></i></button></div>
+            <div class="btn-group" role="group"><button class="btn btn-primary" id="js-zoom-out" type="button" title="Zoom Out [Shift + Down Arrow]"><i class="fas fa-search-minus"></i></button><button class="btn btn-primary" id="js-zoom-in" type="button" title="Zoom In [Shift + Up Arrow]"><i class="fas fa-search-plus"></i></button></div>
+            <div class="btn-group" role="group"><button class="btn btn-primary active" id="js-3d" type="button" title="3D View">3D</button><button class="btn btn-primary" id="js-rphi" type="button" title="R-Phi View">rφ</button><button class="btn btn-primary" id="js-rhoz" type="button" title="Rho-Z View">ρz</button></div>
+            <div class="btn-group" role="group"><button class="btn btn-primary" id="js-xy" type="button" title="XY Plane"><img class="img-fluid" src="./img/yx_small.png"></button><button class="btn btn-primary" id="js-yz" type="button" title="YZ Plane"><img class="img-fluid" src="./img/yz_small.png"></button><button class="btn btn-primary" id="js-xz" type="button" title="ZX Plane"><img class="img-fluid" src="./img/xz_small.png"></button></div>
+            <div class="btn-group" role="group"><button class="btn btn-primary disabled" id="js-prev-sel-event" type="button" title="Previous Selected Event"><i class="fas fa-angle-double-left"></i></button><button class="btn btn-primary disabled" id="js-next-sel-event" type="button" title="Next Selected Event"><i class="fas fa-angle-double-right"></i></button></div>
         </div>
-        <div class="row" style="height:100%;">
-            <div class="col-lg-12 boarderd black" id="display">
-                <div id="axes"></div>
-                <div id="event-info" class="black"
-                    style="height:max-content;padding:0;position:relative;width:max-content;display:inline-flex;">
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td id="js-cms-logo" style="background:transparent;"><img class="img-fluid"
-                                        alt="CMS Logo" src="./img/cms-color-medium.png"></td>
-                                <td id="js-event-text" style="background:transparent;"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="dropdown"><button class="btn btn-primary btn-lg dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" id="js-csv-btn" type="button"><i class="fas fa-file-csv"></i></button>
+            <div class="dropdown-menu"><a class="dropdown-item" id="js-csv-higgs" href="#">Higgs</a><a class="dropdown-item" id="js-csv-z" href="#">Z</a><a class="dropdown-item" id="js-csv-wp" href="#">W<sup>+</sup></a><a class="dropdown-item" id="js-csv-wm" href="#">W<sup>-</sup></a></div>
+        </div>
+        <div id="js-secondary-toolbar" class="secondary-toolbar">
+            <div class="btn-group btn-group-sm" role="group"><button class="btn btn-primary" id="js-autorotate" type="button" title="Autorotate about Y axis"><i class="fas fa-play-circle"></i></button><button class="btn btn-primary" id="js-print-btn" type="button" title="Print Image to File"><i class="fas fa-camera"></i></button><button class="btn btn-primary" id="js-animate" type="button" title="Start/Stop Animation [Shift + A]"><i class="fas fa-film"></i></button></div>
+            <div class="btn-group btn-group-sm" role="group"><button class="btn btn-primary active" id="js-perspective" type="button" title="Perspective Projection"><i class="fas fa-cube"></i></button><button class="btn btn-primary" id="js-orthographic" type="button" title="Perspective Projection"><i class="fas fa-dice-d6"></i></button></div>
+            <div class="btn-group btn-group-sm" role="group"><button class="btn btn-primary" type="button" data-bs-toggle="modal" title="Export 3D Model" data-bs-target="#export-model"><i class="fas fa-upload"></i></button><button class="btn btn-primary" type="button" title="Import 3D Model (obj format)" data-bs-toggle="model" data-bs-target="#import-model"><i class="fas fa-download"></i></button></div>
+            <div class="btn-group btn-group-sm" role="group"><button class="btn btn-primary" type="button" data-bs-toggle="modal" title="Settings" data-bs-target="#settings"><i class="fas fa-cog"></i></button><button class="btn btn-primary" id="js-render-info" type="button" data-bs-toggle="modal" data-bs-target="#statistics" title="Display Statistics"><i class="fas fa-tachometer-alt"></i></button></div>
         </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" id="open-files">
+    <main id="js-display">
+        <div id="js-axes" class="axes-div"></div>
+        <div id="js-event-info" class="event-info-div"><img class="img-fluid" width="128" height="128" src="./img/cms-color-medium.png"><span>REMOVEME<br>REMOVEME<br>REMOVEME<br>REMOVEME</span></div>
+    </main>
+    <div class="modal fade" role="dialog" tabindex="-1" id="open-files">
         <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content bordered black">
-                <div class="modal-header"><button class="close" data-bs-dismiss="modal" type="button"><i
-                            class="fa fa-times"></i><span class="visually-hidden">Close</span></button>
-                    <h4 class="modal-title black">Open File</h4>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Open File</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p><button class="btn btn-primary" id="js-show-webfiles-btn" type="button"> Open file(s) from the
-                            Web </button></p>
+                    <p><button class="btn btn-primary" id="js-show-webfiles-btn" type="button"> Open file(s) from the Web </button></p>
                     <p> Open local file(s): <input type="file" id="js-local-files-btn" multiple=""></p>
-                    <table>
-
-
-                    </table>
                 </div>
-                <div class="modal-footer"><button class="btn btn-primary" data-bs-dismiss="modal" type="button"> Close
-                    </button></div>
+                <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button"> Close </button></div>
             </div>
         </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" id="files">
+    <div class="modal fade" role="dialog" tabindex="-1" id="files">
         <div class="modal-dialog" role="document">
-            <div class="modal-content bordered black">
-                <div class="modal-header"><button class="close" data-bs-dismiss="modal" type="button"><i
-                            class="fa fa-times"></i><span class="visually-hidden">Close</span></button>
-                    <h4 class="modal-title black">Open Event</h4>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Open Event</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="table black" id="browser-table">
+                    <table class="table" id="browser-table">
                         <tbody>
                             <tr>
-                                <td class="browser-header bordered black" width="50%">Files</td>
-                                <td class="browser-header bordered black">Events</td>
+                                <td class="browser-header" width="50%">Files</td>
+                                <td class="browser-header">Events</td>
                             </tr>
                             <tr>
-                                <td class="bordered">
-                                    <table class="table table-hover black" id="browser-files"></table>
-                                </td>
-                                <td class="bordered">
-                                    <table class="table table-hover black" id="browser-events"></table>
-                                </td>
+                                <td><table class="table table-hover" id="browser-files"></table></td>
+                                <td><table class="table table-hover" id="browser-events"></table></td>
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <div id="js-selected-event" class="bordered">
+                    <p id="DELETEME">DELETEME</p>
                 </div>
                 <div class="modal-footer">
-                    <div class="bordered" id="selected-event"></div>
-                    <div id="event-buttons-1"><button class="btn btn-primary" data-bs-dismiss="modal" type="button">
-                            Close </button><button class="btn btn-primary disabled" id="load-event" type="button"> Load
-                        </button></div>
+                    <div><button class="btn btn-light" data-bs-dismiss="modal" type="button"> Close </button><button class="btn btn-primary disabled" id="load-event" type="button"> Load </button></div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" id="loading">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content bordered black">
-                <div class="modal-header"></div>
+    <div class="modal fade" role="dialog" tabindex="-1" data-bs-backdrop="static" id="loading">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
                 <div class="modal-body">
-                    <h4><i class="fa fa-spinner fa-spin"></i> Loading...</h4>
+                    <h4><i class="fas fa-spinner fa-spin"></i> Loading...</h4>
                 </div>
-                <div class="modal-footer"></div>
             </div>
         </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" data-bs-backdrop="static" id="building">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content bordered black">
-                <div class="modal-header"></div>
+    <div class="modal fade" role="dialog" tabindex="-1" data-bs-backdrop="static" id="building">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
                 <div class="modal-body">
-                    <h4><i class="fa fa-cog fa-spin" style="font-size:28px;"></i> Building File Summary for the
-                        Analysis... </h4>
+                    <h4><i class="fas fa-cog fa-spin" style="font-size:28px;"></i> Building File Summary for the Analysis... </h4>
                 </div>
-                <div class="modal-footer"></div>
             </div>
         </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" id="progress">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content bordered black">
-                <div class="modal-body black">
+    <div class="modal" role="dialog" tabindex="-1" data-bs-backdrop="static" id="progress">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
                     <div class="progress">
-                        <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="progress-bar black"
-                            role="progressbar" style="width:0;"></div>
+                        <div class="progress-bar" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" role="progressbar" style="width:0;"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" id="settings">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content bordered black">
-                <div class="modal-header"><button class="close" data-bs-dismiss="modal" type="button"><i
-                            class="fa fa-times"></i><span class="visually-hidden">Close</span></button>
-                    <h4 class="modal-title black">Settings</h4>
+    <div class="modal fade" role="dialog" tabindex="-1" id="settings">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Settings</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p><label for="invert-colors">Light Mode:</label><input type="checkbox" id="invert-colors"></p>
-                    <p><label for="clipping">Show clipping plane controls:</label><input type="checkbox" id="clipping">
-                    </p>
-                    <p><label for="show-axes">Hide axes:</label><input type="checkbox" id="show-axes"></p>
-                    <p><label for="pickable_lines">Thicker Track lines:</label><input type="checkbox"
-                            id="pickable_lines"></p>
-                    <p><label for="show-logo">Show experiment logo:</label><input type="checkbox" id="show-logo"></p>
-                    <p><label for="vh-slider">Set vertical extent of display:</label><span id="vh"></span> % <input
-                            type="range" class="form-range" id="vh-slider" max="100" min="75" step="1" value="90"></p>
-                    <p><label for="fps-slider">Set maximum frame rate:</label><span id="fr"></span> fps <input
-                            type="range" class="form-range" id="fps-slider" max="60" min="1" step="1" value="30"></p>
-                    <p><label for="transparency-slider">Set imported geometry transparency:</label><span
-                            id="trspy"></span><input type="range" class="form-range" id="transparency-slider" max="1.0"
-                            min="0.0" step="0.05" value="1.0"></p>
-                    <div class="btn-group"><button class="btn btn-primary dropdown-toggle" aria-expanded="false"
-                            data-bs-toggle="dropdown" type="button"> Select renderer <span
-                                class="caret"></span></button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#" id="js-webgl-renderer">WebGLRenderer</a></li>
-                            <li><a href="#" id="js-svg-renderer">SVGRenderer</a></li>
-                        </ul>
+                    <div><input type="checkbox" id="show-logo"><label for="show-logo">Hide experiment logo</label></div>
+                    <div><input type="checkbox" id="show-axes"><label for="show-axes">Hide axes</label></div>
+                    <div><input type="checkbox" id="clipping"><label for="clipping">Show clipping plane controls</label></div>
+                    <div><input type="checkbox" id="pickable_lines"><label for="pickable_lines">Thicker Track lines</label></div>
+                    <div><label for="vh-slider">Set vertical extent of display:&nbsp;</label><span id="js-vh"></span><span>%</span><input type="range" id="js-vh-slider" class="form-range" max="100" min="75" step="1" value="90"></div>
+                    <div><label for="fps-slider">Set maximum frame rate:</label><span id="js-fr"></span><span>&nbsp;fps</span><input type="range" id="js-fps-slider" class="form-range" max="60" min="1" step="1" value="30"></div>
+                    <div><label for="transparency-slider">Set imported geometry transparency:</label><span id="js-trspy"></span><input type="range" id="js-transparency-slider" class="form-range" max="1.0" min="0.0" step="0.05" value="1.0"></div>
+                    <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">Select renderer</button>
+                        <div class="dropdown-menu border"><a class="dropdown-item" id="js-webgl-renderer" href="#">WebGLRenderer</a><a class="dropdown-item" id="js-svg-renderer" href="#">SVGRenderer</a></div>
                     </div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-primary" data-bs-dismiss="modal" type="button"> Close
-                    </button></div>
+                <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button"> Close </button></div>
             </div>
         </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" id="statistics">
+    <div class="modal fade" role="dialog" tabindex="-1" id="statistics">
         <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content bordered black">
-                <div class="modal-header"><button class="close" data-bs-dismiss="modal" type="button"><i
-                            class="fa fa-times"></i><span class="visually-hidden">Close</span></button>
-                    <h4 class="modal-title black">Statistics</h4>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Statistics</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p><label for="show-stats">Show display statistics:</label><input type="checkbox" id="show-stats">
-                    </p>
-                    <div id="renderer-info"></div>
+                    <div><input type="checkbox" id="show-stats"><label for="show-stats">Show display statistics</label></div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-primary" data-bs-dismiss="modal" type="button"> Close
-                    </button></div>
+                <div id="renderer-info"></div>
+                <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button"> Close </button></div>
             </div>
         </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" id="analysis">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content bordered black">
-                <div class="modal-header"><button class="close" data-bs-dismiss="modal" type="button"><i
-                            class="fa fa-times"></i><span class="visually-hidden">Close</span></button>
-                    <h4 class="modal-title black">Events Selection</h4>
+    <div class="modal fade" role="dialog" tabindex="-1" id="invariant-mass-modal">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Invariant Mass</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body"><span id="invariant-mass"></span><span> GeV</span></div>
+                <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button"> Close </button></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="export-model">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Export model</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <ul class="nav nav-tabs" role="tablist"></ul>
-                    <div class="tab-content">
-                        <div class="tab-pane" role="tabpanel" id="statistics-tab">
-                            <div id="event-statistics"></div>
-                            <div class="dropdown"></div><button class="btn btn-primary dropdown-toggle"
-                                aria-expanded="true" aria-haspopup="true" data-bs-toggle="dropdown" id="dropdownMenu1"
-                                type="button"> Export to CSV <span class="caret"></span></button>
-                            <ul aria-labelledby="dropdownMenu1" class="dropdown-menu">
-                                <li><a href="#">Higgs</a></li>
-                                <li><a href="#">W+ Boson</a></li>
-                                <li><a href="#">W- Boson</a></li>
-                                <li><a href="#">Z Boson</a></li>
-                            </ul>
-                        </div>
-                        <div class="tab-pane" role="tabpanel" id="m-tab">
-                            <div id="m-plot"></div><span id="m-hist" style="display:block;width:100%;"></span>
-                        </div>
+                    <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">Select export format</button>
+                        <div class="dropdown-menu"><a class="dropdown-item" id="js-export-obj" href="#">Export OBJ</a><a class="dropdown-item" id="js-export-gltf-text" href="#">Export GLTF (text)</a><a class="dropdown-item" id="js-export-gltf-binary" href="#">Export GLTF (binary)</a></div>
                     </div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-primary" data-bs-dismiss="modal" type="button"> Close
-                    </button></div>
+                <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button"> Close </button></div>
             </div>
         </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" id="export-model">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content bordered black">
-                <div class="modal-header"><button class="close" data-bs-dismiss="modal" type="button"><i
-                            class="fa fa-times"></i><span class="visually-hidden">Close</span></button>
-                    <h4 class="modal-title black">Export model</h4>
-                </div>
-                <div class="modal-body">
-                    <div class="btn-group"><button class="btn btn-primary dropdown-toggle" aria-expanded="false"
-                            data-bs-toggle="dropdown" type="button"> Select export format <span
-                                class="caret"></span></button>
-                        <ul class="dropdown-menu" role="menu">
-                            <li><a href="#" id="js-export-obj">Export OBJ</a></li>
-                            <li><a href="#" id="js-export-gltf-text">Export GLTF (text)</a></li>
-                            <li><a href="#" id="js-export-gltf-binary">Export GLTF (binary)</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="modal-footer"><button class="btn btn-primary" data-bs-dismiss="modal" type="button"> Close
-                    </button></div>
-            </div>
-        </div>
-    </div>
-    <div class="modal" role="dialog" tabindex="-1" id="import-model">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content bordered black">
-                <div class="modal-header"><button class="close" data-bs-dismiss="modal" type="button"><i
-                            class="fa fa-times"></i><span class="visually-hidden">Close</span></button>
-                    <h4 class="modal-title black">Import 3D Model</h4>
+    <div class="modal fade" role="dialog" tabindex="-1" id="import-model">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Import 3D Model</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <p>Select a 3D model to load.</p>
-                    <p> Currently, only the `.obj` format is supported. If an additional .mtl is available and loaded,
-                        it will be used as well. </p>
-                    <p><i>Nota bene</i>: a large complicated 3D model may take minutes to load. </p>
-                    <p> Files available via the web have been created from <a
-                            href="https://www.sketchup.com/">SketchUp</a> models created by <a
-                            href="https://twiki.cern.ch/twiki/bin/view/CMSPublic/SketchUpCMS">T. Sakuma.</a></p>
-                    <p><button class="btn btn-primary" id="js-import-web" type="button"> Open file(s) from the Web
-                        </button></p>
+                    <p> Currently, only the `.obj` format is supported. If an additional .mtl is available and loaded, it will be used as well. </p>
+                    <p><i>Note</i>: a large complicated 3D model may take minutes to load. </p>
+                    <p> Files available via the web have been created from <a href="https://www.sketchup.com/">SketchUp</a> models created by <a href="https://twiki.cern.ch/twiki/bin/view/CMSPublic/SketchUpCMS">T. Sakuma.</a></p><button class="btn btn-primary" id="js-import-web" type="button"> Open file(s) from the Web </button>
                     <p> Open local file(s): <input type="file" id="import-file" multiple=""></p>
-                    <table>
-
-
-                    </table>
                 </div>
-                <div class="modal-footer"><button class="btn btn-primary" data-bs-dismiss="modal" type="button"> Close
-                    </button></div>
+                <div class="modal-footer"><button class="btn btn-primary" data-bs-dismiss="modal" type="button"> Close </button></div>
             </div>
         </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" id="geometry-files">
+    <div class="modal fade" role="dialog" tabindex="-1" id="geometry-files">
         <div class="modal-dialog" role="document">
-            <div class="modal-content bordered black">
-                <div class="modal-header"><button class="close" data-bs-dismiss="modal" type="button"><i
-                            class="fa fa-times"></i><span class="visually-hidden">Close</span></button>
-                    <h4 class="modal-title black">Open Model</h4>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Open Model</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="table black" id="obj-table" width="100%">
-                        <tbody>
-                            <tr>
-                                <td class="browser-header bordered black" width="100%">Files</td>
-                            </tr>
-                            <tr>
-                                <td class="bordered">
-                                    <table class="table table-hover black" id="obj-files"></table>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="border" id="selected-obj"></div>
+                    <div class="table-responsive">
+                        <table class="table" id="obj-table">
+                            <thead>
+                                <tr>
+                                    <th>Files</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="file-table">
+                                        <div class="table-responsive" id="obj-files">
+                                            <table class="table table-hover">
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="modal-footer">
-                    <div class="bordered" id="selected-obj"></div>
-                    <div id="event-buttons-2"><button class="btn btn-primary" data-bs-dismiss="modal" type="button">
-                            Close </button><button class="btn btn-primary disabled" id="load-obj" type="button"> Load
-                        </button></div>
-                </div>
+                <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal">Close</button><button class="btn btn-primary disabled" id="load-obj" type="button"> Load </button></div>
             </div>
         </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" id="data-EventObjects">
+    <div class="modal fade" role="dialog" tabindex="-1" id="data-EventObjects">
         <div class="modal-dialog" role="document">
-            <div class="modal-content bordered black">
-                <div class="modal-header"><button class="close" data-bs-dismiss="modal" type="button"><i
-                            class="fa fa-times"></i><span class="visually-hidden">Close</span></button>
-                    <h4 class="modal-title black" id="title-data-EventObjects"></h4>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 id="title-data-EventObjects" class="modal-title"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="table-responsive">
-                        <table class="table table-hover black" id="table-data-eventObject">
+                        <table class="table table-hover" id="table-data-eventObject">
                             <thead>
                                 <tr>
                                     <th class="group">Type</th>
@@ -395,28 +251,11 @@
                         </table>
                     </div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-primary" data-bs-dismiss="modal" type="button"> Close
-                    </button></div>
+                <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal">Close</button></div>
             </div>
         </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" id="invariant-mass-modal">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content bordered black">
-                <div class="modal-header"><button class="close" data-bs-dismiss="modal" type="button"><i
-                            class="fa fa-times"></i><span class="visually-hidden">Close</span></button>
-                    <h4 class="modal-title black">Invariant mass</h4>
-                </div>
-                <div class="modal-body"><span id="invariant-mass"></span><span> GeV</span></div>
-                <div class="modal-footer"><button class="btn btn-primary" data-bs-dismiss="modal" type="button"> Close
-                    </button></div>
-            </div>
-        </div>
-    </div>
-    <script src="./lib/bootstrap.min.js"></script>
-    <script src="./lib/jquery.min.js"></script>
-    <script src="./lib/jquery.scrollintoview.js"></script>
-    <script src="./lib/stupidtable.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
 </body>
 
 </html>
