@@ -13,7 +13,6 @@ import {
   Font,
   DirectionalLight,
   Group,
-  REVISION,
   Scene,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -40,9 +39,9 @@ function setDisplayVerticalHeight(vh: number) {
   assertDefined(ispy.renderer, "Renderer is not initialized");
   ispy.vh = vh;
 
-  const vh_obj = getHTMLObject("vh");
+  const vh_obj = getHTMLObject("js-vh");
   vh_obj.innerHTML = vh.toString();
-  const display = getHTMLObject("display");
+  const display = getHTMLObject("js-display");
   display.style.setProperty("height", `${vh}vh`);
 
   const w = display.clientWidth;
@@ -67,7 +66,7 @@ function setDisplayVerticalHeight(vh: number) {
  */
 function setFramerate(fr: number) {
   ispy.framerate = fr;
-  const fr_obj = getHTMLObject("fr");
+  const fr_obj = getHTMLObject("js-fr");
   fr_obj.innerHTML = fr.toString();
 }
 
@@ -82,7 +81,7 @@ function setupClippingGUI() {
   });
 
   ispy.clipgui.domElement.id = "clipgui";
-  const titlebar = getHTMLObject("titlebar");
+  const titlebar = getHTMLObject("js-titlebar"); // TODO append to the toolbar?
   titlebar.appendChild(ispy.clipgui.domElement);
 
   const localFolder = ispy.clipgui.addFolder("Local Clipping");
@@ -227,8 +226,7 @@ function setupClippingGUI() {
 function setupGUIs() {
   ispy.gui.domElement.id = "treegui";
   ispy.guiReduced.domElement.id = "treegui-reduced";
-  // document.getElementById('titlebar').appendChild(ispy.gui.domElement);
-  const titlebar = getHTMLObject("titlebar");
+  const titlebar = getHTMLObject("js-titlebar"); // TODO append to the toolbar?
   titlebar.appendChild(ispy.guiReduced.domElement);
 
   // It seems currently impossible with dat.gui
@@ -310,9 +308,9 @@ function handleToggles() {
   // On page load hide the stats
   const stats = ispy.stats.dom;
   stats.id = "stats";
-  stats.style = "display: none";
+  stats.style.display = "none";
 
-  const show_stats = getHTMLObject("show-stats") as HTMLInputElement;
+  const show_stats = getHTMLObject<HTMLInputElement>("js-show-stats");
 
   // FF keeps the check state on reload so force an "uncheck"
   show_stats.checked = false;
@@ -321,44 +319,39 @@ function handleToggles() {
     show_stats.checked === true ? (stats.style.display = "block") : (stats.style.display = "none"),
   );
 
-  const show_logo = getHTMLObject("show-logo") as HTMLInputElement;
+  const show_logo = getHTMLObject<HTMLInputElement>("js-show-logo");
   show_logo.checked = true;
 
   show_logo.addEventListener("change", (event: Event) => {
-    const cms_logo = getHTMLObject("cms-logo");
+    const cms_logo = getHTMLObject("js-cms-logo");
     return (event.target as HTMLInputElement).checked
-      ? (cms_logo.style.display = "block")
+      ? (cms_logo.style.display = "block") // TODO should revert to default
       : (cms_logo.style.display = "none");
   });
 
   ispy.inverted_colors = false;
-  const invert_colors = getHTMLObject("invert-colors") as HTMLInputElement;
-  invert_colors.checked = false;
 
-  const show_axes = getHTMLObject("show-axes") as HTMLInputElement;
+  const show_axes = getHTMLObject<HTMLInputElement>("js-show-axes");
 
   // FF keeps the state after a page refresh. Therefore force uncheck.
   show_axes.checked = false;
 
   show_axes.addEventListener("change", (event: Event) => {
-    const axes = getHTMLObject("axes");
+    const axes = getHTMLObject("js-axes");
     return (event.target as HTMLInputElement).checked ? (axes.style.display = "none") : (axes.style.display = "block");
   });
 
   ispy.use_line2 = false;
-
-  const pickable_lines = getHTMLObject("pickable_lines") as HTMLInputElement;
-
+  const pickable_lines = getHTMLObject<HTMLInputElement>("js-pickable_lines");
   pickable_lines.checked = false;
-
   pickable_lines.addEventListener("change", (event: Event) => {
     ispy.use_line2 = (event.target as HTMLInputElement).checked ? true : false;
   });
 
-  const clipgui = getHTMLObject("clipgui");
+  const clipgui = getHTMLObject("js-clipgui");
   clipgui.style.display = "none";
 
-  const clipping = getHTMLObject("clipping") as HTMLInputElement;
+  const clipping = getHTMLObject<HTMLInputElement>("js-clipping");
   clipping.checked = false;
 
   clipping.addEventListener("change", (event: Event) => {
@@ -403,7 +396,7 @@ function handleDragAndDrop() {
  * @returns void
  */
 function init() {
-  const display = getHTMLObject("display");
+  const display = getHTMLObject("js-display");
 
   ispy.scenes = {
     "3D": new Scene(),
@@ -433,7 +426,7 @@ function init() {
   handleToggles();
   handleDragAndDrop();
 
-  display.appendChild(ispy.stats.dom);
+  display.appendChild(ispy.stats.dom); // TODO handle the styling in css
   // The second argument is necessary to make sure that mouse events are
   // handled only when in the canvas
   // TODO check if needed
@@ -458,11 +451,6 @@ function init() {
     });
   });
 
-  getHTMLObject("version").innerHTML = ispy.version;
-  getHTMLObject("threejs").innerHTML = `r${REVISION}`;
-  getHTMLObject("sweetalert").innerHTML = "2.1.0";
-  // getHTMLObject("plotly").innerHTML = Plotly.version;
-
   window.addEventListener("resize", onWindowResize, false);
 
   ispy.raycaster.layers.set(2);
@@ -474,16 +462,16 @@ function init() {
   ispy.animating = false;
 
   setDisplayVerticalHeight(90);
-  (getHTMLObject("vh-slider") as HTMLInputElement).value = ispy.vh.toString();
+  getHTMLObject<HTMLInputElement>("js-vh-slider").value = ispy.vh.toString();
 
   setFramerate(30);
-  (getHTMLObject("fps-slider") as HTMLInputElement).value = ispy.framerate.toString();
+  getHTMLObject<HTMLInputElement>("js-fps-slider").value = ispy.framerate.toString();
 
-  (getHTMLObject("transparency-slider") as HTMLInputElement).value = ispy.importTransparency.toString();
+  getHTMLObject<HTMLInputElement>("js-transparency-slider").value = ispy.importTransparency.toString();
 
-  getHTMLObject("trspy").innerHTML = ispy.importTransparency.toString();
+  getHTMLObject("js-trspy").innerHTML = ispy.importTransparency.toString();
 
-  getHTMLObject("display").appendChild(getHTMLObject("event-info"));
+  // getHTMLObject("js-display").appendChild(getHTMLObject("event-info"));
 }
 
 /**

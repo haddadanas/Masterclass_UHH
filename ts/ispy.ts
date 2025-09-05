@@ -1,14 +1,13 @@
 import { toggleAnimation } from "./animate.js";
 import {
   autoRotate,
-  enterFullscreen,
-  exitFullscreen,
   exportGLTF_binary,
   exportGLTF_text,
   exportOBJ,
   exportScene,
   printImage,
   reload,
+  toggleFullscreen,
 } from "./controls.js";
 import {
   invertColors,
@@ -33,7 +32,6 @@ import {
   loadWebFiles,
   nextEvent,
   nextSelectedEvent,
-  openDialog,
   prevEvent,
   prevSelectedEvent,
   showWebFiles,
@@ -42,8 +40,8 @@ import { event_description } from "./objects-config.js";
 import { updateRenderer, updateRendererInfo } from "./renderer.js";
 import { init, initLight, initControlPanel, run, setDisplayVerticalHeight, setFramerate } from "./setup.js";
 import { addGroups } from "./tree-view.js";
-import { buildFileSummary, createCSV, getSelectionResults } from "./uhh_selection.js";
-import { getHTMLObject } from "./utils.js";
+import { buildFileSummary, createCSV } from "./uhh_selection.js";
+import { getHTMLObject, hideDialog, showDialog } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log(event_description);
@@ -56,37 +54,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const jsZoomIn = getHTMLObject("js-zoom-in");
   const jsZoomOut = getHTMLObject("js-zoom-out");
   const jsAutorotate = getHTMLObject("js-autorotate");
-  const js3D = getHTMLObject("3d");
-  const jsRPhi = getHTMLObject("rphi");
-  const jsRhoZ = getHTMLObject("rhoz");
-  const jsXY = getHTMLObject("xy");
-  const jsYZ = getHTMLObject("yz");
-  const jsZX = getHTMLObject("xz");
-  const jsPerspective = getHTMLObject("perspective");
-  const jsOrthographic = getHTMLObject("orthographic");
-  const jsEnterFullscreen = getHTMLObject("enterFullscreen");
-  const jsExitFullscreen = getHTMLObject("exitFullscreen");
+  const js3D = getHTMLObject("js-3d");
+  const jsRPhi = getHTMLObject("js-rphi");
+  const jsRhoZ = getHTMLObject("js-rhoz");
+  const jsXY = getHTMLObject("js-xy");
+  const jsYZ = getHTMLObject("js-yz");
+  const jsZX = getHTMLObject("js-xz");
+  const jsPerspective = getHTMLObject("js-perspective");
+  const jsOrthographic = getHTMLObject("js-orthographic");
+  const jsToggleFullscreen = getHTMLObject("js-toggle-fullscreen");
   const jsRenderInfo = getHTMLObject("js-render-info");
-  const jsAnalysisBtn = getHTMLObject("js-analysis-btn");
-  const prevSelEvent = getHTMLObject("prev-sel-event");
-  const nextSelEvent = getHTMLObject("next-sel-event");
+  const prevSelEvent = getHTMLObject("js-prev-sel-event");
+  const nextSelEvent = getHTMLObject("js-next-sel-event");
   const jsPrintBtn = getHTMLObject("js-print-btn");
-  const jsAnimate = getHTMLObject("animate");
+  const jsAnimate = getHTMLObject("js-animate");
   const jsShowWebFilesBtn = getHTMLObject("js-show-webfiles-btn");
   const jsLocalFilesBtn = getHTMLObject("js-local-files-btn");
-  const importFile = getHTMLObject("import-file");
+  const importFile = getHTMLObject("js-import-file");
   const jsImportWeb = getHTMLObject("js-import-web");
-  const jsInvertColors = getHTMLObject("invert-colors") as HTMLInputElement;
-  const jsVhSlider = getHTMLObject("vh-slider") as HTMLInputElement;
-  const jsFpsSlider = getHTMLObject("fps-slider") as HTMLInputElement;
-  const jsTransparencySlider = getHTMLObject("transparency-slider") as HTMLInputElement;
+  const jsInvertColors = getHTMLObject<HTMLInputElement>("js-invert-colors");
+  const jsVhSlider = getHTMLObject<HTMLInputElement>("js-vh-slider");
+  const jsFpsSlider = getHTMLObject<HTMLInputElement>("js-fps-slider");
+  const jsTransparencySlider = getHTMLObject<HTMLInputElement>("js-transparency-slider");
   const jsWebGLRenderer = getHTMLObject("js-webgl-renderer");
   const jsSVGRenderer = getHTMLObject("js-svg-renderer");
   const jsExportObj = getHTMLObject("js-export-obj");
   const jsExportGltfText = getHTMLObject("js-export-gltf-text");
   const jsExportGltfBinary = getHTMLObject("js-export-gltf-binary");
-  const jsLoadObj = getHTMLObject("load-obj");
-  const jsLoadEvent = getHTMLObject("load-event");
+  const jsLoadObj = getHTMLObject("js-load-obj");
+  const jsLoadEvent = getHTMLObject("js-load-event");
   const jsCsvHiggs = getHTMLObject("js-csv-higgs");
   const jsCsvZ = getHTMLObject("js-csv-z");
   const jsCsvWp = getHTMLObject("js-csv-wp");
@@ -108,10 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
   jsZX.addEventListener("click", setZX);
   jsPerspective.addEventListener("click", setPerspective);
   jsOrthographic.addEventListener("click", setOrthographic);
-  jsEnterFullscreen.addEventListener("click", enterFullscreen);
-  jsExitFullscreen.addEventListener("click", exitFullscreen);
+  jsToggleFullscreen.addEventListener("click", toggleFullscreen);
   jsRenderInfo.addEventListener("click", updateRendererInfo);
-  jsAnalysisBtn.addEventListener("click", getSelectionResults);
   prevSelEvent.addEventListener("click", prevSelectedEvent);
   nextSelEvent.addEventListener("click", nextSelectedEvent);
   jsPrintBtn.addEventListener("click", printImage);
@@ -120,9 +114,9 @@ document.addEventListener("DOMContentLoaded", () => {
   jsLocalFilesBtn.addEventListener("change", loadLocalFiles);
   importFile.addEventListener("change", importModel);
   jsImportWeb.addEventListener("click", () => {
-    openDialog("#geometry-files");
+    showDialog("geometry-files");
     loadObjFiles();
-    $("#import-model").modal("hide");
+    hideDialog("import-model");
   });
   jsInvertColors.addEventListener("change", invertColors);
   jsVhSlider.addEventListener("input", (event) => {
@@ -143,11 +137,11 @@ document.addEventListener("DOMContentLoaded", () => {
   jsExportGltfText.addEventListener("click", exportGLTF_text);
   jsExportGltfBinary.addEventListener("click", exportGLTF_binary);
   jsLoadObj.addEventListener("click", () => {
-    $("#geometry-files").modal("hide");
+    hideDialog("geometry-files");
     loadSelectedObj();
   });
   jsLoadEvent.addEventListener("click", () => {
-    $("#files").modal("hide");
+    hideDialog("files");
     buildFileSummary();
     loadEvent();
   });

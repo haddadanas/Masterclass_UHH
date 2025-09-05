@@ -1,7 +1,7 @@
 import swal from "sweetalert";
 
 import { ispy, analysis } from "./config.js";
-import { getCurrentEvent, EventCollection, getCurrentIndex, assertDefined, downloadData } from "./utils.js";
+import { getCurrentEvent, EventCollection, getCurrentIndex, assertDefined, downloadData, getHTMLObject, hideDialog, showDialog } from "./utils.js";
 import { Particle, FourVector, MET } from "./ispy.interfaces.js";
 
 // Helper functions to check the selection
@@ -196,14 +196,11 @@ function getPassingEvents(): string[] {
  */
 function buildFileSummary(): void {
   let event_summary: EventCollection;
-  let analysisBtn = document.getElementById("js-analysis-btn");
-  const downloadBtn = document.getElementById("save-csv-btn");
-  if (!analysisBtn) {
-    analysisBtn = document.createElement("button");
-  }
+  const downloadBtn = getHTMLObject<HTMLButtonElement>("js-save-csv-btn");
 
-  $("#loading").modal("hide");
-  $("#building").modal("show");
+  hideDialog("loading");
+  showDialog("building");
+
   try {
     assertDefined(ispy.ig_data, "No event data is loaded!");
     // get the event data
@@ -213,11 +210,9 @@ function buildFileSummary(): void {
     analysis.file_events_summary = event_summary.events;
 
     // enable the analysis button
-    (analysisBtn as HTMLButtonElement).disabled = false;
-    (downloadBtn as HTMLButtonElement).disabled = false;
+    downloadBtn.disabled = false;
   } catch (err) {
-    (analysisBtn as HTMLButtonElement).disabled = true;
-    (downloadBtn as HTMLButtonElement).disabled = true;
+    downloadBtn.disabled = true;
 
     // create and display an error message
     let error_msg = `Error encountered building the file summary: \n${err}`;
@@ -226,8 +221,8 @@ function buildFileSummary(): void {
     alert(error_msg);
   }
 
-  $("#building").modal("hide");
-  $("#loading").modal("show");
+  hideDialog("building");
+  showDialog("loading");
 }
 
 /**
@@ -303,47 +298,6 @@ function getTransverseMass(sumVector: FourVector, met: MET): number {
   return transverseMass;
 }
 
-// function _createHistogram(array: number[], start: number, end: number, bins: number): number[] {
-//   // Histogram the array to the range `start` to `end` with `bins` bins
-//   const hist: number[] = new Array(bins).fill(0);
-//   const binWidth: number = (end - start) / bins;
-//   array.forEach((val) => {
-//     if (val <= start) {
-//       hist[0]++;
-//       return;
-//     }
-//     if (val >= end) {
-//       hist[bins - 1]++;
-//       return;
-//     }
-//     const bin = Math.floor(val / binWidth);
-//     hist[bin]++;
-//   });
-//   return hist;
-// }
-
-/**
- * Creates a histogram from an array of numbers (Not used).
- * @param array The array to create a histogram from.
- * @param _start The start of the histogram range.
- * @param _end The end of the histogram range.
- * @param bins The number of bins for the histogram.
- * @returns The histogram data.
- */
-function createHistogramData(
-  array: number[],
-  _start: number,
-  _end: number,
-  bins: number,
-): { x: number[]; type: string; nbinsx: number } {
-  // Create the data for a histogram of the array
-  return {
-    x: array,
-    type: "histogram",
-    nbinsx: bins,
-  };
-}
-
 /**
  * Gets the invariant and transverse masses for each event.
  * @returns An Array containing the invariant and transverse masses for each event.
@@ -384,39 +338,9 @@ function createCSV(category: string): string {
   return csv;
 }
 
-/**
- * Gets the selection results of the whole file and updates the event statistics display.
- * @returns void
- */
-function getSelectionResults(): void {
-  const event_stats = document.getElementById("event-statistics");
-  if (!event_stats) {
-    return;
-  }
-  if (analysis.file_events_summary === undefined) {
-    event_stats.innerHTML = "No event file is loaded!";
-    return;
-  }
-
-  const passing_events = getPassingEvents();
-  let stats = "With the chosen selection:<br>";
-  stats += `Number of passing events: ${passing_events.length}<br>`;
-  stats += `This is ${((passing_events.length / analysis.file_events_summary.size) * 100).toFixed(
-    2,
-  )}% of the total events.<br>`;
-  event_stats.innerHTML = stats;
-
-  // const masses = getMassesArray();
-  // const m_hist = createHistogramData([...masses.m.values()], 0, 200, 20);
-  // var mt_hist = createHistogramData([...masses.mt.values()], 0, 200, 20);
-  // newPlot("m-hist", [m_hist as Data]);
-  // Plotly.newPlot("mt-hist", [mt_hist]); // TODO enable this when transverse mass is implemented
-  return;
-}
 
 export {
   checkCurrentSelection,
-  getSelectionResults,
   getSelectionCuts,
   getPassingEvents,
   createCSV,
@@ -430,7 +354,6 @@ export {
   sumFourVectors,
   getInvariantMass,
   getTransverseMass,
-  createHistogramData,
   getMassesArray,
   getCurrentSelectionMessage,
 };

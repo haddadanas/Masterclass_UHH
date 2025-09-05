@@ -375,6 +375,22 @@ export function downloadData(content: string, filename: string) {
 }
 
 /**
+ * Toggle HTML Button
+ * @param button The button id to toggle.
+ * @param state The state to set the button to (true = active, false = inactive).
+ */
+export function toggleButton(button: string, state: boolean) {
+  const btn = getHTMLObject<HTMLButtonElement>(button);
+  if (state) {
+    btn.disabled = false;
+    btn.classList.remove("disabled");
+  } else {
+    btn.disabled = true;
+    btn.classList.add("disabled");
+  }
+}
+
+/**
  * Retrieves the names of the objects in the 3D scene.
  * @returns An object containing the names of the objects in the 3D scene.
  */

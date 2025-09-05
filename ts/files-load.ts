@@ -6,27 +6,10 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 import { addEvent, addDetector } from "./objects-add.js";
 import { addSelectionRow } from "./tree-view.js";
-import { changeMeshMaterials, getHTMLObject, toggleCollapse, cleanupData } from "./utils.js";
+import { changeMeshMaterials, getHTMLObject, toggleCollapse, cleanupData, toggleButton, showDialog, hideDialog } from "./utils.js";
 import { ispy } from "./config.js";
 import { buildFileSummary, getPassingEvents } from "./uhh_selection.js";
 import { disabled, gltf_objs } from "./objects-config.js";
-
-/**
- * Toggles the visibility of the specified dialog object.
- * @param object The object's HTML id to toggle.
- * @returns void
- */
-function openDialog(id: string) {
-  $(id).modal("show");
-}
-
-/**
- * Closes the specified dialog object.
- * @param id The HTML id of the dialog to close.
- */
-function closeDialog(id: string) {
-  $(id).modal("hide");
-}
 
 /**
  * Checks if the File API is supported by the browser.
@@ -50,7 +33,7 @@ function hasFileAPI(): boolean {
  * @param id The HTML id of the table to clear.
  */
 function clearTable(id: string) {
-  const tbl = getHTMLObject(id) as HTMLTableElement;
+  const tbl = getHTMLObject<HTMLTableElement>(id);
 
   while (tbl.rows.length > 0) {
     tbl.deleteRow(0);
@@ -58,26 +41,25 @@ function clearTable(id: string) {
 }
 
 /**
- * Selects the specified file and displayes its events.
+ * Selects the specified file and displays its events.
  * @param index The index of the file to select.
  * @returns void
  */
 function selectEvent(index: number) {
-  getHTMLObject("selected-event").innerHTML = `${ispy.file_name}: ${ispy.event_list[index]}`;
+  getHTMLObject("js-selected-event").innerHTML = `${ispy.file_name}: ${ispy.event_list[index]}`;
   //$("#selected-event").html(ispy.file_name+': '+ispy.event_list[index]);
 
   ispy.event_index = index;
 
-  getHTMLObject("load-event").classList.remove("disabled");
-  //$('#load-event').removeClass('disabled');
+  toggleButton("js-load-event", true);
 }
 
 /**
  * Loads the events of a specified file.
  */
 function updateEventList() {
-  clearTable("browser-events");
-  const tbl = getHTMLObject("browser-events") as HTMLTableElement;
+  clearTable("js-browser-events");
+  const tbl = getHTMLObject<HTMLTableElement>("js-browser-events");
 
   for (let i = 0; i < ispy.event_list.length; i++) {
     const event = ispy.event_list[i];
@@ -96,15 +78,15 @@ function updateEventList() {
  */
 function enableNextPrev() {
   if (ispy.event_index > 0) {
-    getHTMLObject("js-prev-event-button").classList.remove("disabled");
+    toggleButton("js-prev-event-button", true);
   } else {
-    getHTMLObject("js-prev-event-button").classList.add("disabled");
+    toggleButton("js-prev-event-button", false);
   }
 
   if (ispy.event_list && ispy.event_list.length - 1 > ispy.event_index) {
-    getHTMLObject("js-next-event-button").classList.remove("disabled");
+    toggleButton("js-next-event-button", true);
   } else {
-    getHTMLObject("js-next-event-button").classList.add("disabled");
+    toggleButton("js-next-event-button", false);
   }
 }
 
@@ -115,15 +97,15 @@ function enableNextPrevSelected() {
   const selectedEvents = getPassingEvents() || [];
 
   if (selectedEvents.length > 0 && ispy.event_index > Number(selectedEvents[0])) {
-    getHTMLObject("prev-sel-event").classList.remove("disabled");
+    toggleButton("js-prev-sel-event", true);
   } else {
-    getHTMLObject("prev-sel-event").classList.add("disabled");
+    toggleButton("js-prev-sel-event", false);
   }
 
   if (selectedEvents.length > 0 && ispy.event_index < Number(selectedEvents[selectedEvents.length - 1])) {
-    getHTMLObject("next-sel-event").classList.remove("disabled");
+    toggleButton("js-next-sel-event", true);
   } else {
-    getHTMLObject("next-sel-event").classList.add("disabled");
+    toggleButton("js-next-sel-event", false);
   }
 }
 
@@ -132,15 +114,11 @@ function enableNextPrevSelected() {
  * @returns void
  */
 function loadEvent() {
-  getHTMLObject("event-loaded").innerHTML = "";
-  //getHTMLObject('loading').style.display = 'block';
-
-  //$("#event-loaded").html("");
-  $("#loading").modal("show");
-
+  getHTMLObject("js-event-loaded").innerHTML = "";
+  showDialog("loading");
   ispy.selected_objects.clear();
 
-  // Hide Detector stuff in tree view if already shown
+  // Hide Detector stuff in tree view if already shown // TODO
   if ($("i.Detector").hasClass("glyphicon-chevron-down")) {
     toggleCollapse("Detector");
   }
@@ -154,9 +132,7 @@ function loadEvent() {
   fileEntry.async("string").then(
     (content) => {
       event = JSON.parse(cleanupData(content));
-
-      //getHTMLObject('loading').style.display = 'none';
-      $("#loading").modal("hide");
+      hideDialog("loading");
 
       if (ispy.isGeometry) {
         $.extend(ispy.detector, event);
@@ -169,10 +145,9 @@ function loadEvent() {
 
         const ievent = Number(ispy.event_index) + 1; // JavaScript!
 
-        getHTMLObject("event-loaded").innerHTML = `${ispy.file_name}:${
+        getHTMLObject("js-event-loaded").innerHTML = `${ispy.file_name}:${
           ispy.event_list[ispy.event_index]
         }  [${ievent} of ${ispy.event_list.length}]`;
-        //$("#event-loaded").html(ispy.file_name + ":" + ispy.event_list[ispy.event_index] + "  [" + ievent + " of " + ispy.event_list.length + "]");
 
         console.log(ispy.current_event?.Types);
         console.log(ispy.current_event?.Collections.Products_V1);
@@ -316,8 +291,8 @@ function selectLocalFile(index: number) {
  * @param list The list of local files to update.
  */
 function updateLocalFileList(list: FileList) {
-  clearTable("browser-files");
-  const tbl = getHTMLObject("browser-files") as HTMLTableElement;
+  clearTable("js-browser-files");
+  const tbl = getHTMLObject<HTMLTableElement>("js-browser-files");
 
   for (let i = 0; i < list.length; i++) {
     const name = list[i].name;
@@ -325,7 +300,7 @@ function updateLocalFileList(list: FileList) {
     const cell = row.insertCell(0);
     const cls = "file";
 
-    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}">${name}</a>`;
+    cell.innerHTML = `<a id="js-browser-file-${i}" class="${cls}">${name}</a>`;
     cell.firstChild?.addEventListener("click", () => {
       selectLocalFile(i);
     });
@@ -342,20 +317,19 @@ function loadLocalFiles() {
     err_msg += "Please try with Chrome (6.0+), Firefox (3.6+), Safari (6.0+), or IE (10+). ";
     err_msg += "Alternatively, open a file from the web. ";
     alert(err_msg);
-
     return;
   }
 
-  getHTMLObject("load-event").classList.add("disabled");
+  toggleButton("js-load-event", false);
   //$('#load-event').addClass('disabled');
 
-  clearTable("browser-files");
-  clearTable("browser-events");
+  clearTable("js-browser-files");
+  clearTable("js-browser-events");
 
-  getHTMLObject("selected-event").innerHTML = "Selected event";
+  getHTMLObject("js-selected-event").innerHTML = "Selected event";
   //$('#selected-event').html("Selected event");
 
-  const files = (getHTMLObject("js-local-files-btn") as HTMLInputElement).files;
+  const files = getHTMLObject<HTMLInputElement>("js-local-files-btn").files;
   if (!files || files.length === 0) {
     alert("Please select a file to load!");
     return;
@@ -363,7 +337,7 @@ function loadLocalFiles() {
   ispy.local_files = files;
   updateLocalFileList(ispy.local_files);
   ispy.loaded_local = true;
-  openDialog("#files");
+  showDialog("#files");
 }
 
 /**
@@ -374,9 +348,7 @@ function loadDroppedFile(file: File) {
   const reader = new FileReader();
   ispy.file_name = file.name;
 
-  //getHTMLObject('loading').style.display = 'block';
-  $("#loading").modal("show");
-
+  showDialog("loading");
   reader.onload = function (e) {
     const target = e.target;
     if (!target || !target.result) {
@@ -403,8 +375,7 @@ function loadDroppedFile(file: File) {
       buildFileSummary();
       loadEvent();
 
-      //getHTMLObject('loading').style.display = 'none';
-      $("#loading").modal("hide");
+      hideDialog("loading");
     });
   };
 
@@ -420,19 +391,18 @@ function loadDroppedFile(file: File) {
  * @param filename The name of the file to select.
  */
 function selectFile(filename: string) {
-  clearTable("browser-events");
+  clearTable("js-browser-events");
 
   ispy.file_name = filename.split("/")[2]; // of course this isn't a general case for files
 
-  //getHTMLObject('progress').style.display = 'block';
-  $("#progress").modal("show");
+  showDialog("progress");
 
   const xhr = new XMLHttpRequest();
   xhr.open("GET", filename, true);
   xhr.overrideMimeType("text/plain; charset=x-user-defined");
 
-  clearTable("browser-events");
-  const ecell = (getHTMLObject("browser-events") as HTMLTableElement).insertRow(0).insertCell(0);
+  clearTable("js-browser-events");
+  const ecell = getHTMLObject<HTMLTableElement>("js-browser-events").insertRow(0).insertCell(0);
   ecell.innerHTML = "Loading events...";
 
   xhr.onprogress = function (evt) {
@@ -445,7 +415,6 @@ function selectFile(filename: string) {
 
   xhr.onreadystatechange = function () {
     if (this.readyState === 4) {
-      //getHTMLObject('progress').style.display = 'none';
 
       const progress_bars = document.querySelectorAll("div.progress-bar");
       progress_bars.forEach((pb) => {
@@ -453,9 +422,7 @@ function selectFile(filename: string) {
         pb.innerHTML = "0%";
       });
 
-      $("#progress").modal("hide");
-      //$('.progress-bar').attr('style', 'width:0%;');
-      //$('.progress-bar').html('0%');
+      hideDialog("progress");
     }
   };
 
@@ -496,13 +463,13 @@ function loadWebFiles() {
     "./data/MinimumBias_Run2012C_0.ig",
   ];
 
-  getHTMLObject("selected-event").innerHTML = "Selected event";
-  getHTMLObject("load-event").classList.add("disabled");
+  getHTMLObject("js-selected-event").innerHTML = "Selected event";
+  toggleButton("js-load-event", false);
 
   //$('#selected-event').html("Selected event");
   //$('#load-event').addClass('disabled');
 
-  const tbl = getHTMLObject("browser-files") as HTMLTableElement;
+  const tbl = getHTMLObject<HTMLTableElement>("js-browser-files");
 
   for (let i = 0; i < web_files.length; i++) {
     const event = web_files[i];
@@ -511,7 +478,7 @@ function loadWebFiles() {
     const cell = row.insertCell(0);
     const cls = "file";
 
-    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}">${name}</a>`;
+    cell.innerHTML = `<a id="js-browser-file-${i}" class="${cls}">${name}</a>`;
     // add onclick handler to the link
     cell.firstChild?.addEventListener("click", () => {
       selectFile(event);
@@ -523,21 +490,20 @@ function loadWebFiles() {
  * Shows the web files dialog.
  */
 function showWebFiles() {
-  openDialog("#files");
+  showDialog("files");
 
   if (ispy.loaded_local === true) {
     // If we have previously opened a local file then
     // we don't want its contents appearing
     // in the web files dialog
-    clearTable("browser-files");
-    clearTable("browser-events");
+    clearTable("js-browser-files");
+    clearTable("js-browser-events");
     ispy.loaded_local = false;
 
     loadWebFiles();
   }
 
-  //getHTMLObject('open-files').style.display = 'none';
-  $("#open-files").modal("hide");
+  hideDialog("open-files");
 }
 
 /**
@@ -562,15 +528,12 @@ function loadGLTFFiles() {
     "./geometry/gltf/HF.glb",
   ];
 
-  clearTable("obj-files");
+  clearTable("js-obj-files");
 
-  getHTMLObject("selected-obj").innerHTML = "Selected geometry";
-  getHTMLObject("load-obj").classList.add("disabled");
+  getHTMLObject("js-selected-obj").innerHTML = "Selected geometry";
+  toggleButton("js-load-obj", false);
 
-  //$('#selected-obj').html("Selected geometry");
-  //$('#load-obj').addClass('disabled');
-
-  const tbl = getHTMLObject("obj-files") as HTMLTableElement;
+  const tbl = getHTMLObject<HTMLTableElement>("js-obj-files");
 
   for (let i = 0; i < gltf_files.length; i++) {
     const event = gltf_files[i];
@@ -579,7 +542,7 @@ function loadGLTFFiles() {
     const cell = row.insertCell(0);
     const cls = "file";
 
-    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}">${name}</a>`;
+    cell.innerHTML = `<a id="js-browser-file-${i}" class="${cls}">${name}</a>`;
     cell.firstChild?.addEventListener("click", () => {
       selectGLTF(name);
     });
@@ -608,15 +571,15 @@ function loadObjFiles() {
     "./geometry/obj/HF.obj",
   ];
 
-  clearTable("obj-files");
+  clearTable("js-obj-files");
 
-  getHTMLObject("selected-obj").innerHTML = "Selected geometry";
-  getHTMLObject("load-obj").classList.add("disabled");
+  getHTMLObject("js-selected-obj").innerHTML = "Selected geometry";
+  toggleButton("js-load-obj", false);
 
   //$('#selected-obj').html("Selected geometry");
   //$('#load-obj').addClass('disabled');
 
-  const tbl = getHTMLObject("obj-files") as HTMLTableElement;
+  const tbl = getHTMLObject<HTMLTableElement>("js-obj-files");
 
   for (let i = 0; i < obj_files.length; i++) {
     const event = obj_files[i];
@@ -625,7 +588,7 @@ function loadObjFiles() {
     const cell = row.insertCell(0);
     const cls = "file";
 
-    cell.innerHTML = `<a id="browser-file-${i}" class="${cls}">${name}</a>`;
+    cell.innerHTML = `<a id="js-browser-file-${i}" class="${cls}">${name}</a>`;
     cell.firstChild?.addEventListener("click", () => {
       selectObj(name);
     });
@@ -641,8 +604,7 @@ function readOBJ(file: File, cb: (contents: string, name: string) => void) {
   const reader = new FileReader();
 
   reader.onload = function (e) {
-    //getHTMLObject('loading').style.display = 'none';
-    $("#loading").modal("hide");
+    hideDialog("loading");
     // skipcq: JS-0255
     cb(e.target?.result as string, file.name);
   };
@@ -726,8 +688,7 @@ function loadOBJMTL(obj: string, mtl_file: File, name: string) {
       }
     });
 
-    //getHTMLObject('loading').style.display = 'none';
-    $("#loading").modal("hide");
+    hideDialog("loading");
 
     object.name = name;
     object.visible = true;
@@ -755,7 +716,7 @@ function importModel() {
     return;
   }
 
-  const files = (getHTMLObject("import-file") as HTMLInputElement).files;
+  const files = getHTMLObject<HTMLInputElement>("js-import-file").files;
   if (!files || files.length === 0) {
     alert("Please select a file to load!");
     return;
@@ -775,11 +736,8 @@ function importModel() {
       return;
     }
 
-    //getHTMLObject('loading').style.display = 'block';
-    //getHTMLObject('import-model').style.display = 'none';
-
-    $("#loading").modal("show");
-    $("#import-model").modal("hide");
+    showDialog("loading");
+    hideDialog("import-model");
 
     readOBJ(files[0], loadOBJ);
   } else if (files.length === 2) {
@@ -803,11 +761,8 @@ function importModel() {
       return;
     }
 
-    //getHTMLObject('loading').style.display = 'block';
-    //getHTMLObject('import-model').style.display = 'none';
-
-    $("#loading").modal("show");
-    $("#import-model").modal("hide");
+    showDialog("loading");
+    hideDialog("import-model");
 
     readOBJMTL(obj_file, mtl_file, loadOBJMTL);
   } else {
@@ -822,12 +777,8 @@ function importModel() {
  * @param gltf_file The GLTF file to select.
  */
 function selectGLTF(gltf_file: string) {
-  getHTMLObject("selected-obj").innerHTML = gltf_file;
-  getHTMLObject("load-obj").classList.remove("disabled");
-
-  //$('#selected-obj').html(gltf_file);
-  //$('#load-obj').removeClass('disabled');
-
+  getHTMLObject("js-selected-obj").innerHTML = gltf_file;
+  toggleButton("js-load-obj", true);
   ispy.selected_gltf = gltf_file;
 }
 
@@ -864,11 +815,7 @@ function loadSelectedGLTF() {
  */
 function selectObj(obj_file: string) {
   getHTMLObject("selected-obj").innerHTML = obj_file;
-  getHTMLObject("load-obj").classList.remove("disabled");
-
-  //$('#selected-obj').html(obj_file);
-  //$('#load-obj').removeClass('disabled');
-
+  toggleButton("load-obj", true);
   ispy.selected_obj = obj_file;
 }
 
@@ -879,7 +826,6 @@ function loadSelectedObj() {
   const name = ispy.selected_obj.split(".")[0];
   const obj_file = `./geometry/obj/${ispy.selected_obj}`;
   const mtl_file = `./geometry/obj/${name}.mtl`;
-
   loadOBJMTL_new(obj_file, mtl_file, name, name, "Imported", true);
 }
 
@@ -947,9 +893,7 @@ function importDetector() {
     return;
   }
   const gltf_loader = new GLTFLoader();
-
-  //getHTMLObject('loading').style.display = 'block';
-  $("#loading").modal("show");
+  showDialog("loading");
 
   for (const g of gltf_objs) {
     gltf_loader.load(g.file, (gltf) => {
@@ -981,32 +925,19 @@ function importDetector() {
     });
   }
 
-  //getHTMLObject('loading').style.display = 'none';
-  $("#loading").modal("hide");
+  hideDialog("loading");
 }
 
 export {
-  openDialog,
-  closeDialog,
-  hasFileAPI,
-  clearTable,
-  selectEvent,
-  updateEventList,
-  enableNextPrev,
-  enableNextPrevSelected,
   loadEvent,
   nextEvent,
   prevEvent,
   nextSelectedEvent,
   prevSelectedEvent,
-  selectLocalFile,
-  updateLocalFileList,
   loadLocalFiles,
   loadDroppedFile,
-  selectFile,
   loadWebFiles,
   showWebFiles,
-  cleanupData,
   loadGLTFFiles,
   loadObjFiles,
   importModel,
@@ -1014,10 +945,6 @@ export {
   importDetector,
   selectGLTF,
   loadSelectedGLTF,
-  selectObj,
   loadSelectedObj,
-  loadOBJMTL,
   loadOBJ,
-  readOBJ,
-  readOBJMTL,
 };
