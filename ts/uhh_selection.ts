@@ -1,7 +1,7 @@
 import swal from "sweetalert";
 
 import { ispy, analysis } from "./config.js";
-import { getCurrentEvent, EventCollection, getCurrentIndex, assertDefined, downloadData, getHTMLObject, hideDialog, showDialog } from "./utils.js";
+import { getCurrentEvent, EventCollection, getCurrentIndex, assertDefined, downloadData, hideDialog, showDialog, toggleButton } from "./utils.js";
 import { Particle, FourVector, MET } from "./ispy.interfaces.js";
 
 // Helper functions to check the selection
@@ -196,7 +196,6 @@ function getPassingEvents(): string[] {
  */
 function buildFileSummary(): void {
   let event_summary: EventCollection;
-  const downloadBtn = getHTMLObject<HTMLButtonElement>("js-save-csv-btn");
 
   hideDialog("loading");
   showDialog("building");
@@ -210,10 +209,8 @@ function buildFileSummary(): void {
     analysis.file_events_summary = event_summary.events;
 
     // enable the analysis button
-    downloadBtn.disabled = false;
+    toggleButton("js-csv-btn", true);
   } catch (err) {
-    downloadBtn.disabled = true;
-
     // create and display an error message
     let error_msg = `Error encountered building the file summary: \n${err}`;
     error_msg += "\nThe event display will work however the full analysis will remain disabled.";

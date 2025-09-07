@@ -3,7 +3,7 @@ import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-import { assertDefined, getHTMLObject, hideDialog } from "./utils";
+import { assertDefined, getHTMLObject } from "./utils";
 import { ispy } from "./config";
 
 function updateControls(redererClass: string, camera: Camera, rendererDom: HTMLCanvasElement) {

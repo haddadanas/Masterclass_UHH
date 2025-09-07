@@ -88,9 +88,11 @@ function reload() {
  * @returns void
  */
 function printImage() {
+  if (!ispy.image_data) {
+    ispy.get_image_data = true;
+    render();
+  }
   assertDefined(ispy.image_data);
-  ispy.get_image_data = true;
-  render();
   window.open(ispy.image_data, "toDataURL() image", "width=1600, height=900");
 }
 

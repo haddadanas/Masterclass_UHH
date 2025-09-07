@@ -17,7 +17,7 @@
 </head>
 
 <body>
-    <header class="bg-primary" id="js-titlebar"><span id="application-name">REMOVEME</span><span id="js-event-loaded" class="header-event">REMOVEME</span>
+    <header class="bg-primary" id="js-titlebar"><span id="application-name">Masterclass @ UHH / DESY</span><span id="js-event-loaded" class="header-event"></span>
         <div class="btn-toolbar">
             <div class="btn-group btn-group-sm" role="group"><a class="btn btn-info" role="button" title="Info" href="about.html" rel="author" target="_blank"><i class="fas fa-info-circle"></i></a><button class="btn btn-primary active" id="js-event-display" type="button"><i class="fas fa-cubes"></i></button><a class="btn btn-info" role="button" title="Help" href="help.html" target="_blank" rel="help"><i class="fas fa-question-circle"></i></a></div>
             <div class="btn-group btn-group-sm" role="group"><button class="btn btn-primary display-mode" id="js-display-mode" type="button" title="Toggle Light/Dark Mode"><i class="fas fa-sun"></i><i class="fas fa-moon"></i></button><button class="btn btn-primary" id="js-toggle-fullscreen" type="button" title="toggle Fullscreen"><i class="fas fa-expand"></i><i class="fas fa-compress"></i></button></div>
@@ -46,7 +46,7 @@
     </div>
     <main id="js-display">
         <div id="js-axes" class="axes-div"></div>
-        <div id="js-event-info" class="event-info-div"><img class="img-fluid" width="128" height="128" src="./img/cms-color-medium.png"><span>REMOVEME<br>REMOVEME<br>REMOVEME<br>REMOVEME</span></div>
+        <div id="js-event-info" class="event-info-div"><img class="img-fluid" width="128" height="128" id="js-cms-logo" src="./img/cms-color-medium.png"><span id="js-event-text">REMOVEME<br>REMOVEME<br>REMOVEME<br>REMOVEME</span></div>
     </main>
     <div class="modal fade" role="dialog" tabindex="-1" id="open-files">
         <div class="modal-dialog modal-sm" role="document">
@@ -69,24 +69,22 @@
                     <h4 class="modal-title">Open Event</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <table class="table" id="browser-table">
+                    <table class="table" id="js-browser-table">
                         <tbody>
                             <tr>
                                 <td class="browser-header" width="50%">Files</td>
                                 <td class="browser-header">Events</td>
                             </tr>
                             <tr>
-                                <td><table class="table table-hover" id="browser-files"></table></td>
-                                <td><table class="table table-hover" id="browser-events"></table></td>
+                                <td><table class="table table-hover" id="js-browser-files"></table></td>
+                                <td><table class="table table-hover" id="js-browser-events"></table></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div id="js-selected-event" class="bordered">
-                    <p id="DELETEME">DELETEME</p>
-                </div>
+                <div id="js-selected-event" class="bordered"></div>
                 <div class="modal-footer">
-                    <div><button class="btn btn-light" data-bs-dismiss="modal" type="button"> Close </button><button class="btn btn-primary disabled" id="load-event" type="button"> Load </button></div>
+                    <div><button class="btn btn-light" data-bs-dismiss="modal" type="button"> Close </button><button class="btn btn-primary disabled" id="js-load-event" type="button" disabled=""> Load </button></div>
                 </div>
             </div>
         </div>
@@ -127,15 +125,15 @@
                     <h4 class="modal-title">Settings</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div><input type="checkbox" id="show-logo"><label for="show-logo">Hide experiment logo</label></div>
-                    <div><input type="checkbox" id="show-axes"><label for="show-axes">Hide axes</label></div>
-                    <div><input type="checkbox" id="clipping"><label for="clipping">Show clipping plane controls</label></div>
-                    <div><input type="checkbox" id="pickable_lines"><label for="pickable_lines">Thicker Track lines</label></div>
+                    <div><input type="checkbox" id="js-show-logo"><label for="show-logo">Hide experiment logo</label></div>
+                    <div><input type="checkbox" id="js-show-axes"><label for="show-axes">Hide axes</label></div>
+                    <div><input type="checkbox" id="js-clipping"><label for="clipping">Show clipping plane controls</label></div>
+                    <div><input type="checkbox" id="js-pickable_lines"><label for="pickable_lines">Thicker Track lines</label></div>
                     <div><label for="vh-slider">Set vertical extent of display:&nbsp;</label><span id="js-vh"></span><span>%</span><input type="range" id="js-vh-slider" class="form-range" max="100" min="75" step="1" value="90"></div>
-                    <div><label for="fps-slider">Set maximum frame rate:</label><span id="js-fr"></span><span>&nbsp;fps</span><input type="range" id="js-fps-slider" class="form-range" max="60" min="1" step="1" value="30"></div>
-                    <div><label for="transparency-slider">Set imported geometry transparency:</label><span id="js-trspy"></span><input type="range" id="js-transparency-slider" class="form-range" max="1.0" min="0.0" step="0.05" value="1.0"></div>
+                    <div><label for="fps-slider">Set maximum frame rate:&nbsp;</label><span id="js-fr"></span><span>&nbsp;fps</span><input type="range" id="js-fps-slider" class="form-range" max="60" min="1" step="1" value="30"></div>
+                    <div><label for="transparency-slider">Set imported geometry transparency:&nbsp;</label><span id="js-trspy"></span><input type="range" id="js-transparency-slider" class="form-range" max="1.0" min="0.0" step="0.05" value="1.0"></div>
                     <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">Select renderer</button>
-                        <div class="dropdown-menu border"><a class="dropdown-item" id="js-webgl-renderer" href="#">WebGLRenderer</a><a class="dropdown-item" id="js-svg-renderer" href="#">SVGRenderer</a></div>
+                        <div class="dropdown-menu border"><a class="dropdown-item" id="js-webgl-renderer" href="#" data-bs-dismiss="modal">WebGLRenderer</a><a class="dropdown-item" id="js-svg-renderer" href="#" data-bs-dismiss="modal">SVGRenderer</a></div>
                     </div>
                 </div>
                 <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button"> Close </button></div>
@@ -149,9 +147,9 @@
                     <h4 class="modal-title">Statistics</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div><input type="checkbox" id="show-stats"><label for="show-stats">Show display statistics</label></div>
+                    <div><input type="checkbox" id="js-show-stats"><label for="show-stats">Show display statistics</label></div>
                 </div>
-                <div id="renderer-info"></div>
+                <div id="js-renderer-info"></div>
                 <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button"> Close </button></div>
             </div>
         </div>
@@ -162,7 +160,7 @@
                 <div class="modal-header">
                     <h4 class="modal-title">Invariant Mass</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body"><span id="invariant-mass"></span><span> GeV</span></div>
+                <div class="modal-body"><span id="js-invariant-mass"></span><span>&nbsp;GeV</span></div>
                 <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button"> Close </button></div>
             </div>
         </div>
@@ -175,7 +173,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">Select export format</button>
-                        <div class="dropdown-menu"><a class="dropdown-item" id="js-export-obj" href="#">Export OBJ</a><a class="dropdown-item" id="js-export-gltf-text" href="#">Export GLTF (text)</a><a class="dropdown-item" id="js-export-gltf-binary" href="#">Export GLTF (binary)</a></div>
+                        <div class="dropdown-menu"><a class="dropdown-item" id="js-export-obj" href="#" data-bs-dismiss="modal">Export OBJ</a><a class="dropdown-item" id="js-export-gltf-text" href="#" data-bs-dismiss="modal">Export GLTF (text)</a><a class="dropdown-item" id="js-export-gltf-binary" href="#" data-bs-dismiss="modal">Export GLTF (binary)</a></div>
                     </div>
                 </div>
                 <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button"> Close </button></div>
@@ -193,7 +191,7 @@
                     <p> Currently, only the `.obj` format is supported. If an additional .mtl is available and loaded, it will be used as well. </p>
                     <p><i>Note</i>: a large complicated 3D model may take minutes to load. </p>
                     <p> Files available via the web have been created from <a href="https://www.sketchup.com/">SketchUp</a> models created by <a href="https://twiki.cern.ch/twiki/bin/view/CMSPublic/SketchUpCMS">T. Sakuma.</a></p><button class="btn btn-primary" id="js-import-web" type="button"> Open file(s) from the Web </button>
-                    <p> Open local file(s): <input type="file" id="import-file" multiple=""></p>
+                    <p> Open local file(s): <input type="file" id="js-import-file" multiple=""></p>
                 </div>
                 <div class="modal-footer"><button class="btn btn-primary" data-bs-dismiss="modal" type="button"> Close </button></div>
             </div>
@@ -206,7 +204,7 @@
                     <h4 class="modal-title">Open Model</h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="border" id="selected-obj"></div>
+                    <div class="border" id="js-selected-obj"></div>
                     <div class="table-responsive">
                         <table class="table" id="obj-table">
                             <thead>
@@ -217,7 +215,7 @@
                             <tbody>
                                 <tr>
                                     <td class="file-table">
-                                        <div class="table-responsive" id="obj-files">
+                                        <div class="table-responsive" id="js-obj-files">
                                             <table class="table table-hover">
                                                 <tbody></tbody>
                                             </table>
@@ -228,7 +226,7 @@
                         </table>
                     </div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal">Close</button><button class="btn btn-primary disabled" id="load-obj" type="button"> Load </button></div>
+                <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal">Close</button><button class="btn btn-primary disabled" id="js-load-obj" type="button"> Load </button></div>
             </div>
         </div>
     </div>

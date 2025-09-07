@@ -5,7 +5,6 @@ import { Material, Object3D } from "three";
 
 import { ispy } from "./config.js";
 import { Particle, EventObject, EventSummary, MET, FourVector, SelectionFieldController } from "./ispy.interfaces.js";
-import bootstrap from "bootstrap";
 
 const mMuon2 = 0.10566 * 0.10566;
 const mElectron2 = 0.511e-3 * 0.511e-3;
@@ -334,18 +333,14 @@ export function toggleCollapse(key: string) {
  * Toggle a dialog modal by its ID.
  * @param id The ID of the dialog modal to toggle.
  */
-export function toggleDialog(id: string) {
-  const dlg = bootstrap.Modal.getOrCreateInstance(getHTMLObject<HTMLDialogElement>(id));
-  dlg.toggle();
-}
-
-/**
- * Toggle a dialog modal by its ID.
- * @param id The ID of the dialog modal to toggle.
- */
 export function showDialog(id: string) {
-  const dlg = bootstrap.Modal.getOrCreateInstance(getHTMLObject<HTMLDialogElement>(id));
-  dlg.show();
+  const el = getHTMLObject<HTMLElement>(id);
+  el.classList.add('show');
+  el.style.display = 'block';
+  // add backdrop
+  const backdrop = document.createElement('div');
+  backdrop.className = 'modal-backdrop fade show';
+  document.body.append(backdrop);
 }
 
 /**
@@ -353,8 +348,11 @@ export function showDialog(id: string) {
  * @param id The ID of the dialog modal to toggle.
  */
 export function hideDialog(id: string) {
-  const dlg = bootstrap.Modal.getOrCreateInstance(getHTMLObject<HTMLDialogElement>(id));
-  dlg.hide();
+  const el = getHTMLObject<HTMLElement>(id);
+  el.classList.remove('show');
+  el.style.display = 'none';
+  // remove all backdrops
+  document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
 }
 
 /**

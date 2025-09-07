@@ -80,7 +80,7 @@ function setupClippingGUI() {
     autoPlace: false,
   });
 
-  ispy.clipgui.domElement.id = "clipgui";
+  ispy.clipgui.domElement.id = "js-clipgui";
   const titlebar = getHTMLObject("js-titlebar"); // TODO append to the toolbar?
   titlebar.appendChild(ispy.clipgui.domElement);
 
@@ -224,8 +224,8 @@ function setupClippingGUI() {
  * Initializes the application.
  */
 function setupGUIs() {
-  ispy.gui.domElement.id = "treegui";
-  ispy.guiReduced.domElement.id = "treegui-reduced";
+  ispy.gui.domElement.id = "js-treegui";
+  ispy.guiReduced.domElement.id = "js-treegui-reduced";
   const titlebar = getHTMLObject("js-titlebar"); // TODO append to the toolbar?
   titlebar.appendChild(ispy.guiReduced.domElement);
 
