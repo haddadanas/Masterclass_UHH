@@ -1,20 +1,23 @@
-.header-nav {
+#application-name {
   flex: 0 0 auto;
-  display: flex;
-  gap: 0.5rem;
-  margin-left: auto;
+  font-weight: bold;
+  font-family: monospace;
 }
 
 .header-event {
   flex: 1 1 auto;
   text-align: center;
   font-size: 1.2rem;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
-#application-name {
+.header-nav {
   flex: 0 0 auto;
-  font-weight: bold;
-  font-family: monospace;
+  display: flex;
+  gap: 0;
+  margin-left: auto;
+  flex-wrap: nowrap;
 }
 
 html[data-bs-theme="light"] #js-display-mode .fa-moon {

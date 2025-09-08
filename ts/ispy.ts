@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loadObjFiles();
     hideDialog("import-model");
   });
-  jsInvertColors.addEventListener("change", invertColors);
+  jsInvertColors.addEventListener("click", invertColors);
   jsVhSlider.addEventListener("input", (event) => {
     const value = parseFloat((event.target as HTMLInputElement).value);
     setDisplayVerticalHeight(value);

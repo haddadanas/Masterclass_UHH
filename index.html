@@ -13,12 +13,13 @@
     <link rel="stylesheet" href="./css/bss-overrides.css">
     <link rel="stylesheet" href="./css/modal.css">
     <link rel="stylesheet" href="./css/header_toolbar.css">
+    <link rel="stylesheet" href="./css/dat_gui.css">
     <link rel="stylesheet" href="./css/styles.css">
 </head>
 
 <body>
     <header class="bg-primary" id="js-titlebar"><span id="application-name">Masterclass @ UHH / DESY</span><span id="js-event-loaded" class="header-event"></span>
-        <div class="btn-toolbar">
+        <div class="btn-toolbar header-nav">
             <div class="btn-group btn-group-sm" role="group"><a class="btn btn-info" role="button" title="Info" href="about.html" rel="author" target="_blank"><i class="fas fa-info-circle"></i></a><button class="btn btn-primary active" id="js-event-display" type="button"><i class="fas fa-cubes"></i></button><a class="btn btn-info" role="button" title="Help" href="help.html" target="_blank" rel="help"><i class="fas fa-question-circle"></i></a></div>
             <div class="btn-group btn-group-sm" role="group"><button class="btn btn-primary display-mode" id="js-display-mode" type="button" title="Toggle Light/Dark Mode"><i class="fas fa-sun"></i><i class="fas fa-moon"></i></button><button class="btn btn-primary" id="js-toggle-fullscreen" type="button" title="toggle Fullscreen"><i class="fas fa-expand"></i><i class="fas fa-compress"></i></button></div>
         </div>
@@ -34,7 +35,7 @@
             <div class="btn-group" role="group"><button class="btn btn-primary" id="js-xy" type="button" title="XY Plane"><img class="img-fluid" src="./img/yx_small.png"></button><button class="btn btn-primary" id="js-yz" type="button" title="YZ Plane"><img class="img-fluid" src="./img/yz_small.png"></button><button class="btn btn-primary" id="js-xz" type="button" title="ZX Plane"><img class="img-fluid" src="./img/xz_small.png"></button></div>
             <div class="btn-group" role="group"><button class="btn btn-primary disabled" id="js-prev-sel-event" type="button" title="Previous Selected Event"><i class="fas fa-angle-double-left"></i></button><button class="btn btn-primary disabled" id="js-next-sel-event" type="button" title="Next Selected Event"><i class="fas fa-angle-double-right"></i></button></div>
         </div>
-        <div class="dropdown"><button class="btn btn-primary btn-lg dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" id="js-csv-btn" type="button"><i class="fas fa-file-csv"></i></button>
+        <div class="dropdown"><button class="btn btn-primary btn-lg disabled dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" id="js-csv-btn" type="button" disabled=""><i class="fas fa-file-csv"></i></button>
             <div class="dropdown-menu"><a class="dropdown-item" id="js-csv-higgs" href="#">Higgs</a><a class="dropdown-item" id="js-csv-z" href="#">Z</a><a class="dropdown-item" id="js-csv-wp" href="#">W<sup>+</sup></a><a class="dropdown-item" id="js-csv-wm" href="#">W<sup>-</sup></a></div>
         </div>
         <div id="js-secondary-toolbar" class="secondary-toolbar">
@@ -46,7 +47,8 @@
     </div>
     <main id="js-display">
         <div id="js-axes" class="axes-div"></div>
-        <div id="js-event-info" class="event-info-div"><img class="img-fluid" width="128" height="128" id="js-cms-logo" src="./img/cms-color-medium.png"><span id="js-event-text">REMOVEME<br>REMOVEME<br>REMOVEME<br>REMOVEME</span></div>
+        <div id="js-event-info" class="event-info-div"><img class="img-fluid" width="128" height="128" id="js-cms-logo" src="./img/cms-color-medium.png"><span id="js-event-text"></span></div>
+        <div id="js-menu-container" class="menu-container"></div>
     </main>
     <div class="modal fade" role="dialog" tabindex="-1" id="open-files">
         <div class="modal-dialog modal-sm" role="document">

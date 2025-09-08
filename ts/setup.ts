@@ -81,7 +81,8 @@ function setupClippingGUI() {
   });
 
   ispy.clipgui.domElement.id = "js-clipgui";
-  const titlebar = getHTMLObject("js-titlebar"); // TODO append to the toolbar?
+  ispy.clipgui.domElement.classList.add("gui-menu");
+  const titlebar = getHTMLObject("js-menu-container");
   titlebar.appendChild(ispy.clipgui.domElement);
 
   const localFolder = ispy.clipgui.addFolder("Local Clipping");
@@ -226,7 +227,8 @@ function setupClippingGUI() {
 function setupGUIs() {
   ispy.gui.domElement.id = "js-treegui";
   ispy.guiReduced.domElement.id = "js-treegui-reduced";
-  const titlebar = getHTMLObject("js-titlebar"); // TODO append to the toolbar?
+  ispy.guiReduced.domElement.classList.add("gui-menu");
+  const titlebar = getHTMLObject("js-menu-container");
   titlebar.appendChild(ispy.guiReduced.domElement);
 
   // It seems currently impossible with dat.gui
