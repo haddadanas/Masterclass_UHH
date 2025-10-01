@@ -9,6 +9,14 @@ import { Particle, EventObject, EventSummary, MET, FourVector, SelectionFieldCon
 const mMuon2 = 0.10566 * 0.10566;
 const mElectron2 = 0.511e-3 * 0.511e-3;
 
+declare namespace bootstrap {
+  class Modal {
+    static getOrCreateInstance(element: HTMLElement): Modal;
+    show(): void;
+    hide(): void;
+  }
+}
+
 /**
  * Checks if property exists on a given object
  * @param obj The object to check.
@@ -335,12 +343,7 @@ export function toggleCollapse(key: string) {
  */
 export function showDialog(id: string) {
   const el = getHTMLObject<HTMLElement>(id);
-  el.classList.add('show');
-  el.style.display = 'block';
-  // add backdrop
-  const backdrop = document.createElement('div');
-  backdrop.className = 'modal-backdrop fade show';
-  document.body.append(backdrop);
+  bootstrap.Modal.getOrCreateInstance(el).show();
 }
 
 /**
@@ -349,10 +352,7 @@ export function showDialog(id: string) {
  */
 export function hideDialog(id: string) {
   const el = getHTMLObject<HTMLElement>(id);
-  el.classList.remove('show');
-  el.style.display = 'none';
-  // remove all backdrops
-  document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+  bootstrap.Modal.getOrCreateInstance(el).hide();
 }
 
 /**

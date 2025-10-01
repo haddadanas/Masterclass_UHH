@@ -514,30 +514,25 @@ function initControlPanel() {
  */
 function createCheckboxContainer(cont: GUIController) {
   const selectionField = cont as unknown as SelectionFieldController;
-  // check if not __input
-  const inputField = selectionField.domElement.querySelector("input") as HTMLInputElement;
-
+  
   // Create a checkbox element
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
+  selectionField.checkbox = false;
+
+  // get input field
+  const inputField = selectionField.domElement.querySelector("input") as HTMLInputElement;
+  inputField.classList.add("sel-field")
 
   // Add the checkbox to the DOM
   selectionField.domElement.appendChild(checkbox);
-  selectionField.domElement.style.display = "flex";
-
-  // Add the checkbox to the controller
-  selectionField.checkbox = false;
 
   // Disable the input field initially
   inputField.disabled = true;
-  inputField.style.backgroundColor = "#e0e0e0";
-  inputField.style.cursor = "not-allowed";
   inputField.value = "";
 
   checkbox.addEventListener("change", function () {
     inputField.disabled = !this.checked;
-    inputField.style.backgroundColor = this.checked ? "" : "#e0e0e0";
-    inputField.style.cursor = this.checked ? "" : "not-allowed";
     inputField.value = this.checked ? selectionField.initialValue : "";
     selectionField.checkbox = this.checked;
   });
@@ -551,6 +546,8 @@ function initSelectionFields() {
   const gui_elem = ispy.guiReduced;
 
   const folder = gui_elem.__folders["Event Selection"];
+  folder.domElement.id = "selection-folder";
+
   const nMuon = 0,
     nElectron = 0,
     nPhoton = 0,
@@ -680,7 +677,6 @@ export {
   setupInset,
   handleToggles,
   handleDragAndDrop,
-  createCheckboxContainer,
   run,
   initSelectionFields,
 };

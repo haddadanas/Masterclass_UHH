@@ -338,7 +338,7 @@ function loadLocalFiles() {
   ispy.local_files = files;
   updateLocalFileList(ispy.local_files);
   ispy.loaded_local = true;
-  showDialog("#files");
+  showDialog("files");
 }
 
 /**
