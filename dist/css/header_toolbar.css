@@ -39,3 +39,15 @@ html[data-bs-theme="dark"] #js-display-mode .fa-sun {
 #js-toggle-fullscreen.pressed .fa-compress {
   display: inline;
 }
+
+#js-autorotate .fa-pause-circle {
+  display: none;
+}
+
+#js-autorotate.pressed .fa-play-circle {
+  display: none;
+}
+
+#js-autorotate.pressed .fa-pause-circle {
+  display: inline;
+}

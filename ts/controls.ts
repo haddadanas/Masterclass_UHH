@@ -10,9 +10,9 @@ import { render } from "./renderer.js";
  * @returns void
  */
 function autoRotate() {
+  const autorotateBtn = getHTMLObject<HTMLButtonElement>("js-autorotate");
   ispy.autoRotating = !ispy.autoRotating;
-
-  getHTMLObject<HTMLButtonElement>("js-autorotate").classList.toggle("active");
+  autorotateBtn.classList.toggle("pressed");
 }
 
 /**
@@ -88,12 +88,15 @@ function reload() {
  * @returns void
  */
 function printImage() {
-  if (!ispy.image_data) {
-    ispy.get_image_data = true;
-    render();
-  }
+  // get the current image data
+  ispy.get_image_data = true;
+  render();
+
   assertDefined(ispy.image_data);
-  window.open(ispy.image_data, "toDataURL() image", "width=1600, height=900");
+  downloadData(ispy.image_data, "ispy_image.png");
+
+  // remove image data to free memory
+  ispy.image_data = null;
 }
 
 /**
