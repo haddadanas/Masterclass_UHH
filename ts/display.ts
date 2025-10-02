@@ -23,6 +23,22 @@ function lookAtOrigin() {
   ispy.camera?.lookAt(new Vector3(0, 0, 0));
 }
 
+/** Initializes the camera position to a default location.
+ * @returns void
+ */
+function initCameraPosition() {
+  assertDefined(ispy.camera, "Camera is not defined");
+  ispy.camera.position.x = 9.5;
+  ispy.camera.position.y = 9.5;
+  ispy.camera.position.z = 13.0;
+
+  ispy.camera.zoom = 2.0;
+  ispy.camera.up = new Vector3(0, 1, 0);
+
+  ispy.camera.updateProjectionMatrix();
+  lookAtOrigin();
+}
+
 /**
  * Initializes the camera object, saved to ispy.camera.
  * @returns void
@@ -42,15 +58,7 @@ function initCamera() {
 
   ispy.is_perspective = true;
   ispy.camera = ispy.is_perspective ? ispy.p_camera : ispy.o_camera;
-  ispy.camera.position.x = 9.5;
-  ispy.camera.position.y = 9.5;
-  ispy.camera.position.z = 13.0;
-
-  ispy.camera.zoom = 2.0;
-  ispy.camera.up = new Vector3(0, 1, 0);
-
-  ispy.camera.updateProjectionMatrix();
-  lookAtOrigin();
+  initCameraPosition();
 }
 
 /**
@@ -352,7 +360,7 @@ function unHighlightObject() {
 function resetView() {
   assertDefined(ispy.controls, "Controls are not defined");
   setPerspective();
-  initCamera();
+  initCameraPosition();
 
   ispy.controls.reset();
 
