@@ -17,7 +17,7 @@ header {
   top: 0;
   left: 0;
   right: 0;
-  height: 30px;
+  height: 25px;
   display: flex;
   align-items: center;
   padding: 5px;
@@ -27,10 +27,10 @@ header {
 
 .toolbar {
   position: fixed;
-  top: 30px;
+  top: 25px;
   left: 0;
   right: 0;
-  height: 40px;
+  height: 35px;
   display: flex;
   align-items: center;
   padding: 5px;
@@ -41,7 +41,7 @@ header {
 
 main {
   position: absolute;
-  top: 70px;
+  top: 60px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -63,8 +63,8 @@ main {
   margin-left: auto;
 }
 
-.btn-group {
-  height: 40px;
+.btn-group, .dropdown {
+  height: 35px;
   object-fit: contain;
   display: inline-flex;
   flex-direction: row;
@@ -75,7 +75,7 @@ main {
 }
 
 header .btn-group {
-  height: 30px;
+  height: 29px;
 }
 
 .btn {
@@ -115,6 +115,8 @@ header .btn {
 .btn.active {
   background-color: var(--bs-secondary);
   color: var(--bs-secondary-bg);
+  pointer-events: none;
+  cursor: default;
 }
 
 .dropdown-menu {
@@ -169,8 +171,8 @@ header .btn {
   background-color: inherit;
   color: var(--bs-tertiary-color);
   position: absolute;
-  top: 1rem;
-  left: 1rem;
+  top: 0.5rem;
+  left: 0.5rem;
   z-index: 500;
   display: flex;
   align-items: flex-start;
