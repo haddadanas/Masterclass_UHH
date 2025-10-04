@@ -1,0 +1,34 @@
+.clean-block {
+  padding: 0;
+}
+
+.clean-block.clean-services.dark {
+  padding: 0;
+  margin: 0;
+}
+
+.container {
+  padding: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.clean-block .block-heading {
+  padding-top: 2em;
+  margin-top: 0px;
+}
+
+.block-heading img {
+  padding-left: 1em;
+}
+
+.clean-block .block-heading p {
+  padding-top: 1em;
+  margin-left: 100px;
+  margin-right: 100px;
+  max-width: 750px;
+}
+
+:is(#js-help, #js-about) .btn i {
+  margin: 0;
+}
