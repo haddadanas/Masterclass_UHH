@@ -1,3 +1,8 @@
+.page {
+  overflow-y: scroll;
+  font-family: 'Montserrat';
+}
+
 .clean-block {
   padding: 0;
 }
@@ -7,14 +12,14 @@
   margin: 0;
 }
 
-.container {
+.page .container {
   padding: 5px;
   margin-left: 10px;
   margin-right: 10px;
 }
 
 .clean-block .block-heading {
-  padding-top: 2em;
+  padding-top: 1em;
   margin-top: 0px;
 }
 
@@ -22,13 +27,23 @@
   padding-left: 1em;
 }
 
-.clean-block .block-heading p {
-  padding-top: 1em;
+.clean-block .block-heading :is(p, h1, h2, h3, h4, h5) {
+  padding-top: 0.5em;
   margin-left: 100px;
   margin-right: 100px;
-  max-width: 750px;
+  max-width: 100%;
+  text-align: center;
 }
 
-:is(#js-help, #js-about) .btn i {
+.card div {
+  text-align: center;
+}
+
+.page .btn {
+  background-color: var(--bs-primary);
+}
+
+.page .btn i {
   margin: 0;
 }
+
