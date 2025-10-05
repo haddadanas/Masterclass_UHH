@@ -8,19 +8,21 @@
     <meta name="description" content="CMS Event Display adapted for the Masterclasses">
     <link rel="shortcut icon" href="./img/cms-favicon.png" type="image/png">
     <link rel="apple-touch-icon" href="./img/cms-favicon.png">
-    <link rel="stylesheet" href="./css/bootstrap.min.css">
-    <link rel="stylesheet" href="./fonts/fontawesome-all.min.css">
-    <link rel="stylesheet" href="./css/bss-overrides.css">
-    <link rel="stylesheet" href="./css/modal.css">
-    <link rel="stylesheet" href="./css/header_toolbar.css">
-    <link rel="stylesheet" href="./css/dat_gui.css">
-    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/Montserrat.css">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/css/bss-overrides.css">
+    <link rel="stylesheet" href="assets/css/about.css">
+    <link rel="stylesheet" href="assets/css/modal.css">
+    <link rel="stylesheet" href="assets/css/header_toolbar.css">
+    <link rel="stylesheet" href="assets/css/dat_gui.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
 <body>
     <header class="bg-primary" id="js-titlebar"><span id="application-name">Masterclass @ UHH / DESY</span><span id="js-event-loaded" class="header-event"></span>
         <div class="btn-toolbar header-nav">
-            <div class="btn-group btn-group-sm" role="group"><a class="btn btn-info" role="button" title="Info" href="about.html" rel="author" target="_blank"><i class="fas fa-info-circle"></i></a><button class="btn btn-primary active" id="js-event-display" type="button"><i class="fas fa-cubes"></i></button><a class="btn btn-info" role="button" title="Help" href="help.html" target="_blank" rel="help"><i class="fas fa-question-circle"></i></a></div>
+            <div class="btn-group btn-group-sm" role="group"><a class="btn btn-info" role="button" id="js-about-btn"><i class="fas fa-info-circle"></i></a><button class="btn btn-primary active" id="js-event-display" type="button"><i class="fas fa-cubes"></i></button><a class="btn btn-info" role="button" id="js-help-btn"><i class="fas fa-question-circle"></i></a></div>
             <div class="btn-group btn-group-sm" role="group"><button class="btn btn-primary display-mode" id="js-display-mode" type="button" title="Toggle Light/Dark Mode"><i class="fas fa-sun"></i><i class="fas fa-moon"></i></button><button class="btn btn-primary" id="js-toggle-fullscreen" type="button" title="toggle Fullscreen"><i class="fas fa-expand"></i><i class="fas fa-compress"></i></button></div>
         </div>
     </header>
@@ -32,7 +34,7 @@
             <div class="btn-group" role="group"><button class="btn btn-primary" id="js-reset-view" type="button" title="Return to Start View"><i class="fas fa-home"></i></button></div>
             <div class="btn-group" role="group"><button class="btn btn-primary" id="js-zoom-out" type="button" title="Zoom Out [Shift + Down Arrow]"><i class="fas fa-search-minus"></i></button><button class="btn btn-primary" id="js-zoom-in" type="button" title="Zoom In [Shift + Up Arrow]"><i class="fas fa-search-plus"></i></button></div>
             <div class="btn-group" role="group"><button class="btn btn-primary active" id="js-3d" type="button" title="3D View">3D</button><button class="btn btn-primary" id="js-rphi" type="button" title="R-Phi View">rφ</button><button class="btn btn-primary" id="js-rhoz" type="button" title="Rho-Z View">ρz</button></div>
-            <div class="btn-group" role="group"><button class="btn btn-primary" id="js-xy" type="button" title="XY Plane"><img class="img-fluid" src="./img/yx_small.png" alt="yx-axis"></button><button class="btn btn-primary" id="js-yz" type="button" title="YZ Plane"><img class="img-fluid" src="./img/yz_small.png" alt="yz-axis"></button><button class="btn btn-primary" id="js-xz" type="button" title="ZX Plane"><img class="img-fluid" src="./img/xz_small.png" alt="xz-axis"></button></div>
+            <div class="btn-group" role="group"><button class="btn btn-primary" id="js-xy" type="button" title="XY Plane"><img class="img-fluid" src="assets/img/yx_small.png" alt="yx-axis"></button><button class="btn btn-primary" id="js-yz" type="button" title="YZ Plane"><img class="img-fluid" src="assets/img/yz_small.png" alt="yz-axis"></button><button class="btn btn-primary" id="js-xz" type="button" title="ZX Plane"><img class="img-fluid" src="assets/img/xz_small.png" alt="xz-axis"></button></div>
             <div class="btn-group" role="group"><button class="btn btn-primary disabled" id="js-prev-sel-event" type="button" title="Previous Selected Event"><i class="fas fa-angle-double-left"></i></button><button class="btn btn-primary disabled" id="js-next-sel-event" type="button" title="Next Selected Event"><i class="fas fa-angle-double-right"></i></button></div>
         </div>
         <div class="dropdown"><button class="btn btn-primary btn-lg disabled dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" id="js-csv-btn" type="button" disabled=""><i class="fas fa-file-csv"></i></button>
@@ -47,10 +49,82 @@
     </div>
     <main id="js-display">
         <div id="js-axes" class="axes-div"></div>
-        <div id="js-event-info" class="event-info-div"><img class="img-fluid" width="128" height="128" id="js-cms-logo" src="./img/cms-color-medium.png" alt="CMS logo"><span id="js-event-text"></span></div>
+        <div id="js-event-info" class="event-info-div"><img class="img-fluid" width="128" height="128" id="js-cms-logo" src="assets/img/cms-color-medium.png" alt="CMS logo"><span id="js-event-text"></span></div>
         <div id="js-menu-container" class="menu-container"></div>
     </main>
-    <div class="modal" role="dialog" tabindex="-1" id="open-files">
+    <main id="js-about" class="page" hidden>
+        <section class="clean-block clean-services dark">
+            <div class="container">
+                <div class="block-heading">
+                    <h1 class="text-info">Masterclasses @ UHH / DESY</h1>
+                    <h2>title</h2>
+                    <p>description</p>
+                    <p>github:&nbsp;<a class="btn btn-primary" role="button" href="https://github.com/haddadanas/Masterclass_UHH" target="_blank"><i class="fab fa-github"></i></a>&nbsp;</p>
+                    <p>sponsors<img src="assets/img/UHH_Universität_Hamburg_Logo.svg" alt="UHH Logo" height="70px"><img src="assets/img/desy-circle.svg" alt="DESY Logo" height="70"></p>
+                </div>
+                <h2 style="text-align: center;">links</h2>
+                <div class="row">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card"><img class="card-img-top w-100 d-block" src="assets/img/logo-teilchenwelt.svg" style="background: var(--bs-light);">
+                            <div class="card-body">
+                                <h4 class="card-title">Netzwerk Teilchenwelt</h4>
+                                <p class="card-text">teilchenwelt</p>
+                            </div>
+                            <div><a class="btn btn-outline-primary btn-sm" role="button" href="https://www.teilchenwelt.de/angebote/alle-angebote/" target="_blank"><i class="far fa-arrow-alt-circle-right"></i></a></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card"><img class="card-img-top w-100 d-block" src="assets/img/CMS%20Slice.gif">
+                            <div class="card-body">
+                                <h4 class="card-title">CMS Interactive Slice</h4>
+                                <p class="card-text">cms-interactive</p>
+                            </div>
+                            <div><a class="btn btn-outline-primary btn-sm" role="button" href="https://cmsslice.web.cern.ch" target="_blank"><i class="far fa-arrow-alt-circle-right"></i></a></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card"><img class="card-img-top w-100 d-block" src="assets/img/ispy-webgl-screenshot-1.0.0.png">
+                            <div class="card-body">
+                                <h4 class="card-title">Original CMS Event Display</h4>
+                                <p class="card-text">event-display</p>
+                            </div>
+                            <div><a class="btn btn-outline-primary btn-sm" role="button" href="https://github.com/cms-outreach/ispy-webgl" target="_blank"><i class="fab fa-github"></i></a><a class="btn btn-outline-primary btn-sm" role="button" href="https://ispy-webgl.web.cern.ch" target="_blank"><i class="far fa-arrow-alt-circle-right"></i></a><a class="btn btn-outline-primary btn-sm" role="button" href="https://doi.org/10.1088/1742-6596/898/7/072030" target="_blank"><i class="far fa-file-alt"></i></a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <main id="js-help" class="page" hidden>
+        <section class="clean-block">
+            <div class="container">
+                <div class="block-heading">
+                    <h2 class="text-info">Help</h2>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-sm-6 col-lg-4">
+                        <div class="card text-center clean-card">
+                            <div class="card-body info">
+                                <h4 class="card-title">student-title</h4>
+                                <p class="card-text">student-text</p>
+                                <div class="icons"></div><button class="btn btn-primary" type="button"><i class="far fa-arrow-alt-circle-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-4">
+                        <div class="card text-center clean-card">
+                            <div class="card-body info">
+                                <h4 class="card-title">teacher-title</h4>
+                                <p class="card-text">teacher-text</p>
+                                <div class="icons"><button class="btn btn-primary" type="button"><i class="far fa-arrow-alt-circle-right"></i></button></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <div class="modal fade" role="dialog" tabindex="-1" id="open-files">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -175,7 +249,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button">Select export format</button>
-                        <div class="dropdown-menu"><a class="dropdown-item" id="js-export-obj" href="#" data-bs-dismiss="modal">Export OBJ</a><a class="dropdown-item" id="js-export-gltf-text" href="#" data-bs-dismiss="modal">Export GLTF (text)</a><a class="dropdown-item" id="js-export-gltf-binary" href="#" data-bs-dismiss="modal">Export GLTF (binary)</a></div>
+                        <div class="dropdown-menu"><a class="dropdown-item" id="js-export-obj" href="#" data-bs-dismiss="modal">OBJ</a><a class="dropdown-item" id="js-export-gltf-text" href="#" data-bs-dismiss="modal">GLTF (text)</a><a class="dropdown-item" id="js-export-gltf-binary" href="#" data-bs-dismiss="modal">GLTF (binary)</a></div>
                     </div>
                 </div>
                 <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button"> Close </button></div>
@@ -255,7 +329,7 @@
             </div>
         </div>
     </div>
-    <script src="./js/bootstrap.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
 
 </html>

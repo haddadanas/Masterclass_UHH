@@ -275,7 +275,7 @@ function setupInset(height: number) {
 
   const font_loader = new FontLoader();
 
-  font_loader.load("./fonts/helvetiker_regular.typeface.json", (font: Font) => {
+  font_loader.load("./assets/fonts/helvetiker_regular.typeface.json", (font: Font) => {
     const tps = { size: 0.75, height: 0.1, font: font };
 
     const x_geo = new TextGeometry("X", tps);
