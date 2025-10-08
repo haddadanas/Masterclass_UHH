@@ -273,10 +273,8 @@ function setXY() {
   assertDefined(ispy.camera, "Camera is not defined");
   const length = ispy.camera.position.length();
 
-  ispy.camera.position.x = 0;
-  ispy.camera.position.y = 0;
-  ispy.camera.position.z = length;
-  ispy.camera.up = new Vector3(0, 1, 0);
+  ispy.camera.position.set(0, 0, length);
+  ispy.camera.up.set(0, 1, 0);
 
   lookAtOrigin();
 }
@@ -289,10 +287,8 @@ function setZX() {
   assertDefined(ispy.camera, "Camera is not defined");
   const length = ispy.camera.position.length();
 
-  ispy.camera.position.x = 0;
-  ispy.camera.position.y = length;
-  ispy.camera.position.z = 0;
-  ispy.camera.up = new Vector3(1, 0, 0);
+  ispy.camera.position.set(0, length, 0);
+  ispy.camera.up.set(0, 1, 0);
 
   lookAtOrigin();
 }
@@ -305,10 +301,8 @@ function setYZ() {
   assertDefined(ispy.camera, "Camera is not defined");
   const length = ispy.camera.position.length();
 
-  ispy.camera.position.x = -length;
-  ispy.camera.position.y = 0;
-  ispy.camera.position.z = 0;
-  ispy.camera.up = new Vector3(0, 1, 0);
+  ispy.camera.position.set(-length, 0, 0);
+  ispy.camera.up.set(0, 1, 0);
 
   lookAtOrigin();
 }
