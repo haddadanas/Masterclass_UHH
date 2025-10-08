@@ -514,7 +514,7 @@ function initControlPanel() {
  */
 function createCheckboxContainer(cont: GUIController) {
   const selectionField = cont as unknown as SelectionFieldController;
-  
+
   // Create a checkbox element
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
@@ -522,7 +522,7 @@ function createCheckboxContainer(cont: GUIController) {
 
   // get input field
   const inputField = selectionField.domElement.querySelector("input") as HTMLInputElement;
-  inputField.classList.add("sel-field")
+  inputField.classList.add("sel-field");
 
   // Add the checkbox to the DOM
   selectionField.domElement.appendChild(checkbox);

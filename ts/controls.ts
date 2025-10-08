@@ -3,7 +3,15 @@ import { OBJExporter } from "three/examples/jsm/exporters/OBJExporter";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
 
 import { ispy } from "./config.js";
-import { assertDefined, setLanguage, downloadData, getHTMLObject, hideDialog, showDialog, changeMeshMaterials } from "./utils.js";
+import {
+  assertDefined,
+  setLanguage,
+  downloadData,
+  getHTMLObject,
+  hideDialog,
+  showDialog,
+  changeMeshMaterials,
+} from "./utils.js";
 import { render, updateRenderer, updateRendererInfo } from "./renderer.js";
 import {
   importModel,
@@ -18,15 +26,7 @@ import {
   showWebFiles,
 } from "./files-load.js";
 import { toggleAnimation } from "./animate.js";
-import {
-  resetView,
-  showView,
-  setXY,
-  setYZ,
-  setZX,
-  setPerspective,
-  setOrthographic,
-} from "./display.js";
+import { resetView, showView, setXY, setYZ, setZX, setPerspective, setOrthographic } from "./display.js";
 import { setDisplayVerticalHeight, setFramerate } from "./setup.js";
 import { buildFileSummary, createCSV } from "./analysis.js";
 
@@ -339,7 +339,7 @@ function showMass() {
   mass = Math.sqrt(mass);
 
   getHTMLObject("js-invariant-mass").innerHTML = mass.toFixed(2);
-  showDialog("invariant-mass-modal")
+  showDialog("invariant-mass-modal");
 
   ispy.selected_objects.clear();
   ispy.subfoldersReduced["Info"][1].setValue(0);

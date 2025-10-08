@@ -14,10 +14,12 @@ export default [{
             document: "readonly",
             console: "readonly",
             alert: "readonly",
+            navigator: "readonly",
+            localStorage: "readonly",
             location: "readonly",
-            $: "readonly",
             setTimeout: "readonly",
             requestAnimationFrame: "readonly",
+            fetch: "readonly",
         },
         parser: tsParser,
         ecmaVersion: 2022, // Use the latest ECMAScript version

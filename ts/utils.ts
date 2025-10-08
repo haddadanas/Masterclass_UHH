@@ -26,8 +26,8 @@ declare namespace bootstrap {
  * Add tooltip support to the document.
  */
 export function setupTooltips() {
-    const triggers = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    triggers.forEach(el => new bootstrap.Tooltip(el));
+  const triggers = [].slice.call(document.querySelectorAll("[data-bs-toggle='tooltip']"));
+  triggers.forEach((el) => new bootstrap.Tooltip(el));
 }
 
 /**
@@ -35,13 +35,13 @@ export function setupTooltips() {
  * @param langData An object containing key-value pairs for translation.
  */
 function updateContent(langData: { [key: string]: { [key: string]: string } }) {
-    document.querySelectorAll('[data-i18n]').forEach(element => {
-        const key = element.getAttribute('data-i18n') || "";
-        const [namespace, keyName] = key.split(".");
-        if (!namespace || !keyName) return;
-        if (!(namespace in langData)) return;
-        element.innerHTML = langData[namespace][keyName] || element.innerHTML;
-    });
+  document.querySelectorAll("[data-i18n]").forEach((element) => {
+    const key = element.getAttribute("data-i18n") || "";
+    const [namespace, keyName] = key.split(".");
+    if (!namespace || !keyName) return;
+    if (!(namespace in langData)) return;
+    element.innerHTML = langData[namespace][keyName] || element.innerHTML;
+  });
 }
 
 /**
@@ -49,9 +49,9 @@ function updateContent(langData: { [key: string]: { [key: string]: string } }) {
  * @param lang The language code to set as preference.
  */
 function setLanguagePreference(lang: string) {
-    document.documentElement.lang = lang;
-    localStorage.setItem('language', lang);
-    // location.reload();
+  document.documentElement.lang = lang;
+  localStorage.setItem("language", lang);
+  // location.reload();
 }
 
 /**
@@ -60,8 +60,8 @@ function setLanguagePreference(lang: string) {
  * @returns A promise that resolves to the language data object.
  */
 async function fetchLanguageData(lang: string): Promise<{ [key: string]: { [key: string]: string } }> {
-    const response = await fetch(`assets/locales/${lang}.json`);
-    return response.json();
+  const response = await fetch(`assets/locales/${lang}.json`);
+  return response.json();
 }
 
 /**
@@ -69,9 +69,9 @@ async function fetchLanguageData(lang: string): Promise<{ [key: string]: { [key:
  * @param lang The selected language code.
  */
 export async function setLanguage(lang: string) {
-    setLanguagePreference(lang);
-    const langData = await fetchLanguageData(lang);
-    updateContent(langData);
+  setLanguagePreference(lang);
+  const langData = await fetchLanguageData(lang);
+  updateContent(langData);
 }
 
 /**
