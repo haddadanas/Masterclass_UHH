@@ -30,7 +30,8 @@
         "import-web": "Files available via the web have been created from <a href=\"https://www.sketchup.com/\">SketchUp</a> models created by <a href=\"https://twiki.cern.ch/twiki/bin/view/CMSPublic/SketchUpCMS\">T. Sakuma.</a>",
         "open-model": "Open model",
         "type": "Type",
-        "value": "Value"
+        "value": "Value",
+        "or": "or"
     },
     "about": {
         "title": "About us",

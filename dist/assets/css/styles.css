@@ -125,6 +125,26 @@ header .btn {
   white-space: nowrap;
 }
 
+/* Apply to all file inputs */
+input[type="file"]::file-selector-button {
+  background-color: var(--bs-primary);
+  color: var(--bs-body-bg);
+  border: 1px solid var(--bs-primary);
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+/* Hover/Focus states */
+input[type="file"]:hover::file-selector-button {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+}
+input[type="file"]:focus-visible::file-selector-button {
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25);
+}
+
+
 .strikethrough {
   position: relative;
 }

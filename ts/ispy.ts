@@ -12,7 +12,8 @@ import { setLanguage } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log(event_description);
-  setLanguage('en');
+  const lang = localStorage.getItem('language') || navigator.language || 'en';
+  setLanguage(lang);
   setupKeyboardListeners();
   setupControls();
   init();

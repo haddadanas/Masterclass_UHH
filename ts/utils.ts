@@ -36,6 +36,7 @@ function updateContent(langData: { [key: string]: { [key: string]: string } }) {
  * @param lang The language code to set as preference.
  */
 function setLanguagePreference(lang: string) {
+    document.documentElement.lang = lang;
     localStorage.setItem('language', lang);
     // location.reload();
 }
