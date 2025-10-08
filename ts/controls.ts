@@ -2,7 +2,7 @@ import { OBJExporter } from "three/examples/jsm/exporters/OBJExporter";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
 
 import { ispy } from "./config.js";
-import { assertDefined, downloadData, getHTMLObject, hideDialog, showDialog } from "./utils.js";
+import { assertDefined, setLanguage, downloadData, getHTMLObject, hideDialog, showDialog } from "./utils.js";
 import { render, updateRenderer, updateRendererInfo } from "./renderer.js";
 import {
   importModel,
@@ -334,11 +334,16 @@ export function setupControls() {
   const jsAboutBtn = getHTMLObject("js-about-btn");
   const jsHelpBtn = getHTMLObject("js-help-btn");
   const jsDisplayBtn = getHTMLObject("js-event-display");
+  const jsLangEN = getHTMLObject<HTMLSelectElement>("js-lang-en");
+  const jsLangDE = getHTMLObject<HTMLSelectElement>("js-lang-de");
 
   // connect functions to the buttons
   jsAboutBtn.addEventListener("click", () => switchMain("about"));
   jsHelpBtn.addEventListener("click", () => switchMain("help"));
   jsDisplayBtn.addEventListener("click", () => switchMain("display"));
+
+  jsLangEN.addEventListener("click", () => setLanguage("en"));
+  jsLangDE.addEventListener("click", () => setLanguage("de"));
 
   // connect functions to the buttons
   jsReload.addEventListener("click", reload);

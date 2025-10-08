@@ -1,0 +1,53 @@
+{
+    "main": {
+        "close": "Close",
+        "load": "Load",
+        "loading": "Loading...",
+        "build": "Searching for particles...",
+        "files": "Files",
+        "open-file": "Open file",
+        "open-web-file": "Open file(s) from the Web",
+        "open-local-file": "Open local file(s)",
+        "open-event": "Open event",
+        "settings": "Settings",
+        "hide-logo": "Hide experiment logo",
+        "hide-axes": "Hide axes",
+        "show-clipping": "Show clipping controls",
+        "thicker-tracks": "Thicker track lines",
+        "vh-slider": "Set vertical extent of display:&nbsp;",
+        "fps": "Set maximum frame rate:&nbsp;",
+        "transparency": "Set imported geometry transparency:&nbsp;",
+        "select-renderer": "Select renderer",
+        "statistics": "Statistics",
+        "show-stats": "Show display statistics",
+        "invariant-mass": "Invariant mass",
+        "export-model": "Export Model",
+        "export-format": "Select export format",
+        "import-model": "Import 3D Model",
+        "import-select": "Select 3D model to load",
+        "import-supported": "Currently, only the `.obj` format is supported. If an additional `.mtl` is available and loaded, it will be used as well.",
+        "import-note": "<i>Note</i>: a large complicated 3D model may take minutes to load.",
+        "import-web": "Files available via the web have been created from <a href=\"https://www.sketchup.com/\">SketchUp</a> models created by <a href=\"https://twiki.cern.ch/twiki/bin/view/CMSPublic/SketchUpCMS\">T. Sakuma.</a>",
+        "open-model": "Open model",
+        "type": "Type",
+        "value": "Value"
+    },
+    "about": {
+        "title": "About us",
+        "description": "The masterclasses are one-day workshops developed by the Netzwerk Teilchenwelt for students, providing an overview of particle physics and data analysis, as well as initial insights into research. This software is based on the event display program of the CMS experiment at CERN. It is used in the masterclasses to visualize detector recordings of proton-proton collisions. The goal of the masterclass is to determine the mass of the Z and Higgs bosons.",
+        "sponsors": "This project was made possible by the following institutions:",
+        "github": "The source code is available on GitHub:&nbsp;",
+        "origin": "This software is a version of the iSpy WebGL event display for the CMS experiment at CERN, adapted for students. The original version was developed by F. Ali, L. Barnard, M. Hategan, S. Lee, C. Logrén, T. McCauley, P. Nguyen, and M. Saunby.",
+        "teilchenwelt": "Offers from the Netzwerk Teilchenwelt.",
+        "cms-interactive": "Interactive view of the CMS detector, illustrating the traces and signatures left by different types of particles.",
+        "event-display": "The original event display program for the CMS experiment at CERN, allowing detailed exploration of particle collision events.",
+        "links": "Useful links"
+    },
+    "help": {
+        "title": "Help",
+        "student-title": "Students",
+        "student-text": "Here you will find a short guide on how to use the software.",
+        "teacher-title": "Instructors",
+        "teacher-text": "Here you will find instructions for setting up the software at a location."
+    }
+}

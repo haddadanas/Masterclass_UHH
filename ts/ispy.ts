@@ -8,9 +8,11 @@ import {
 import { event_description } from "./objects-config.js";
 import { init, initLight, initControlPanel, run } from "./setup.js";
 import { addGroups } from "./tree-view.js";
+import { setLanguage } from "./utils.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log(event_description);
+  setLanguage('en');
   setupKeyboardListeners();
   setupControls();
   init();

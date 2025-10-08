@@ -18,6 +18,49 @@ declare namespace bootstrap {
 }
 
 /**
+ * Updates the content of the HTML elements with the provided language data.
+ * @param langData An object containing key-value pairs for translation.
+ */
+function updateContent(langData: { [key: string]: { [key: string]: string } }) {
+    document.querySelectorAll('[data-i18n]').forEach(element => {
+        const key = element.getAttribute('data-i18n') || "";
+        const [namespace, keyName] = key.split(".");
+        if (!namespace || !keyName) return;
+        if (!(namespace in langData)) return;
+        element.innerHTML = langData[namespace][keyName] || element.innerHTML;
+    });
+}
+
+/**
+ * Sets the language preference in local storage and reloads the page.
+ * @param lang The language code to set as preference.
+ */
+function setLanguagePreference(lang: string) {
+    localStorage.setItem('language', lang);
+    // location.reload();
+}
+
+/**
+ * Fetches language data from a JSON file.
+ * @param lang The language code to fetch data for.
+ * @returns A promise that resolves to the language data object.
+ */
+async function fetchLanguageData(lang: string): Promise<{ [key: string]: { [key: string]: string } }> {
+    const response = await fetch(`assets/locales/${lang}.json`);
+    return response.json();
+}
+
+/**
+ * Toggles the language
+ * @param lang The selected language code.
+ */
+export async function setLanguage(lang: string) {
+    setLanguagePreference(lang);
+    const langData = await fetchLanguageData(lang);
+    updateContent(langData);
+}
+
+/**
  * Checks if property exists on a given object
  * @param obj The object to check.
  * @param prop The property to check for.
