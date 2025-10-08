@@ -116,9 +116,13 @@ export function toggleAnimation() {
   ispy.animating = !ispy.animating;
 
   const animateElement = getHTMLObject("js-animate");
-  animateElement.classList.toggle("active");
+  animateElement.classList.toggle("pressed");
 
   if (ispy.animating) {
+    const autorotateBtn = getHTMLObject<HTMLButtonElement>("js-autorotate");
+    autorotateBtn.classList.remove("pressed");
+    ispy.autoRotating = false;
+  
     resetView();
 
     const home = ispy.camera.position;

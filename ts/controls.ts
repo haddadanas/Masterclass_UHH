@@ -146,6 +146,11 @@ function autoRotate() {
   const autorotateBtn = getHTMLObject<HTMLButtonElement>("js-autorotate");
   ispy.autoRotating = !ispy.autoRotating;
   autorotateBtn.classList.toggle("pressed");
+  if (ispy.autoRotating) {
+    const animateBtn = getHTMLObject<HTMLButtonElement>("js-animate");
+    animateBtn.classList.remove("pressed");
+    ispy.animating = false;
+  }
 }
 
 // Object Controls

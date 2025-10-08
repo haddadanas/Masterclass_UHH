@@ -51,3 +51,16 @@ html[data-bs-theme="dark"] #js-display-mode .fa-sun {
 #js-autorotate.pressed .fa-pause-circle {
   display: inline;
 }
+
+#js-animate .fa-stop-circle {
+  display: none;
+}
+
+#js-animate.pressed .fa-film {
+  display: none;
+}
+
+#js-animate.pressed .fa-stop-circle {
+  display: inline;
+}
+
