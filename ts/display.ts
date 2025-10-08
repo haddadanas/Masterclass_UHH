@@ -1,14 +1,12 @@
-import { Camera, Color, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, Vector2, Vector3 } from "three";
+import { Camera, Color, Object3D, OrthographicCamera, PerspectiveCamera, Vector2, Vector3 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 import {
   getFourVectorByIndex,
   getHTMLObject,
   removeExistingBubble,
-  changeMeshMaterials,
   showTrackInfoBubble,
   assertDefined,
-  showDialog,
 } from "./utils.js";
 import { ispy } from "./config.js";
 import { event_description } from "./objects-config.js";
@@ -59,71 +57,6 @@ function initCamera() {
   ispy.is_perspective = true;
   ispy.camera = ispy.is_perspective ? ispy.p_camera : ispy.o_camera;
   initCameraPosition();
-}
-
-/**
- * Zooms in the camera view.
- * @returns void
- */
-function zoomIn() {
-  assertDefined(ispy.camera, "Camera is not defined");
-  ispy.camera.zoom += 0.5;
-  ispy.camera.updateProjectionMatrix();
-}
-
-/**
- * Zooms out the camera view.
- * @returns void
- */
-function zoomOut() {
-  assertDefined(ispy.camera, "Camera is not defined");
-  ispy.camera.zoom -= 0.5;
-  ispy.camera.updateProjectionMatrix();
-}
-
-/**
- * Inverts the colors of the scene. // TODO move to controls
- * @returns void
- */
-function invertColors() {
-  const htmlEl = document.documentElement;
-  assertDefined(ispy.renderer, "Renderer is not defined");
-  ispy.inverted_colors = !ispy.inverted_colors;
-
-  if (!ispy.inverted_colors) {
-    ispy.renderer.setClearColor(new Color(0x232323), 1);
-    htmlEl.setAttribute("data-bs-theme", "dark");
-  } else {
-    ispy.renderer.setClearColor(new Color(0xefefef), 1);
-    htmlEl.setAttribute("data-bs-theme", "light");
-  }
-}
-
-/**
- * Sets the transparency for imported objects.
- * @param t The transparency value to set for the imported objects.
- * @returns void
- */
-function setTransparency(t: number) {
-  assertDefined(ispy.scene, "Scene is not defined");
-  ispy.importTransparency = t;
-
-  getHTMLObject("js-trspy").innerHTML = t.toString();
-
-  const imported = ispy.scene.getObjectByName("Imported");
-  if (!imported) {
-    console.error("Imported object not found in the scene");
-    return;
-  }
-
-  imported.children.forEach((obj) => {
-    (obj.children as Mesh[]).forEach((c) => {
-      changeMeshMaterials(c.material, (m) => {
-        m.transparent = true;
-        m.opacity = t;
-      });
-    });
-  });
 }
 
 /**
@@ -255,46 +188,6 @@ function onMouseDown(_e: MouseEvent) {
 
     ispy.subfoldersReduced["Info"][1].setValue(ispy.selected_objects.size);
   }
-}
-
-/**
- * Shows the invariant mass of selected objects in a modal dialog.
- * @returns void
- */
-function showMass() {
-  let mass = 0;
-  let sumE = 0;
-  let sumPx = 0;
-  let sumPy = 0;
-  let sumPz = 0;
-
-  ispy.selected_objects.forEach((o, _key) => {
-    sumE += o.fourVector.E;
-    sumPx += o.fourVector.px;
-    sumPy += o.fourVector.py;
-    sumPz += o.fourVector.pz;
-
-    // This is cheating. Should get colors from event_description config.
-    if (o.ptype === "Electron") {
-      o.material.color.setHex(0x19ff19);
-    }
-
-    if (o.ptype === "Muon") {
-      o.material.color.setHex(0xff0000);
-    }
-
-    o.selected = false;
-  });
-
-  mass = sumE * sumE;
-  mass -= sumPx * sumPx + sumPy * sumPy + sumPz * sumPz;
-  mass = Math.sqrt(mass);
-
-  getHTMLObject("js-invariant-mass").innerHTML = mass.toFixed(2);
-  showDialog("invariant-mass-modal")
-
-  ispy.selected_objects.clear();
-  ispy.subfoldersReduced["Info"][1].setValue(0);
 }
 
 /**
@@ -573,17 +466,12 @@ function showView(view: string) {
 
 export {
   initCamera,
-  zoomIn,
-  zoomOut,
-  invertColors,
-  setTransparency,
   onWindowResize,
   getObjectIds,
   onMouseMove,
   onMouseDown,
   highlightObject,
   unHighlightObject,
-  showMass,
   resetView,
   setXY,
   setZX,

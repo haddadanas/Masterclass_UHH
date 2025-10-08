@@ -9,7 +9,7 @@ import { addEvent, addDetector } from "./objects-add.js";
 import { addSelectionRow } from "./tree-view.js";
 import { changeMeshMaterials, getHTMLObject, toggleCollapse, cleanupData, toggleButton, showDialog, hideDialog } from "./utils.js";
 import { ispy } from "./config.js";
-import { buildFileSummary, getPassingEvents } from "./uhh_selection.js";
+import { buildFileSummary, getPassingEvents } from "./analysis.js";
 import { disabled, gltf_objs } from "./objects-config.js";
 
 /**

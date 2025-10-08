@@ -100,7 +100,7 @@
     "ts/renderer.ts",
     "ts/setup.ts",
     "ts/tree-view.ts",
-    "ts/uhh_selection.ts",
+    "ts/analysis.ts",
     "ts/utils.ts",
   ],
   "exclude": [

@@ -15,6 +15,19 @@ declare namespace bootstrap {
     show(): void;
     hide(): void;
   }
+  class Tooltip {
+    constructor(element: HTMLElement);
+    show(): void;
+    hide(): void;
+  }
+}
+
+/**
+ * Add tooltip support to the document.
+ */
+export function setupTooltips() {
+    const triggers = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    triggers.forEach(el => new bootstrap.Tooltip(el));
 }
 
 /**

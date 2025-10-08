@@ -1,8 +1,9 @@
+import { Color, Mesh } from "three";
 import { OBJExporter } from "three/examples/jsm/exporters/OBJExporter";
 import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
 
 import { ispy } from "./config.js";
-import { assertDefined, setLanguage, downloadData, getHTMLObject, hideDialog, showDialog } from "./utils.js";
+import { assertDefined, setLanguage, downloadData, getHTMLObject, hideDialog, showDialog, changeMeshMaterials } from "./utils.js";
 import { render, updateRenderer, updateRendererInfo } from "./renderer.js";
 import {
   importModel,
@@ -19,29 +20,35 @@ import {
 import { toggleAnimation } from "./animate.js";
 import {
   resetView,
-  zoomIn,
-  zoomOut,
   showView,
   setXY,
   setYZ,
   setZX,
   setPerspective,
   setOrthographic,
-  invertColors,
-  setTransparency,
-  showMass,
 } from "./display.js";
 import { setDisplayVerticalHeight, setFramerate } from "./setup.js";
-import { buildFileSummary, createCSV } from "./uhh_selection.js";
+import { buildFileSummary, createCSV } from "./analysis.js";
 
+// Display Controls
 /**
- * Toggles the auto-rotation state.
+ * Zooms in the camera view.
  * @returns void
  */
-function autoRotate() {
-  const autorotateBtn = getHTMLObject<HTMLButtonElement>("js-autorotate");
-  ispy.autoRotating = !ispy.autoRotating;
-  autorotateBtn.classList.toggle("pressed");
+function zoomIn() {
+  assertDefined(ispy.camera, "Camera is not defined");
+  ispy.camera.zoom += 0.5;
+  ispy.camera.updateProjectionMatrix();
+}
+
+/**
+ * Zooms out the camera view.
+ * @returns void
+ */
+function zoomOut() {
+  assertDefined(ispy.camera, "Camera is not defined");
+  ispy.camera.zoom -= 0.5;
+  ispy.camera.updateProjectionMatrix();
 }
 
 /**
@@ -114,19 +121,59 @@ function reload() {
 }
 
 /**
- * Prints the current display as Image.
+ * Inverts the colors of the scene. // TODO move to controls
  * @returns void
  */
-function printImage() {
-  // get the current image data
-  ispy.get_image_data = true;
-  render();
+function invertColors() {
+  const htmlEl = document.documentElement;
+  assertDefined(ispy.renderer, "Renderer is not defined");
+  ispy.inverted_colors = !ispy.inverted_colors;
 
-  assertDefined(ispy.image_data);
-  downloadData(ispy.image_data, "ispy_image.png");
+  if (!ispy.inverted_colors) {
+    ispy.renderer.setClearColor(new Color(0x232323), 1);
+    htmlEl.setAttribute("data-bs-theme", "dark");
+  } else {
+    ispy.renderer.setClearColor(new Color(0xefefef), 1);
+    htmlEl.setAttribute("data-bs-theme", "light");
+  }
+}
 
-  // remove image data to free memory
-  ispy.image_data = null;
+/**
+ * Toggles the auto-rotation state.
+ * @returns void
+ */
+function autoRotate() {
+  const autorotateBtn = getHTMLObject<HTMLButtonElement>("js-autorotate");
+  ispy.autoRotating = !ispy.autoRotating;
+  autorotateBtn.classList.toggle("pressed");
+}
+
+// Object Controls
+/**
+ * Sets the transparency for imported objects.
+ * @param t The transparency value to set for the imported objects.
+ * @returns void
+ */
+function setTransparency(t: number) {
+  assertDefined(ispy.scene, "Scene is not defined");
+  ispy.importTransparency = t;
+
+  getHTMLObject("js-trspy").innerHTML = t.toString();
+
+  const imported = ispy.scene.getObjectByName("Imported");
+  if (!imported) {
+    console.error("Imported object not found in the scene");
+    return;
+  }
+
+  imported.children.forEach((obj) => {
+    (obj.children as Mesh[]).forEach((c) => {
+      changeMeshMaterials(c.material, (m) => {
+        m.transparent = true;
+        m.opacity = t;
+      });
+    });
+  });
 }
 
 /**
@@ -252,6 +299,63 @@ function exportOBJ() {
   });
 }
 
+// Page Controls
+/**
+ * Shows the invariant mass of selected objects in a modal dialog.
+ * @returns void
+ */
+function showMass() {
+  let mass = 0;
+  let sumE = 0;
+  let sumPx = 0;
+  let sumPy = 0;
+  let sumPz = 0;
+
+  ispy.selected_objects.forEach((o, _key) => {
+    sumE += o.fourVector.E;
+    sumPx += o.fourVector.px;
+    sumPy += o.fourVector.py;
+    sumPz += o.fourVector.pz;
+
+    // This is cheating. Should get colors from event_description config.
+    if (o.ptype === "Electron") {
+      o.material.color.setHex(0x19ff19);
+    }
+
+    if (o.ptype === "Muon") {
+      o.material.color.setHex(0xff0000);
+    }
+
+    o.selected = false;
+  });
+
+  mass = sumE * sumE;
+  mass -= sumPx * sumPx + sumPy * sumPy + sumPz * sumPz;
+  mass = Math.sqrt(mass);
+
+  getHTMLObject("js-invariant-mass").innerHTML = mass.toFixed(2);
+  showDialog("invariant-mass-modal")
+
+  ispy.selected_objects.clear();
+  ispy.subfoldersReduced["Info"][1].setValue(0);
+}
+
+/**
+ * Prints the current display as Image.
+ * @returns void
+ */
+function printImage() {
+  // get the current image data
+  ispy.get_image_data = true;
+  render();
+
+  assertDefined(ispy.image_data);
+  downloadData(ispy.image_data, "ispy_image.png");
+
+  // remove image data to free memory
+  ispy.image_data = null;
+}
+
 function hideToolbarButtons() {
   const toolbar = getHTMLObject<HTMLDivElement>("js-toolbar");
   toolbar.style.display = "none";
@@ -289,6 +393,7 @@ function switchMain(view: "about" | "display" | "help") {
   }
 }
 
+// Exported function
 export function setupControls() {
   // get js buttons
   const jsReload = getHTMLObject("js-reload");

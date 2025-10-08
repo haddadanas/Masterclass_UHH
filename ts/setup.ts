@@ -26,7 +26,7 @@ import { importDetector, loadDroppedFile } from "./files-load.js";
 import { data_groups } from "./objects-config.js";
 import { initCamera, onMouseDown, onMouseMove, onWindowResize } from "./display.js";
 import { CHARGE_MAP, SELEC_NAME_MAP } from "./analysis-config.js";
-import { checkCurrentSelection } from "./uhh_selection.js";
+import { checkCurrentSelection } from "./analysis.js";
 import { SelectionFieldController } from "./ispy.interfaces.js";
 
 /**
