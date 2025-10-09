@@ -48,7 +48,15 @@
         "title": "Help",
         "student-title": "Students",
         "student-text": "Here you will find a short guide on how to use the software.",
+        "student-guide": "Guide",
+        "live-tutorial": "Interactive Tutorial",
         "teacher-title": "Instructors",
-        "teacher-text": "Here you will find instructions for setting up the software at a location."
+        "teacher-text": "Here you will find instructions for setting up the software at a location.",
+        "teacher-guide": "Setup Guide",
+        "teacher-releases": "Releases",
+        "dev-title": "Developers",
+        "dev-text": "Here you will find information about the code and how to edit and contribute.",
+        "dev-guide": "Developer Guide",
+        "dev-code": "Code"
     }
 }
