@@ -102,6 +102,7 @@
     "ts/tree-view.ts",
     "ts/analysis.ts",
     "ts/utils.ts",
+    "ts/tutorial.ts",
   ],
   "exclude": [
     "node_modules",

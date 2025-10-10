@@ -29,6 +29,7 @@ import { toggleAnimation } from "./animate.js";
 import { resetView, showView, setXY, setYZ, setZX, setPerspective, setOrthographic } from "./display.js";
 import { setDisplayVerticalHeight, setFramerate } from "./setup.js";
 import { buildFileSummary, createCSV } from "./analysis.js";
+import { startTutorial } from "./tutorial.js";
 
 // Display Controls
 /**
@@ -446,6 +447,23 @@ export function setupControls() {
   const jsDisplayBtn = getHTMLObject("js-event-display");
   const jsLangEN = getHTMLObject<HTMLSelectElement>("js-lang-en");
   const jsLangDE = getHTMLObject<HTMLSelectElement>("js-lang-de");
+  const jsBasicsTutorialBtn = getHTMLObject("js-basics-tutorial-btn");
+  const jsControlsTutorialBtn = getHTMLObject("js-controls-tutorial-btn");
+  const jsAnalysisTutorialBtn = getHTMLObject("js-analysis-tutorial-btn");
+  
+  // Tutorial button
+  jsBasicsTutorialBtn.addEventListener("click", () => {
+    switchMain("display");
+    startTutorial("basics");
+  });
+  jsControlsTutorialBtn.addEventListener("click", () => {
+    switchMain("display");
+    startTutorial("controls");
+  });
+  jsAnalysisTutorialBtn.addEventListener("click", () => {
+    switchMain("display");
+    startTutorial("analysis");
+  });
 
   // connect functions to the buttons
   jsAboutBtn.addEventListener("click", () => switchMain("about"));

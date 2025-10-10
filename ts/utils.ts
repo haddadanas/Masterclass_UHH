@@ -395,6 +395,23 @@ export function toggleCollapse(key: string) {
 }
 
 /**
+ * Toggles the expanded state of a GUI folder.
+ * @param key The key of the group to toggle.
+ */
+export function toggleExpand(key: string) {
+  const guis = [ispy.gui];
+  if (key === "Detector") {
+    guis.push(ispy.guiReduced);
+  }
+  guis.forEach((gui) => {
+    const folder = gui.__folders[key];
+    if (folder) {
+      folder.open();
+    }
+  });
+}
+
+/**
  * Toggle a dialog modal by its ID.
  * @param id The ID of the dialog modal to toggle.
  */

@@ -7,7 +7,15 @@ import $ from "jquery";
 
 import { addEvent, addDetector } from "./objects-add.js";
 import { addSelectionRow } from "./tree-view.js";
-import { changeMeshMaterials, getHTMLObject, toggleCollapse, cleanupData, toggleButton, showDialog, hideDialog } from "./utils.js";
+import {
+  changeMeshMaterials,
+  getHTMLObject,
+  toggleCollapse,
+  cleanupData,
+  toggleButton,
+  showDialog,
+  hideDialog,
+} from "./utils.js";
 import { ispy } from "./config.js";
 import { buildFileSummary, getPassingEvents } from "./analysis.js";
 import { disabled, gltf_objs } from "./objects-config.js";
@@ -127,8 +135,7 @@ function loadEvent() {
   let event;
   const fileEntry = ispy.ig_data?.file(ispy.event_list[ispy.event_index]);
   if (!fileEntry) {
-    alert("No event data loaded or file not found!");
-    return;
+    throw new Error("No event data loaded or file not found!");
   }
   fileEntry.async("string").then(
     (content) => {
@@ -392,60 +399,70 @@ function loadDroppedFile(file: File) {
  * @param filename The name of the file to select.
  */
 function selectFile(filename: string) {
-  clearTable("js-browser-events");
+  return new Promise((resolve, reject) => {
+    clearTable("js-browser-events");
 
-  ispy.file_name = filename.split("/")[2]; // of course this isn't a general case for files
+    ispy.file_name = filename.split("/")[2]; // of course this isn't a general case for files
 
-  showDialog("progress");
+    showDialog("progress");
 
-  const xhr = new XMLHttpRequest();
-  xhr.open("GET", filename, true);
-  xhr.overrideMimeType("text/plain; charset=x-user-defined");
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", filename, true);
+    xhr.overrideMimeType("text/plain; charset=x-user-defined");
 
-  clearTable("js-browser-events");
-  const ecell = getHTMLObject<HTMLTableElement>("js-browser-events").insertRow(0).insertCell(0);
-  ecell.innerHTML = "Loading events...";
+    clearTable("js-browser-events");
+    const ecell = getHTMLObject<HTMLTableElement>("js-browser-events").insertRow(0).insertCell(0);
+    ecell.innerHTML = "Loading events...";
 
-  xhr.onprogress = function (evt) {
-    if (evt.lengthComputable) {
-      const percentComplete = Math.round((evt.loaded / evt.total) * 100);
-      $(".progress-bar").attr("style", `width:${percentComplete}%;`);
-      $(".progress-bar").html(`${percentComplete}%`);
-    }
-  };
+    xhr.onprogress = function (evt) {
+      if (evt.lengthComputable) {
+        const percentComplete = Math.round((evt.loaded / evt.total) * 100);
+        $(".progress-bar").attr("style", `width:${percentComplete}%;`);
+        $(".progress-bar").html(`${percentComplete}%`);
+      }
+    };
 
-  xhr.onreadystatechange = function () {
-    if (this.readyState === 4) {
-
-      const progress_bars = document.querySelectorAll("div.progress-bar");
-      progress_bars.forEach((pb) => {
-        (pb as HTMLDivElement).style.width = "0%";
-        pb.innerHTML = "0%";
-      });
-
-      hideDialog("progress");
-    }
-  };
-
-  xhr.onload = function () {
-    if (this.status === 200) {
-      const event_list: string[] = [];
-      JSZip.loadAsync(xhr.responseText).then((zip) => {
-        $.each(zip.files, (_index, zipEntry) => {
-          if (!zipEntry.dir && zipEntry.name !== "Header") {
-            event_list.push(zipEntry.name);
-          }
+    xhr.onreadystatechange = function () {
+      if (this.readyState === 4) {
+        const progress_bars = document.querySelectorAll("div.progress-bar");
+        progress_bars.forEach((pb) => {
+          (pb as HTMLDivElement).style.width = "0%";
+          pb.innerHTML = "0%";
         });
 
-        ispy.event_list = event_list;
-        ispy.event_index = 0;
-        updateEventList();
-        ispy.ig_data = zip;
-      });
-    }
-  };
+        hideDialog("progress");
+      }
+    };
 
-  xhr.send();
+    xhr.onload = async function () {
+      if (this.status === 200) {
+        const event_list: string[] = [];
+        await JSZip.loadAsync(xhr.responseText)
+          .then((zip) => {
+            $.each(zip.files, (_index, zipEntry) => {
+              if (!zipEntry.dir && zipEntry.name !== "Header") {
+                event_list.push(zipEntry.name);
+              }
+            });
+
+            ispy.event_list = event_list;
+            ispy.event_index = 0;
+            updateEventList();
+            ispy.ig_data = zip;
+            resolve(true);
+          })
+          .catch((err) => {
+            reject(new Error(`Error loading file ${filename}: ${err}`));
+          });
+      }
+    };
+
+    xhr.onerror = function () {
+      reject(new Error(`Error loading file ${filename}`));
+    };
+
+    xhr.send();
+  });
 }
 
 /**
@@ -931,6 +948,8 @@ function importDetector() {
 
 export {
   loadEvent,
+  selectFile,
+  selectEvent,
   nextEvent,
   prevEvent,
   nextSelectedEvent,
