@@ -3,7 +3,7 @@
 import JSZip from "jszip";
 import { Material, Object3D } from "three";
 
-import { ispy } from "./config.js";
+import { ispy, supportedLanguages } from "./config.js";
 import { Particle, EventObject, EventSummary, MET, FourVector, SelectionFieldController } from "./ispy.interfaces.js";
 
 const mMuon2 = 0.10566 * 0.10566;
@@ -65,10 +65,31 @@ async function fetchLanguageData(lang: string): Promise<{ [key: string]: { [key:
 }
 
 /**
+ * Checks if the provided language is supported, defaults to 'en' if not.
+ * @param lang The language code to check.
+ * @returns A valid language code.
+ */
+function checkLanguage(lang: string): string {
+  if (supportedLanguages.includes(lang)) {
+    return lang;
+  }
+  // check if the language has a region subtag and try to match the base language
+  if (lang.split(/[-_]/).length > 1) {
+    for (const l of supportedLanguages) {
+      if (lang.includes(l)) {
+        return l;
+      }
+    }
+  }
+  return "en";
+}
+
+/**
  * Toggles the language
  * @param lang The selected language code.
  */
 export async function setLanguage(lang: string) {
+  lang = checkLanguage(lang);
   setLanguagePreference(lang);
   const langData = await fetchLanguageData(lang);
   updateContent(langData);

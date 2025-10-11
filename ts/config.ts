@@ -4,6 +4,8 @@ import Stats from "stats.js";
 
 import { Ispy, Analysis, EventSummary, TrackLine } from "./ispy.interfaces.js";
 
+const supportedLanguages = ["en", "de"];
+
 // These need to be defined before adding objects:
 const POINT = 0;
 const LINE = 1;
@@ -24,6 +26,7 @@ const BUFFERBOX = 11;
 const STACKEDTOWER = 12;
 
 export {
+  supportedLanguages,
   POINT,
   LINE,
   BOX,
