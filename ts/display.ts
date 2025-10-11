@@ -186,7 +186,7 @@ function onMouseDown(_e: MouseEvent) {
       }
     }
 
-    ispy.subfoldersReduced["Info"][1].setValue(ispy.selected_objects.size);
+    ispy.subfolders["Info"][1].setValue(ispy.selected_objects.size);
   }
 }
 

@@ -13,6 +13,7 @@
         "hide-logo": "Hide experiment logo",
         "hide-axes": "Hide axes",
         "show-clipping": "Show clipping controls",
+        "advanced-controls": "Show advanced controls",
         "thicker-tracks": "Thicker track lines",
         "vh-slider": "Set vertical extent of display:&nbsp;",
         "fps": "Set maximum frame rate:&nbsp;",

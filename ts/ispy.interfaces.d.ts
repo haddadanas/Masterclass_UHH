@@ -17,7 +17,7 @@ import {
 import Stats from "stats.js";
 import JSZip from "jszip";
 
-interface SubFolderReduced {
+interface SubFolder {
   Detector: string[];
   Selection: Array<GUIController>;
   Controllers: Array<GUIController>;
@@ -96,10 +96,9 @@ interface Ispy {
 
   // GUI and Controls
   gui: GUI;
-  guiReduced: GUI;
   clipgui?: GUI;
-  subfolders: Record<string, string[]>;
-  subfoldersReduced: SubFolderReduced;
+  subfolders: SubFolder;
+  additionalFolders: { [key: string]: string[] };
   controls?: OrbitControls | TrackballControls;
 
   // Interaction and Animation

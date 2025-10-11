@@ -35,7 +35,7 @@ import {
   detector_description,
   disabled,
   event_description,
-  reduced_data_groups,
+  controls_groups,
 } from "./objects-config.js";
 import { addSelectionRow, applySavedSettings, clearSubfolders, saveCutSettings } from "./tree-view.js";
 import { showView } from "./display.js";
@@ -600,7 +600,7 @@ function addEvent(event: EventObject) {
     addToScene(event, v);
   });
 
-  reduced_data_groups.forEach(({ name: n, function: addFunc }) => {
+  controls_groups.forEach(({ name: n, function: addFunc }) => {
     addFunc(n);
   });
 

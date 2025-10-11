@@ -155,7 +155,7 @@ function loadEvent() {
 
         getHTMLObject("js-event-loaded").innerHTML = `${ispy.file_name}:${
           ispy.event_list[ispy.event_index]
-        }  [${ievent} of ${ispy.event_list.length}]`;
+        } <strong>[${ievent} / ${ispy.event_list.length}]</strong>`;
 
         console.log(ispy.current_event?.Types);
         console.log(ispy.current_event?.Collections.Products_V1);
@@ -832,8 +832,8 @@ function loadSelectedGLTF() {
  * @param obj_file The OBJ file to select.
  */
 function selectObj(obj_file: string) {
-  getHTMLObject("selected-obj").innerHTML = obj_file;
-  toggleButton("load-obj", true);
+  getHTMLObject("js-selected-obj").innerHTML = obj_file;
+  toggleButton("js-load-obj", true);
   ispy.selected_obj = obj_file;
 }
 

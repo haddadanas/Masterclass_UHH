@@ -343,7 +343,7 @@ function showMass() {
   showDialog("invariant-mass-modal");
 
   ispy.selected_objects.clear();
-  ispy.subfoldersReduced["Info"][1].setValue(0);
+  ispy.subfolders["Info"][1].setValue(0);
 }
 
 /**

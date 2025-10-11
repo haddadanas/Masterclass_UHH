@@ -2869,11 +2869,19 @@ for (const view in event_description) {
 }
 
 const data_groups = ["Provenance", "Tracking", "ECAL", "HCAL", "Muon", "Physics"];
-
-const reduced_data_groups = [
+const additionalControls = ["Imported", ...data_groups]
+const controls_groups = [
   { name: "Momentum Cut (GeV)", function: (group: string) => addControllers(group) },
   { name: "Show/Hide", function: (group: string) => addControllers(group) },
   { name: "Event Info", function: (group: string) => addInfo(group) },
 ];
 
-export { detector_description, event_description, gltf_objs, disabled, data_groups, reduced_data_groups };
+export {
+  detector_description,
+  event_description,
+  gltf_objs,
+  disabled,
+  data_groups,
+  additionalControls,
+  controls_groups,
+};

@@ -224,20 +224,11 @@ function setupClippingGUI() {
 /**
  * Initializes the application.
  */
-function setupGUIs() {
+function setupGUI() {
   ispy.gui.domElement.id = "js-treegui";
-  ispy.guiReduced.domElement.id = "js-treegui-reduced";
-  ispy.guiReduced.domElement.classList.add("gui-menu");
+  ispy.gui.domElement.classList.add("gui-menu");
   const titlebar = getHTMLObject("js-menu-container");
-  titlebar.appendChild(ispy.guiReduced.domElement);
-
-  // It seems currently impossible with dat.gui
-  // to fetch the folders as an array and remove them
-  // (without knowing the name beforehand).
-  // Therefore we have to keep track of them by-hand.
-  // TODO check if needed
-  // ispy.subfolders = {};
-  // ispy.subfoldersReduced = {};
+  titlebar.appendChild(ispy.gui.domElement);
 }
 
 /**
@@ -422,7 +413,7 @@ function init() {
 
   useRenderer("WebGLRenderer");
 
-  setupGUIs();
+  setupGUI();
   setupClippingGUI();
   updateClipping();
   handleToggles();
@@ -543,7 +534,7 @@ function createCheckboxContainer(cont: GUIController) {
  * @returns void
  */
 function initSelectionFields() {
-  const gui_elem = ispy.guiReduced;
+  const gui_elem = ispy.gui;
 
   const folder = gui_elem.__folders["Event Selection"];
   folder.domElement.id = "selection-folder";
@@ -614,14 +605,14 @@ function initSelectionFields() {
     if (key === "pt") {
       cont.onFinishChange(function (this: SelectionFieldController, value: number) {
         if (value < 0) this.setValue(0);
-        ispy.subfoldersReduced.Controllers.find((c) => c.property === "min_pt")?.setValue(value);
+        ispy.subfolders.Controllers.find((c) => c.property === "min_pt")?.setValue(value);
       });
     }
   });
 
-  // add all controllers to the reduced subfolders for convenience
+  // add all controllers to the subfolders for convenience
   folder.__controllers.forEach((c) => {
-    ispy.subfoldersReduced.Selection.push(c);
+    ispy.subfolders.Selection.push(c);
   });
 }
 
@@ -667,16 +658,4 @@ function run() {
   }
 }
 
-export {
-  init,
-  initLight,
-  initControlPanel,
-  setDisplayVerticalHeight,
-  setFramerate,
-  setupGUIs,
-  setupInset,
-  handleToggles,
-  handleDragAndDrop,
-  run,
-  initSelectionFields,
-};
+export { init, initLight, initControlPanel, setDisplayVerticalHeight, setFramerate, run };

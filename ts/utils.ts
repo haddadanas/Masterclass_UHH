@@ -382,16 +382,10 @@ export function changeMeshMaterials(materials: Material | Material[] | undefined
  * @param key The key of the group to toggle.
  */
 export function toggleCollapse(key: string) {
-  const guis = [ispy.gui];
-  if (key === "Detector") {
-    guis.push(ispy.guiReduced);
+  const folder = ispy.gui.__folders[key];
+  if (folder) {
+    folder.close();
   }
-  guis.forEach((gui) => {
-    const folder = gui.__folders[key];
-    if (folder) {
-      folder.close();
-    }
-  });
 }
 
 /**
@@ -399,16 +393,10 @@ export function toggleCollapse(key: string) {
  * @param key The key of the group to toggle.
  */
 export function toggleExpand(key: string) {
-  const guis = [ispy.gui];
-  if (key === "Detector") {
-    guis.push(ispy.guiReduced);
+  const folder = ispy.gui.__folders[key];
+  if (folder) {
+    folder.open();
   }
-  guis.forEach((gui) => {
-    const folder = gui.__folders[key];
-    if (folder) {
-      folder.open();
-    }
-  });
 }
 
 /**
@@ -495,7 +483,7 @@ export function addControllers(group: string) {
     "Additional Tracks": false,
   };
 
-  const gui_elem = ispy.guiReduced;
+  const gui_elem = ispy.gui;
 
   const folder = gui_elem.__folders[group];
 
@@ -550,8 +538,8 @@ export function addControllers(group: string) {
       });
     };
 
-    const pt_controller = ispy.subfoldersReduced.Controllers.filter((o) => o.property === "min_pt")[0];
-    const jet_controller = ispy.subfoldersReduced.Controllers.filter((o) => o.property === "Jet: min Et")[0];
+    const pt_controller = ispy.subfolders.Controllers.filter((o) => o.property === "min_pt")[0];
+    const jet_controller = ispy.subfolders.Controllers.filter((o) => o.property === "Jet: min Et")[0];
 
     folder.add(row_obj, "Electrons").onChange(function (this: SelectionFieldController) {
       togglePhysicsObjects(["GsfElectrons"], Boolean(this.getValue()));
@@ -584,9 +572,9 @@ export function addControllers(group: string) {
     });
   }
 
-  // add all controllers to the reduced subfolders for convenience
+  // add all controllers to the subfolders for convenience
   (folder.__controllers as SelectionFieldController[]).forEach((c) => {
-    ispy.subfoldersReduced["Controllers"].push(c);
+    ispy.subfolders["Controllers"].push(c);
   });
 }
 
@@ -595,7 +583,7 @@ export function addControllers(group: string) {
  * @param group The group name to add info controllers for.
  */
 export function addInfo(group: string) {
-  const gui_elem = ispy.guiReduced;
+  const gui_elem = ispy.gui;
 
   const folder = gui_elem.__folders[group];
 
@@ -634,8 +622,8 @@ export function addInfo(group: string) {
       removeExistingBubble();
     });
 
-  // add all controllers to the reduced subfolders for convenience
+  // add all controllers to the subfolders for convenience
   (folder.__controllers as SelectionFieldController[]).forEach((c) => {
-    ispy.subfoldersReduced["Info"].push(c);
+    ispy.subfolders["Info"].push(c);
   });
 }

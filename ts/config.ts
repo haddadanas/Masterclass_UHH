@@ -49,13 +49,13 @@ export const ispy: Ispy = {
 
   // Detector and collections
   detector: { Collections: {} },
-  subfoldersReduced: {
+  subfolders: {
     Selection: [],
     Detector: [],
     Controllers: [],
     Info: [],
   },
-  subfolders: {},
+  additionalFolders: {},
 
   // Views and rendering settings
   views: ["3D", "RPhi", "RhoZ"],
@@ -90,11 +90,6 @@ export const ispy: Ispy = {
   image_data: null,
 
   // GUI and stats
-  guiReduced: new GUI({
-    name: "Controls Reduced",
-    hideable: false,
-    autoPlace: false,
-  }),
   gui: new GUI({
     name: "Controls",
     hideable: false,

@@ -7,7 +7,7 @@
 .header-event {
   flex: 1 1 auto;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   overflow-x: auto;
   white-space: nowrap;
 }

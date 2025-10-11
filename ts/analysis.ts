@@ -141,11 +141,11 @@ function checkCurrentSelection(): void {
   const [Msgtext, symbol] = getCurrentSelectionMessage();
   swal({ text: Msgtext, title: "Selection Results", icon: symbol, buttons: [false], timer: 3000 }); // TODO check if no buttons
   if (symbol === "error") return;
-  const nSelected = ispy.subfoldersReduced["Selection"].find((e) => e.property === "nSelected");
+  const nSelected = ispy.subfolders["Selection"].find((e) => e.property === "nSelected");
   if (nSelected) {
     nSelected.setValue(getPassingEvents().length);
   }
-  const firstSelected = ispy.subfoldersReduced["Selection"].find((e) => e.property === "firstSelected");
+  const firstSelected = ispy.subfolders["Selection"].find((e) => e.property === "firstSelected");
   if (firstSelected) {
     firstSelected.setValue(
       getPassingEvents()
@@ -162,7 +162,7 @@ function checkCurrentSelection(): void {
  */
 function getSelectionCuts(): { [key: string]: number } {
   const cuts: { [key: string]: number } = {};
-  ispy.subfoldersReduced["Selection"].forEach((e) => {
+  ispy.subfolders["Selection"].forEach((e) => {
     if (["function", "string"].includes(typeof e.getValue())) return;
     if ("checkbox" in e && !e.checkbox) {
       cuts[e.property] = -1;

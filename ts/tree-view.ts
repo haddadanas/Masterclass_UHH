@@ -3,11 +3,11 @@ import { GUI, GUIController } from "dat.gui";
 
 import { ispy } from "./config.js";
 import {
-  data_groups,
+  additionalControls,
   detector_description,
   disabled,
   event_description,
-  reduced_data_groups,
+  controls_groups,
 } from "./objects-config.js";
 import { getHTMLObject, hasProperty } from "./utils.js";
 import { SelectionFieldController } from "./ispy.interfaces.js";
@@ -16,31 +16,33 @@ import { SelectionFieldController } from "./ispy.interfaces.js";
  * Adds groups and subfolders to the GUI for better organization.
  */
 function addGroups() {
+  const gui = ispy.gui;
+
   // Add option to keep user cuts and preferences when switching between events
-  ispy.guiReduced.add({ "Keep Settings": false }, "Keep Settings");
+  gui.add({ "Keep Settings": false }, "Keep Settings");
 
-  ispy.gui.addFolder("Detector");
-  ispy.gui.addFolder("Imported");
+  gui.addFolder("Detector");
+  gui.addFolder("Event Selection");
 
-  ispy.guiReduced.addFolder("Detector");
-  ispy.guiReduced.addFolder("Event Selection");
-
-  // create subfolders to access controllers and objects easily, since we have a lot of them
-  ispy.subfolders.Detector = [];
-  ispy.subfolders.Imported = [];
-
-  ispy.subfoldersReduced.Detector = [];
-  ispy.subfoldersReduced["Controllers"] = [];
-  ispy.subfoldersReduced["Info"] = [];
-  ispy.subfoldersReduced["Selection"] = [];
-
-  data_groups.forEach((gr) => {
-    ispy.gui.addFolder(gr);
-    ispy.subfolders[gr] = [];
+  controls_groups.forEach((gr) => {
+    gui.addFolder(gr.name);
+  });
+  const additionalFolder = gui.addFolder("Additional");
+  additionalFolder.name = "Advanced Controls";
+  additionalControls.forEach((gr) => {
+    additionalFolder.addFolder(gr);
+    ispy.additionalFolders[gr] = [];
   });
 
-  reduced_data_groups.forEach((gr) => {
-    ispy.guiReduced.addFolder(gr.name);
+  const additionalFolderElem = additionalFolder.domElement.parentElement as HTMLElement;
+  // additionalFolderElem?.style.setProperty("display", "none");
+  const additionalControlsElem = getHTMLObject<HTMLInputElement>("js-additional-controls");
+  additionalControlsElem.checked = false;
+
+  additionalControlsElem.addEventListener("change", (event: Event) => {
+    (event.target as HTMLInputElement).checked
+      ? (additionalFolderElem.style.display = "block")
+      : (additionalFolderElem.style.display = "none");
   });
 }
 
@@ -48,21 +50,21 @@ function addGroups() {
  * Clears all subfolders in the GUI.
  */
 function clearSubfolders() {
-  data_groups.forEach((g) => {
-    const folder = ispy.gui.__folders[g];
-
-    ispy.subfolders[g].forEach((s) => {
+  const subfolders = ispy.subfolders;
+  const additionalFolders = ispy.additionalFolders;
+  additionalControls.forEach((g) => {
+    const folder = ispy.gui.__folders["Additional"].__folders[g];
+    additionalFolders[g].forEach((s) => {
       folder.removeFolder(folder.__folders[s]);
     });
-
-    ispy.subfolders[g] = [];
+    additionalFolders[g] = [];
   });
 
   ["Controllers", "Info"].forEach((g) => {
-    (ispy.subfoldersReduced[g] as GUIController[]).forEach((s) => {
+    (subfolders[g] as GUIController[]).forEach((s) => {
       s.remove();
     });
-    ispy.subfoldersReduced[g] = [];
+    subfolders[g] = [];
   });
 }
 
@@ -234,129 +236,128 @@ function addSelectionRow(
     min_energy: 10.0,
   };
 
-  const guis = [ispy.gui];
-  ispy.subfolders[group].push(name);
-  if (group === "Detector") {
-    guis.splice(1, 0, ispy.guiReduced);
-    ispy.subfoldersReduced[group].push(name);
+  const isAdditional = additionalControls.includes(group);
+  const gui = isAdditional ? ispy.gui.__folders["Additional"] : ispy.gui;
+  if (isAdditional) {
+    ispy.additionalFolders[group].push(name);
+  } else if (group === "Detector") {
+    ispy.subfolders[group].push(name);
   }
-  guis.forEach((gui_elem) => {
-    const folder = gui_elem.__folders[group];
+  const folder = gui.__folders[group];
 
-    const sf = folder.addFolder(name); // TODO check if works right
+  const sf = folder.addFolder(name); // TODO check if works right
 
-    if (!(group.includes("Detector") || group.includes("Imported") || group.includes("Provenance"))) {
-      sf.add(row_obj, "number");
-    }
+  if (!(group.includes("Detector") || group.includes("Imported") || group.includes("Provenance"))) {
+    sf.add(row_obj, "number");
+  }
 
-    // For Provenance, ECAL, etc. show table when clicking on
-    // tab for objects in the gui
-    if (
-      group.includes("Provenance") ||
-      group.includes("CAL") ||
-      group.includes("Tracking") ||
-      group.includes("Muon") ||
-      group.includes("Physics")
-    ) {
-      sf.domElement.onclick = null;
-    }
+  // For Provenance, ECAL, etc. show table when clicking on
+  // tab for objects in the gui
+  if (
+    group.includes("Provenance") ||
+    group.includes("CAL") ||
+    group.includes("Tracking") ||
+    group.includes("Muon") ||
+    group.includes("Physics")
+  ) {
+    sf.domElement.onclick = null;
+  }
 
-    sf.add(row_obj, "key");
+  sf.add(row_obj, "key");
 
-    sf.add(row_obj, "show").onChange(() => {
-      toggle(key);
+  sf.add(row_obj, "show").onChange(() => {
+    toggle(key);
+  });
+
+  // Event is not part of the scene and is
+  // handled with css so no need for the rest
+  if (key.includes("Event_") || group.includes("Imported")) return;
+
+  sf.add(row_obj, "opacity", 0, 1).onChange(() => {
+    ispy.views.forEach((v) => {
+      const obj = ispy.scenes[v].getObjectByName(key);
+
+      if (!obj) return;
+
+      obj.children.forEach((o) => {
+        if (!("material" in o)) return;
+        (o.material as Material).opacity = row_obj.opacity;
+      });
     });
+  });
 
-    // Event is not part of the scene and is
-    // handled with css so no need for the rest
-    if (key.includes("Event_") || group.includes("Imported")) return;
+  if (ispy.use_line2) {
+    // This conditional could / should be improved
+    applyThickerLines(key, sf, row_obj);
+  }
 
-    sf.add(row_obj, "opacity", 0, 1).onChange(() => {
+  if (key.includes("Muons_") || key.includes("Electron") || key.includes("Tracks_")) {
+    sf.add(row_obj, "min_pt").onChange(() => {
       ispy.views.forEach((v) => {
         const obj = ispy.scenes[v].getObjectByName(key);
 
         if (!obj) return;
 
         obj.children.forEach((o) => {
-          if (!("material" in o)) return;
-          (o.material as Material).opacity = row_obj.opacity;
+          o.visible = o.userData.pt < row_obj.min_pt ? false : true;
         });
       });
     });
+  }
 
-    if (ispy.use_line2) {
-      // This conditional could / should be improved
-      applyThickerLines(key, sf, row_obj);
-    }
-
-    if (key.includes("Muons_") || key.includes("Electron") || key.includes("Tracks_")) {
-      sf.add(row_obj, "min_pt").onChange(() => {
-        ispy.views.forEach((v) => {
-          const obj = ispy.scenes[v].getObjectByName(key);
-
-          if (!obj) return;
-
-          obj.children.forEach((o) => {
-            o.visible = o.userData.pt < row_obj.min_pt ? false : true;
-          });
-        });
-      });
-    }
-
-    if (key.includes("Jet")) {
-      sf.add(row_obj, "min_et").onChange(() => {
-        ispy.views.forEach((v) => {
-          const obj = ispy.scenes[v].getObjectByName(key);
-
-          if (!obj) return;
-
-          obj.children.forEach((o) => {
-            o.visible = o.userData.et < row_obj.min_et ? false : true;
-          });
-        });
-      });
-    }
-
-    if (key.includes("Photon")) {
-      sf.add(row_obj, "min_energy").onChange(() => {
-        ispy.views.forEach((v) => {
-          const obj = ispy.scenes[v].getObjectByName(key);
-
-          if (!obj) return;
-
-          obj.children.forEach((o) => {
-            o.visible = o.userData.energy < row_obj.min_energy ? false : true;
-          });
-        });
-      });
-    }
-
-    sf.addColor(row_obj, "color").onChange(() => {
+  if (key.includes("Jet")) {
+    sf.add(row_obj, "min_et").onChange(() => {
       ispy.views.forEach((v) => {
         const obj = ispy.scenes[v].getObjectByName(key);
 
         if (!obj) return;
 
-        // Change color in event_decription for objects in
-        // Physics group. Once they are picked (i.e. pointer over)
-        // the color will revert to this new one rather than to the original
-        if (group.includes("Physics")) {
-          event_description[v][key].style.color = row_obj.color;
-        }
+        obj.children.forEach((o) => {
+          o.visible = o.userData.et < row_obj.min_et ? false : true;
+        });
+      });
+    });
+  }
+
+  if (key.includes("Photon")) {
+    sf.add(row_obj, "min_energy").onChange(() => {
+      ispy.views.forEach((v) => {
+        const obj = ispy.scenes[v].getObjectByName(key);
+
+        if (!obj) return;
 
         obj.children.forEach((o) => {
-          o.traverse((oc) => {
-            // Special case to handle
-            if (oc.type === "ArrowHelper" || key.includes("MET") || key.includes("Proton")) {
-              oc.children.forEach((og) => {
-                if (!("material" in og)) return;
-                (og.material as LineBasicMaterial | MeshBasicMaterial).color = new Color(row_obj.color);
-              });
-            } else {
-              if (!("material" in oc)) return;
-              (oc.material as LineBasicMaterial | MeshBasicMaterial).color = new Color(row_obj.color);
-            }
-          });
+          o.visible = o.userData.energy < row_obj.min_energy ? false : true;
+        });
+      });
+    });
+  }
+
+  sf.addColor(row_obj, "color").onChange(() => {
+    ispy.views.forEach((v) => {
+      const obj = ispy.scenes[v].getObjectByName(key);
+
+      if (!obj) return;
+
+      // Change color in event_decription for objects in
+      // Physics group. Once they are picked (i.e. pointer over)
+      // the color will revert to this new one rather than to the original
+      if (group.includes("Physics")) {
+        event_description[v][key].style.color = row_obj.color;
+      }
+
+      obj.children.forEach((o) => {
+        o.traverse((oc) => {
+          // Special case to handle
+          if (oc.type === "ArrowHelper" || key.includes("MET") || key.includes("Proton")) {
+            oc.children.forEach((og) => {
+              if (!("material" in og)) return;
+              (og.material as LineBasicMaterial | MeshBasicMaterial).color = new Color(row_obj.color);
+            });
+          } else {
+            if (!("material" in oc)) return;
+            (oc.material as LineBasicMaterial | MeshBasicMaterial).color = new Color(row_obj.color);
+          }
         });
       });
     });
@@ -369,9 +370,9 @@ function addSelectionRow(
  */
 function saveCutSettings() {
   const settings: Record<string, number | string | boolean> = {};
-  const btn = (ispy.guiReduced.__controllers as SelectionFieldController[]).find((o) => o.property === "Keep Settings");
+  const btn = (ispy.gui.__controllers as SelectionFieldController[]).find((o) => o.property === "Keep Settings");
   if (btn?.getValue()) {
-    const controllers = ispy.subfoldersReduced["Controllers"];
+    const controllers = ispy.subfolders["Controllers"];
     controllers.forEach((c) => {
       settings[c.property] = c.getValue();
     });
@@ -388,7 +389,7 @@ function applySavedSettings(settings: Record<string, number | string | boolean>)
   if (!Object.keys(settings).length) {
     return;
   }
-  const controllers = ispy.subfoldersReduced["Controllers"];
+  const controllers = ispy.subfolders["Controllers"];
   controllers.forEach((c) => {
     if (c.property in settings) {
       c.setValue(settings[c.property]);
