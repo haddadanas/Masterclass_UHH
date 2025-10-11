@@ -74,13 +74,25 @@ const enStepTexts: { [key: string]: { [key: string]: [string, string] } } = {
       "Loaded Event",
       "The event has been loaded. You can see the track and calorimeter hits in the detector. Different colors represent different particle types.",
     ],
+    eventName: [
+      "Event's Path and Number",
+      "The path of the currently loaded event with its index in the curretly loaded file are shown here.",
+    ],
     selectingTracks: [
       "Selecting Tracks",
-      "You can click on tracks to select them. The track will turn white if selected. <br><i class='fas fa-edit' style='color: blue;'></i> Try selecting the four <strong>red tracks</strong> outside of the E-CAL barrel in this event.",
+      "You can click on tracks to select them. The track will turn white if selected. <br><i class='fas fa-edit' style='color: blue;'></i> Try selecting the <strong>four red tracks</strong> outside of the E-CAL barrel in this event.",
     ],
     invariantMass: [
       "Getting the invariant mass",
       "By pressing <kbd>M</kbd> the invariant mass of all selected tracks is calculated <br><i class='fas fa-edit' style='color: blue;'></i> Try it out! Notice anything special about the mass ;)",
+    ],
+    additionalTools: [
+      "More tools",
+      "Here you can find additional tools, including animated view, screenshot, importing detector models and more. Also the settings menu is located here. Explore the different options you have!",
+    ],
+    controlMenu:[
+      "Many more controls",
+      "Here you can find additional controls for the event display, including options for customizing the view and analyzing the data. A seperate tutorial for the control menu is available in the help section. Check it out!",
     ],
     end: [
       "End of Tutorial",
@@ -119,13 +131,25 @@ const deStepTexts: { [key: string]: { [key: string]: [string, string] } } = {
       "Geladenes Ereignis",
       "Das Ereignis wurde geladen. Du kannst die Spur und die Kalorimeter-Hits im Detektor sehen. Verschiedene Farben repräsentieren verschiedene Teilchentypen.",
     ],
+    eventName: [
+      "Pfad und Nummer des Ereignisses",
+      "Der Pfad des aktuell geladenen Ereignisses mit seinem Index in der aktuell geladenen Datei wird hier angezeigt.",
+    ],
     selectingTracks: [
       "Spuren auswählen",
-      "Du kannst auf Spuren klicken, um sie auszuwählen. Die Spur wird weiß, wenn sie ausgewählt ist. <br><i class='fas fa-edit' style='color: blue;'></i> Versuche, die vier <strong>roten Spuren</strong> außerhalb des E-CAL-Barrels in diesem Ereignis auszuwählen.",
+      "Du kannst auf Spuren klicken, um sie auszuwählen. Die Spur wird weiß, wenn sie ausgewählt ist. <br><i class='fas fa-edit' style='color: blue;'></i> Versuche, die <strong>vier roten Spuren</strong> außerhalb des E-CAL-Barrels in diesem Ereignis auszuwählen.",
     ],
     invariantMass: [
       "Berechnung der invarianten Masse",
       "Durch Drücken von <kbd>M</kbd> wird die invariante Masse aller ausgewählten Spuren berechnet. <br><i class='fas fa-edit' style='color: blue;'></i> Probiere es aus! Fällt dir etwas Besonderes an der Masse auf ;)",
+    ],
+    additionalTools: [
+      "Weitere Werkzeuge",
+      "Hier findest du weitere Werkzeuge, darunter animierte Ansicht, Screenshot, Import von Detektormodellen und mehr. Auch das Einstellungsmenü befindet sich hier. Erkunde die verschiedenen Optionen, die du hast!",
+    ],
+    controlMenu:[
+      "Viele weitere Steuerungen",
+      "Hier findest du weitere Steuerungen für das Event-Display, darunter Optionen zur Anpassung der Ansicht und zur Analyse der Daten. Ein separates Tutorial für das Steuerungsmenü ist im Hilfebereich verfügbar. Schau es dir an!",
     ],
     end: [
       "Ende des Tutorials",
@@ -210,6 +234,13 @@ const availableTutorials = {
         },
       },
       {
+        element: "#js-event-loaded",
+        popover: {
+          title: langMap["eventName"][0],
+          description: langMap["eventName"][1],
+        },
+      },
+      {
         element: "#js-display",
         popover: {
           title: langMap["loadedEvent"][0],
@@ -236,6 +267,20 @@ const availableTutorials = {
           },
         },
         disableActiveInteraction: false,
+      },
+      {
+        element: "#js-secondary-toolbar",
+        popover: {
+          title: langMap["additionalTools"][0],
+          description: langMap["additionalTools"][1],
+        },
+      },
+      {
+        element: "#js-treegui",
+        popover: {
+          title: langMap["controlMenu"][0],
+          description: langMap["controlMenu"][1],
+        },
       },
       {
         popover: {
