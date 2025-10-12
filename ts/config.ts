@@ -45,6 +45,7 @@ export {
 export const ispy: Ispy = {
   // Metadata and versioning
   version: "v3.0.0-UHH",
+  lang: "en",
   event_list: [],
   ig_data: null,
   ievent: 0,
@@ -53,10 +54,10 @@ export const ispy: Ispy = {
   // Detector and collections
   detector: { Collections: {} },
   subfolders: {
-    Selection: [],
+    selection: [],
     Detector: [],
-    Controllers: [],
-    Info: [],
+    controllers: [],
+    info: [],
   },
   additionalFolders: {},
 
@@ -98,6 +99,7 @@ export const ispy: Ispy = {
     hideable: false,
     autoPlace: false,
   }),
+  guiLangData: {},
   stats: new Stats(),
 
   // Scenes and rendering

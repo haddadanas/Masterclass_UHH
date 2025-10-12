@@ -2,6 +2,7 @@ import { Driver, driver, DriveStep } from "driver.js";
 import { loadEvent, selectEvent, selectFile } from "./files-load";
 import { hideDialog, showDialog } from "./utils";
 import { resetView } from "./display";
+import { ispy } from "./config";
 
 export interface TutorialHooks {
   openPanel?: (id: string) => void;
@@ -17,7 +18,7 @@ export function startTutorial(key: "basics" | "controls" | "analysis") {
     throw new Error("Invalid tutorial key");
   }
   //detect language
-  const lang = localStorage.getItem("language") || navigator.language || "en";
+  const lang = ispy.lang;
   const availableLanguages: { [key: string]: { [key: string]: [string, string] } } = {
     en: enStepTexts[key],
     de: deStepTexts[key],
@@ -90,7 +91,7 @@ const enStepTexts: { [key: string]: { [key: string]: [string, string] } } = {
       "More tools",
       "Here you can find additional tools, including animated view, screenshot, importing detector models and more. Also the settings menu is located here. Explore the different options you have!",
     ],
-    controlMenu:[
+    controlMenu: [
       "Many more controls",
       "Here you can find additional controls for the event display, including options for customizing the view and analyzing the data. A seperate tutorial for the control menu is available in the help section. Check it out!",
     ],
@@ -147,7 +148,7 @@ const deStepTexts: { [key: string]: { [key: string]: [string, string] } } = {
       "Weitere Werkzeuge",
       "Hier findest du weitere Werkzeuge, darunter animierte Ansicht, Screenshot, Import von Detektormodellen und mehr. Auch das Einstellungsmenü befindet sich hier. Erkunde die verschiedenen Optionen, die du hast!",
     ],
-    controlMenu:[
+    controlMenu: [
       "Viele weitere Steuerungen",
       "Hier findest du weitere Steuerungen für das Event-Display, darunter Optionen zur Anpassung der Ansicht und zur Analyse der Daten. Ein separates Tutorial für das Steuerungsmenü ist im Hilfebereich verfügbar. Schau es dir an!",
     ],

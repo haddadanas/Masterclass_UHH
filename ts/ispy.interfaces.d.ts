@@ -19,9 +19,9 @@ import JSZip from "jszip";
 
 interface SubFolder {
   Detector: string[];
-  Selection: Array<GUIController>;
-  Controllers: Array<GUIController>;
-  Info: Array<GUIController>;
+  selection: Array<GUIController>;
+  controllers: Array<GUIController>;
+  info: Array<GUIController>;
   [key: string]: Array<GUIController> | string[];
 }
 
@@ -67,6 +67,8 @@ interface Ispy {
   // File and Event Information
   file_name?: string;
   version: string;
+  lang: string;
+  guiLangData: Record<string, string>;
   event_index: number;
   current_event?: EventObject;
   event_list: string[];

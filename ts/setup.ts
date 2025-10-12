@@ -19,13 +19,13 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GUI, GUIController } from "dat.gui";
 import { update } from "@tweenjs/tween.js";
 
-import { assertDefined, getHTMLObject } from "./utils.js";
+import { addController, assertDefined, getHTMLObject } from "./utils.js";
 import { ispy } from "./config.js";
 import { useRenderer, updateClipping, render } from "./renderer.js";
 import { importDetector, loadDroppedFile } from "./files-load.js";
 import { data_groups } from "./objects-config.js";
 import { initCamera, onMouseDown, onMouseMove, onWindowResize } from "./display.js";
-import { CHARGE_MAP, SELEC_NAME_MAP } from "./analysis-config.js";
+import { CHARGE_MAP } from "./gui-config.js";
 import { checkCurrentSelection } from "./analysis.js";
 import { SelectionFieldController } from "./ispy.interfaces.js";
 
@@ -534,9 +534,9 @@ function createCheckboxContainer(cont: GUIController) {
  * @returns void
  */
 function initSelectionFields() {
-  const gui_elem = ispy.gui;
+  const gui = ispy.gui;
 
-  const folder = gui_elem.__folders["Event Selection"];
+  const folder = gui.__folders["selection"];
   folder.domElement.id = "selection-folder";
 
   const nMuon = 0,
@@ -548,11 +548,11 @@ function initSelectionFields() {
     test = checkCurrentSelection;
 
   const row_obj = {
-    TrackerMuons: nMuon,
-    GsfElectrons: nElectron,
-    Photons: nPhoton,
+    selMuons: nMuon,
+    selElectrons: nElectron,
+    selPhotons: nPhoton,
     charge: chargeSign,
-    pt: minPt,
+    minptvis: minPt,
     minMETs: minPt,
     maxMETs: maxPt,
     check: test,
@@ -563,12 +563,12 @@ function initSelectionFields() {
   //   var help_map = analysis.selection_fields_help;
   let cont: GUIController | null = null;
   (Object.keys(row_obj) as (keyof typeof row_obj)[]).forEach((key) => {
-    const elem_name = SELEC_NAME_MAP[key];
     // let help_info = help_map[key] || false;
 
     // add the controller to the folder
     if (key === "charge") {
-      cont = folder.add(row_obj, key, ["", "positive", "negative", "opposite"]).name(elem_name);
+      folder.add;
+      cont = addController(folder, row_obj, key, ["", "positive", "negative", "opposite"]);
       cont.getValue = function () {
         const result = (this.object as Record<string, string | number>)[this.property];
         return CHARGE_MAP[result];
@@ -578,13 +578,14 @@ function initSelectionFields() {
       return;
     }
 
-    cont = folder.add(row_obj, key).name(elem_name);
+    cont = addController(folder, row_obj, key);
     // if (help_info) {
     //     cont.help(help_info);
     // }
 
     if (typeof row_obj[key] == "boolean") return;
     if (typeof row_obj[key] == "function") {
+      // TODO refactor to css
       const btnContainer = cont.domElement.previousSibling as HTMLElement;
       btnContainer.style.width = "100%";
       btnContainer.style.height = "auto";
@@ -599,20 +600,20 @@ function initSelectionFields() {
     cont.onFinishChange(function (this: SelectionFieldController, value: number) {
       if (value < 0) this.setValue(0);
     });
-    if (["TrackerMuons", "GsfElectrons", "Photons", "maxMETs"].includes(key)) {
+    if (["selMuons", "selElectrons", "selPhotons", "maxMETs"].includes(key)) {
       createCheckboxContainer(cont);
     }
-    if (key === "pt") {
+    if (key === "minptvis") {
       cont.onFinishChange(function (this: SelectionFieldController, value: number) {
         if (value < 0) this.setValue(0);
-        ispy.subfolders.Controllers.find((c) => c.property === "min_pt")?.setValue(value);
+        ispy.subfolders.controllers.find((c) => c.property === "min_pt")?.setValue(value);
       });
     }
   });
 
   // add all controllers to the subfolders for convenience
   folder.__controllers.forEach((c) => {
-    ispy.subfolders.Selection.push(c);
+    ispy.subfolders.selection.push(c);
   });
 }
 

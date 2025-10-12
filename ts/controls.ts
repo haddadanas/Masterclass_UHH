@@ -343,7 +343,7 @@ function showMass() {
   showDialog("invariant-mass-modal");
 
   ispy.selected_objects.clear();
-  ispy.subfolders["Info"][1].setValue(0);
+  ispy.subfolders["info"][1].setValue(0);
 }
 
 /**
@@ -450,7 +450,7 @@ export function setupControls() {
   const jsBasicsTutorialBtn = getHTMLObject("js-basics-tutorial-btn");
   const jsControlsTutorialBtn = getHTMLObject("js-controls-tutorial-btn");
   const jsAnalysisTutorialBtn = getHTMLObject("js-analysis-tutorial-btn");
-  
+
   // Tutorial button
   jsBasicsTutorialBtn.addEventListener("click", () => {
     switchMain("display");

@@ -1,7 +1,16 @@
 import swal from "sweetalert";
 
 import { ispy, analysis } from "./config.js";
-import { getCurrentEvent, EventCollection, getCurrentIndex, assertDefined, downloadData, hideDialog, showDialog, toggleButton } from "./utils.js";
+import {
+  getCurrentEvent,
+  EventCollection,
+  getCurrentIndex,
+  assertDefined,
+  downloadData,
+  hideDialog,
+  showDialog,
+  toggleButton,
+} from "./utils.js";
 import { Particle, FourVector, MET } from "./ispy.interfaces.js";
 
 // Helper functions to check the selection
@@ -103,8 +112,8 @@ function checkIfEventPassing(event_index: number | string = -1): boolean | undef
 
   for (let [name, part] of summary.particles) {
     if (cuts[name] === -1) continue;
-    if (name === "TrackerMuons" || name === "GsfElectrons") {
-      part = getPtPassingLeptons(part, cuts["pt"]);
+    if (name === "selMuons" || name === "selElectrons") {
+      part = getPtPassingLeptons(part, cuts["minptvis"]);
       pass = checkCharge(part, cuts["charge"]);
       if (!pass) break;
     }
@@ -141,11 +150,11 @@ function checkCurrentSelection(): void {
   const [Msgtext, symbol] = getCurrentSelectionMessage();
   swal({ text: Msgtext, title: "Selection Results", icon: symbol, buttons: [false], timer: 3000 }); // TODO check if no buttons
   if (symbol === "error") return;
-  const nSelected = ispy.subfolders["Selection"].find((e) => e.property === "nSelected");
+  const nSelected = ispy.subfolders["selection"].find((e) => e.property === "nSelected");
   if (nSelected) {
     nSelected.setValue(getPassingEvents().length);
   }
-  const firstSelected = ispy.subfolders["Selection"].find((e) => e.property === "firstSelected");
+  const firstSelected = ispy.subfolders["selection"].find((e) => e.property === "firstSelected");
   if (firstSelected) {
     firstSelected.setValue(
       getPassingEvents()
@@ -161,16 +170,15 @@ function checkCurrentSelection(): void {
  * @returns The current selection cuts.
  */
 function getSelectionCuts(): { [key: string]: number } {
-  const cuts: { [key: string]: number } = {};
-  ispy.subfolders["Selection"].forEach((e) => {
-    if (["function", "string"].includes(typeof e.getValue())) return;
-    if ("checkbox" in e && !e.checkbox) {
-      cuts[e.property] = -1;
-      return;
-    }
-    cuts[e.property] = e.getValue();
-  });
-  return cuts;
+  return Object.fromEntries(
+    ispy.subfolders["selection"]
+      .filter((e) => e.property === "charge" || ["boolean", "number"].includes(typeof e.getValue()))
+      .filter((e) => e.property !== "nSelected")
+      .map((e) => {
+        if ("checkbox" in e && !e.checkbox) return [e.property, -1];
+        return [e.property, e.getValue()];
+      }),
+  );
 }
 
 /**
@@ -334,7 +342,6 @@ function createCSV(category: string): string {
 
   return csv;
 }
-
 
 export {
   checkCurrentSelection,

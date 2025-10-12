@@ -9,7 +9,7 @@ import {
   event_description,
   controls_groups,
 } from "./objects-config.js";
-import { getHTMLObject, hasProperty } from "./utils.js";
+import { addController, addFolder, addColor, getHTMLObject, hasProperty } from "./utils.js";
 import { SelectionFieldController } from "./ispy.interfaces.js";
 
 /**
@@ -17,25 +17,23 @@ import { SelectionFieldController } from "./ispy.interfaces.js";
  */
 function addGroups() {
   const gui = ispy.gui;
-
   // Add option to keep user cuts and preferences when switching between events
-  gui.add({ "Keep Settings": false }, "Keep Settings");
+  addController(gui, { saveSetting: false }, "saveSetting");
 
-  gui.addFolder("Detector");
-  gui.addFolder("Event Selection");
+  addFolder(gui, "Detector");
+  addFolder(gui, "selection");
 
   controls_groups.forEach((gr) => {
-    gui.addFolder(gr.name);
+    addFolder(gui, gr.name);
   });
-  const additionalFolder = gui.addFolder("Additional");
-  additionalFolder.name = "Advanced Controls";
+  const additionalFolder = addFolder(gui, "additional");
   additionalControls.forEach((gr) => {
-    additionalFolder.addFolder(gr);
+    addFolder(additionalFolder, gr);
     ispy.additionalFolders[gr] = [];
   });
 
   const additionalFolderElem = additionalFolder.domElement.parentElement as HTMLElement;
-  // additionalFolderElem?.style.setProperty("display", "none");
+  additionalFolderElem?.style.setProperty("display", "none");
   const additionalControlsElem = getHTMLObject<HTMLInputElement>("js-additional-controls");
   additionalControlsElem.checked = false;
 
@@ -53,14 +51,14 @@ function clearSubfolders() {
   const subfolders = ispy.subfolders;
   const additionalFolders = ispy.additionalFolders;
   additionalControls.forEach((g) => {
-    const folder = ispy.gui.__folders["Additional"].__folders[g];
+    const folder = ispy.gui.__folders["additional"].__folders[g];
     additionalFolders[g].forEach((s) => {
       folder.removeFolder(folder.__folders[s]);
     });
     additionalFolders[g] = [];
   });
 
-  ["Controllers", "Info"].forEach((g) => {
+  ["controllers", "info"].forEach((g) => {
     (subfolders[g] as GUIController[]).forEach((s) => {
       s.remove();
     });
@@ -147,7 +145,7 @@ function applyThickerLines(
     key.includes("RPCRec") ||
     key.includes("DTRecSegment")
   ) {
-    sf.add(row_obj, "linewidth", 1, 5).onChange(() => {
+    addController(sf, row_obj, "linewidth", 1, 5).onChange(() => {
       ispy.views.forEach((v) => {
         const obj = ispy.scenes[v].getObjectByName(key);
 
@@ -161,7 +159,7 @@ function applyThickerLines(
     });
   }
   if (key.includes("GlobalMuon") || key.includes("Electron") || key.includes("Photon")) {
-    sf.add(row_obj, "linewidth", 1, 5).onChange(() => {
+    addController(sf, row_obj, "linewidth", 1, 5).onChange(() => {
       ispy.views.forEach((v) => {
         const obj = ispy.scenes[v].getObjectByName(key);
 
@@ -237,7 +235,7 @@ function addSelectionRow(
   };
 
   const isAdditional = additionalControls.includes(group);
-  const gui = isAdditional ? ispy.gui.__folders["Additional"] : ispy.gui;
+  const gui = isAdditional ? ispy.gui.__folders["additional"] : ispy.gui;
   if (isAdditional) {
     ispy.additionalFolders[group].push(name);
   } else if (group === "Detector") {
@@ -245,10 +243,10 @@ function addSelectionRow(
   }
   const folder = gui.__folders[group];
 
-  const sf = folder.addFolder(name); // TODO check if works right
+  const sf = addFolder(folder, name); // TODO check if works right
 
   if (!(group.includes("Detector") || group.includes("Imported") || group.includes("Provenance"))) {
-    sf.add(row_obj, "number");
+    addController(sf, row_obj, "number");
   }
 
   // For Provenance, ECAL, etc. show table when clicking on
@@ -263,9 +261,9 @@ function addSelectionRow(
     sf.domElement.onclick = null;
   }
 
-  sf.add(row_obj, "key");
+  addController(sf, row_obj, "key");
 
-  sf.add(row_obj, "show").onChange(() => {
+  addController(sf, row_obj, "show").onChange(() => {
     toggle(key);
   });
 
@@ -273,7 +271,7 @@ function addSelectionRow(
   // handled with css so no need for the rest
   if (key.includes("Event_") || group.includes("Imported")) return;
 
-  sf.add(row_obj, "opacity", 0, 1).onChange(() => {
+  addController(sf, row_obj, "opacity", 0, 1).onChange(() => {
     ispy.views.forEach((v) => {
       const obj = ispy.scenes[v].getObjectByName(key);
 
@@ -292,7 +290,7 @@ function addSelectionRow(
   }
 
   if (key.includes("Muons_") || key.includes("Electron") || key.includes("Tracks_")) {
-    sf.add(row_obj, "min_pt").onChange(() => {
+    addController(sf, row_obj, "min_pt").onChange(() => {
       ispy.views.forEach((v) => {
         const obj = ispy.scenes[v].getObjectByName(key);
 
@@ -306,7 +304,7 @@ function addSelectionRow(
   }
 
   if (key.includes("Jet")) {
-    sf.add(row_obj, "min_et").onChange(() => {
+    addController(sf, row_obj, "min_et").onChange(() => {
       ispy.views.forEach((v) => {
         const obj = ispy.scenes[v].getObjectByName(key);
 
@@ -320,7 +318,7 @@ function addSelectionRow(
   }
 
   if (key.includes("Photon")) {
-    sf.add(row_obj, "min_energy").onChange(() => {
+    addController(sf, row_obj, "min_energy").onChange(() => {
       ispy.views.forEach((v) => {
         const obj = ispy.scenes[v].getObjectByName(key);
 
@@ -333,7 +331,7 @@ function addSelectionRow(
     });
   }
 
-  sf.addColor(row_obj, "color").onChange(() => {
+  addColor(sf, row_obj, "color").onChange(() => {
     ispy.views.forEach((v) => {
       const obj = ispy.scenes[v].getObjectByName(key);
 
@@ -370,9 +368,9 @@ function addSelectionRow(
  */
 function saveCutSettings() {
   const settings: Record<string, number | string | boolean> = {};
-  const btn = (ispy.gui.__controllers as SelectionFieldController[]).find((o) => o.property === "Keep Settings");
+  const btn = (ispy.gui.__controllers as SelectionFieldController[]).find((o) => o.property === "saveSetting");
   if (btn?.getValue()) {
-    const controllers = ispy.subfolders["Controllers"];
+    const controllers = ispy.subfolders["controllers"];
     controllers.forEach((c) => {
       settings[c.property] = c.getValue();
     });
@@ -389,7 +387,7 @@ function applySavedSettings(settings: Record<string, number | string | boolean>)
   if (!Object.keys(settings).length) {
     return;
   }
-  const controllers = ispy.subfolders["Controllers"];
+  const controllers = ispy.subfolders["controllers"];
   controllers.forEach((c) => {
     if (c.property in settings) {
       c.setValue(settings[c.property]);

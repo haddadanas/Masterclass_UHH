@@ -86,7 +86,6 @@
     "forceConsistentCasingInFileNames": true
   },
   "files": [
-    "ts/analysis-config.ts",
     "ts/animate.ts",
     "ts/config.ts",
     "ts/controls.ts",
