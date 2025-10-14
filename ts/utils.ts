@@ -2,10 +2,10 @@
 // Description: This file contains utility functions that are used in the analysis code.
 import JSZip from "jszip";
 import { Material, Object3D } from "three";
+import { GUI, GUIController } from "dat.gui";
 
 import { ispy, supportedLanguages } from "./config.js";
 import { Particle, EventObject, EventSummary, MET, FourVector, SelectionFieldController } from "./ispy.interfaces.js";
-import { GUI, GUIController } from "dat.gui";
 
 const mMuon2 = 0.10566 * 0.10566;
 const mElectron2 = 0.511e-3 * 0.511e-3;
@@ -145,7 +145,7 @@ export function addController<T extends object>(gui: GUI, target: T, key: keyof 
  * @param propName
  * @returns
  */
-export function addColor(gui: GUI, target: Object, propName: string): GUIController {
+export function addColor(gui: GUI, target: object, propName: string): GUIController {
   const controller = gui.addColor(target, propName);
   const titleElem = controller.domElement.parentNode?.querySelector("span.property-name");
   if (!titleElem) throw new Error(`Color controller ${propName} does not have a title element.`);

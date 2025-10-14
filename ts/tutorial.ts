@@ -1,8 +1,9 @@
 import { Driver, driver, DriveStep } from "driver.js";
-import { loadEvent, selectEvent, selectFile } from "./files-load";
-import { hideDialog, showDialog } from "./utils";
-import { resetView } from "./display";
-import { ispy } from "./config";
+
+import { loadEvent, selectEvent, selectFile } from "./files-load.js";
+import { hideDialog, showDialog } from "./utils.js";
+import { resetView } from "./display.js";
+import { ispy } from "./config.js";
 
 export interface TutorialHooks {
   openPanel?: (id: string) => void;

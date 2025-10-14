@@ -1,10 +1,10 @@
 import { Camera, Color, WebGLRenderer } from "three";
-import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer";
+import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer.js";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-import { assertDefined, getHTMLObject } from "./utils";
-import { ispy } from "./config";
+import { assertDefined, getHTMLObject } from "./utils.js";
+import { ispy } from "./config.js";
 
 function updateControls(redererClass: string, camera: Camera, rendererDom: HTMLCanvasElement) {
   let controls: OrbitControls | TrackballControls;

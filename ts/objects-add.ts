@@ -14,7 +14,7 @@ import {
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
+import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
 import $ from "jquery";
 
 import {

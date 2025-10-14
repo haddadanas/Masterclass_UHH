@@ -1,6 +1,6 @@
 import { Color, Mesh } from "three";
-import { OBJExporter } from "three/examples/jsm/exporters/OBJExporter";
-import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter";
+import { OBJExporter } from "three/examples/jsm/exporters/OBJExporter.js";
+import { GLTFExporter } from "three/examples/jsm/exporters/GLTFExporter.js";
 
 import { ispy } from "./config.js";
 import {
