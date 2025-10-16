@@ -1,7 +1,7 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
 import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer";
-import { GUI, GUIController } from "dat.gui";
+import { GUI, Controller } from "lil-gui";
 import {
   Scene,
   WebGLRenderer,
@@ -19,19 +19,19 @@ import JSZip from "jszip";
 
 interface SubFolder {
   Detector: string[];
-  selection: Array<GUIController>;
-  controllers: Array<GUIController>;
-  info: Array<GUIController>;
-  [key: string]: Array<GUIController> | string[];
+  selection: Array<Controller>;
+  controllers: Array<Controller>;
+  info: Array<Controller>;
+  [key: string]: Array<Controller> | string[];
 }
 
-interface SelectionFieldController extends GUIController {
+interface SelectionFieldController extends Controller {
   __input: HTMLInputElement;
   initialValue: string;
   checkbox: boolean;
   property: string;
   getValue: () => number | string | boolean;
-  setValue: (value: number | string | boolean) => GUIController;
+  setValue: (value: number | string | boolean) => Controller;
 }
 
 interface EventObject {

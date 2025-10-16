@@ -1,4 +1,4 @@
-import { GUI } from "dat.gui";
+import { GUI } from "lil-gui";
 import { Raycaster, Scene, Vector3 } from "three";
 import Stats from "stats.js";
 
@@ -95,8 +95,8 @@ export const ispy: Ispy = {
 
   // GUI and stats
   gui: new GUI({
-    name: "Controls",
-    hideable: false,
+    title: "Controls",
+    closeFolders: true,
     autoPlace: false,
   }),
   guiLangData: {},

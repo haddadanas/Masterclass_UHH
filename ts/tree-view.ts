@@ -1,5 +1,5 @@
 import { Color, LineBasicMaterial, Material, MeshBasicMaterial } from "three";
-import { GUI, GUIController } from "dat.gui";
+import { GUI, Controller } from "lil-gui";
 
 import { ispy } from "./config.js";
 import {
@@ -9,8 +9,7 @@ import {
   event_description,
   controls_groups,
 } from "./objects-config.js";
-import { addController, addFolder, addColor, getHTMLObject, hasProperty } from "./utils.js";
-import { SelectionFieldController } from "./ispy.interfaces.js";
+import { addController, addFolder, addColor, getHTMLObject, hasProperty, getGUIFolder, getGUIController } from "./utils.js";
 
 /**
  * Adds groups and subfolders to the GUI for better organization.
@@ -32,7 +31,7 @@ function addGroups() {
     ispy.additionalFolders[gr] = [];
   });
 
-  const additionalFolderElem = additionalFolder.domElement.parentElement as HTMLElement;
+  const additionalFolderElem = additionalFolder.domElement as HTMLElement;
   additionalFolderElem?.style.setProperty("display", "none");
   const additionalControlsElem = getHTMLObject<HTMLInputElement>("js-additional-controls");
   additionalControlsElem.checked = false;
@@ -51,16 +50,16 @@ function clearSubfolders() {
   const subfolders = ispy.subfolders;
   const additionalFolders = ispy.additionalFolders;
   additionalControls.forEach((g) => {
-    const folder = ispy.gui.__folders["additional"].__folders[g];
+    const folder = getGUIFolder(getGUIFolder(ispy.gui, "additional"), g);
     additionalFolders[g].forEach((s) => {
-      folder.removeFolder(folder.__folders[s]);
+      getGUIFolder(folder, s).destroy();
     });
     additionalFolders[g] = [];
   });
 
   ["controllers", "info"].forEach((g) => {
-    (subfolders[g] as GUIController[]).forEach((s) => {
-      s.remove();
+    (subfolders[g] as Controller[]).forEach((s) => {
+      s.destroy();
     });
     subfolders[g] = [];
   });
@@ -235,13 +234,13 @@ function addSelectionRow(
   };
 
   const isAdditional = additionalControls.includes(group);
-  const gui = isAdditional ? ispy.gui.__folders["additional"] : ispy.gui;
+  const gui = isAdditional ? getGUIFolder(ispy.gui, "additional") : ispy.gui;
   if (isAdditional) {
     ispy.additionalFolders[group].push(name);
   } else if (group === "Detector") {
     ispy.subfolders[group].push(name);
   }
-  const folder = gui.__folders[group];
+  const folder = getGUIFolder(gui, group);
 
   const sf = addFolder(folder, name); // TODO check if works right
 
@@ -368,7 +367,7 @@ function addSelectionRow(
  */
 function saveCutSettings() {
   const settings: Record<string, number | string | boolean> = {};
-  const btn = (ispy.gui.__controllers as SelectionFieldController[]).find((o) => o.property === "saveSetting");
+  const btn = getGUIController(ispy.gui, "saveSetting");
   if (btn?.getValue()) {
     const controllers = ispy.subfolders["controllers"];
     controllers.forEach((c) => {

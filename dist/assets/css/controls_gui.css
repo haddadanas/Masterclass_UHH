@@ -1,0 +1,51 @@
+.menu-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 0;
+}
+
+.lil-root {
+  position: static;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.lil-controller .lil-widget input[type=text] {
+  line-height: normal;                                                                  
+}
+
+.lil-controller .lil-widget input[type=text].sel-field {                                                       
+  background: #e0e0e0;
+  cursor: not-allowed;
+}
+
+.lil-controller .lil-widget input[type=text].sel-field:enabled {
+  background: #303030;
+  cursor: inherit;
+}
+
+.lil-controller .lil-widget input[type=checkbox] {                                                       
+    padding: 0;
+    margin: 0;
+    align-self: center;
+    background: #2c2c2c;
+}
+
+.lil-controller .lil-widget div {
+  box-sizing: content-box;                                                             
+}
+
+.lil-number {
+  width: auto;
+}
+
+.lil-function {
+  height: auto;
+}
+
+#selection-folder .lil-widget {
+  display: flex;
+}

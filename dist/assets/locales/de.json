@@ -96,7 +96,7 @@
     "show": "anzeigen",
     "opacity": "Transparenz",
     "color": "Farbe",
-    "charge": "Ladungszeichen",
+    "charge": "Ladungssumme",
     "check": "Auswahl prüfen",
     "nSelected": "# Ausgewählt",
     "firstSelected": "Ausgewählte Ereignisse",
@@ -106,6 +106,10 @@
     "muons": "Myonen",
     "met": "Fehlendes E<sub>T</sub>",
     "selectedTracks": "Ausgewählte Spuren",
-    "trackInfo": "Spurinfo"
+    "trackInfo": "Spurinfo",
+    "": "",
+    "negative": "Negativ",
+    "positive": "Positiv",
+    "opposite": "Entgegengesetzt"
   }
 }

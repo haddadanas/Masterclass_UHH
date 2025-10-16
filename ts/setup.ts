@@ -16,16 +16,15 @@ import {
   Scene,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { GUI, GUIController } from "dat.gui";
+import { GUI, Controller, OptionController } from "lil-gui";
 import { update } from "@tweenjs/tween.js";
 
-import { addController, assertDefined, getHTMLObject } from "./utils.js";
+import { addController, assertDefined, getGUIFolder, getHTMLObject } from "./utils.js";
 import { ispy } from "./config.js";
 import { useRenderer, updateClipping, render } from "./renderer.js";
 import { importDetector, loadDroppedFile } from "./files-load.js";
 import { data_groups } from "./objects-config.js";
 import { initCamera, onMouseDown, onMouseMove, onWindowResize } from "./display.js";
-import { CHARGE_MAP } from "./gui-config.js";
 import { checkCurrentSelection } from "./analysis.js";
 import { SelectionFieldController } from "./ispy.interfaces.js";
 
@@ -75,13 +74,11 @@ function setFramerate(fr: number) {
  */
 function setupClippingGUI() {
   ispy.clipgui = new GUI({
-    name: "Clipping Controls",
-    hideable: false,
+    title: "Clipping Controls",
     autoPlace: false,
   });
 
   ispy.clipgui.domElement.id = "js-clipgui";
-  ispy.clipgui.domElement.classList.add("gui-menu");
   const titlebar = getHTMLObject("js-menu-container");
   titlebar.appendChild(ispy.clipgui.domElement);
 
@@ -146,7 +143,7 @@ function setupClippingGUI() {
     .add(local_params.planeX, "constant")
     .min(-10)
     .max(10)
-    .onChange((d) => (ispy.local_planes[0].constant = d));
+    .onChange((d: number) => (ispy.local_planes[0].constant = d));
 
   local_planeX.add(local_params.planeX, "negated").onChange(() => {
     ispy.local_planes[0].negate();
@@ -159,7 +156,7 @@ function setupClippingGUI() {
     .add(global_params.planeX, "constant")
     .min(-10)
     .max(10)
-    .onChange((d) => (ispy.global_planes[0].constant = d));
+    .onChange((d: number) => (ispy.global_planes[0].constant = d));
 
   global_planeX.add(global_params.planeX, "negated").onChange(() => {
     ispy.global_planes[0].negate();
@@ -172,7 +169,7 @@ function setupClippingGUI() {
     .add(local_params.planeY, "constant")
     .min(-10)
     .max(10)
-    .onChange((d) => (ispy.local_planes[1].constant = d));
+    .onChange((d: number) => (ispy.local_planes[1].constant = d));
 
   local_planeY.add(local_params.planeY, "negated").onChange(() => {
     ispy.local_planes[1].negate();
@@ -185,7 +182,7 @@ function setupClippingGUI() {
     .add(global_params.planeY, "constant")
     .min(-10)
     .max(10)
-    .onChange((d) => (ispy.global_planes[1].constant = d));
+    .onChange((d: number) => (ispy.global_planes[1].constant = d));
 
   global_planeY.add(global_params.planeY, "negated").onChange(() => {
     ispy.global_planes[1].negate();
@@ -198,7 +195,7 @@ function setupClippingGUI() {
     .add(local_params.planeZ, "constant")
     .min(-30)
     .max(30)
-    .onChange((d) => (ispy.local_planes[2].constant = d));
+    .onChange((d: number) => (ispy.local_planes[2].constant = d));
 
   local_planeZ.add(local_params.planeZ, "negated").onChange(() => {
     ispy.local_planes[2].negate();
@@ -211,7 +208,7 @@ function setupClippingGUI() {
     .add(global_params.planeZ, "constant")
     .min(-30)
     .max(30)
-    .onChange((d) => (ispy.global_planes[2].constant = d));
+    .onChange((d: number) => (ispy.global_planes[2].constant = d));
 
   global_planeZ.add(global_params.planeZ, "negated").onChange(() => {
     ispy.global_planes[2].negate();
@@ -226,7 +223,6 @@ function setupClippingGUI() {
  */
 function setupGUI() {
   ispy.gui.domElement.id = "js-treegui";
-  ispy.gui.domElement.classList.add("gui-menu");
   const titlebar = getHTMLObject("js-menu-container");
   titlebar.appendChild(ispy.gui.domElement);
 }
@@ -503,12 +499,13 @@ function initControlPanel() {
  * Creates a checkbox container for a given GUI controller.
  * @param cont The GUI controller to create the checkbox container for.
  */
-function createCheckboxContainer(cont: GUIController) {
+function createCheckboxContainer(cont: Controller) {
   const selectionField = cont as unknown as SelectionFieldController;
 
   // Create a checkbox element
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
+  checkbox.name = "enable-" + selectionField.property;
   selectionField.checkbox = false;
 
   // get input field
@@ -516,7 +513,9 @@ function createCheckboxContainer(cont: GUIController) {
   inputField.classList.add("sel-field");
 
   // Add the checkbox to the DOM
-  selectionField.domElement.appendChild(checkbox);
+  const domEle = selectionField.domElement.querySelector(".lil-widget");
+  if (!domEle) throw new Error("Could not find .lil-widget element");
+  domEle.appendChild(checkbox);
 
   // Disable the input field initially
   inputField.disabled = true;
@@ -536,7 +535,7 @@ function createCheckboxContainer(cont: GUIController) {
 function initSelectionFields() {
   const gui = ispy.gui;
 
-  const folder = gui.__folders["selection"];
+  const folder = getGUIFolder(gui, "selection");
   folder.domElement.id = "selection-folder";
 
   const nMuon = 0,
@@ -560,28 +559,24 @@ function initSelectionFields() {
     firstSelected: "",
   };
 
-  //   var help_map = analysis.selection_fields_help;
-  let cont: GUIController | null = null;
+  let cont: Controller | null = null;
   (Object.keys(row_obj) as (keyof typeof row_obj)[]).forEach((key) => {
-    // let help_info = help_map[key] || false;
 
     // add the controller to the folder
     if (key === "charge") {
       folder.add;
-      cont = addController(folder, row_obj, key, ["", "positive", "negative", "opposite"]);
-      cont.getValue = function () {
-        const result = (this.object as Record<string, string | number>)[this.property];
-        return CHARGE_MAP[result];
-      };
-      cont.domElement.style.color = "blue";
-      // cont.help(help_info);
+      cont = addController(folder, row_obj, key, {"": undefined, "positive": 1, "negative": -1, "opposite": 0});
+      cont.domElement.querySelectorAll("select option").forEach(
+        (el) => (el.setAttribute("data-i18n", `gui.${el.innerHTML}`)),
+      );
+      cont.onFinishChange(function (this: OptionController, _value: number) {
+        const key = this._names[this._values.indexOf(this.getValue())];
+        this.$display.innerHTML = ispy.guiLangData[key] || key;
+      });
       return;
     }
 
     cont = addController(folder, row_obj, key);
-    // if (help_info) {
-    //     cont.help(help_info);
-    // }
 
     if (typeof row_obj[key] == "boolean") return;
     if (typeof row_obj[key] == "function") {
@@ -612,7 +607,7 @@ function initSelectionFields() {
   });
 
   // add all controllers to the subfolders for convenience
-  folder.__controllers.forEach((c) => {
+  folder.controllers.forEach((c) => {
     ispy.subfolders.selection.push(c);
   });
 }

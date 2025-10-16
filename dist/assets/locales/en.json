@@ -106,6 +106,10 @@
     "muons": "Muons",
     "met": "Missing E<sub>T</sub>",
     "selectedTracks": "Selected Tracks",
-    "trackInfo": "Track Info"
+    "trackInfo": "Track Info",
+    "": "",
+    "negative": "Negative",
+    "positive": "Positive",
+    "opposite": "Opposite"
   }
 }

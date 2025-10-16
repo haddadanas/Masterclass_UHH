@@ -2,7 +2,7 @@
 // Description: This file contains utility functions that are used in the analysis code.
 import JSZip from "jszip";
 import { Material, Object3D } from "three";
-import { GUI, GUIController } from "dat.gui";
+import { GUI, Controller } from "lil-gui";
 
 import { ispy, supportedLanguages } from "./config.js";
 import { Particle, EventObject, EventSummary, MET, FourVector, SelectionFieldController } from "./ispy.interfaces.js";
@@ -107,49 +107,41 @@ export async function setLanguage(lang: string) {
 }
 
 /**
- * Overwride the addFolder method of dat.gui to add data-i18n attributes to the folder titles.
+ * Overwride the addFolder method of lil-gui to add data-i18n attributes to the folder titles.
  * @param gui
  * @param key
  * @returns
  */
 export function addFolder(gui: GUI, key: string) {
   const folder = gui.addFolder(key);
-  const titleElem = folder.domElement.querySelector(".title");
-  if (!titleElem) throw new Error(`Folder ${key} does not have a title element.`);
-  titleElem.setAttribute("data-i18n", `gui.${key}`);
+  folder.$title.setAttribute("data-i18n", `gui.${key}`);
   return folder;
 }
 
 /**
- * Overwride the addController method of dat.gui to add data-i18n attributes to the controller titles.
+ * Overwride the addController method of lil-gui to add data-i18n attributes to the controller titles.
  * @param gui
  * @param target
  * @param key
- * @param min
- * @param max
- * @param step
+  * @param args
  * @returns
  */
 export function addController<T extends object>(gui: GUI, target: T, key: keyof T, ...args: any[]) {
   const controller = gui.add(target, key, ...args);
-  const titleElem = controller.domElement.parentNode?.querySelector("span.property-name");
-  if (!titleElem) throw new Error(`Controller ${key.toString()} does not have a title element.`);
-  titleElem.setAttribute("data-i18n", `gui.${key.toString()}`);
+  controller.$name.setAttribute("data-i18n", `gui.${key.toString()}`);
   return controller;
 }
 
 /**
- * Overwride the addColor method of dat.gui to add data-i18n attributes to the color controller titles.
+ * Overwride the addColor method of lil-gui to add data-i18n attributes to the color controller titles.
  * @param gui
  * @param target
  * @param propName
  * @returns
  */
-export function addColor(gui: GUI, target: object, propName: string): GUIController {
-  const controller = gui.addColor(target, propName);
-  const titleElem = controller.domElement.parentNode?.querySelector("span.property-name");
-  if (!titleElem) throw new Error(`Color controller ${propName} does not have a title element.`);
-  titleElem.setAttribute("data-i18n", `gui.${propName}`);
+export function addColor<T extends object>(gui: GUI, target: T, key: keyof T): Controller {
+  const controller = gui.addColor(target, key);
+  controller.$name.setAttribute("data-i18n", `gui.${key.toString()}`);
   return controller;
 }
 
@@ -461,12 +453,28 @@ export function changeMeshMaterials(materials: Material | Material[] | undefined
   });
 }
 
+export function getGUIController(gui: GUI, key: string): Controller {
+  const controller = gui.controllers.find((c) => c.property === key);
+  if (!controller) {
+    throw new Error(`Controller with key ${key} not found.`);
+  }
+  return controller;
+}
+
+export function getGUIFolder(gui: GUI, key: string): GUI {
+  const folder = gui.folders.find((f) => f._title === key);
+  if (!folder) {
+    throw new Error(`Folder with key ${key} not found.`);
+  }
+  return folder;
+}
+
 /**
  * Toggles the collapse state of a GUI folder.
  * @param key The key of the group to toggle.
  */
 export function toggleCollapse(key: string) {
-  const folder = ispy.gui.__folders[key];
+  const folder = getGUIFolder(ispy.gui, key);
   if (folder) {
     folder.close();
   }
@@ -477,7 +485,7 @@ export function toggleCollapse(key: string) {
  * @param key The key of the group to toggle.
  */
 export function toggleExpand(key: string) {
-  const folder = ispy.gui.__folders[key];
+  const folder = getGUIFolder(ispy.gui, key);
   if (folder) {
     folder.open();
   }
@@ -567,9 +575,9 @@ export function addControllers(group: string) {
     additional: false,
   };
 
-  const gui_elem = ispy.gui;
+  const gui = ispy.gui;
 
-  const folder = gui_elem.__folders[group];
+  const folder = getGUIFolder(gui, group);
 
   const names = getSceneObjects();
 
@@ -651,7 +659,7 @@ export function addControllers(group: string) {
   }
 
   // add all controllers to the subfolders for convenience
-  (folder.__controllers as SelectionFieldController[]).forEach((c) => {
+  (folder.controllers as SelectionFieldController[]).forEach((c) => {
     ispy.subfolders["controllers"].push(c);
   });
 }
@@ -661,9 +669,9 @@ export function addControllers(group: string) {
  * @param group The group name to add info controllers for.
  */
 export function addInfo(group: string) {
-  const gui_elem = ispy.gui;
+  const gui = ispy.gui;
 
-  const folder = gui_elem.__folders[group];
+  const folder = getGUIFolder(gui, group);
 
   const names = getSceneObjects();
   // pt is element 1 in the collection object (inconvinient definition by design)
@@ -695,7 +703,7 @@ export function addInfo(group: string) {
   });
 
   // add all controllers to the subfolders for convenience
-  (folder.__controllers as SelectionFieldController[]).forEach((c) => {
+  (folder.controllers as SelectionFieldController[]).forEach((c) => {
     ispy.subfolders["info"].push(c);
   });
 }
