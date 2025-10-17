@@ -18,20 +18,22 @@
 }
 
 .lil-controller .lil-widget input[type=text].sel-field {                                                       
-  background: #e0e0e0;
+  background: #333333;
   cursor: not-allowed;
 }
 
 .lil-controller .lil-widget input[type=text].sel-field:enabled {
-  background: #303030;
+  background: var(--widget-color);
   cursor: inherit;
 }
 
-.lil-controller .lil-widget input[type=checkbox] {                                                       
+.lil-gui .lil-controller .sel-checkbox {
     padding: 0;
-    margin: 0;
+    margin: 0 5px 0 0;
     align-self: center;
-    background: #2c2c2c;
+    background: #e0e0e0;
+    min-width: var(--checkbox-size);
+    min-height: var(--checkbox-size);
 }
 
 .lil-controller .lil-widget div {
@@ -48,4 +50,12 @@
 
 #selection-folder .lil-widget {
   display: flex;
+}
+
+#selection-folder .lil-controller > .lil-name{
+  min-width: 55%;
+}
+
+#selection-folder .lil-controller > .sel-checkbox + .lil-name {
+  min-width: calc(55% - var(--checkbox-size) - 5px);
 }

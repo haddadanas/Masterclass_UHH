@@ -32,6 +32,9 @@ interface SelectionFieldController extends Controller {
   property: string;
   getValue: () => number | string | boolean;
   setValue: (value: number | string | boolean) => Controller;
+  $name: HTMLElement;
+  $input: HTMLInputElement;
+  domElement: HTMLElement;
 }
 
 interface EventObject {

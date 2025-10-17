@@ -505,19 +505,16 @@ function createCheckboxContainer(cont: Controller) {
   // Create a checkbox element
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
+  checkbox.classList.add("sel-checkbox");
   checkbox.name = "enable-" + selectionField.property;
   selectionField.checkbox = false;
 
-  // get input field
-  const inputField = selectionField.domElement.querySelector("input") as HTMLInputElement;
-  inputField.classList.add("sel-field");
-
   // Add the checkbox to the DOM
-  const domEle = selectionField.domElement.querySelector(".lil-widget");
-  if (!domEle) throw new Error("Could not find .lil-widget element");
-  domEle.appendChild(checkbox);
+  selectionField.domElement.insertBefore(checkbox, selectionField.$name);
 
-  // Disable the input field initially
+  // get input field and disable the input field initially
+  const inputField = selectionField.$input;
+  inputField.classList.add("sel-field");
   inputField.disabled = true;
   inputField.value = "";
 
