@@ -40,10 +40,15 @@
     "sponsors": "Dieses Project wurde durch folgende Institutionen ermöglicht:",
     "github": "Der Quellcode ist auf GitHub verfügbar:&nbsp;",
     "origin": "Diese Software ist eine an Schüler und Schülerinnen angepasste Version des iSpy WebGL Event Displays für das CMS Experiment am CERN. Entwickelt wurde die Originalversion von F. Ali, L. Barnard, M. Hategan, S. Lee, C. Logrén, T. McCauley, P. Nguyen und M. Saunby.",
-    "teilchenwelt": "Angebote des Netzwerks Teilchenwelt",
+    "studyTitle": "Physikstudium an der Universität Hamburg",
+    "studyText": "Interessierst du dich für ein Physikstudium? Warum nicht an der Universität Hamburg? 5 verschiedene Vertiefungsbereiche, große Vielfalt an Forschungsthemen, sowie das DESY-Forschungscampus in unmittelbarer Nähe. Hier findest du weitere Informationen dazu.",
+    "studyPlan": "Studienplan (B. Sc.)",
+    "infoBsc": "Bachelor-Studiengang (nur Deutsch)",
+    "elbakademie": "Ein außerschulisches Veranstaltungsprogramm für interessierte Schülerinnen und Schüler ab der 9. Klasse, die einen Einblick in die DESY-Forschung erhalten möchten und mehr über Physik lernen wollen.",
+    "teilchenwelt": "Angebote des Netzwerks Teilchenwelt richten sich an alle Physikinteressierte die mehr über der Welt der kleinsten Teilchen erfahren wollen. Das Netzwerk wird von mehr als 30 Universitäten und Forschungsinstituten in Deutschland getragen.",
     "cms-interactive": "Interaktive Ansicht des CMS Detektors mit Veranschaulichung der hinterlassenen Spuren und Signaturen verschiedener Teilchenarten.",
-    "event-display": "Das originale Event-Display-Programm für das CMS-Experiment am CERN, das eine detaillierte Erkundung von Teilchenkollisionsevents ermöglicht.",
-    "links": "Nützliche Links"
+    "event-display": "Das originale Event-Display-Programm für das CMS-Experiment am CERN, das eine detaillierte Erkundung von Teilchenkollisionsevents ermöglicht. Das Event-Display wird unter anderem von Forscherinnen und Forschern zur Visualisierung von Kollisionen verwendet, um ein besseres Verständnis der Physik zu ermöglichen.",
+    "links": "Nützliche Links und Physikangebote:"
   },
   "help": {
     "title": "Hilfe",

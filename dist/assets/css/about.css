@@ -36,8 +36,24 @@
   text-align: center;
 }
 
+.card {
+  margin-bottom: 5px;
+}
+
 .card div {
   text-align: center;
+}
+
+.card p {
+  margin-bottom: inherit;
+}
+
+.card .img-remark {
+  text-align: right;
+  font-size: xx-small;
+  padding-left: auto;
+  padding-right: 5px;
+  text-wrap: nowrap;
 }
 
 .page .btn {

@@ -40,10 +40,15 @@
     "sponsors": "This project was made possible by the following institutions:",
     "github": "The source code is available on GitHub:&nbsp;",
     "origin": "This software is a version of the iSpy WebGL event display for the CMS experiment at CERN, adapted for students. The original version was developed by F. Ali, L. Barnard, M. Hategan, S. Lee, C. Logrén, T. McCauley, P. Nguyen, and M. Saunby.",
-    "teilchenwelt": "Offers from the Netzwerk Teilchenwelt.",
+    "studyTitle": "Study physics at the University of Hamburg",
+    "studyText": "Are you interested in studying physics? Why not at the University of Hamburg? 5 different specialization fields, a wide variety of research topics, and the DESY research campus in close proximity. Here you can find more information about it.",
+    "studyPlan": "Study plan (B. Sc.)",
+    "infoBsc": "Bachelor's program (German only)",
+    "elbakademie": "An extracurricular program for interested students from grade 9 onwards, who want to gain insights into DESY research and learn more about physics.",
+    "teilchenwelt": "Offers from the Netzwerk Teilchenwelt are aimed at all physics enthusiasts who want to learn more about the world of the smallest particles. The network is supported by more than 30 universities and research institutes in Germany.",
     "cms-interactive": "Interactive view of the CMS detector, illustrating the traces and signatures left by different types of particles.",
-    "event-display": "The original event display program for the CMS experiment at CERN, allowing detailed exploration of particle collision events.",
-    "links": "Useful links"
+    "event-display": "The original event display program for the CMS experiment at CERN, allowing detailed exploration of particle collision events. The event display is used by researchers, among others, to visualize collisions in order to gain a better understanding of the physics involved.",
+    "links": "Useful links and physics offers:"
   },
   "help": {
     "title": "Help",
