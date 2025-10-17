@@ -27,22 +27,22 @@ export default async (env, options) => {
         template: "./index.html",
         inject: "body",
       }),
-      new CopyWebpackPlugin({
-        patterns: [
-          {
-            from: "node_modules/jquery/dist/jquery.min.js",
-            to: "jquery.min.js",
-          },
-          {
-            from: "node_modules/stupid-table-plugin/stupidtable.min.js",
-            to: "stupidtable.min.js",
-          },
-          {
-            from: "node_modules/jquery.scrollintoview/jquery.scrollintoview.js",
-            to: "jquery.scrollintoview.js",
-          },
-        ],
-      }),
+      // new CopyWebpackPlugin({
+      //   patterns: [
+      //     {
+      //       from: "node_modules/jquery/dist/jquery.min.js",
+      //       to: "jquery.min.js",
+      //     },
+      //     {
+      //       from: "node_modules/stupid-table-plugin/stupidtable.min.js",
+      //       to: "stupidtable.min.js",
+      //     },
+      //     {
+      //       from: "node_modules/jquery.scrollintoview/jquery.scrollintoview.js",
+      //       to: "jquery.scrollintoview.js",
+      //     },
+      //   ],
+      // }),
       new webpack.DefinePlugin({
         PRODUCTION: JSON.stringify(!dev),
       }),

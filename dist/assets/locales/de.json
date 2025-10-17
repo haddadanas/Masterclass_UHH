@@ -112,14 +112,14 @@
     "positive": "Positiv",
     "opposite": "Entgegengesetzt"
   },
-  "sel-fields": {
-    "selMuons": "Anzahl benötigter Myonen. <i>Diese Auswahl wird nur berücksichtigt, wenn das Kontrollkästchen aktiviert ist. Falls die p<sub>T</sub>-Bedingung ebenfalls angegeben ist, werden nur Myonen gezählt, die diese Bedingung erfüllen.</i>",
-    "selElectrons": "Anzahl benötigter Elektronen. <i>Diese Auswahl wird nur berücksichtigt, wenn das Kontrollkästchen aktiviert ist. Falls die p<sub>T</sub>-Bedingung ebenfalls angegeben ist, werden nur Elektronen gezählt, die diese Bedingung erfüllen.</i>",
-    "selPhotons": "Anzahl benötigter Photonen. <i>Diese Auswahl wird nur berücksichtigt, wenn das Kontrollkästchen aktiviert ist.</i>",
+  "selectHelp": {
+    "selMuons": "Anzahl benötigter Myonen. <br><i class='fas fa-info-circle'></i><i>Diese Auswahl wird nur berücksichtigt, wenn das Kontrollkästchen aktiviert ist. Falls die p<sub>T</sub>-Bedingung ebenfalls angegeben ist, werden nur Myonen gezählt, die diese Bedingung erfüllen.</i>",
+    "selElectrons": "Anzahl benötigter Elektronen. <br><i class='fas fa-info-circle'></i><i>Diese Auswahl wird nur berücksichtigt, wenn das Kontrollkästchen aktiviert ist. Falls die p<sub>T</sub>-Bedingung ebenfalls angegeben ist, werden nur Elektronen gezählt, die diese Bedingung erfüllen.</i>",
+    "selPhotons": "Anzahl benötigter Photonen. <br><i class='fas fa-info-circle'></i><i>Diese Auswahl wird nur berücksichtigt, wenn das Kontrollkästchen aktiviert ist.</i>",
     "charge": "Erforderliches Vorzeichen der Ladungssumme aller ausgewählten Leptonen",
-    "pt": "Minimales p<sub>T</sub> für die Leptonen",
+    "minptvis": "Minimales p<sub>T</sub> für die Leptonen",
     "minMETs": "Minimales MET erforderlich",
-    "maxMETs": "Maximales MET erforderlich. <i>Diese Auswahl wird nur berücksichtigt, wenn das Kontrollkästchen aktiviert ist.</i>",
+    "maxMETs": "Maximales MET erforderlich. <br><i class='fas fa-info-circle'></i><i>Diese Auswahl wird nur berücksichtigt, wenn das Kontrollkästchen aktiviert ist.</i>",
     "nSelected": "Gesamtzahl der Ereignisse, die die Auswahl in den geladenen Datei erfüllen.",
     "firstSelected": "Indizes der ersten 5 Ereignisse, die die Auswahl erfüllen"
   }

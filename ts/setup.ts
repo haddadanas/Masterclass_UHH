@@ -526,11 +526,6 @@ function createCheckboxContainer(cont: Controller) {
 }
 
 
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-
 /**
  * Create a info circle right to the selection field with info on hover
  * about the field.
@@ -548,17 +543,20 @@ function createInfoCircle(cont: Controller) {
   // Create a custom popup element
   const popup = document.createElement("div");
   popup.classList.add("sel-info-popup");
-  // popup.setAttribute("data-i18n", `selectHelp.${selectionField.property}`);
-  popup.innerHTML = "Hallo Welt"; // default text
-  popup.style.visibility = "hidden";
+  const textEle = document.createElement("span");
+  textEle.setAttribute("data-i18n", `selectHelp.${selectionField.property}`);
+  popup.appendChild(textEle);
 
-  infoCircle.appendChild(popup);
-  infoCircle.addEventListener("click", async function () {
-    await sleep(1000);
-    popup.style.visibility = "visible";
+  document.body.appendChild(popup);
+  infoCircle.addEventListener("click", function (event: MouseEvent) {
+    const x = event.clientX;
+    const y = event.clientY;
+    popup.style.setProperty("top", `${y + 5}px`);
+    popup.style.setProperty("left", `${x - 205}px`);
+    popup.style.setProperty("display", "block");
   });
   infoCircle.addEventListener("mouseout", function () {
-    popup.style.visibility = "hidden";
+    popup.removeAttribute("style");
   });
 }
 
@@ -608,6 +606,7 @@ function initSelectionFields() {
         const key = this._names[this._values.indexOf(this.getValue())];
         this.$display.innerHTML = ispy.guiLangData[key] || key;
       });
+      createInfoCircle(cont);
       return;
     }
 
@@ -632,7 +631,6 @@ function initSelectionFields() {
     });
     if (["selMuons", "selElectrons", "selPhotons", "maxMETs"].includes(key)) {
       createCheckboxContainer(cont);
-      createInfoCircle(cont);
     }
     if (key === "minptvis") {
       cont.onFinishChange(function (this: SelectionFieldController, value: number) {
@@ -640,6 +638,7 @@ function initSelectionFields() {
         ispy.subfolders.controllers.find((c) => c.property === "min_pt")?.setValue(value);
       });
     }
+    createInfoCircle(cont);
   });
 
   // add all controllers to the subfolders for convenience

@@ -32,6 +32,7 @@
     margin: 0 5px 0 0;
     align-self: center;
     background: #e0e0e0;
+    color: var(--bs-info-text-emphasis);
     min-width: var(--checkbox-size);
     min-height: var(--checkbox-size);
 }
@@ -59,3 +60,27 @@
 #selection-folder .lil-controller > .sel-checkbox + .lil-name {
   min-width: calc(55% - var(--checkbox-size) - 5px);
 }
+
+.sel-info-circle:hover {
+    color: var(--bs-info-text-emphasis);
+    cursor: pointer;
+  }
+
+.sel-info-popup {
+    z-index: 1005;
+    background: var(--bs-info-text-emphasis);
+    max-width: 200px;
+    position: absolute;
+    border-radius: 5px;
+    white-space: nowrap;
+    display: none;
+    padding: 4px;
+  }
+
+.sel-info-popup span {
+    margin: 0;
+    padding: 0;
+    text-wrap: auto;
+    font-size: smaller;
+
+  }
