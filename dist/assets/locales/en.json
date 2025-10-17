@@ -111,5 +111,16 @@
     "negative": "Negative",
     "positive": "Positive",
     "opposite": "Opposite"
+  },
+  "sel-fields": {
+    "selMuons": "Number of Muons required. <i>This selection is only considered, when the checkbox is checked. If the p<sub>T</sub> constraint is also provided, only muons passing this selection are counted.</i>",
+    "selElectrons": "Number of Electrons required. <i>This selection is only considered, when the checkbox is checked. If the p<sub>T</sub> constraint is also provided, only electrons passing this selection are counted.</i>",
+    "selPhotons": "Number of photons required. <i>This selection is only considered, when the checkbox is checked.</i>",
+    "charge": "Required sign of the charge sum of all selected leptons",
+    "pt": "Minimum p<sub>T</sub> required for the leptons",
+    "minMETs": "Minimum MET required",
+    "maxMETs": "Maximum MET required. <i>This selection is only considered, when the checkbox is checked.</i>",
+    "nSelected": "Total Number of events passing the selection within the loaded file.",
+    "firstSelected": "Indices of the first 5 events passing the selection"
   }
 }
