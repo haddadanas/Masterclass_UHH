@@ -525,6 +525,44 @@ function createCheckboxContainer(cont: Controller) {
   });
 }
 
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+
+/**
+ * Create a info circle right to the selection field with info on hover
+ * about the field.
+ * @param cont The GUI controller to create the info circle for.
+ */
+function createInfoCircle(cont: Controller) {
+  const selectionField = cont as unknown as SelectionFieldController;
+
+  // Create an info circle element
+  const infoCircle = document.createElement("i");
+  infoCircle.classList.add("fas", "fa-question-circle", "sel-info-circle");
+
+  selectionField.domElement.appendChild(infoCircle);
+
+  // Create a custom popup element
+  const popup = document.createElement("div");
+  popup.classList.add("sel-info-popup");
+  // popup.setAttribute("data-i18n", `selectHelp.${selectionField.property}`);
+  popup.innerHTML = "Hallo Welt"; // default text
+  popup.style.visibility = "hidden";
+
+  infoCircle.appendChild(popup);
+  infoCircle.addEventListener("click", async function () {
+    await sleep(1000);
+    popup.style.visibility = "visible";
+  });
+  infoCircle.addEventListener("mouseout", function () {
+    popup.style.visibility = "hidden";
+  });
+}
+
+
 /**
  * Initializes the selection fields in the control panel.
  * @returns void
@@ -594,6 +632,7 @@ function initSelectionFields() {
     });
     if (["selMuons", "selElectrons", "selPhotons", "maxMETs"].includes(key)) {
       createCheckboxContainer(cont);
+      createInfoCircle(cont);
     }
     if (key === "minptvis") {
       cont.onFinishChange(function (this: SelectionFieldController, value: number) {
