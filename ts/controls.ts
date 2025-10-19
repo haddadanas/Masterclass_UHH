@@ -369,8 +369,19 @@ function hideToolbarButtons() {
 
 function showToolbarButtons() {
   const toolbar = getHTMLObject<HTMLDivElement>("js-toolbar");
-  toolbar.style.display = "";
+  toolbar.style.removeProperty("display");
 }
+
+function hideEventName() {
+  const eventName = getHTMLObject<HTMLDivElement>("js-event-loaded");
+  eventName.style.display = "none";
+}
+
+function showEventName() {
+  const eventName = getHTMLObject<HTMLDivElement>("js-event-loaded");
+  eventName.style.removeProperty("display");
+}
+
 
 function switchMain(view: "about" | "display" | "help") {
   const mainMap = {
@@ -394,8 +405,10 @@ function switchMain(view: "about" | "display" | "help") {
   }
   if (view === "display") {
     showToolbarButtons();
+    showEventName();
   } else {
     hideToolbarButtons();
+    hideEventName();
   }
 }
 

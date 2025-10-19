@@ -1,6 +1,7 @@
 .page {
   overflow-y: scroll;
   font-family: 'Montserrat';
+  top: 25px;
 }
 
 .clean-block {
@@ -25,14 +26,13 @@
 }
 
 .block-heading img {
-  margin-left: 1em;
+  margin: 0.5em;
 }
 
 .clean-block .block-heading :is(p, h1, h2, h3, h4, h5) {
-  padding-top: 0.5em;
-  margin-left: 100px;
-  margin-right: 100px;
-  max-width: 100%;
+  margin: 0 auto 1em auto;
+  width: fit-content;
+  max-width: 90%;
   text-align: center;
 }
 
@@ -48,19 +48,33 @@
   margin-bottom: inherit;
 }
 
-.card .img-remark {
-  text-align: right;
-  font-size: xx-small;
-  padding-left: auto;
-  padding-right: 5px;
-  text-wrap: nowrap;
-}
-
 .page .btn {
   background-color: var(--bs-primary);
+  height: 40px;
+  margin: 2px;
+  border-radius: 10px;
+  font-size: 90%;
 }
 
 .page .btn i {
   margin: 0;
+}
+
+.img-remark {
+  display: block;
+  text-align: right;
+  font-size: xx-small;
+  margin: 0 0 0 auto;
+  padding-right: 5px;
+  text-wrap: nowrap;
+  white-space: nowrap;
+}
+
+html[data-bs-theme="light"] #uhh-dark {
+  display: none;
+}
+
+html[data-bs-theme="dark"] #uhh-light {
+  display: none;
 }
 

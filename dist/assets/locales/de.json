@@ -37,7 +37,7 @@
   "about": {
     "title": "Über uns",
     "description": "Die Masterclasses sind eintägige Workshops entwickelt vom Netzwerk Teilchenwelt für Schülerinnen und Schüler, um Ihnen einen Überblick in die Welt der Teilchenphysik, Datenanalyse zu geben, sowie erste Einblicke von der Forschung zu ermöglichen. Diese Software basiert auf dem Event-Display-Programm des CMS-Experiments am CERN. Sie wird in den Masterclasses verwendet, um Detektoraufnahmen von Proton-Proton-Kollisionen zu visualisieren. Ziel der Masterclass am Ende ist eine Massenbestimmung des Z- und Higgs-Bosons.",
-    "sponsors": "Dieses Project wurde durch folgende Institutionen ermöglicht:",
+    "sponsors": "Dieses Event-Display sowie die Masterclasses in Hamburg wurden durch folgende Institutionen ermöglicht:",
     "github": "Der Quellcode ist auf GitHub verfügbar:&nbsp;",
     "origin": "Diese Software ist eine an Schüler und Schülerinnen angepasste Version des iSpy WebGL Event Displays für das CMS Experiment am CERN. Entwickelt wurde die Originalversion von F. Ali, L. Barnard, M. Hategan, S. Lee, C. Logrén, T. McCauley, P. Nguyen und M. Saunby.",
     "studyTitle": "Physikstudium an der Universität Hamburg",
@@ -48,6 +48,9 @@
     "teilchenwelt": "Angebote des Netzwerks Teilchenwelt richten sich an alle Physikinteressierte die mehr über der Welt der kleinsten Teilchen erfahren wollen. Das Netzwerk wird von mehr als 30 Universitäten und Forschungsinstituten in Deutschland getragen.",
     "cms-interactive": "Interaktive Ansicht des CMS Detektors mit Veranschaulichung der hinterlassenen Spuren und Signaturen verschiedener Teilchenarten.",
     "event-display": "Das originale Event-Display-Programm für das CMS-Experiment am CERN, das eine detaillierte Erkundung von Teilchenkollisionsevents ermöglicht. Das Event-Display wird unter anderem von Forscherinnen und Forschern zur Visualisierung von Kollisionen verwendet, um ein besseres Verständnis der Physik zu ermöglichen.",
+    "photo": "Foto",
+    "left": "Links",
+    "right": "Rechts",
     "links": "Nützliche Links und Physikangebote:"
   },
   "help": {

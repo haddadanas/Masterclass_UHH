@@ -37,7 +37,7 @@
   "about": {
     "title": "About us",
     "description": "The masterclasses are one-day workshops developed by the Netzwerk Teilchenwelt for students, providing an overview of particle physics and data analysis, as well as initial insights into research. This software is based on the event display program of the CMS experiment at CERN. It is used in the masterclasses to visualize detector recordings of proton-proton collisions. The goal of the masterclass is to determine the mass of the Z and Higgs bosons.",
-    "sponsors": "This project was made possible by the following institutions:",
+    "sponsors": "This Event-Display as well as the Masterclasses in Hamburg are made possible by the following institutions:",
     "github": "The source code is available on GitHub:&nbsp;",
     "origin": "This software is a version of the iSpy WebGL event display for the CMS experiment at CERN, adapted for students. The original version was developed by F. Ali, L. Barnard, M. Hategan, S. Lee, C. Logrén, T. McCauley, P. Nguyen, and M. Saunby.",
     "studyTitle": "Study physics at the University of Hamburg",
@@ -48,6 +48,9 @@
     "teilchenwelt": "Offers from the Netzwerk Teilchenwelt are aimed at all physics enthusiasts who want to learn more about the world of the smallest particles. The network is supported by more than 30 universities and research institutes in Germany.",
     "cms-interactive": "Interactive view of the CMS detector, illustrating the traces and signatures left by different types of particles.",
     "event-display": "The original event display program for the CMS experiment at CERN, allowing detailed exploration of particle collision events. The event display is used by researchers, among others, to visualize collisions in order to gain a better understanding of the physics involved.",
+    "photo": "Photo",
+    "left": "Left",
+    "right": "Right",
     "links": "Useful links and physics offers:"
   },
   "help": {
