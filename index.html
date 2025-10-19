@@ -2,420 +2,421 @@
 <html data-bs-theme="dark" lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>Masterclass: CMS Event Display</title>
-    <meta name="description" content="CMS Event Display adapted for the Masterclasses">
-    <link rel="shortcut icon" href="assets/img/cms-favicon.png" type="image/png">
-    <link rel="apple-touch-icon" href="assets/img/cms-favicon.png">
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/driver.css">
-    <link rel="stylesheet" href="assets/css/Montserrat.css">
-    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
-    <link rel="stylesheet" href="assets/css/bss-overrides.css">
-    <link rel="stylesheet" href="assets/css/about.css">
-    <link rel="stylesheet" href="assets/css/modal.css">
-    <link rel="stylesheet" href="assets/css/header_toolbar.css">
-    <link rel="stylesheet" href="assets/css/controls_gui.css">
-    <link rel="stylesheet" href="assets/css/styles.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+  <title>Masterclass: CMS Event Display</title>
+  <meta name="description" content="CMS Event Display adapted for the Masterclasses">
+  <link rel="shortcut icon" href="assets/img/cms-favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="assets/img/cms-favicon.png">
+  <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/driver.css">
+  <link rel="stylesheet" href="assets/css/Montserrat.css">
+  <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+  <link rel="stylesheet" href="assets/css/bss-overrides.css">
+  <link rel="stylesheet" href="assets/css/about.css">
+  <link rel="stylesheet" href="assets/css/modal.css">
+  <link rel="stylesheet" href="assets/css/header_toolbar.css">
+  <link rel="stylesheet" href="assets/css/controls_gui.css">
+  <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 
 <body>
-    <header class="bg-primary" id="js-titlebar"><span id="application-name">Masterclass @ Hamburg</span><span id="js-event-loaded" class="header-event"></span>
-        <div class="btn-toolbar header-nav">
-            <div class="btn-group btn-group-sm" id="tutorial-view" role="group">
-                <a class="btn btn-info" role="button" id="js-about-btn"><i class="fas fa-info-circle"></i></a><button class="btn btn-primary active" id="js-event-display" type="button"><i class="fas fa-cubes"></i></button><a class="btn btn-info" role="button" id="js-help-btn"><i class="fas fa-question-circle"></i></a>
-            </div>
-            <div class="btn-group btn-group-sm" id="tutorial-display" role="group">
-                <button class="btn btn-primary display-mode" id="js-display-mode" type="button" title="Toggle Light/Dark Mode"><i class="fas fa-sun"></i><i class="fas fa-moon"></i></button>
-                <div class="dropdown btn-group" role="group"><button class="btn btn-primary btn-sm" aria-expanded="false" data-bs-toggle="dropdown" type="button"><i class="fas fa-language"></i></button>
-                    <div class="dropdown-menu"><a class="dropdown-item" href="#" id="js-lang-en">EN</a><a class="dropdown-item" href="#" id="js-lang-de">DE</a></div>
-                </div><button class="btn btn-primary" id="js-toggle-fullscreen" type="button" title="toggle Fullscreen"><i class="fas fa-expand"></i><i class="fas fa-compress"></i></button>
-            </div>
-        </div>
-    </header>
-    <div class="bg-secondary toolbar" id="js-toolbar" role="toolbar">
-        <div id="js-primary-toolbar" class="primary-toolbar">
-            <div class="btn-group" id="tutorial-open" role="group">
-                <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#open-files" title="Open Files"><i class="fas fa-folder-open"></i></button>
-            </div>
-            <div class="btn-group" role="group">
-                <button class="btn btn-primary" id="js-reload" type="button" title="Reload Page"><i class="fas fa-redo"></i></button>
-            </div>
-            <div class="btn-group" id="tutorial-next-prev" role="group">
-                <button class="btn btn-primary disabled" id="js-prev-event-button" type="button" title="Previous Event [Left Arrow]"><i class="fas fa-chevron-left"></i></button><button class="btn btn-primary disabled" id="js-next-event-button" type="button" title="Next Event [Right Arrow]"><i class="fas fa-chevron-right"></i></button>
-            </div>
-            <div class="btn-group" id="tutorial-reset-view" role="group">
-                <button class="btn btn-primary" id="js-reset-view" type="button" title="Return to Start View"><i class="fas fa-home"></i></button>
-            </div>
-            <div class="btn-group" id="tutorial-zoom" role="group">
-                <button class="btn btn-primary" id="js-zoom-out" type="button" title="Zoom Out [Shift + Down Arrow]"><i class="fas fa-search-minus"></i></button><button class="btn btn-primary" id="js-zoom-in" type="button" title="Zoom In [Shift + Up Arrow]"><i class="fas fa-search-plus"></i></button>
-            </div>
-            <div class="btn-group" id="tutorial-views" role="group">
-                <button class="btn btn-primary active" id="js-3d" type="button" title="3D View">3D</button><button class="btn btn-primary" id="js-rphi" type="button" title="R-Phi View">rφ</button><button class="btn btn-primary" id="js-rhoz" type="button" title="Rho-Z View">ρz</button>
-            </div>
-            <div class="btn-group" id="tutorial-axes" role="group">
-                <button class="btn btn-primary" id="js-xy" type="button" title="XY Plane"><img class="img-fluid" src="assets/img/yx_small.png" alt="yx-axis"></button><button class="btn btn-primary" id="js-yz" type="button" title="YZ Plane"><img class="img-fluid" src="assets/img/yz_small.png" alt="yz-axis"></button><button class="btn btn-primary" id="js-xz" type="button" title="ZX Plane"><img class="img-fluid" src="assets/img/xz_small.png" alt="xz-axis"></button>
-            </div>
-            <div class="btn-group" id="tutorial-sel-next-prev" role="group">
-                <button class="btn btn-primary disabled" id="js-prev-sel-event" type="button" title="Previous Selected Event"><i class="fas fa-angle-double-left"></i></button><button class="btn btn-primary disabled" id="js-next-sel-event" type="button" title="Next Selected Event"><i class="fas fa-angle-double-right"></i></button>
-            </div>
-        </div>
-        <div class="dropdown" id="tutorial-csv">
-            <button class="btn btn-primary btn-lg disabled dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" id="js-csv-btn" type="button" disabled=""><i class="fas fa-file-csv"></i></button>
-            <div class="dropdown-menu"><a class="dropdown-item" id="js-csv-higgs" href="#">Higgs</a><a class="dropdown-item" id="js-csv-z" href="#">Z</a><a class="dropdown-item" id="js-csv-wp" href="#">W<sup>+</sup></a><a class="dropdown-item" id="js-csv-wm" href="#">W<sup>-</sup></a></div>
-        </div>
-        <div id="js-secondary-toolbar" class="secondary-toolbar">
-            <div class="btn-group btn-group-sm" role="group">
-                <button class="btn btn-primary" id="js-autorotate" type="button" title="Autorotate about Y axis"><i class="fas fa-play-circle"></i><i class="fas fa-pause-circle"></i></button><button class="btn btn-primary" id="js-print-btn" type="button" title="Print Image to File"><i class="fas fa-camera"></i></button><button class="btn btn-primary" id="js-animate" type="button" title="Start/Stop Animation [Shift + A]"><i class="fas fa-film"></i><i class="fas fa-stop-circle"></i></button>
-            </div>
-            <div class="btn-group btn-group-sm" role="group">
-                <button class="btn btn-primary active" id="js-perspective" type="button" title="Perspective Projection"><i class="fas fa-cube"></i></button><button class="btn btn-primary" id="js-orthographic" type="button" title="Perspective Projection"><i class="fas fa-dice-d6"></i></button>
-            </div>
-            <div class="btn-group btn-group-sm" role="group">
-                <button class="btn btn-primary" type="button" data-bs-toggle="modal" title="Export 3D Model" data-bs-target="#export-model"><i class="fas fa-upload"></i></button><button class="btn btn-primary" type="button" title="Import 3D Model (obj format)" data-bs-toggle="modal" data-bs-target="#import-model"><i class="fas fa-download"></i></button>
-            </div>
-            <div class="btn-group btn-group-sm" role="group">
-                <button class="btn btn-primary" type="button" data-bs-toggle="modal" title="Settings" data-bs-target="#settings"><i class="fas fa-cog"></i></button><button class="btn btn-primary" id="js-render-info" type="button" data-bs-toggle="modal" data-bs-target="#statistics" title="Display Statistics"><i class="fas fa-tachometer-alt"></i></button>
-            </div>
-        </div>
+  <header class="bg-primary" id="js-titlebar"><span id="application-name">Masterclass @ Hamburg</span><span id="js-event-loaded" class="header-event"></span>
+    <div class="btn-toolbar header-nav">
+      <div class="btn-group btn-group-sm" id="tutorial-view" role="group">
+        <a class="btn btn-info" role="button" id="js-about-btn"><i class="fas fa-info-circle"></i></a><button class="btn btn-primary active" id="js-event-display" type="button"><i class="fas fa-cubes"></i></button><a class="btn btn-info" role="button" id="js-help-btn"><i class="fas fa-question-circle"></i></a>
+      </div>
+      <div class="btn-group btn-group-sm" id="tutorial-display" role="group">
+        <button class="btn btn-primary display-mode" id="js-display-mode" type="button" title="Toggle Light/Dark Mode"><i class="fas fa-sun"></i><i class="fas fa-moon"></i></button>
+        <div class="dropdown btn-group" role="group"><button class="btn btn-primary btn-sm" aria-expanded="false" data-bs-toggle="dropdown" type="button"><i class="fas fa-language"></i></button>
+          <div class="dropdown-menu"><a class="dropdown-item" href="#" id="js-lang-en">EN</a><a class="dropdown-item" href="#" id="js-lang-de">DE</a></div>
+        </div><button class="btn btn-primary" id="js-toggle-fullscreen" type="button" title="toggle Fullscreen"><i class="fas fa-expand"></i><i class="fas fa-compress"></i></button>
+      </div>
     </div>
-    <main id="js-display">
-        <div id="js-axes" class="axes-div"></div>
-        <div id="js-event-info" class="event-info-div"><img class="img-fluid" width="128" height="128" id="js-cms-logo" src="assets/img/cms-color-medium.png" alt="CMS logo"><span id="js-event-text"></span></div>
-        <div id="js-menu-container" class="menu-container"></div>
-    </main>
-    <main id="js-about" class="page" hidden>
-        <section class="clean-block clean-services dark">
-            <div class="container">
-                <div class="block-heading">
-                    <h1 class="text-info">Masterclasses @ Hamburg</h1>
-                    <h2 data-i18n="about.title"></h2>
-                    <p data-i18n="about.description"></p>
-                    <p><span data-i18n="about.github"></span><a class="btn btn-primary" role="button" href="https://github.com/haddadanas/Masterclass_UHH" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a></p>
-                    <p><span data-i18n="about.sponsors"></span><br><a href="https://www.uni-hamburg.de/" target="_blank" rel="noopener noreferrer"><img src="assets/img/UHH_Universitaet_Hamburg_Logo_mit_Schrift_2010_Farbe_CMYK.svg" title="Universität Hamburg" alt="UHH Logo" height="70px" data-bs-toggle="tooltip" id="uhh-light"><img src="assets/img/uhh-logo-2010-farbnegativ-rgb.png" title="Universität Hamburg" alt="UHH Logo" height="70px" data-bs-toggle="tooltip" id="uhh-dark"></a><a href="https://www.desy.de/" target="_blank" rel="noopener noreferrer"><img src="assets/img/desy-circle.svg" title="Deutsches Elektronen-Synchrotron, Standort Hamburg" alt="DESY Logo" height="70" data-bs-toggle="tooltip"></a><br><span class="img-remark">Logos: (<span data-i18n="about.left"></span>) &copy; UHH (<span data-i18n="about.right"></span>) &copy; DESY</span></p>
+  </header>
+  <div class="bg-secondary toolbar" id="js-toolbar" role="toolbar">
+    <div id="js-primary-toolbar" class="primary-toolbar">
+      <div class="btn-group" id="tutorial-open" role="group">
+        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#open-files" title="Open Files"><i class="fas fa-folder-open"></i></button>
+      </div>
+      <div class="btn-group" role="group">
+        <button class="btn btn-primary" id="js-reload" type="button" title="Reload Page"><i class="fas fa-redo"></i></button>
+      </div>
+      <div class="btn-group" id="tutorial-next-prev" role="group">
+        <button class="btn btn-primary disabled" id="js-prev-event-button" type="button" title="Previous Event [Left Arrow]"><i class="fas fa-chevron-left"></i></button><button class="btn btn-primary disabled" id="js-next-event-button" type="button" title="Next Event [Right Arrow]"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <div class="btn-group" id="tutorial-reset-view" role="group">
+        <button class="btn btn-primary" id="js-reset-view" type="button" title="Return to Start View"><i class="fas fa-home"></i></button>
+      </div>
+      <div class="btn-group" id="tutorial-zoom" role="group">
+        <button class="btn btn-primary" id="js-zoom-out" type="button" title="Zoom Out [Shift + Down Arrow]"><i class="fas fa-search-minus"></i></button><button class="btn btn-primary" id="js-zoom-in" type="button" title="Zoom In [Shift + Up Arrow]"><i class="fas fa-search-plus"></i></button>
+      </div>
+      <div class="btn-group" id="tutorial-views" role="group">
+        <button class="btn btn-primary active" id="js-3d" type="button" title="3D View">3D</button><button class="btn btn-primary" id="js-rphi" type="button" title="R-Phi View">rφ</button><button class="btn btn-primary" id="js-rhoz" type="button" title="Rho-Z View">ρz</button>
+      </div>
+      <div class="btn-group" id="tutorial-axes" role="group">
+        <button class="btn btn-primary" id="js-xy" type="button" title="XY Plane"><img class="img-fluid" src="assets/img/yx_small.png" alt="yx-axis"></button><button class="btn btn-primary" id="js-yz" type="button" title="YZ Plane"><img class="img-fluid" src="assets/img/yz_small.png" alt="yz-axis"></button><button class="btn btn-primary" id="js-xz" type="button" title="ZX Plane"><img class="img-fluid" src="assets/img/xz_small.png" alt="xz-axis"></button>
+      </div>
+      <div class="btn-group" id="tutorial-sel-next-prev" role="group">
+        <button class="btn btn-primary disabled" id="js-prev-sel-event" type="button" title="Previous Selected Event"><i class="fas fa-angle-double-left"></i></button><button class="btn btn-primary disabled" id="js-next-sel-event" type="button" title="Next Selected Event"><i class="fas fa-angle-double-right"></i></button>
+      </div>
+    </div>
+    <div class="dropdown" id="tutorial-csv">
+      <button class="btn btn-primary btn-lg disabled dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" id="js-csv-btn" type="button" disabled=""><i class="fas fa-file-csv"></i></button>
+      <div class="dropdown-menu"><a class="dropdown-item" id="js-csv-higgs" href="#">Higgs</a><a class="dropdown-item" id="js-csv-z" href="#">Z</a><a class="dropdown-item" id="js-csv-wp" href="#">W<sup>+</sup></a><a class="dropdown-item" id="js-csv-wm" href="#">W<sup>-</sup></a></div>
+    </div>
+    <div id="js-secondary-toolbar" class="secondary-toolbar">
+      <div class="btn-group btn-group-sm" role="group">
+        <button class="btn btn-primary" id="js-autorotate" type="button" title="Autorotate about Y axis"><i class="fas fa-play-circle"></i><i class="fas fa-pause-circle"></i></button><button class="btn btn-primary" id="js-print-btn" type="button" title="Print Image to File"><i class="fas fa-camera"></i></button><button class="btn btn-primary" id="js-animate" type="button" title="Start/Stop Animation [Shift + A]"><i class="fas fa-film"></i><i class="fas fa-stop-circle"></i></button>
+      </div>
+      <div class="btn-group btn-group-sm" role="group">
+        <button class="btn btn-primary active" id="js-perspective" type="button" title="Perspective Projection"><i class="fas fa-cube"></i></button><button class="btn btn-primary" id="js-orthographic" type="button" title="Perspective Projection"><i class="fas fa-dice-d6"></i></button>
+      </div>
+      <div class="btn-group btn-group-sm" role="group">
+        <button class="btn btn-primary" type="button" data-bs-toggle="modal" title="Export 3D Model" data-bs-target="#export-model"><i class="fas fa-upload"></i></button><button class="btn btn-primary" type="button" title="Import 3D Model (obj format)" data-bs-toggle="modal" data-bs-target="#import-model"><i class="fas fa-download"></i></button>
+      </div>
+      <div class="btn-group btn-group-sm" role="group">
+        <button class="btn btn-primary" type="button" data-bs-toggle="modal" title="Settings" data-bs-target="#settings"><i class="fas fa-cog"></i></button><button class="btn btn-primary" id="js-render-info" type="button" data-bs-toggle="modal" data-bs-target="#statistics" title="Display Statistics"><i class="fas fa-tachometer-alt"></i></button>
+      </div>
+    </div>
+  </div>
+  <main id="js-display">
+    <div id="js-axes" class="axes-div"></div>
+    <div id="js-event-info" class="event-info-div"><img class="img-fluid" width="128" height="128" id="js-cms-logo" src="assets/img/cms-color-medium.png" alt="CMS logo"><span id="js-event-text"></span></div>
+    <div id="js-menu-container" class="menu-container"></div>
+  </main>
+  <main id="js-about" class="page" hidden>
+    <section class="clean-block clean-services dark">
+      <div class="container">
+        <div class="block-heading">
+          <h1 class="text-info">Masterclasses @ Hamburg</h1>
+          <h2 data-i18n="about.title"></h2>
+          <p data-i18n="about.description"></p>
+          <p><span data-i18n="about.github"></span><a class="btn btn-primary" role="button" href="https://github.com/haddadanas/Masterclass_UHH" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a></p>
+          <p><span data-i18n="about.sponsors"></span><br><a href="https://www.uni-hamburg.de/" target="_blank" rel="noopener noreferrer"><img src="assets/img/UHH_Universitaet_Hamburg_Logo_mit_Schrift_2010_Farbe_CMYK.svg" title="Universität Hamburg" alt="UHH Logo" height="70px" data-bs-toggle="tooltip" id="uhh-light"><img src="assets/img/uhh-logo-2010-farbnegativ-rgb.png" title="Universität Hamburg" alt="UHH Logo" height="70px" data-bs-toggle="tooltip" id="uhh-dark"></a><a href="https://www.desy.de/" target="_blank" rel="noopener noreferrer"><img src="assets/img/desy-circle.svg" title="Deutsches Elektronen-Synchrotron, Standort Hamburg" alt="DESY Logo" height="70" data-bs-toggle="tooltip"></a><br><span class="img-remark">Logos: (<span data-i18n="about.left"></span>) &copy; UHH (<span data-i18n="about.right"></span>) &copy; DESY</span></p>
 
-                </div>
-                <hr class="my-4">
-                <h2 style="text-align: center;" data-i18n="about.links"></h2>
-                <div class="row">
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card"><img class="card-img-top w-100 d-block"src="assets/img/UHH_Universitaet_Hamburg_Logo_mit_Schrift_2010_Farbe_CMYK.svg" style="background: var(--bs-light); padding: 1em;">
-                            <span class="img-remark"><span data-i18n="about.photo"></span>: &copy; UHH</span>
-                            <div class="card-body">
-                                <h4 class="card-title" data-i18n="about.studyTitle"></h4>
-                                <p class="card-text" data-i18n="about.studyText"></p>
-                            </div>
-                            <div>
-                                <a class="btn btn-outline-primary" role="button" href="https://www.physik.uni-hamburg.de/studium.html" title="visit website" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i></a>
-                                <a class="btn btn-outline-primary" role="button" href="https://www.min-studieren.uni-hamburg.de/studium/physik/bachelor-physik/" target="_blank" rel="noopener noreferrer"><i class="fas fa-info-circle"></i>&nbsp;<span data-i18n="about.infoBsc"></span></a>
-                                <a class="btn btn-outline-primary" role="button" href="https://www.min-studieren.uni-hamburg.de/wp-content/uploads/2020/11/studienplan-fb-physik-bsc-physik-e1611133577820.jpg" target="_blank" rel="noopener noreferrer"><i class="fas fa-table"></i>&nbsp;<span data-i18n="about.studyPlan"></span></a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card"><img class="card-img-top w-100 d-block" src="assets/img/elbakademie_desy.jpg" style="background: var(--bs-light);">
-                            <span class="img-remark"><span data-i18n="about.photo"></span>: &copy; DESY</span>
-                            <div class="card-body">
-                                <h4 class="card-title">ELB-Akademie</h4>
-                                <p class="card-text" data-i18n="about.elbakademie"></p>
-                            </div>
-                            <div><a class="btn btn-outline-primary" role="button" href="https://www.desy.de/schule/schuelerlabore/standort_hamburg/elb_akademie" title="visit website" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i></a></div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card"><img class="card-img-top w-100 d-block" src="assets/img/logo-teilchenwelt.svg" style="background: var(--bs-light); padding: 1em;">
-                            <span class="img-remark"><span data-i18n="about.photo"></span>: &copy; Netzwerk Teilchenwelt</span>
-                            <div class="card-body">
-                                <h4 class="card-title">Netzwerk Teilchenwelt</h4>
-                                <p class="card-text" data-i18n="about.teilchenwelt"></p>
-                            </div>
-                            <div><a class="btn btn-outline-primary" role="button" href="https://www.teilchenwelt.de/angebote/alle-angebote/" title="visit website" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i></a></div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card"><img class="card-img-top w-100 d-block" src="assets/img/CMS%20Slice.gif">
-                            <span class="img-remark"><span data-i18n="about.photo"></span>: &copy; CMS / CERN</span>
-                            <div class="card-body">
-                                <h4 class="card-title">CMS Interactive Slice</h4>
-                                <p class="card-text" data-i18n="about.cms-interactive"></p>
-                            </div>
-                            <div><a class="btn btn-outline-primary" role="button" href="https://cmsslice.web.cern.ch" title="visit website" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i></a></div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card"><img class="card-img-top w-100 d-block" src="assets/img/ispy-webgl-screenshot-1.0.0.png">
-                            <div class="card-body">
-                                <h4 class="card-title">CMS Event Display</h4>
-                                <p class="card-text" data-i18n="about.event-display"></p>
-                            </div>
-                            <div><a class="btn btn-outline-primary" role="button" href="https://github.com/cms-outreach/ispy-webgl" title="Github Repository" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a><a class="btn btn-outline-primary" role="button" href="https://ispy-webgl.web.cern.ch" title="visit website" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i></a><a class="btn btn-outline-primary" role="button" href="https://doi.org/10.1088/1742-6596/898/7/072030" title="DOI" target="_blank" rel="noopener noreferrer"><i class="far fa-file-alt"></i></a></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-    <main id="js-help" class="page" hidden>
-        <section class="clean-block">
-            <div class="container">
-                <div class="block-heading">
-                    <h2 class="text-info" data-i18n="help.title"></h2>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-12 col-sm-4">
-                        <div class="card text-center clean-card">
-                            <div class="card-body info">
-                                <h4 class="card-title" data-i18n="help.student-title"></h4>
-                                <p class="card-text" data-i18n="help.student-text"></p>
-                                <div class="icons"><button class="btn btn-primary" type="button"><i class="fas fa-book-open"></i>&nbsp;<span data-i18n="help.student-guide"></span></button><hr class="my-2" aria-hidden="true"><span data-i18n="help.interactive-tutorial"></span><br><button class="btn btn-outline-light" id="js-basics-tutorial-btn" title="Start Tutorial"><i class="fas fa-chalkboard-teacher"></i>&nbsp;<span data-i18n="help.basic-tutorial"></span></button>&nbsp;<button class="btn btn-outline-light" id="js-controls-tutorial-btn" title="Start Tutorial"><i class="fas fa-chalkboard-teacher"></i>&nbsp;<span data-i18n="help.controls-tutorial"></span></button>&nbsp;<button class="btn btn-outline-light" id="js-analysis-tutorial-btn" title="Start Tutorial"><i class="fas fa-chalkboard-teacher"></i>&nbsp;<span data-i18n="help.analysis-tutorial"></span></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-4">
-                        <div class="card text-center clean-card">
-                            <div class="card-body info">
-                                <h4 class="card-title" data-i18n="help.teacher-title"></h4>
-                                <p class="card-text" data-i18n="help.teacher-text"></p>
-                                <div class="icons"><button class="btn btn-primary" type="button"><i class="fas fa-book-open"></i>&nbsp;<span data-i18n="help.teacher-guide"></span></button>&nbsp;<a class="btn btn-outline-light" role="button" title="Releases on Github" href="https://github.com/haddadanas/Masterclass_UHH/releases" target="_blank"><i class="fab fa-github"></i>&nbsp;<span data-i18n="help.teacher-releases"></span></a></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-sm-4">
-                        <div class="card text-center clean-card">
-                            <div class="card-body info">
-                                <h4 class="card-title" data-i18n="help.dev-title"></h4>
-                                <p class="card-text" data-i18n="help.dev-text"></p>
-                                <div class="icons"><button class="btn btn-primary" type="button"><i class="fas fa-book-open"></i>&nbsp;<span data-i18n="help.dev-guide"></span></button>&nbsp;<a class="btn btn-outline-light" role="button" title="Code on Github" href="https://github.com/haddadanas/Masterclass_UHH" target="_blank"><i class="fas fa-code-branch"></i>&nbsp;<span data-i18n="help.dev-code"></span></a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-    <div class="modal" role="dialog" tabindex="-1" id="open-files">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content" id="tutorial-files-modal">
-                <div class="modal-header">
-                    <h4 class="modal-title" data-i18n="main.open-file"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p><button class="btn btn-primary" id="js-show-webfiles-btn" type="button" data-i18n="main.open-web-file"></button></p>
-                    <div class="d-flex align-items-center my-2 text-muted" role="separator" aria-label="or">
-                        <hr class="flex-grow-1 m-0">
-                        <span class="px-2" data-i18n="main.or"></span>
-                        <hr class="flex-grow-1 m-0">
-                    </div>
-                    <p><span data-i18n="main.open-local-file"></span><input class="form-control mt-1" type="file" id="js-local-files-btn" multiple=""></p>
-                </div>
-                <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button></div>
-            </div>
         </div>
-    </div>
-    <div class="modal" role="dialog" tabindex="-1" id="files">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" data-i18n="main.open-event"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <table class="table" id="js-browser-table">
-                        <tbody>
-                            <tr>
-                                <td class="browser-header" style="width: 50%;" data-i18n="main.files"></td>
-                                <td class="browser-header" style="width: 50%;">Events</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <table class="table table-hover" id="js-browser-files"></table>
-                                </td>
-                                <td>
-                                    <table class="table table-hover" id="js-browser-events"></table>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div id="js-selected-event" class="bordered"></div>
-                <div class="modal-footer">
-                    <div><button class="btn btn-light" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button><button class="btn btn-primary disabled" id="js-load-event" type="button" data-i18n="main.load" disabled=""></button></div>
-                </div>
+        <hr class="my-4">
+        <h2 style="text-align: center;" data-i18n="about.links"></h2>
+        <div class="row">
+          <div class="col-md-6 col-lg-4">
+            <div class="card"><img class="card-img-top w-100 d-block" src="assets/img/UHH_Universitaet_Hamburg_Logo_mit_Schrift_2010_Farbe_CMYK.svg" style="background: var(--bs-light); padding: 1em;">
+              <span class="img-remark"><span data-i18n="about.photo"></span>: &copy; UHH</span>
+              <div class="card-body">
+                <h4 class="card-title" data-i18n="about.studyTitle"></h4>
+                <p class="card-text" data-i18n="about.studyText"></p>
+              </div>
+              <div>
+                <a class="btn btn-outline-primary" role="button" href="https://www.physik.uni-hamburg.de/studium.html" title="visit website" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i></a>
+                <a class="btn btn-outline-primary" role="button" href="https://www.min-studieren.uni-hamburg.de/studium/physik/bachelor-physik/" target="_blank" rel="noopener noreferrer"><i class="fas fa-info-circle"></i>&nbsp;<span data-i18n="about.infoBsc"></span></a>
+                <a class="btn btn-outline-primary" role="button" href="https://www.min-studieren.uni-hamburg.de/wp-content/uploads/2020/11/studienplan-fb-physik-bsc-physik-e1611133577820.jpg" target="_blank" rel="noopener noreferrer"><i class="fas fa-table"></i>&nbsp;<span data-i18n="about.studyPlan"></span></a>
+              </div>
             </div>
-        </div>
-    </div>
-    <div class="modal" role="dialog" tabindex="-1" data-bs-backdrop="static" id="loading">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <h4><i class="fas fa-spinner fa-spin"></i>&nbsp;<span data-i18n="main.loading"></span></h4>
-                </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="card"><img class="card-img-top w-100 d-block" src="assets/img/elbakademie_desy.jpg" style="background: var(--bs-light);">
+              <span class="img-remark"><span data-i18n="about.photo"></span>: &copy; DESY</span>
+              <div class="card-body">
+                <h4 class="card-title">ELB-Akademie</h4>
+                <p class="card-text" data-i18n="about.elbakademie"></p>
+              </div>
+              <div><a class="btn btn-outline-primary" role="button" href="https://www.desy.de/schule/schuelerlabore/standort_hamburg/elb_akademie" title="visit website" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i></a></div>
             </div>
-        </div>
-    </div>
-    <div class="modal" role="dialog" tabindex="-1" data-bs-backdrop="static" id="building">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <h4><i class="fas fa-cog fa-spin" style="font-size:28px;"></i>&nbsp;<span data-i18n="main.build"></span></h4>
-                </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="card"><img class="card-img-top w-100 d-block" src="assets/img/logo-teilchenwelt.svg" style="background: var(--bs-light); padding: 1em;">
+              <span class="img-remark"><span data-i18n="about.photo"></span>: &copy; Netzwerk Teilchenwelt</span>
+              <div class="card-body">
+                <h4 class="card-title">Netzwerk Teilchenwelt</h4>
+                <p class="card-text" data-i18n="about.teilchenwelt"></p>
+              </div>
+              <div><a class="btn btn-outline-primary" role="button" href="https://www.teilchenwelt.de/angebote/alle-angebote/" title="visit website" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i></a></div>
             </div>
-        </div>
-    </div>
-    <div class="modal" role="dialog" tabindex="-1" data-bs-backdrop="static" id="progress">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="progress">
-                        <div class="progress-bar" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" role="progressbar" style="width:0;"></div>
-                    </div>
-                </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="card"><img class="card-img-top w-100 d-block" src="assets/img/CMS%20Slice.gif">
+              <span class="img-remark"><span data-i18n="about.photo"></span>: &copy; CMS / CERN</span>
+              <div class="card-body">
+                <h4 class="card-title">CMS Interactive Slice</h4>
+                <p class="card-text" data-i18n="about.cms-interactive"></p>
+              </div>
+              <div><a class="btn btn-outline-primary" role="button" href="https://cmsslice.web.cern.ch" title="visit website" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i></a></div>
             </div>
-        </div>
-    </div>
-    <div class="modal" role="dialog" tabindex="-1" id="settings">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" data-i18n="main.settings"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div><input type="checkbox" id="js-show-logo"><label for="js-show-logo" data-i18n="main.hide-logo"></label></div>
-                    <div><input type="checkbox" id="js-show-axes"><label for="js-show-axes" data-i18n="main.hide-axes"></label></div>
-                    <div><input type="checkbox" id="js-clipping"><label for="js-clipping" data-i18n="main.show-clipping"></label></div>
-                    <div><input type="checkbox" id="js-additional-controls"><label for="js-additional-controls" data-i18n="main.advanced-controls"></label></div>
-                    <div><input type="checkbox" id="js-pickable_lines"><label for="js-pickable_lines" data-i18n="main.thicker-tracks"></label></div>
-                    <div><label for="js-vh-slider" data-i18n="main.vh-slider"></label><span id="js-vh"></span><span>%</span><input type="range" id="js-vh-slider" class="form-range" max="100" min="75" step="1" value="90"></div>
-                    <div><label for="js-fps-slider" data-i18n="main.fps"></label><span id="js-fr"></span><span>&nbsp;fps</span><input type="range" id="js-fps-slider" class="form-range" max="60" min="1" step="1" value="30"></div>
-                    <div><label for="js-transparency-slider" data-i18n="main.transparency"></label><span id="js-trspy"></span><input type="range" id="js-transparency-slider" class="form-range" max="1.0" min="0.0" step="0.05" value="1.0"></div>
-                    <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button" data-i18n="main.select-renderer"></button>
-                        <div class="dropdown-menu border"><a class="dropdown-item" id="js-webgl-renderer" href="#" data-bs-dismiss="modal">WebGLRenderer</a><a class="dropdown-item" id="js-svg-renderer" href="#" data-bs-dismiss="modal">SVGRenderer</a></div>
-                    </div>
-                </div>
-                <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button></div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="card"><img class="card-img-top w-100 d-block" src="assets/img/ispy-webgl-screenshot-1.0.0.png">
+              <div class="card-body">
+                <h4 class="card-title">CMS Event Display</h4>
+                <p class="card-text" data-i18n="about.event-display"></p>
+              </div>
+              <div><a class="btn btn-outline-primary" role="button" href="https://github.com/cms-outreach/ispy-webgl" title="Github Repository" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a><a class="btn btn-outline-primary" role="button" href="https://ispy-webgl.web.cern.ch" title="visit website" target="_blank" rel="noopener noreferrer"><i class="fas fa-globe"></i></a><a class="btn btn-outline-primary" role="button" href="https://doi.org/10.1088/1742-6596/898/7/072030" title="DOI" target="_blank" rel="noopener noreferrer"><i class="far fa-file-alt"></i></a></div>
             </div>
+          </div>
         </div>
-    </div>
-    <div class="modal" role="dialog" tabindex="-1" id="statistics">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" data-i18n="main.statistics"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
+      </div>
+    </section>
+  </main>
+  <main id="js-help" class="page" hidden>
+    <section class="clean-block">
+      <div class="container">
+        <div class="block-heading">
+          <h2 class="text-info" data-i18n="help.title"></h2>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-12 col-sm-4">
+            <div class="card text-center clean-card">
+              <div class="card-body info">
+                <h4 class="card-title" data-i18n="help.student-title"></h4>
+                <p class="card-text" data-i18n="help.student-text"></p>
+                <div class="icons"><button class="btn btn-primary" type="button"><i class="fas fa-book-open"></i>&nbsp;<span data-i18n="help.student-guide"></span></button>
+                  <hr class="my-2" aria-hidden="true"><span data-i18n="help.interactive-tutorial"></span><br><button class="btn btn-outline-light" id="js-basics-tutorial-btn" title="Start Tutorial"><i class="fas fa-chalkboard-teacher"></i>&nbsp;<span data-i18n="help.basic-tutorial"></span></button>&nbsp;<button class="btn btn-outline-light" id="js-controls-tutorial-btn" title="Start Tutorial"><i class="fas fa-chalkboard-teacher"></i>&nbsp;<span data-i18n="help.controls-tutorial"></span></button>&nbsp;<button class="btn btn-outline-light" id="js-analysis-tutorial-btn" title="Start Tutorial"><i class="fas fa-chalkboard-teacher"></i>&nbsp;<span data-i18n="help.analysis-tutorial"></span></button>
                 </div>
-                <div class="modal-body">
-                    <div><input type="checkbox" id="js-show-stats"><label for="js-show-stats" data-i18n="main.show-stats"></label></div>
-                </div>
-                <div id="js-renderer-info"></div>
-                <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button></div>
+              </div>
             </div>
-        </div>
-    </div>
-    <div class="modal" role="dialog" tabindex="-1" id="invariant-mass-modal">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" data-i18n="main.invariant-mass"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body"><span id="js-invariant-mass"></span><span>&nbsp;GeV</span></div>
-                <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button></div>
+          </div>
+          <div class="col-12 col-sm-4">
+            <div class="card text-center clean-card">
+              <div class="card-body info">
+                <h4 class="card-title" data-i18n="help.teacher-title"></h4>
+                <p class="card-text" data-i18n="help.teacher-text"></p>
+                <div class="icons"><button class="btn btn-primary" type="button"><i class="fas fa-book-open"></i>&nbsp;<span data-i18n="help.teacher-guide"></span></button>&nbsp;<a class="btn btn-outline-light" role="button" title="Releases on Github" href="https://github.com/haddadanas/Masterclass_UHH/releases" target="_blank"><i class="fab fa-github"></i>&nbsp;<span data-i18n="help.teacher-releases"></span></a></div>
+              </div>
             </div>
-        </div>
-    </div>
-    <div class="modal" role="dialog" tabindex="-1" id="export-model">
-        <div class="modal-dialog modal-sm" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" data-i18n="main.export-model"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button" data-i18n="main.export-format"></button>
-                        <div class="dropdown-menu"><a class="dropdown-item" id="js-export-obj" href="#" data-bs-dismiss="modal">OBJ</a><a class="dropdown-item" id="js-export-gltf-text" href="#" data-bs-dismiss="modal">GLTF (text)</a><a class="dropdown-item" id="js-export-gltf-binary" href="#" data-bs-dismiss="modal">GLTF (binary)</a></div>
-                    </div>
-                </div>
-                <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button></div>
+          </div>
+          <div class="col-12 col-sm-4">
+            <div class="card text-center clean-card">
+              <div class="card-body info">
+                <h4 class="card-title" data-i18n="help.dev-title"></h4>
+                <p class="card-text" data-i18n="help.dev-text"></p>
+                <div class="icons"><button class="btn btn-primary" type="button"><i class="fas fa-book-open"></i>&nbsp;<span data-i18n="help.dev-guide"></span></button>&nbsp;<a class="btn btn-outline-light" role="button" title="Code on Github" href="https://github.com/haddadanas/Masterclass_UHH" target="_blank"><i class="fas fa-code-branch"></i>&nbsp;<span data-i18n="help.dev-code"></span></a></div>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
-    <div class="modal" role="dialog" tabindex="-1" id="import-model">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" data-i18n="main.import-model"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p data-i18n="main.import-select"></p>
-                    <p data-i18n="main.import-supported"></p>
-                    <p data-i18n="main.import-note"></p>
-                    <p data-i18n="main.import-web"></p><button class="btn btn-primary" id="js-import-web" type="button" data-i18n="main.open-web-file"></button>
-                    <div class="d-flex align-items-center my-2 text-muted" role="separator" aria-label="or">
-                        <hr class="flex-grow-1 m-0">
-                        <span class="px-2" data-i18n="main.or"></span>
-                        <hr class="flex-grow-1 m-0">
-                    </div>
-                    <p><span data-i18n="main.open-local-file"></span><input class="form-control mt-1" type="file" id="js-import-file" multiple=""></p>
-                </div>
-                <div class="modal-footer"><button class="btn btn-primary" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button></div>
-            </div>
+      </div>
+    </section>
+  </main>
+  <div class="modal" role="dialog" tabindex="-1" id="open-files">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content" id="tutorial-files-modal">
+        <div class="modal-header">
+          <h4 class="modal-title" data-i18n="main.open-file"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
         </div>
+        <div class="modal-body">
+          <p><button class="btn btn-primary" id="js-show-webfiles-btn" type="button" data-i18n="main.open-web-file"></button></p>
+          <div class="d-flex align-items-center my-2 text-muted" role="separator" aria-label="or">
+            <hr class="flex-grow-1 m-0">
+            <span class="px-2" data-i18n="main.or"></span>
+            <hr class="flex-grow-1 m-0">
+          </div>
+          <p><span data-i18n="main.open-local-file"></span><input class="form-control mt-1" type="file" id="js-local-files-btn" multiple=""></p>
+        </div>
+        <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button></div>
+      </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" id="geometry-files">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" data-i18n="main.open-model"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="border" id="js-selected-obj"></div>
+  </div>
+  <div class="modal" role="dialog" tabindex="-1" id="files">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" data-i18n="main.open-event"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <table class="table" id="js-browser-table">
+            <tbody>
+              <tr>
+                <td class="browser-header" style="width: 50%;" data-i18n="main.files"></td>
+                <td class="browser-header" style="width: 50%;">Events</td>
+              </tr>
+              <tr>
+                <td>
+                  <table class="table table-hover" id="js-browser-files"></table>
+                </td>
+                <td>
+                  <table class="table table-hover" id="js-browser-events"></table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="js-selected-event" class="bordered"></div>
+        <div class="modal-footer">
+          <div><button class="btn btn-light" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button><button class="btn btn-primary disabled" id="js-load-event" type="button" data-i18n="main.load" disabled=""></button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" role="dialog" tabindex="-1" data-bs-backdrop="static" id="loading">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h4><i class="fas fa-spinner fa-spin"></i>&nbsp;<span data-i18n="main.loading"></span></h4>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" role="dialog" tabindex="-1" data-bs-backdrop="static" id="building">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <h4><i class="fas fa-cog fa-spin" style="font-size:28px;"></i>&nbsp;<span data-i18n="main.build"></span></h4>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" role="dialog" tabindex="-1" data-bs-backdrop="static" id="progress">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="progress">
+            <div class="progress-bar" aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" role="progressbar" style="width:0;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" role="dialog" tabindex="-1" id="settings">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" data-i18n="main.settings"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div><input type="checkbox" id="js-show-logo"><label for="js-show-logo" data-i18n="main.hide-logo"></label></div>
+          <div><input type="checkbox" id="js-show-axes"><label for="js-show-axes" data-i18n="main.hide-axes"></label></div>
+          <div><input type="checkbox" id="js-clipping"><label for="js-clipping" data-i18n="main.show-clipping"></label></div>
+          <div><input type="checkbox" id="js-additional-controls"><label for="js-additional-controls" data-i18n="main.advanced-controls"></label></div>
+          <div><input type="checkbox" id="js-pickable_lines"><label for="js-pickable_lines" data-i18n="main.thicker-tracks"></label></div>
+          <div><label for="js-vh-slider" data-i18n="main.vh-slider"></label><span id="js-vh"></span><span>%</span><input type="range" id="js-vh-slider" class="form-range" max="100" min="75" step="1" value="90"></div>
+          <div><label for="js-fps-slider" data-i18n="main.fps"></label><span id="js-fr"></span><span>&nbsp;fps</span><input type="range" id="js-fps-slider" class="form-range" max="60" min="1" step="1" value="30"></div>
+          <div><label for="js-transparency-slider" data-i18n="main.transparency"></label><span id="js-trspy"></span><input type="range" id="js-transparency-slider" class="form-range" max="1.0" min="0.0" step="0.05" value="1.0"></div>
+          <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button" data-i18n="main.select-renderer"></button>
+            <div class="dropdown-menu border"><a class="dropdown-item" id="js-webgl-renderer" href="#" data-bs-dismiss="modal">WebGLRenderer</a><a class="dropdown-item" id="js-svg-renderer" href="#" data-bs-dismiss="modal">SVGRenderer</a></div>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" role="dialog" tabindex="-1" id="statistics">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" data-i18n="main.statistics"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div><input type="checkbox" id="js-show-stats"><label for="js-show-stats" data-i18n="main.show-stats"></label></div>
+        </div>
+        <div id="js-renderer-info"></div>
+        <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" role="dialog" tabindex="-1" id="invariant-mass-modal">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" data-i18n="main.invariant-mass"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body"><span id="js-invariant-mass"></span><span>&nbsp;GeV</span></div>
+        <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" role="dialog" tabindex="-1" id="export-model">
+    <div class="modal-dialog modal-sm" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" data-i18n="main.export-model"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="dropdown"><button class="btn btn-primary dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button" data-i18n="main.export-format"></button>
+            <div class="dropdown-menu"><a class="dropdown-item" id="js-export-obj" href="#" data-bs-dismiss="modal">OBJ</a><a class="dropdown-item" id="js-export-gltf-text" href="#" data-bs-dismiss="modal">GLTF (text)</a><a class="dropdown-item" id="js-export-gltf-binary" href="#" data-bs-dismiss="modal">GLTF (binary)</a></div>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-light" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" role="dialog" tabindex="-1" id="import-model">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" data-i18n="main.import-model"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p data-i18n="main.import-select"></p>
+          <p data-i18n="main.import-supported"></p>
+          <p data-i18n="main.import-note"></p>
+          <p data-i18n="main.import-web"></p><button class="btn btn-primary" id="js-import-web" type="button" data-i18n="main.open-web-file"></button>
+          <div class="d-flex align-items-center my-2 text-muted" role="separator" aria-label="or">
+            <hr class="flex-grow-1 m-0">
+            <span class="px-2" data-i18n="main.or"></span>
+            <hr class="flex-grow-1 m-0">
+          </div>
+          <p><span data-i18n="main.open-local-file"></span><input class="form-control mt-1" type="file" id="js-import-file" multiple=""></p>
+        </div>
+        <div class="modal-footer"><button class="btn btn-primary" data-bs-dismiss="modal" type="button" data-i18n="main.close"></button></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal" role="dialog" tabindex="-1" id="geometry-files">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" data-i18n="main.open-model"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="border" id="js-selected-obj"></div>
+          <div class="table-responsive">
+            <table class="table" id="obj-table">
+              <thead>
+                <tr>
+                  <th data-i18n="main.files">Files</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="file-table">
                     <div class="table-responsive">
-                        <table class="table" id="obj-table">
-                            <thead>
-                                <tr>
-                                    <th data-i18n="main.files">Files</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="file-table">
-                                        <div class="table-responsive">
-                                            <table class="table table-hover" id="js-obj-files">
-                                                <tbody></tbody>
-                                            </table>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                      <table class="table table-hover" id="js-obj-files">
+                        <tbody></tbody>
+                      </table>
                     </div>
-                </div>
-                <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal" data-i18n="main.close"></button><button class="btn btn-primary disabled" id="js-load-obj" type="button" data-i18n="main.load"></button></div>
-            </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+        <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal" data-i18n="main.close"></button><button class="btn btn-primary disabled" id="js-load-obj" type="button" data-i18n="main.load"></button></div>
+      </div>
     </div>
-    <div class="modal" role="dialog" tabindex="-1" id="data-EventObjects">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 id="title-data-EventObjects" class="modal-title"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover" id="table-data-eventObject">
-                            <thead>
-                                <tr>
-                                    <th class="group" data-i18n="main.type"></th>
-                                    <th class="group" data-i18n="main.value"></th>
-                                </tr>
-                            </thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal" data-i18n="main.close"></button></div>
-            </div>
+  </div>
+  <div class="modal" role="dialog" tabindex="-1" id="data-EventObjects">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 id="title-data-EventObjects" class="modal-title"></h4><button class="btn-close" type="button" aria-label="Close" data-bs-dismiss="modal"></button>
         </div>
+        <div class="modal-body">
+          <div class="table-responsive">
+            <table class="table table-hover" id="table-data-eventObject">
+              <thead>
+                <tr>
+                  <th class="group" data-i18n="main.type"></th>
+                  <th class="group" data-i18n="main.value"></th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal" data-i18n="main.close"></button></div>
+      </div>
     </div>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+  </div>
+  <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
 
 </html>
