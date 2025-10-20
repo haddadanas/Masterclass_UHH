@@ -102,6 +102,7 @@
     "ts/analysis.ts",
     "ts/utils.ts",
     "ts/tutorial.ts",
+    "ts/tutorial-config.ts"
   ],
   "exclude": [
     "node_modules",

@@ -191,6 +191,7 @@ input[type="file"]:focus-visible::file-selector-button {
   z-index: 500;
   background-color: inherit;
   height: 8vw;
+  min-height: 20px;
   width: auto;
 }
 
@@ -205,13 +206,14 @@ input[type="file"]:focus-visible::file-selector-button {
   align-items: flex-start;
   gap: 0.5rem;
   padding: 0.5rem;
-  height: 10vh;
+  height: 15vh;
   width: fit-content;
 }
 
 .event-info-div img {
   height: 100%;
   width: auto;
+  min-height: 50px;
 }
 
 .event-info-div span {

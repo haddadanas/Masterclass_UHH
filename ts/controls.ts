@@ -11,6 +11,7 @@ import {
   hideDialog,
   showDialog,
   changeMeshMaterials,
+  updateGuidesLanguage,
 } from "./utils.js";
 import { render, updateRenderer, updateRendererInfo } from "./renderer.js";
 import {
@@ -403,6 +404,10 @@ function switchMain(view: "about" | "display" | "help") {
       btnMap[key as keyof typeof btnMap].classList.remove("active");
     }
   }
+  // Hide all guide containers
+  document.querySelectorAll(".guide-container").forEach((el) => {
+    (el as HTMLDivElement).removeAttribute("style");
+  });
   if (view === "display") {
     showToolbarButtons();
     showEventName();
@@ -547,6 +552,18 @@ export function setupControls() {
   jsCsvZ.addEventListener("click", () => createCSV("Z"));
   jsCsvWp.addEventListener("click", () => createCSV("Wp"));
   jsCsvWm.addEventListener("click", () => createCSV("Wm"));
+
+  for (const key of ["student", "teacher", "dev"]) {
+    const guideBtn = getHTMLObject<HTMLButtonElement>(`js-${key}-guide-btn`);
+    guideBtn.addEventListener("click", () => {
+      document.querySelectorAll(".guide-container").forEach((el) => {
+        (el as HTMLDivElement).removeAttribute("style");
+      });
+      const guideContainer = getHTMLObject<HTMLDivElement>(`js-${key}-guide-container`);
+      updateGuidesLanguage(guideContainer, ispy.lang);
+      guideContainer.style.setProperty("display", "block");
+    });
+  }
 }
 
 export function setupKeyboardListeners() {

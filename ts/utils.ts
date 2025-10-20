@@ -72,6 +72,11 @@ async function fetchLanguageData(lang: string): Promise<{ [key: string]: { [key:
   return response.json();
 }
 
+export async function updateGuidesLanguage(element: HTMLElement, lang: string) {
+  const langData = await fetchLanguageData(`${lang}_guide`);
+  updateContent(element, langData);
+}
+
 /**
  * Checks if the provided language is supported, defaults to 'en' if not.
  * @param lang The language code to check.
@@ -473,22 +478,24 @@ export function getGUIFolder(gui: GUI, key: string): GUI {
  * Toggles the collapse state of a GUI folder.
  * @param key The key of the group to toggle.
  */
-export function toggleCollapse(key: string) {
+export function toggleCollapse(key: string): GUI {
   const folder = getGUIFolder(ispy.gui, key);
   if (folder) {
     folder.close();
   }
+  return folder;
 }
 
 /**
  * Toggles the expanded state of a GUI folder.
  * @param key The key of the group to toggle.
  */
-export function toggleExpand(key: string) {
+export function toggleExpand(key: string): GUI {
   const folder = getGUIFolder(ispy.gui, key);
   if (folder) {
     folder.open();
   }
+  return folder;
 }
 
 /**

@@ -168,7 +168,7 @@
               <div class="card-body info">
                 <h4 class="card-title" data-i18n="help.student-title"></h4>
                 <p class="card-text" data-i18n="help.student-text"></p>
-                <div class="icons"><button class="btn btn-primary" type="button"><i class="fas fa-book-open"></i>&nbsp;<span data-i18n="help.student-guide"></span></button>
+                <div class="icons"><button class="btn btn-primary" type="button" id="js-student-guide-btn"><i class="fas fa-book-open"></i>&nbsp;<span data-i18n="help.student-guide"></span></button>
                   <hr class="my-2" aria-hidden="true"><span data-i18n="help.interactive-tutorial"></span><br><button class="btn btn-outline-light" id="js-basics-tutorial-btn" title="Start Tutorial"><i class="fas fa-chalkboard-teacher"></i>&nbsp;<span data-i18n="help.basic-tutorial"></span></button>&nbsp;<button class="btn btn-outline-light" id="js-controls-tutorial-btn" title="Start Tutorial"><i class="fas fa-chalkboard-teacher"></i>&nbsp;<span data-i18n="help.controls-tutorial"></span></button>&nbsp;<button class="btn btn-outline-light" id="js-analysis-tutorial-btn" title="Start Tutorial"><i class="fas fa-chalkboard-teacher"></i>&nbsp;<span data-i18n="help.analysis-tutorial"></span></button>
                 </div>
               </div>
@@ -179,7 +179,7 @@
               <div class="card-body info">
                 <h4 class="card-title" data-i18n="help.teacher-title"></h4>
                 <p class="card-text" data-i18n="help.teacher-text"></p>
-                <div class="icons"><button class="btn btn-primary" type="button"><i class="fas fa-book-open"></i>&nbsp;<span data-i18n="help.teacher-guide"></span></button>&nbsp;<a class="btn btn-outline-light" role="button" title="Releases on Github" href="https://github.com/haddadanas/Masterclass_UHH/releases" target="_blank"><i class="fab fa-github"></i>&nbsp;<span data-i18n="help.teacher-releases"></span></a></div>
+                <div class="icons"><button class="btn btn-primary" type="button" id="js-teacher-guide-btn"><i class="fas fa-book-open"></i>&nbsp;<span data-i18n="help.teacher-guide"></span></button>&nbsp;<a class="btn btn-outline-light" role="button" title="Releases on Github" href="https://github.com/haddadanas/Masterclass_UHH/releases" target="_blank"><i class="fab fa-github"></i>&nbsp;<span data-i18n="help.teacher-releases"></span></a></div>
               </div>
             </div>
           </div>
@@ -188,10 +188,141 @@
               <div class="card-body info">
                 <h4 class="card-title" data-i18n="help.dev-title"></h4>
                 <p class="card-text" data-i18n="help.dev-text"></p>
-                <div class="icons"><button class="btn btn-primary" type="button"><i class="fas fa-book-open"></i>&nbsp;<span data-i18n="help.dev-guide"></span></button>&nbsp;<a class="btn btn-outline-light" role="button" title="Code on Github" href="https://github.com/haddadanas/Masterclass_UHH" target="_blank"><i class="fas fa-code-branch"></i>&nbsp;<span data-i18n="help.dev-code"></span></a></div>
+                <div class="icons"><button class="btn btn-primary" type="button" id="js-dev-guide-btn"><i class="fas fa-book-open"></i>&nbsp;<span data-i18n="help.dev-guide"></span></button>&nbsp;<a class="btn btn-outline-light" role="button" title="Code on Github" href="https://github.com/haddadanas/Masterclass_UHH" target="_blank"><i class="fas fa-code-branch"></i>&nbsp;<span data-i18n="help.dev-code"></span></a></div>
               </div>
             </div>
           </div>
+        </div>
+        <div class="guide-container" id="js-student-guide-container">
+          <h1 class="mb-4" data-i18n="student.title"></h1>
+          <h3 data-i18n="student.openFile"></h3>
+          <p data-i18n="student.openFile1"></p>
+          <ol>
+            <li>
+              <p data-i18n="student.openFile2"></p>
+            </li>
+            <li>
+              <p data-i18n="student.openFile3"></p>
+            </li>
+          </ol>
+          <h3 data-i18n="student.navigateEvents"></h3>
+          <p data-i18n="student.navigateEvents1"></p>
+          <p data-i18n="student.navigateEvents2"></p>
+          <h3 data-i18n="student.changeView"></h3>
+          <p data-i18n="student.changeView1"></p>
+          <p data-i18n="student.changeView2"></p>
+          <h3 data-i18n="student.detector"></h3>
+          <p data-i18n="student.detector1"></p>
+          <p data-i18n="student.detector2"></p>
+          <h3 data-i18n="student.objects"></h3>
+          <p data-i18n="student.objects1"></p>
+          <p data-i18n="student.objects2"></p>
+          <h3 data-i18n="student.selection"></h3>
+          <p data-i18n="student.selection1"></p>
+          <h3 data-i18n="student.invariantMass"></h3>
+          <p data-i18n="student.invariantMass1"></p>
+          <h2 data-i18n="student.eventSelection"></h2>
+          <h3 data-i18n="student.eventSelection1"></h3>
+          <p data-i18n="student.eventSelection2"></p>
+          <ol>
+            <li>
+              <p data-i18n="student.eventSelection3"></p>
+            </li>
+            <li>
+              <p data-i18n="student.eventSelection4"></p>
+            </li>
+            <li>
+              <p data-i18n="student.eventSelection5"></p>
+            </li>
+            <li>
+              <p data-i18n="student.eventSelection6"></p>
+            </li>
+          </ol>
+        </div>
+        <div class="guide-container" id="js-teacher-guide-container">
+          <h1 class="mb-4" data-i18n="teacher.title"></h1>
+          <p data-i18n="teacher.intro"></p>
+          <h3 data-i18n="teacher.prerequisites"></h3>
+          <p data-i18n="teacher.prerequisites1"></p>
+          <p data-i18n="teacher.prerequisites2"></p>
+          <ol>
+            <li>Python: <a href="https://www.python.org/downloads/">Download</a></li>
+            <li>Node.js: <a href="https://nodejs.org/en/download/">Download</a></li>
+          </ol>
+          <p data-i18n="teacher.prerequisites3"></p>
+          <h3 data-i18n="teacher.download"></h3>
+          <p data-i18n="teacher.download1"></p>
+          <p data-i18n="teacher.download2"></p>
+          <h3 data-i18n="teacher.setup"></h3>
+          <p data-i18n="teacher.setup1"></p>
+          <h4 data-i18n="teacher.setupPy"></h4>
+          <p data-i18n="teacher.setupPy1"></p>
+          <h4 data-i18n="teacher.setupNode"></h4>
+          <p data-i18n="teacher.setupNode1"></p>
+          <p data-i18n="teacher.setupNode2"></p>
+          <div class="terminal" role="region" aria-label="Terminal example">
+            <div class="terminal-header" aria-hidden="true">
+              <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            </div>
+            <pre>
+              <code class="language-bash" data-i18n="teacher.cd"></code>
+              <code class="language-bash" data-i18n="teacher.cd1"></code>
+              <code class="language-bash">$ cd ~/Downloads/masterclass_uhh-main</code>
+            </pre>
+            <pre>
+              <code class="language-bash" data-i18n="teacher.py"></code>
+              <code class="language-bash">$ python -m http.server 8000</code>
+            </pre>
+            <pre>
+              <code class="language-bash" data-i18n="teacher.node"></code>
+              <code class="language-bash" data-i18n="teacher.node-install"></code>
+              <code class="language-bash">$ npm install -g http-server</code>
+              <code class="language-bash" data-i18n="teacher.node-run"></code>
+              <code class="language-bash">$ npx http-server ./ -p 8000</code>
+            </pre>
+          </div>
+          <h3 data-i18n="teacher.access"></h3>
+          <p data-i18n="teacher.access1"></p>
+          <p data-i18n="teacher.access2"></p>
+          <p data-i18n="teacher.access3"></p>
+        </div>
+        <div class="guide-container" id="js-dev-guide-container">
+          <h1 class="mb-4" data-i18n="dev.title"></h1>
+          <p data-i18n="dev.intro"></p>
+          <h3 data-i18n="dev.prerequisites"></h3>
+          <p data-i18n="dev.prerequisites1"></p>
+          <ol>
+            <li>Node.js: <a href="https://nodejs.org/en/download/">Download</a></li>
+          </ol>
+          <h3 data-i18n="dev.clone"></h3>
+          <p data-i18n="dev.clone1"></p>
+          <p data-i18n="dev.clone2"></p>
+          <div class="terminal" role="region" aria-label="Terminal example">
+            <div class="terminal-header" aria-hidden="true">
+              <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            </div>
+            <pre>
+              <code class="language-bash" data-i18n="dev.git"></code>
+              <code class="language-bash" data-i18n="dev.git1"></code>
+              <code class="language-bash">$ git clone git@github.com:haddadanas/Masterclass_UHH.git masterclass</code>
+              <code class="language-bash">$ cd masterclass/</code>
+            </pre>
+            <pre>
+              <code class="language-bash" data-i18n="dev.install"></code>
+              <code class="language-bash">$ npm update</code>
+              <code class="language-bash" data-i18n="dev.install1"></code>
+            </pre>
+            <pre>
+              <code class="language-bash" data-i18n="dev.compile"></code>
+              <code class="language-bash">npm run build</code>
+              <code class="language-bash" data-i18n="dev.compile1"></code>
+              <code class="language-bash">npm run build:dev</code>
+              <code class="language-bash" data-i18n="dev.run"></code>
+              <code class="language-bash">npm test</code>
+            </pre>
+          </div>
+          <h3 data-i18n="dev.structure"></h3>
+          <p data-i18n="dev.structure1"></p>
         </div>
       </div>
     </section>

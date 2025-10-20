@@ -17,13 +17,13 @@ import { addController, addFolder, addColor, getHTMLObject, hasProperty, getGUIF
 function addGroups() {
   const gui = ispy.gui;
   // Add option to keep user cuts and preferences when switching between events
-  addController(gui, { saveSetting: false }, "saveSetting");
+  addController(gui, { saveSetting: false }, "saveSetting").domElement.id = "save-setting-controller";
 
-  addFolder(gui, "Detector");
-  addFolder(gui, "selection");
+  addFolder(gui, "Detector").domElement.id = "detector-folder";
+  addFolder(gui, "selection").domElement.id = "selection-folder";
 
   controls_groups.forEach((gr) => {
-    addFolder(gui, gr.name);
+    addFolder(gui, gr.name).domElement.id = `${gr.name}-folder`;
   });
   const additionalFolder = addFolder(gui, "additional");
   additionalControls.forEach((gr) => {

@@ -569,7 +569,6 @@ function initSelectionFields() {
   const gui = ispy.gui;
 
   const folder = getGUIFolder(gui, "selection");
-  folder.domElement.id = "selection-folder";
 
   const nMuon = 0,
     nElectron = 0,
