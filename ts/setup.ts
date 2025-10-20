@@ -573,7 +573,7 @@ function initSelectionFields() {
   const nMuon = 0,
     nElectron = 0,
     nPhoton = 0,
-    chargeSign = "",
+    chargeSign = undefined,
     minPt = 0,
     maxPt = Infinity,
     test = checkCurrentSelection;
@@ -589,7 +589,7 @@ function initSelectionFields() {
     check: test,
     nSelected: "0",
     firstSelected: "",
-  };
+  };  // TODO: use this object to get the selection cuts, since they are auto. updated 
 
   let cont: Controller | null = null;
   (Object.keys(row_obj) as (keyof typeof row_obj)[]).forEach((key) => {
@@ -597,7 +597,7 @@ function initSelectionFields() {
     // add the controller to the folder
     if (key === "charge") {
       folder.add;
-      cont = addController(folder, row_obj, key, {"": undefined, "positive": 1, "negative": -1, "opposite": 0});
+      cont = addController(folder, row_obj, key, { "": undefined, "positive": 1, "negative": -1, "opposite": 0 });
       cont.domElement.querySelectorAll("select option").forEach(
         (el) => (el.setAttribute("data-i18n", `gui.${el.innerHTML}`)),
       );
@@ -612,14 +612,7 @@ function initSelectionFields() {
     cont = addController(folder, row_obj, key);
 
     if (typeof row_obj[key] == "boolean") return;
-    if (typeof row_obj[key] == "function") {
-      // TODO refactor to css
-      const btnContainer = cont.domElement.previousSibling as HTMLElement;
-      btnContainer.style.width = "100%";
-      btnContainer.style.height = "auto";
-      btnContainer.id = "clickable-button";
-      return;
-    }
+    if (typeof row_obj[key] == "function") return;
     if (typeof row_obj[key] == "string") {
       cont.onFinishChange(function (this: SelectionFieldController) {
         this.setValue(this.initialValue);
