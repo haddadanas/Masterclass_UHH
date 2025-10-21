@@ -181,7 +181,7 @@ function applyThickerLines(
  * @param _objectIds The object IDs to show or hide.
  * @param visible Whether to show or hide the object.
  */
-function addSelectionRow(
+function addSelectionRow( // skipcq: JS-R1005
   group: string,
   key: string,
   name: string,

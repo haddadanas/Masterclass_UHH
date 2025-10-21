@@ -10,7 +10,7 @@ import { Particle, EventObject, EventSummary, MET, FourVector, SelectionFieldCon
 const mMuon2 = 0.10566 * 0.10566;
 const mElectron2 = 0.511e-3 * 0.511e-3;
 
-declare namespace bootstrap {
+declare namespace bootstrap { // skipcq: JS-0337
   class Modal {
     static getOrCreateInstance(element: HTMLElement): Modal;
     show(): void;
@@ -260,7 +260,7 @@ export function getParticleInfo(key: string, type: [string, string][], eventObje
  */
 export function getFourVectorByIndex(
   key: string,
-  objectUserData: { originalIndex: number; [key: string]: unknown },
+  objectUserData: { originalIndex: number;[key: string]: unknown },
 ): [FourVector, string?] {
   const currentEvent = getCurrentEvent();
   if (!currentEvent) {
