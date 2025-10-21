@@ -95,6 +95,13 @@ html[data-bs-theme="dark"] #uhh-light {
     border-radius: 4px;
 }
 
+.guide-container img {
+    background-color: var(--bs-light);
+    border: 1px solid;
+    margin: 0 1px 0 1px;
+    border-radius: 4px;
+}
+
 .terminal {
   background: #0b1220;
   color: #cfe8ff;
