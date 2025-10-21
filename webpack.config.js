@@ -1,6 +1,5 @@
 import path from "path";
 
-import CopyWebpackPlugin from "copy-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import webpack from "webpack";
 
