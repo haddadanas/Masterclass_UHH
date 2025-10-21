@@ -480,10 +480,7 @@ export function getGUIFolder(gui: GUI, key: string): GUI {
  */
 export function toggleCollapse(key: string): GUI {
   const folder = getGUIFolder(ispy.gui, key);
-  if (folder) {
-    folder.close();
-  }
-  return folder;
+  return folder.close();
 }
 
 /**
@@ -492,10 +489,7 @@ export function toggleCollapse(key: string): GUI {
  */
 export function toggleExpand(key: string): GUI {
   const folder = getGUIFolder(ispy.gui, key);
-  if (folder) {
-    folder.open();
-  }
-  return folder;
+  return folder.open();
 }
 
 /**
