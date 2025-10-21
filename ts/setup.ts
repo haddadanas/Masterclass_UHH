@@ -506,7 +506,7 @@ function createCheckboxContainer(cont: Controller) {
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
   checkbox.classList.add("sel-checkbox");
-  checkbox.name = "enable-" + selectionField.property;
+  checkbox.name = `enable-${selectionField.property}`;
   selectionField.checkbox = false;
 
   // Add the checkbox to the DOM
@@ -548,14 +548,14 @@ function createInfoCircle(cont: Controller) {
   popup.appendChild(textEle);
 
   document.body.appendChild(popup);
-  infoCircle.addEventListener("click", function (event: MouseEvent) {
+  infoCircle.addEventListener("click", (event: MouseEvent) => {
     const x = event.clientX;
     const y = event.clientY;
     popup.style.setProperty("top", `${y + 5}px`);
     popup.style.setProperty("left", `${x - 205}px`);
     popup.style.setProperty("display", "block");
   });
-  infoCircle.addEventListener("mouseout", function () {
+  infoCircle.addEventListener("mouseout", () => {
     popup.removeAttribute("style");
   });
 }
@@ -596,7 +596,6 @@ function initSelectionFields() {
 
     // add the controller to the folder
     if (key === "charge") {
-      folder.add;
       cont = addController(folder, row_obj, key, { "": undefined, "positive": 1, "negative": -1, "opposite": 0 });
       cont.domElement.querySelectorAll("select option").forEach(
         (el) => (el.setAttribute("data-i18n", `gui.${el.innerHTML}`)),

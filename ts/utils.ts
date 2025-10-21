@@ -131,7 +131,7 @@ export function addFolder(gui: GUI, key: string) {
   * @param args
  * @returns
  */
-export function addController<T extends object>(gui: GUI, target: T, key: keyof T, ...args: any[]) {
+export function addController<T extends object>(gui: GUI, target: T, key: keyof T, ...args: any[]) { // skipcq: JS-0323
   const controller = gui.add(target, key, ...args);
   controller.$name.setAttribute("data-i18n", `gui.${key.toString()}`);
   return controller;

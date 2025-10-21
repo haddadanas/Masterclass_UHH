@@ -3,14 +3,6 @@ import { driver } from "driver.js";
 import { ispy } from "./config.js";
 import { getTutorialSteps } from "./tutorial-config.js";
 
-export interface TutorialHooks {
-  openPanel?: (id: string) => void;
-  focusTool?: (tool: string) => void;
-  highlightCanvasObject?: (id: number) => void;
-  unhighlightAll?: () => void;
-  sendAnalytics?: (event: string, payload?: any) => void;
-}
-
 export function startTutorial(key: string) {
   const tutorialSteps = getTutorialSteps(key, ispy.lang);
 
