@@ -1,8 +1,8 @@
+import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import importPlugin from "eslint-plugin-import";
-import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
   globalIgnores(["dist/", "node_modules/", "js/"]),
