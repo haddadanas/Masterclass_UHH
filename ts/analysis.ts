@@ -247,15 +247,15 @@ function getSelectionParticles(event_index: string): {
     return results;
   }
   const selection = getSelectionCuts();
-  const pt_cut = selection["pt"];
-  const filteredSelection = ["TrackerMuons", "GsfElectrons", "Photons"].filter((sel) => {
+  const pt_cut = selection["minptvis"];
+  const filteredSelection = ["selMuons", "selElectrons", "selPhotons"].filter((sel) => {
     return !(selection[sel] === 0 || selection[sel] === -1);
   });
   results["met"] = summary.met;
   filteredSelection.forEach((key) => {
     if (summary.particles.has(key)) {
       let tmp = summary.particles.get(key) || [];
-      if (key === "GsfElectrons" || key === "TrackerMuons") {
+      if (key === "selElectrons" || key === "selMuons") {
         tmp = tmp.filter((part) => part["pt"] >= pt_cut);
       }
       tmp_parts.set(key, tmp);

@@ -52,17 +52,21 @@ main {
 
 /* toolbars and buttons */
 
-.primary-toolbar {
+.primary-toolbar, .secondary-toolbar {
   display: inline-flex;
-  overflow-x: scroll;
+  overflow: scroll;
   scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.primary-toolbar::-webkit-scrollbar,
+.secondary-toolbar::-webkit-scrollbar {
+  display: none;
 }
 
 .secondary-toolbar {
-  display: inline-flex;
-  overflow-x: scroll;
   margin-left: auto;
-  scrollbar-width: none;
 }
 
 .btn-group, .dropdown {
@@ -74,6 +78,7 @@ main {
   align-items: center;
   justify-content: center;
   margin: 0;
+  min-width: fit-content;
 }
 
 header .btn-group {

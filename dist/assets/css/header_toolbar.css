@@ -10,6 +10,9 @@
   font-size: 0.9rem;
   overflow-x: auto;
   white-space: nowrap;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .header-nav {
