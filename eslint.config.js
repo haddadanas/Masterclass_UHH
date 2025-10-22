@@ -59,7 +59,7 @@ export default defineConfig([
   {
     files: ["**/*.ts", "**/*.tsx", "**/*.js"],
     languageOptions: {
-      globals: globals.browser,
+      globals: { ...globals.browser, "BlobPart": "readonly", "EventListener": "readonly" },
       parser: tsParser,
       parserOptions: {
         ecmaVersion: 2022,

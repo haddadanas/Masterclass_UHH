@@ -41,7 +41,7 @@ function setDisplayVerticalHeight(vh: number) {
   const vh_obj = getHTMLObject("js-vh");
   vh_obj.innerHTML = vh.toString();
   const display = getHTMLObject("js-display");
-  display.style.setProperty("height", `${vh}vh`);
+  display.style.setProperty("height", `${vh}%`);
 
   const w = display.clientWidth;
   const h = display.clientHeight;
@@ -450,7 +450,7 @@ function init() {
   // Are we running an animation?
   ispy.animating = false;
 
-  setDisplayVerticalHeight(90);
+  setDisplayVerticalHeight(100);
   getHTMLObject<HTMLInputElement>("js-vh-slider").value = ispy.vh.toString();
 
   setFramerate(30);
@@ -520,6 +520,7 @@ function createCheckboxContainer(cont: Controller) {
 
   checkbox.addEventListener("change", function () {
     inputField.disabled = !this.checked;
+    selectionField.reset();
     inputField.value = this.checked ? selectionField.initialValue : "";
     selectionField.checkbox = this.checked;
   });

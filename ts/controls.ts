@@ -65,12 +65,12 @@ function enterFullscreen() {
   }
   if (container.requestFullscreen) {
     container.requestFullscreen();
-  } else if ((container as any).msRequestFullscreen) { // skipcq: JS-0323
-    (container as any).msRequestFullscreen(); // skipcq: JS-0323
-  } else if ((container as any).mozRequestFullScreen) { // skipcq: JS-0323
-    (container as any).mozRequestFullScreen(); // skipcq: JS-0323
-  } else if ((container as any).webkitRequestFullscreen) { // skipcq: JS-0323
-    (container as any).webkitRequestFullscreen(); // skipcq: JS-0323
+  } else if ("msRequestFullscreen" in container && container.msRequestFullscreen instanceof Function) {
+    container.msRequestFullscreen();
+  } else if ("mozRequestFullScreen" in container && container.mozRequestFullScreen instanceof Function) {
+    container.mozRequestFullScreen();
+  } else if ("webkitRequestFullscreen" in container && container.webkitRequestFullscreen instanceof Function) {
+    container.webkitRequestFullscreen();
   } else {
     alert("Cannot go to full screen!");
   }
@@ -83,12 +83,12 @@ function enterFullscreen() {
 function exitFullscreen() {
   if (document.exitFullscreen) {
     document.exitFullscreen();
-  } else if ((document as any).msExitFullscreen) { // skipcq: JS-0323
-    (document as any).msExitFullscreen(); // skipcq: JS-0323
-  } else if ((document as any).mozCancelFullScreen) { // skipcq: JS-0323
-    (document as any).mozCancelFullScreen(); // skipcq: JS-0323
-  } else if ((document as any).webkitExitFullscreen) { // skipcq: JS-0323
-    (document as any).webkitExitFullscreen(); // skipcq: JS-0323
+  } else if ("msExitFullscreen" in document && document.msExitFullscreen instanceof Function) {
+    document.msExitFullscreen();
+  } else if ("mozCancelFullScreen" in document && document.mozCancelFullScreen instanceof Function) {
+    document.mozCancelFullScreen();
+  } else if ("webkitExitFullscreen" in document && document.webkitExitFullscreen instanceof Function) {
+    document.webkitExitFullscreen();
   } else {
     alert("Cannot exit full screen. Try Esc?");
   }

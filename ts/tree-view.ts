@@ -131,7 +131,7 @@ function showObject(key: string, view: string, show: boolean) {
 function applyThickerLines(
   key: string,
   sf: GUI,
-  row_obj: Record<string, any>, // skipcq: JS-0323
+  row_obj: { linewidth: number; [key: string]: number | boolean | string },
 ) {
   if (
     key.includes("GEMDigis") ||
@@ -185,7 +185,7 @@ function addSelectionRow( // skipcq: JS-R1005
   group: string,
   key: string,
   name: string,
-  _objectIds: any[], // skipcq: JS-0323 --- IGNORE --- objectIds not used
+  _objectIds: unknown[],
   visible: boolean,
 ) {
   let opacity = 1.0;

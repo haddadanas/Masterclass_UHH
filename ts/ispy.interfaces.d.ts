@@ -40,7 +40,7 @@ interface SelectionFieldController extends Controller {
 interface EventObject {
   Collections: Record<string, Array<Array<number | number[]>>>;
   Types: Record<string, [string, string][]>;
-  [key: string]: any; // skipcq: JS-0323
+  [key: string]: Record;
 }
 
 interface TrackLine extends Line {
@@ -120,7 +120,7 @@ interface Ispy {
   inverted_colors: boolean;
 
   // Detector and Data
-  detector: { Collections: Record<string, any> }; // skipcq: JS-0323
+  detector: { Collections: Record };
 
   // Stats and Physics
   stats: Stats;
