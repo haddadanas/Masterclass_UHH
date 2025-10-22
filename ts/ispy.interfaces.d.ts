@@ -1,7 +1,7 @@
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
 import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer";
-import { GUI, GUIController } from "dat.gui";
+import { GUI, Controller } from "lil-gui";
 import {
   Scene,
   WebGLRenderer,
@@ -17,27 +17,30 @@ import {
 import Stats from "stats.js";
 import JSZip from "jszip";
 
-interface SubFolderReduced {
+interface SubFolder {
   Detector: string[];
-  Selection: Array<GUIController>;
-  Controllers: Array<GUIController>;
-  Info: Array<GUIController>;
-  [key: string]: Array<GUIController> | string[];
+  selection: Array<Controller>;
+  controllers: Array<Controller>;
+  info: Array<Controller>;
+  [key: string]: Array<Controller> | string[];
 }
 
-interface SelectionFieldController extends GUIController {
+interface SelectionFieldController extends Controller {
   __input: HTMLInputElement;
   initialValue: string;
   checkbox: boolean;
   property: string;
   getValue: () => number | string | boolean;
-  setValue: (value: number | string | boolean) => GUIController;
+  setValue: (value: number | string | boolean) => Controller;
+  $name: HTMLElement;
+  $input: HTMLInputElement;
+  domElement: HTMLElement;
 }
 
 interface EventObject {
   Collections: Record<string, Array<Array<number | number[]>>>;
   Types: Record<string, [string, string][]>;
-  [key: string]: any; // skipcq: JS-0323
+  [key: string]: Record;
 }
 
 interface TrackLine extends Line {
@@ -67,6 +70,8 @@ interface Ispy {
   // File and Event Information
   file_name?: string;
   version: string;
+  lang: string;
+  guiLangData: Record<string, string>;
   event_index: number;
   current_event?: EventObject;
   event_list: string[];
@@ -96,10 +101,9 @@ interface Ispy {
 
   // GUI and Controls
   gui: GUI;
-  guiReduced: GUI;
   clipgui?: GUI;
-  subfolders: Record<string, string[]>;
-  subfoldersReduced: SubFolderReduced;
+  subfolders: SubFolder;
+  additionalFolders: { [key: string]: string[] };
   controls?: OrbitControls | TrackballControls;
 
   // Interaction and Animation
@@ -116,7 +120,7 @@ interface Ispy {
   inverted_colors: boolean;
 
   // Detector and Data
-  detector: { Collections: Record<string, any> }; // skipcq: JS-0323
+  detector: { Collections: Record };
 
   // Stats and Physics
   stats: Stats;

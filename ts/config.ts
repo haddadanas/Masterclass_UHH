@@ -1,8 +1,10 @@
-import { GUI } from "dat.gui";
+import { GUI } from "lil-gui";
 import { Raycaster, Scene, Vector3 } from "three";
 import Stats from "stats.js";
 
 import { Ispy, Analysis, EventSummary, TrackLine } from "./ispy.interfaces.js";
+
+const supportedLanguages = ["en", "de"];
 
 // These need to be defined before adding objects:
 const POINT = 0;
@@ -24,6 +26,7 @@ const BUFFERBOX = 11;
 const STACKEDTOWER = 12;
 
 export {
+  supportedLanguages,
   POINT,
   LINE,
   BOX,
@@ -41,7 +44,8 @@ export {
 
 export const ispy: Ispy = {
   // Metadata and versioning
-  version: "v2.0.0-UHH",
+  version: "v3.0.0-HH",
+  lang: "en",
   event_list: [],
   ig_data: null,
   ievent: 0,
@@ -49,13 +53,13 @@ export const ispy: Ispy = {
 
   // Detector and collections
   detector: { Collections: {} },
-  subfoldersReduced: {
-    Selection: [],
+  subfolders: {
+    selection: [],
     Detector: [],
-    Controllers: [],
-    Info: [],
+    controllers: [],
+    info: [],
   },
-  subfolders: {},
+  additionalFolders: {},
 
   // Views and rendering settings
   views: ["3D", "RPhi", "RhoZ"],
@@ -90,16 +94,12 @@ export const ispy: Ispy = {
   image_data: null,
 
   // GUI and stats
-  guiReduced: new GUI({
-    name: "Controls Reduced",
-    hideable: false,
-    autoPlace: false,
-  }),
   gui: new GUI({
-    name: "Controls",
-    hideable: false,
+    title: "Controls",
+    closeFolders: true,
     autoPlace: false,
   }),
+  guiLangData: {},
   stats: new Stats(),
 
   // Scenes and rendering

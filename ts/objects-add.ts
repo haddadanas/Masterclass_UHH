@@ -14,7 +14,8 @@ import {
 import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
 import { BufferGeometryUtils } from "three/examples/jsm/utils/BufferGeometryUtils.js";
-import { LineGeometry } from "three/examples/jsm/lines/LineGeometry";
+import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
+import $ from "jquery";
 
 import {
   POINT,
@@ -29,17 +30,11 @@ import {
   STACKEDTOWER,
   ispy,
 } from "./config.js";
-import {
-  data_groups,
-  detector_description,
-  disabled,
-  event_description,
-  reduced_data_groups,
-} from "./objects-config.js";
+import { data_groups, detector_description, disabled, event_description, controls_groups } from "./objects-config.js";
 import { addSelectionRow, applySavedSettings, clearSubfolders, saveCutSettings } from "./tree-view.js";
 import { showView } from "./display.js";
 import { EventObject, Description } from "./ispy.interfaces.js";
-import { assertDefined } from "./utils.js";
+import { assertDefined, updateGUILang } from "./utils.js";
 
 type DataArray = (number | number[] | string)[][];
 
@@ -228,13 +223,7 @@ function addSolidBoxToScene(data: DataArray, key: string, descr: Description, oc
   }
 }
 
-function addScaledSolidBoxToScene(
-  data: DataArray,
-  key: string,
-  descr: Description,
-  ocolor: Color,
-  transp: boolean,
-) {
+function addScaledSolidBoxToScene(data: DataArray, key: string, descr: Description, ocolor: Color, transp: boolean) {
   const ss_boxes: BufferGeometry[] = [];
   let maxEnergy = 0.0;
 
@@ -263,13 +252,7 @@ function addScaledSolidBoxToScene(
   }
 }
 
-function addScaledSolidTowerToScene(
-  data: DataArray,
-  key: string,
-  descr: Description,
-  ocolor: Color,
-  transp: boolean,
-) {
+function addScaledSolidTowerToScene(data: DataArray, key: string, descr: Description, ocolor: Color, transp: boolean) {
   const sst_boxes: BufferGeometry[] = [];
   let maxE = 0.0;
 
@@ -599,7 +582,7 @@ function addEvent(event: EventObject) {
     addToScene(event, v);
   });
 
-  reduced_data_groups.forEach(({ name: n, function: addFunc }) => {
+  controls_groups.forEach(({ name: n, function: addFunc }) => {
     addFunc(n);
   });
 
@@ -607,6 +590,7 @@ function addEvent(event: EventObject) {
   applySavedSettings(currentSetting);
 
   showView(ispy.current_view || "3D");
+  updateGUILang();
 }
 
 // export all functions

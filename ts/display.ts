@@ -1,11 +1,10 @@
-import { Camera, Color, Mesh, Object3D, OrthographicCamera, PerspectiveCamera, Vector2, Vector3 } from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { Camera, Color, Object3D, OrthographicCamera, PerspectiveCamera, Vector2, Vector3 } from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 import {
   getFourVectorByIndex,
   getHTMLObject,
   removeExistingBubble,
-  changeMeshMaterials,
   showTrackInfoBubble,
   assertDefined,
 } from "./utils.js";
@@ -22,12 +21,28 @@ function lookAtOrigin() {
   ispy.camera?.lookAt(new Vector3(0, 0, 0));
 }
 
+/** Initializes the camera position to a default location.
+ * @returns void
+ */
+function initCameraPosition() {
+  assertDefined(ispy.camera, "Camera is not defined");
+  ispy.camera.position.x = 9.5;
+  ispy.camera.position.y = 9.5;
+  ispy.camera.position.z = 13.0;
+
+  ispy.camera.zoom = 2.0;
+  ispy.camera.up = new Vector3(0, 1, 0);
+
+  ispy.camera.updateProjectionMatrix();
+  lookAtOrigin();
+}
+
 /**
  * Initializes the camera object, saved to ispy.camera.
  * @returns void
  */
 function initCamera() {
-  const display = getHTMLObject("display");
+  const display = getHTMLObject("js-display");
   const width = display.clientWidth;
   const height = display.clientHeight;
 
@@ -41,109 +56,7 @@ function initCamera() {
 
   ispy.is_perspective = true;
   ispy.camera = ispy.is_perspective ? ispy.p_camera : ispy.o_camera;
-  ispy.camera.position.x = 9.5;
-  ispy.camera.position.y = 9.5;
-  ispy.camera.position.z = 13.0;
-
-  ispy.camera.zoom = 2.0;
-  ispy.camera.up = new Vector3(0, 1, 0);
-
-  ispy.camera.updateProjectionMatrix();
-  lookAtOrigin();
-}
-
-/**
- * Zooms in the camera view.
- * @returns void
- */
-function zoomIn() {
-  assertDefined(ispy.camera, "Camera is not defined");
-  ispy.camera.zoom += 0.5;
-  ispy.camera.updateProjectionMatrix();
-}
-
-/**
- * Zooms out the camera view.
- * @returns void
- */
-function zoomOut() {
-  assertDefined(ispy.camera, "Camera is not defined");
-  ispy.camera.zoom -= 0.5;
-  ispy.camera.updateProjectionMatrix();
-}
-
-/**
- * Inverts the colors of the scene.
- * @returns void
- */
-function invertColors() {
-  assertDefined(ispy.renderer, "Renderer is not defined");
-  ispy.inverted_colors = !ispy.inverted_colors;
-
-  if (!ispy.inverted_colors) {
-    ispy.renderer.setClearColor(new Color(0x232323), 1);
-  } else {
-    ispy.renderer.setClearColor(new Color(0xefefef), 1);
-  }
-
-  const body = document.querySelector("body");
-  assertDefined(body, "Body element not found");
-  body.classList.toggle("white");
-  body.classList.toggle("black");
-
-  const ids = [
-    "event-info",
-    "titlebar",
-    "toolbar",
-    "display",
-    "browser-table",
-    "browser-files",
-    "obj-table",
-    "obj-files",
-  ];
-
-  ids.forEach((id) => {
-    const el = getHTMLObject(id);
-
-    el.classList.toggle("white");
-    el.classList.toggle("black");
-  });
-
-  const selectors = ["#browser-table th", "#obj-table th", ".modal-content", ".modal-title", "#table-data-eventObject"];
-
-  selectors.forEach((sels) => {
-    document.querySelectorAll(sels).forEach((s) => {
-      s.classList.toggle("white");
-      s.classList.toggle("black");
-    });
-  });
-}
-
-/**
- * Sets the transparency for imported objects.
- * @param t The transparency value to set for the imported objects.
- * @returns void
- */
-function setTransparency(t: number) {
-  assertDefined(ispy.scene, "Scene is not defined");
-  ispy.importTransparency = t;
-
-  getHTMLObject("trspy").innerHTML = t.toString();
-
-  const imported = ispy.scene.getObjectByName("Imported");
-  if (!imported) {
-    console.error("Imported object not found in the scene");
-    return;
-  }
-
-  imported.children.forEach((obj) => {
-    (obj.children as Mesh[]).forEach((c) => {
-      changeMeshMaterials(c.material, (m) => {
-        m.transparent = true;
-        m.opacity = t;
-      });
-    });
-  });
+  initCameraPosition();
 }
 
 /**
@@ -152,8 +65,8 @@ function setTransparency(t: number) {
 function onWindowResize() {
   assertDefined(ispy.camera, "Camera is not defined");
   assertDefined(ispy.renderer, "Renderer is not defined");
-  const display = getHTMLObject("display");
-  display.removeAttribute("style");
+  const display = getHTMLObject("js-display");
+  // display.removeAttribute("style"); TODO check if needed
 
   const w = display.clientWidth;
   const h = display.clientHeight;
@@ -194,7 +107,7 @@ function getObjectIds(obj: Object3D): number[] {
 function onMouseMove(e: MouseEvent) {
   e.preventDefault();
 
-  const display = getHTMLObject("display");
+  const display = getHTMLObject("js-display");
   const w = display.clientWidth;
   const h = display.clientHeight;
 
@@ -273,49 +186,8 @@ function onMouseDown(_e: MouseEvent) {
       }
     }
 
-    ispy.subfoldersReduced["Info"][1].setValue(ispy.selected_objects.size);
+    ispy.subfolders["info"][1].setValue(ispy.selected_objects.size);
   }
-}
-
-/**
- * Shows the invariant mass of selected objects in a modal dialog.
- * @returns void
- */
-function showMass() {
-  let mass = 0;
-  let sumE = 0;
-  let sumPx = 0;
-  let sumPy = 0;
-  let sumPz = 0;
-
-  ispy.selected_objects.forEach((o, _key) => {
-    sumE += o.fourVector.E;
-    sumPx += o.fourVector.px;
-    sumPy += o.fourVector.py;
-    sumPz += o.fourVector.pz;
-
-    // This is cheating. Should get colors from event_description config.
-    if (o.ptype === "Electron") {
-      o.material.color.setHex(0x19ff19);
-    }
-
-    if (o.ptype === "Muon") {
-      o.material.color.setHex(0xff0000);
-    }
-
-    o.selected = false;
-  });
-
-  mass = sumE * sumE;
-  mass -= sumPx * sumPx + sumPy * sumPy + sumPz * sumPz;
-  mass = Math.sqrt(mass);
-
-  getHTMLObject("invariant-mass").innerHTML = mass.toFixed(2);
-  //document.getElementById('invariant-mass-modal').style.display = 'block';
-  $("#invariant-mass-modal").modal("show");
-
-  ispy.selected_objects.clear();
-  ispy.subfoldersReduced["Info"][1].setValue(0);
 }
 
 /**
@@ -381,13 +253,13 @@ function unHighlightObject() {
 function resetView() {
   assertDefined(ispy.controls, "Controls are not defined");
   setPerspective();
-  initCamera();
+  initCameraPosition();
 
   ispy.controls.reset();
 
-  getHTMLObject("3d").classList.add("active");
-  getHTMLObject("rphi").classList.remove("active");
-  getHTMLObject("rhoz").classList.remove("active");
+  getHTMLObject("js-3d").classList.add("active");
+  getHTMLObject("js-rphi").classList.remove("active");
+  getHTMLObject("js-rhoz").classList.remove("active");
 
   ispy.current_view = "3D";
   ispy.scene = ispy.scenes["3D"];
@@ -401,10 +273,8 @@ function setXY() {
   assertDefined(ispy.camera, "Camera is not defined");
   const length = ispy.camera.position.length();
 
-  ispy.camera.position.x = 0;
-  ispy.camera.position.y = 0;
-  ispy.camera.position.z = length;
-  ispy.camera.up = new Vector3(0, 1, 0);
+  ispy.camera.position.set(0, 0, length);
+  ispy.camera.up.set(0, 1, 0);
 
   lookAtOrigin();
 }
@@ -417,10 +287,8 @@ function setZX() {
   assertDefined(ispy.camera, "Camera is not defined");
   const length = ispy.camera.position.length();
 
-  ispy.camera.position.x = 0;
-  ispy.camera.position.y = length;
-  ispy.camera.position.z = 0;
-  ispy.camera.up = new Vector3(1, 0, 0);
+  ispy.camera.position.set(0, length, 0);
+  ispy.camera.up.set(0, 1, 0);
 
   lookAtOrigin();
 }
@@ -433,10 +301,8 @@ function setYZ() {
   assertDefined(ispy.camera, "Camera is not defined");
   const length = ispy.camera.position.length();
 
-  ispy.camera.position.x = -length;
-  ispy.camera.position.y = 0;
-  ispy.camera.position.z = 0;
-  ispy.camera.up = new Vector3(0, 1, 0);
+  ispy.camera.position.set(-length, 0, 0);
+  ispy.camera.up.set(0, 1, 0);
 
   lookAtOrigin();
 }
@@ -449,8 +315,8 @@ function setOrthographic() {
   assertDefined(ispy.o_camera, "Orthographic camera is not defined");
   assertDefined(ispy.p_camera, "Perspective camera is not defined");
   assertDefined(ispy.controls, "Controls are not defined");
-  getHTMLObject("perspective").classList.remove("active");
-  getHTMLObject("orthographic").classList.add("active");
+  getHTMLObject("js-perspective").classList.remove("active");
+  getHTMLObject("js-orthographic").classList.add("active");
 
   ispy.is_perspective = false;
   ispy.camera = ispy.o_camera;
@@ -494,8 +360,8 @@ function setPerspective() {
   assertDefined(ispy.o_camera, "Orthographic camera is not defined");
   assertDefined(ispy.p_camera, "Perspective camera is not defined");
   assertDefined(ispy.controls, "Controls are not defined");
-  getHTMLObject("perspective").classList.add("active");
-  getHTMLObject("orthographic").classList.remove("active");
+  getHTMLObject("js-perspective").classList.add("active");
+  getHTMLObject("js-orthographic").classList.remove("active");
 
   ispy.is_perspective = true;
   ispy.camera = ispy.p_camera;
@@ -524,16 +390,16 @@ function showView(view: string) {
   assertDefined(ispy.controls, "Controls are not defined");
   switch (view) {
     case "3D":
-      getHTMLObject("3d").classList.add("active");
-      getHTMLObject("rphi").classList.remove("active");
-      getHTMLObject("rhoz").classList.remove("active");
+      getHTMLObject("js-3d").classList.add("active");
+      getHTMLObject("js-rphi").classList.remove("active");
+      getHTMLObject("js-rhoz").classList.remove("active");
 
-      getHTMLObject("perspective").removeAttribute("disabled");
-      getHTMLObject("orthographic").removeAttribute("disabled");
+      getHTMLObject("js-perspective").removeAttribute("disabled");
+      getHTMLObject("js-orthographic").removeAttribute("disabled");
 
-      getHTMLObject("xy").removeAttribute("disabled");
-      getHTMLObject("yz").removeAttribute("disabled");
-      getHTMLObject("xz").removeAttribute("disabled");
+      getHTMLObject("js-xy").removeAttribute("disabled");
+      getHTMLObject("js-yz").removeAttribute("disabled");
+      getHTMLObject("js-xz").removeAttribute("disabled");
 
       (ispy.controls as OrbitControls).enableRotate = true;
 
@@ -544,16 +410,16 @@ function showView(view: string) {
       break;
 
     case "RPhi":
-      getHTMLObject("3d").classList.remove("active");
-      getHTMLObject("rphi").classList.add("active");
-      getHTMLObject("rhoz").classList.remove("active");
+      getHTMLObject("js-3d").classList.remove("active");
+      getHTMLObject("js-rphi").classList.add("active");
+      getHTMLObject("js-rhoz").classList.remove("active");
 
-      getHTMLObject("perspective").setAttribute("disabled", "");
-      getHTMLObject("orthographic").setAttribute("disabled", "");
+      getHTMLObject("js-perspective").setAttribute("disabled", "");
+      getHTMLObject("js-orthographic").setAttribute("disabled", "");
 
-      getHTMLObject("xy").setAttribute("disabled", "");
-      getHTMLObject("yz").setAttribute("disabled", "");
-      getHTMLObject("xz").setAttribute("disabled", "");
+      getHTMLObject("js-xy").setAttribute("disabled", "");
+      getHTMLObject("js-yz").setAttribute("disabled", "");
+      getHTMLObject("js-xz").setAttribute("disabled", "");
 
       (ispy.controls as OrbitControls).enableRotate = false;
       ispy.controls.reset();
@@ -566,16 +432,16 @@ function showView(view: string) {
       break;
 
     case "RhoZ":
-      getHTMLObject("3d").classList.remove("active");
-      getHTMLObject("rphi").classList.remove("active");
-      getHTMLObject("rhoz").classList.add("active");
+      getHTMLObject("js-3d").classList.remove("active");
+      getHTMLObject("js-rphi").classList.remove("active");
+      getHTMLObject("js-rhoz").classList.add("active");
 
-      getHTMLObject("perspective").setAttribute("disabled", "");
-      getHTMLObject("orthographic").setAttribute("disabled", "");
+      getHTMLObject("js-perspective").setAttribute("disabled", "");
+      getHTMLObject("js-orthographic").setAttribute("disabled", "");
 
-      getHTMLObject("xy").setAttribute("disabled", "");
-      getHTMLObject("yz").setAttribute("disabled", "");
-      getHTMLObject("xz").setAttribute("disabled", "");
+      getHTMLObject("js-xy").setAttribute("disabled", "");
+      getHTMLObject("js-yz").setAttribute("disabled", "");
+      getHTMLObject("js-xz").setAttribute("disabled", "");
 
       (ispy.controls as OrbitControls).enableRotate = false;
       ispy.controls.reset();
@@ -594,17 +460,12 @@ function showView(view: string) {
 
 export {
   initCamera,
-  zoomIn,
-  zoomOut,
-  invertColors,
-  setTransparency,
   onWindowResize,
   getObjectIds,
   onMouseMove,
   onMouseDown,
   highlightObject,
   unHighlightObject,
-  showMass,
   resetView,
   setXY,
   setZX,

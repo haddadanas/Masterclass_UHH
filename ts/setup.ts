@@ -13,21 +13,19 @@ import {
   Font,
   DirectionalLight,
   Group,
-  REVISION,
   Scene,
 } from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { GUI, GUIController } from "dat.gui";
+import { GUI, Controller, OptionController } from "lil-gui";
 import { update } from "@tweenjs/tween.js";
 
-import { assertDefined, getHTMLObject } from "./utils.js";
+import { addController, assertDefined, getGUIFolder, getHTMLObject } from "./utils.js";
 import { ispy } from "./config.js";
 import { useRenderer, updateClipping, render } from "./renderer.js";
 import { importDetector, loadDroppedFile } from "./files-load.js";
 import { data_groups } from "./objects-config.js";
 import { initCamera, onMouseDown, onMouseMove, onWindowResize } from "./display.js";
-import { CHARGE_MAP, SELEC_NAME_MAP } from "./analysis-config.js";
-import { checkCurrentSelection } from "./uhh_selection.js";
+import { checkCurrentSelection } from "./analysis.js";
 import { SelectionFieldController } from "./ispy.interfaces.js";
 
 /**
@@ -40,10 +38,10 @@ function setDisplayVerticalHeight(vh: number) {
   assertDefined(ispy.renderer, "Renderer is not initialized");
   ispy.vh = vh;
 
-  const vh_obj = getHTMLObject("vh");
+  const vh_obj = getHTMLObject("js-vh");
   vh_obj.innerHTML = vh.toString();
-  const display = getHTMLObject("display");
-  display.style.setProperty("height", `${vh}vh`);
+  const display = getHTMLObject("js-display");
+  display.style.setProperty("height", `${vh}%`);
 
   const w = display.clientWidth;
   const h = display.clientHeight;
@@ -67,7 +65,7 @@ function setDisplayVerticalHeight(vh: number) {
  */
 function setFramerate(fr: number) {
   ispy.framerate = fr;
-  const fr_obj = getHTMLObject("fr");
+  const fr_obj = getHTMLObject("js-fr");
   fr_obj.innerHTML = fr.toString();
 }
 
@@ -76,13 +74,12 @@ function setFramerate(fr: number) {
  */
 function setupClippingGUI() {
   ispy.clipgui = new GUI({
-    name: "Clipping Controls",
-    hideable: false,
+    title: "Clipping Controls",
     autoPlace: false,
   });
 
-  ispy.clipgui.domElement.id = "clipgui";
-  const titlebar = getHTMLObject("titlebar");
+  ispy.clipgui.domElement.id = "js-clipgui";
+  const titlebar = getHTMLObject("js-menu-container");
   titlebar.appendChild(ispy.clipgui.domElement);
 
   const localFolder = ispy.clipgui.addFolder("Local Clipping");
@@ -146,7 +143,7 @@ function setupClippingGUI() {
     .add(local_params.planeX, "constant")
     .min(-10)
     .max(10)
-    .onChange((d) => (ispy.local_planes[0].constant = d));
+    .onChange((d: number) => (ispy.local_planes[0].constant = d));
 
   local_planeX.add(local_params.planeX, "negated").onChange(() => {
     ispy.local_planes[0].negate();
@@ -159,7 +156,7 @@ function setupClippingGUI() {
     .add(global_params.planeX, "constant")
     .min(-10)
     .max(10)
-    .onChange((d) => (ispy.global_planes[0].constant = d));
+    .onChange((d: number) => (ispy.global_planes[0].constant = d));
 
   global_planeX.add(global_params.planeX, "negated").onChange(() => {
     ispy.global_planes[0].negate();
@@ -172,7 +169,7 @@ function setupClippingGUI() {
     .add(local_params.planeY, "constant")
     .min(-10)
     .max(10)
-    .onChange((d) => (ispy.local_planes[1].constant = d));
+    .onChange((d: number) => (ispy.local_planes[1].constant = d));
 
   local_planeY.add(local_params.planeY, "negated").onChange(() => {
     ispy.local_planes[1].negate();
@@ -185,7 +182,7 @@ function setupClippingGUI() {
     .add(global_params.planeY, "constant")
     .min(-10)
     .max(10)
-    .onChange((d) => (ispy.global_planes[1].constant = d));
+    .onChange((d: number) => (ispy.global_planes[1].constant = d));
 
   global_planeY.add(global_params.planeY, "negated").onChange(() => {
     ispy.global_planes[1].negate();
@@ -198,7 +195,7 @@ function setupClippingGUI() {
     .add(local_params.planeZ, "constant")
     .min(-30)
     .max(30)
-    .onChange((d) => (ispy.local_planes[2].constant = d));
+    .onChange((d: number) => (ispy.local_planes[2].constant = d));
 
   local_planeZ.add(local_params.planeZ, "negated").onChange(() => {
     ispy.local_planes[2].negate();
@@ -211,7 +208,7 @@ function setupClippingGUI() {
     .add(global_params.planeZ, "constant")
     .min(-30)
     .max(30)
-    .onChange((d) => (ispy.global_planes[2].constant = d));
+    .onChange((d: number) => (ispy.global_planes[2].constant = d));
 
   global_planeZ.add(global_params.planeZ, "negated").onChange(() => {
     ispy.global_planes[2].negate();
@@ -224,20 +221,10 @@ function setupClippingGUI() {
 /**
  * Initializes the application.
  */
-function setupGUIs() {
-  ispy.gui.domElement.id = "treegui";
-  ispy.guiReduced.domElement.id = "treegui-reduced";
-  // document.getElementById('titlebar').appendChild(ispy.gui.domElement);
-  const titlebar = getHTMLObject("titlebar");
-  titlebar.appendChild(ispy.guiReduced.domElement);
-
-  // It seems currently impossible with dat.gui
-  // to fetch the folders as an array and remove them
-  // (without knowing the name beforehand).
-  // Therefore we have to keep track of them by-hand.
-  // TODO check if needed
-  // ispy.subfolders = {};
-  // ispy.subfoldersReduced = {};
+function setupGUI() {
+  ispy.gui.domElement.id = "js-treegui";
+  const titlebar = getHTMLObject("js-menu-container");
+  titlebar.appendChild(ispy.gui.domElement);
 }
 
 /**
@@ -275,7 +262,7 @@ function setupInset(height: number) {
 
   const font_loader = new FontLoader();
 
-  font_loader.load("./fonts/helvetiker_regular.typeface.json", (font: Font) => {
+  font_loader.load("./assets/fonts/helvetiker_regular.typeface.json", (font: Font) => {
     const tps = { size: 0.75, height: 0.1, font: font };
 
     const x_geo = new TextGeometry("X", tps);
@@ -310,9 +297,9 @@ function handleToggles() {
   // On page load hide the stats
   const stats = ispy.stats.dom;
   stats.id = "stats";
-  stats.style = "display: none";
+  stats.style.display = "none";
 
-  const show_stats = getHTMLObject("show-stats") as HTMLInputElement;
+  const show_stats = getHTMLObject<HTMLInputElement>("js-show-stats");
 
   // FF keeps the check state on reload so force an "uncheck"
   show_stats.checked = false;
@@ -321,44 +308,39 @@ function handleToggles() {
     show_stats.checked === true ? (stats.style.display = "block") : (stats.style.display = "none"),
   );
 
-  const show_logo = getHTMLObject("show-logo") as HTMLInputElement;
+  const show_logo = getHTMLObject<HTMLInputElement>("js-show-logo");
   show_logo.checked = true;
 
   show_logo.addEventListener("change", (event: Event) => {
-    const cms_logo = getHTMLObject("cms-logo");
+    const cms_logo = getHTMLObject("js-cms-logo");
     return (event.target as HTMLInputElement).checked
-      ? (cms_logo.style.display = "block")
+      ? (cms_logo.style.display = "block") // TODO should revert to default
       : (cms_logo.style.display = "none");
   });
 
   ispy.inverted_colors = false;
-  const invert_colors = getHTMLObject("invert-colors") as HTMLInputElement;
-  invert_colors.checked = false;
 
-  const show_axes = getHTMLObject("show-axes") as HTMLInputElement;
+  const show_axes = getHTMLObject<HTMLInputElement>("js-show-axes");
 
   // FF keeps the state after a page refresh. Therefore force uncheck.
   show_axes.checked = false;
 
   show_axes.addEventListener("change", (event: Event) => {
-    const axes = getHTMLObject("axes");
+    const axes = getHTMLObject("js-axes");
     return (event.target as HTMLInputElement).checked ? (axes.style.display = "none") : (axes.style.display = "block");
   });
 
   ispy.use_line2 = false;
-
-  const pickable_lines = getHTMLObject("pickable_lines") as HTMLInputElement;
-
+  const pickable_lines = getHTMLObject<HTMLInputElement>("js-pickable_lines");
   pickable_lines.checked = false;
-
   pickable_lines.addEventListener("change", (event: Event) => {
     ispy.use_line2 = (event.target as HTMLInputElement).checked ? true : false;
   });
 
-  const clipgui = getHTMLObject("clipgui");
+  const clipgui = getHTMLObject("js-clipgui");
   clipgui.style.display = "none";
 
-  const clipping = getHTMLObject("clipping") as HTMLInputElement;
+  const clipping = getHTMLObject<HTMLInputElement>("js-clipping");
   clipping.checked = false;
 
   clipping.addEventListener("change", (event: Event) => {
@@ -403,7 +385,7 @@ function handleDragAndDrop() {
  * @returns void
  */
 function init() {
-  const display = getHTMLObject("display");
+  const display = getHTMLObject("js-display");
 
   ispy.scenes = {
     "3D": new Scene(),
@@ -427,13 +409,13 @@ function init() {
 
   useRenderer("WebGLRenderer");
 
-  setupGUIs();
+  setupGUI();
   setupClippingGUI();
   updateClipping();
   handleToggles();
   handleDragAndDrop();
 
-  display.appendChild(ispy.stats.dom);
+  display.appendChild(ispy.stats.dom); // TODO handle the styling in css
   // The second argument is necessary to make sure that mouse events are
   // handled only when in the canvas
   // TODO check if needed
@@ -458,11 +440,6 @@ function init() {
     });
   });
 
-  getHTMLObject("version").innerHTML = ispy.version;
-  getHTMLObject("threejs").innerHTML = `r${REVISION}`;
-  getHTMLObject("sweetalert").innerHTML = "2.1.0";
-  // getHTMLObject("plotly").innerHTML = Plotly.version;
-
   window.addEventListener("resize", onWindowResize, false);
 
   ispy.raycaster.layers.set(2);
@@ -473,17 +450,17 @@ function init() {
   // Are we running an animation?
   ispy.animating = false;
 
-  setDisplayVerticalHeight(90);
-  (getHTMLObject("vh-slider") as HTMLInputElement).value = ispy.vh.toString();
+  setDisplayVerticalHeight(100);
+  getHTMLObject<HTMLInputElement>("js-vh-slider").value = ispy.vh.toString();
 
   setFramerate(30);
-  (getHTMLObject("fps-slider") as HTMLInputElement).value = ispy.framerate.toString();
+  getHTMLObject<HTMLInputElement>("js-fps-slider").value = ispy.framerate.toString();
 
-  (getHTMLObject("transparency-slider") as HTMLInputElement).value = ispy.importTransparency.toString();
+  getHTMLObject<HTMLInputElement>("js-transparency-slider").value = ispy.importTransparency.toString();
 
-  getHTMLObject("trspy").innerHTML = ispy.importTransparency.toString();
+  getHTMLObject("js-trspy").innerHTML = ispy.importTransparency.toString();
 
-  getHTMLObject("display").appendChild(getHTMLObject("event-info"));
+  // getHTMLObject("js-display").appendChild(getHTMLObject("event-info"));
 }
 
 /**
@@ -522,97 +499,120 @@ function initControlPanel() {
  * Creates a checkbox container for a given GUI controller.
  * @param cont The GUI controller to create the checkbox container for.
  */
-function createCheckboxContainer(cont: GUIController) {
+function createCheckboxContainer(cont: Controller) {
   const selectionField = cont as unknown as SelectionFieldController;
-  // check if not __input
-  const inputField = selectionField.domElement.querySelector("input") as HTMLInputElement;
 
   // Create a checkbox element
   const checkbox = document.createElement("input");
   checkbox.type = "checkbox";
-
-  // Add the checkbox to the DOM
-  selectionField.domElement.appendChild(checkbox);
-  selectionField.domElement.style.display = "flex";
-
-  // Add the checkbox to the controller
+  checkbox.classList.add("sel-checkbox");
+  checkbox.name = `enable-${selectionField.property}`;
   selectionField.checkbox = false;
 
-  // Disable the input field initially
+  // Add the checkbox to the DOM
+  selectionField.domElement.insertBefore(checkbox, selectionField.$name);
+
+  // get input field and disable the input field initially
+  const inputField = selectionField.$input;
+  inputField.classList.add("sel-field");
   inputField.disabled = true;
-  inputField.style.backgroundColor = "#e0e0e0";
-  inputField.style.cursor = "not-allowed";
   inputField.value = "";
 
   checkbox.addEventListener("change", function () {
     inputField.disabled = !this.checked;
-    inputField.style.backgroundColor = this.checked ? "" : "#e0e0e0";
-    inputField.style.cursor = this.checked ? "" : "not-allowed";
+    selectionField.reset();
     inputField.value = this.checked ? selectionField.initialValue : "";
     selectionField.checkbox = this.checked;
   });
 }
+
+
+/**
+ * Create a info circle right to the selection field with info on hover
+ * about the field.
+ * @param cont The GUI controller to create the info circle for.
+ */
+function createInfoCircle(cont: Controller) {
+  const selectionField = cont as unknown as SelectionFieldController;
+
+  // Create an info circle element
+  const infoCircle = document.createElement("i");
+  infoCircle.classList.add("fas", "fa-question-circle", "sel-info-circle");
+
+  selectionField.domElement.appendChild(infoCircle);
+
+  // Create a custom popup element
+  const popup = document.createElement("div");
+  popup.classList.add("sel-info-popup");
+  const textEle = document.createElement("span");
+  textEle.setAttribute("data-i18n", `selectHelp.${selectionField.property}`);
+  popup.appendChild(textEle);
+
+  document.body.appendChild(popup);
+  infoCircle.addEventListener("click", (event: MouseEvent) => {
+    const x = event.clientX;
+    const y = event.clientY;
+    popup.style.setProperty("top", `${y + 5}px`);
+    popup.style.setProperty("left", `${x - 205}px`);
+    popup.style.setProperty("display", "block");
+  });
+  infoCircle.addEventListener("mouseout", () => {
+    popup.removeAttribute("style");
+  });
+}
+
 
 /**
  * Initializes the selection fields in the control panel.
  * @returns void
  */
 function initSelectionFields() {
-  const gui_elem = ispy.guiReduced;
+  const gui = ispy.gui;
 
-  const folder = gui_elem.__folders["Event Selection"];
+  const folder = getGUIFolder(gui, "selection");
+
   const nMuon = 0,
     nElectron = 0,
     nPhoton = 0,
-    chargeSign = "",
+    chargeSign = undefined,
     minPt = 0,
     maxPt = Infinity,
     test = checkCurrentSelection;
 
   const row_obj = {
-    TrackerMuons: nMuon,
-    GsfElectrons: nElectron,
-    Photons: nPhoton,
+    selMuons: nMuon,
+    selElectrons: nElectron,
+    selPhotons: nPhoton,
     charge: chargeSign,
-    pt: minPt,
+    minptvis: minPt,
     minMETs: minPt,
     maxMETs: maxPt,
     check: test,
     nSelected: "0",
     firstSelected: "",
-  };
+  };  // TODO: use this object to get the selection cuts, since they are auto. updated 
 
-  //   var help_map = analysis.selection_fields_help;
-  let cont: GUIController | null = null;
+  let cont: Controller | null = null;
   (Object.keys(row_obj) as (keyof typeof row_obj)[]).forEach((key) => {
-    const elem_name = SELEC_NAME_MAP[key];
-    // let help_info = help_map[key] || false;
 
     // add the controller to the folder
     if (key === "charge") {
-      cont = folder.add(row_obj, key, ["", "positive", "negative", "opposite"]).name(elem_name);
-      cont.getValue = function () {
-        const result = (this.object as Record<string, string | number>)[this.property];
-        return CHARGE_MAP[result];
-      };
-      cont.domElement.style.color = "blue";
-      // cont.help(help_info);
+      cont = addController(folder, row_obj, key, { "": undefined, "positive": 1, "negative": -1, "opposite": 0 });
+      cont.domElement.querySelectorAll("select option").forEach(
+        (el) => (el.setAttribute("data-i18n", `gui.${el.innerHTML}`)),
+      );
+      cont.onFinishChange(function (this: OptionController, _value: number) {
+        const key = this._names[this._values.indexOf(this.getValue())];
+        this.$display.innerHTML = ispy.guiLangData[key] || key;
+      });
+      createInfoCircle(cont);
       return;
     }
 
-    cont = folder.add(row_obj, key).name(elem_name);
-    // if (help_info) {
-    //     cont.help(help_info);
-    // }
+    cont = addController(folder, row_obj, key);
 
     if (typeof row_obj[key] == "boolean") return;
-    if (typeof row_obj[key] == "function") {
-      const btnContainer = cont.domElement.previousSibling as HTMLElement;
-      btnContainer.style.width = "100%";
-      btnContainer.style.height = "auto";
-      btnContainer.id = "clickable-button";
-      return;
-    }
+    if (typeof row_obj[key] == "function") return;
     if (typeof row_obj[key] == "string") {
       cont.onFinishChange(function (this: SelectionFieldController) {
         this.setValue(this.initialValue);
@@ -621,20 +621,21 @@ function initSelectionFields() {
     cont.onFinishChange(function (this: SelectionFieldController, value: number) {
       if (value < 0) this.setValue(0);
     });
-    if (["TrackerMuons", "GsfElectrons", "Photons", "maxMETs"].includes(key)) {
+    if (["selMuons", "selElectrons", "selPhotons", "maxMETs"].includes(key)) {
       createCheckboxContainer(cont);
     }
-    if (key === "pt") {
+    if (key === "minptvis") {
       cont.onFinishChange(function (this: SelectionFieldController, value: number) {
         if (value < 0) this.setValue(0);
-        ispy.subfoldersReduced.Controllers.find((c) => c.property === "min_pt")?.setValue(value);
+        ispy.subfolders.controllers.find((c) => c.property === "min_pt")?.setValue(value);
       });
     }
+    createInfoCircle(cont);
   });
 
-  // add all controllers to the reduced subfolders for convenience
-  folder.__controllers.forEach((c) => {
-    ispy.subfoldersReduced.Selection.push(c);
+  // add all controllers to the subfolders for convenience
+  folder.controllers.forEach((c) => {
+    ispy.subfolders.selection.push(c);
   });
 }
 
@@ -680,17 +681,4 @@ function run() {
   }
 }
 
-export {
-  init,
-  initLight,
-  initControlPanel,
-  setDisplayVerticalHeight,
-  setFramerate,
-  setupGUIs,
-  setupInset,
-  handleToggles,
-  handleDragAndDrop,
-  createCheckboxContainer,
-  run,
-  initSelectionFields,
-};
+export { init, initLight, initControlPanel, setDisplayVerticalHeight, setFramerate, run };

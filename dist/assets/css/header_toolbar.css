@@ -1,0 +1,69 @@
+#application-name {
+  flex: 0 0 auto;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+.header-event {
+  flex: 1 1 auto;
+  text-align: center;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.header-nav {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 0;
+  margin-left: auto;
+  flex-wrap: nowrap;
+}
+
+html[data-bs-theme="light"] #js-display-mode .fa-moon {
+  display: none;
+}
+
+html[data-bs-theme="dark"] #js-display-mode .fa-sun {
+  display: none;
+}
+
+#js-toggle-fullscreen .fa-compress {
+  display: none;
+}
+
+#js-toggle-fullscreen.pressed .fa-expand {
+  display: none;
+}
+
+#js-toggle-fullscreen.pressed .fa-compress {
+  display: inline;
+}
+
+#js-autorotate .fa-pause-circle {
+  display: none;
+}
+
+#js-autorotate.pressed .fa-play-circle {
+  display: none;
+}
+
+#js-autorotate.pressed .fa-pause-circle {
+  display: inline;
+}
+
+#js-animate .fa-stop-circle {
+  display: none;
+}
+
+#js-animate.pressed .fa-film {
+  display: none;
+}
+
+#js-animate.pressed .fa-stop-circle {
+  display: inline;
+}
+

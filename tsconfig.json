@@ -3,7 +3,7 @@
     /* Visit https://aka.ms/tsconfig to read more about this file */
     /* Language and Environment */
     "target": "es2022", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
-    "module": "commonjs", /* Specify what module code is generated. */
+    "module": "es2022", /* Specify what module code is generated. */
     "moduleResolution": "node", /* Specify how TypeScript looks up a file from a given module specifier. */
     "pretty": true,
     "removeComments": true,
@@ -86,7 +86,6 @@
     "forceConsistentCasingInFileNames": true
   },
   "files": [
-    "ts/analysis-config.ts",
     "ts/animate.ts",
     "ts/config.ts",
     "ts/controls.ts",
@@ -100,8 +99,10 @@
     "ts/renderer.ts",
     "ts/setup.ts",
     "ts/tree-view.ts",
-    "ts/uhh_selection.ts",
+    "ts/analysis.ts",
     "ts/utils.ts",
+    "ts/tutorial.ts",
+    "ts/tutorial-config.ts"
   ],
   "exclude": [
     "node_modules",

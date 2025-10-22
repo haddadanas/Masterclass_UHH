@@ -2,12 +2,153 @@
 // Description: This file contains utility functions that are used in the analysis code.
 import JSZip from "jszip";
 import { Material, Object3D } from "three";
+import { GUI, Controller } from "lil-gui";
 
-import { ispy } from "./config.js";
+import { ispy, supportedLanguages } from "./config.js";
 import { Particle, EventObject, EventSummary, MET, FourVector, SelectionFieldController } from "./ispy.interfaces.js";
 
 const mMuon2 = 0.10566 * 0.10566;
 const mElectron2 = 0.511e-3 * 0.511e-3;
+
+declare namespace bootstrap { // skipcq: JS-0337
+  class Modal {
+    static getOrCreateInstance(element: HTMLElement): Modal;
+    show(): void;
+    hide(): void;
+  }
+  class Tooltip {
+    constructor(element: HTMLElement);
+    show(): void;
+    hide(): void;
+  }
+}
+
+/**
+ * Add tooltip support to the document.
+ */
+export function setupTooltips() {
+  const triggers = [].slice.call(document.querySelectorAll("[data-bs-toggle='tooltip']"));
+  triggers.forEach((el) => new bootstrap.Tooltip(el));
+}
+
+/**
+ * Updates the content of the HTML elements with the provided language data.
+ * @param langData An object containing key-value pairs for translation.
+ */
+function updateContent(element: Document | HTMLElement, langData: { [key: string]: { [key: string]: string } }) {
+  element.querySelectorAll("[data-i18n]").forEach((element) => {
+    const key = element.getAttribute("data-i18n") || "";
+    const [namespace, keyName] = key.split(".");
+    if (!namespace || !keyName) return;
+    if (!(namespace in langData)) return;
+    element.innerHTML = langData[namespace][keyName] || element.innerHTML;
+  });
+}
+
+export function updateGUILang() {
+  if (!ispy.guiLangData) return;
+  const guiElem = ispy.gui.domElement;
+  updateContent(guiElem, { gui: ispy.guiLangData });
+}
+
+/**
+ * Sets the language preference in local storage and reloads the page.
+ * @param lang The language code to set as preference.
+ */
+function setLanguagePreference(lang: string) {
+  document.documentElement.lang = lang;
+  localStorage.setItem("language", lang);
+  ispy.lang = lang;
+  // location.reload();
+}
+
+/**
+ * Fetches language data from a JSON file.
+ * @param lang The language code to fetch data for.
+ * @returns A promise that resolves to the language data object.
+ */
+async function fetchLanguageData(lang: string): Promise<{ [key: string]: { [key: string]: string } }> {
+  const response = await fetch(`assets/locales/${lang}.json`);
+  return response.json();
+}
+
+export async function updateGuidesLanguage(element: HTMLElement, lang: string) {
+  const langData = await fetchLanguageData(`${lang}_guide`);
+  updateContent(element, langData);
+}
+
+/**
+ * Checks if the provided language is supported, defaults to 'en' if not.
+ * @param lang The language code to check.
+ * @returns A valid language code.
+ */
+function checkLanguage(lang: string): string {
+  if (supportedLanguages.includes(lang)) {
+    return lang;
+  }
+  // check if the language has a region subtag and try to match the base language
+  if (lang.split(/[-_]/).length > 1) {
+    for (const l of supportedLanguages) {
+      if (lang.includes(l)) {
+        return l;
+      }
+    }
+  }
+  console.warn(`Language ${lang} not supported, defaulting to English.`);
+  return "en";
+}
+
+/**
+ * Toggles the language
+ * @param lang The selected language code.
+ */
+export async function setLanguage(lang: string) {
+  lang = checkLanguage(lang);
+  setLanguagePreference(lang);
+  const langData = await fetchLanguageData(lang);
+  updateContent(document, langData);
+  // keep the gui lang data to update them inbetween events
+  ispy.guiLangData = langData["gui"];
+}
+
+/**
+ * Overwride the addFolder method of lil-gui to add data-i18n attributes to the folder titles.
+ * @param gui
+ * @param key
+ * @returns
+ */
+export function addFolder(gui: GUI, key: string) {
+  const folder = gui.addFolder(key);
+  folder.$title.setAttribute("data-i18n", `gui.${key}`);
+  return folder;
+}
+
+/**
+ * Overwride the addController method of lil-gui to add data-i18n attributes to the controller titles.
+ * @param gui
+ * @param target
+ * @param key
+  * @param args
+ * @returns
+ */
+export function addController<T extends object>(gui: GUI, target: T, key: keyof T, ...args: any[]) { // skipcq: JS-0323
+  const controller = gui.add(target, key, ...args);
+  controller.$name.setAttribute("data-i18n", `gui.${key.toString()}`);
+  return controller;
+}
+
+/**
+ * Overwride the addColor method of lil-gui to add data-i18n attributes to the color controller titles.
+ * @param gui
+ * @param target
+ * @param propName
+ * @returns
+ */
+export function addColor<T extends object>(gui: GUI, target: T, key: keyof T): Controller {
+  const controller = gui.addColor(target, key);
+  controller.$name.setAttribute("data-i18n", `gui.${key.toString()}`);
+  return controller;
+}
 
 /**
  * Checks if property exists on a given object
@@ -23,10 +164,7 @@ export function hasProperty<T extends object, K extends PropertyKey>(obj: T, pro
  * Asserts that a value is defined (not null or undefined).
  * @param value The value to assert is defined.
  */
-export function assertDefined<T>(
-  value: T | undefined | null,
-  msg = "Value is undefined or null",
-): asserts value is T {
+export function assertDefined<T>(value: T | undefined | null, msg = "Value is undefined or null"): asserts value is T {
   if (value === undefined || value === null) {
     throw new Error(msg);
   }
@@ -122,7 +260,7 @@ export function getParticleInfo(key: string, type: [string, string][], eventObje
  */
 export function getFourVectorByIndex(
   key: string,
-  objectUserData: { originalIndex: number; [key: string]: unknown },
+  objectUserData: { originalIndex: number;[key: string]: unknown },
 ): [FourVector, string?] {
   const currentEvent = getCurrentEvent();
   if (!currentEvent) {
@@ -176,6 +314,11 @@ export function cleanupData(d: string): string {
 function getEventsSummary(event_json: EventObject): EventSummary {
   const part_names = ["TrackerMuons", "GsfElectrons", "Photons", "METs"];
   const keys = Object.keys(event_json.Collections);
+  const keyMap: { [key: string]: string } = {
+    TrackerMuons: "selMuons",
+    GsfElectrons: "selElectrons",
+    Photons: "selPhotons",
+  };
   const map = part_names.map((name) => keys.filter((k) => k.includes(name)).reduce((x, y) => (x > y ? x : y)));
 
   const particles = new Map<string, Particle[]>();
@@ -192,7 +335,7 @@ function getEventsSummary(event_json: EventObject): EventSummary {
       tmp.push(getParticleInfo(collec, type, part as number[]));
     });
 
-    particles.set(key, tmp);
+    particles.set(keyMap[key], tmp);
   });
 
   return { particles: particles, met: met };
@@ -288,12 +431,12 @@ export function showTrackInfoBubble(intersectedObject: Object3D, pointer: { x: n
  * @param id The ID of the HTML object to retrieve.
  * @returns The HTML object with the specified ID.
  */
-export function getHTMLObject(id: string): HTMLElement {
+export function getHTMLObject<T extends HTMLElement>(id: string): T {
   const obj = document.getElementById(id);
   if (obj === null) {
     throw new Error(`Object with id ${id} not found.`);
   }
-  return obj;
+  return obj as T;
 }
 
 /**
@@ -315,21 +458,89 @@ export function changeMeshMaterials(materials: Material | Material[] | undefined
   });
 }
 
+export function getGUIController(gui: GUI, key: string): Controller {
+  const controller = gui.controllers.find((c) => c.property === key);
+  if (!controller) {
+    throw new Error(`Controller with key ${key} not found.`);
+  }
+  return controller;
+}
+
+export function getGUIFolder(gui: GUI, key: string): GUI {
+  const folder = gui.folders.find((f) => f._title === key);
+  if (!folder) {
+    throw new Error(`Folder with key ${key} not found.`);
+  }
+  return folder;
+}
+
 /**
  * Toggles the collapse state of a GUI folder.
  * @param key The key of the group to toggle.
  */
-export function toggleCollapse(key: string) {
-  const guis = [ispy.gui];
-  if (key === "Detector") {
-    guis.push(ispy.guiReduced);
+export function toggleCollapse(key: string): GUI {
+  const folder = getGUIFolder(ispy.gui, key);
+  return folder.close();
+}
+
+/**
+ * Toggles the expanded state of a GUI folder.
+ * @param key The key of the group to toggle.
+ */
+export function toggleExpand(key: string): GUI {
+  const folder = getGUIFolder(ispy.gui, key);
+  return folder.open();
+}
+
+/**
+ * Toggle a dialog modal by its ID.
+ * @param id The ID of the dialog modal to toggle.
+ */
+export function showDialog(id: string) {
+  const el = getHTMLObject<HTMLElement>(id);
+  bootstrap.Modal.getOrCreateInstance(el).show();
+}
+
+/**
+ * Toggle a dialog modal by its ID.
+ * @param id The ID of the dialog modal to toggle.
+ */
+export function hideDialog(id: string) {
+  const el = getHTMLObject<HTMLElement>(id);
+  bootstrap.Modal.getOrCreateInstance(el).hide();
+}
+
+/**
+ * Create Download link for an ArrayBuffer and trigger the download.
+ * @param data The ArrayBuffer data to download.
+ * @param filename The name of the file to download.
+ * @returns void
+ */
+export function downloadData(content: string, filename: string) {
+  const link = document.createElement("a");
+  link.style.display = "none";
+  link.setAttribute("href", content);
+  link.setAttribute("download", filename);
+  link.setAttribute("target", "_blank");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+/**
+ * Toggle HTML Button
+ * @param button The button id to toggle.
+ * @param state The state to set the button to (true = active, false = inactive).
+ */
+export function toggleButton(button: string, state: boolean) {
+  const btn = getHTMLObject<HTMLButtonElement>(button);
+  if (state) {
+    btn.disabled = false;
+    btn.classList.remove("disabled");
+  } else {
+    btn.disabled = true;
+    btn.classList.add("disabled");
   }
-  guis.forEach((gui) => {
-    const folder = gui.__folders[key];
-    if (folder) {
-      folder.close();
-    }
-  });
 }
 
 /**
@@ -356,59 +567,53 @@ export function addControllers(group: string) {
   const row_obj = {
     number: 0,
     min_pt: 1.0,
-    Electrons: true,
-    Muons: true,
-    Photons: false,
-    Jets: false,
-    MET: false,
-    "Jet: min Et": 1.0,
-    "Additional Tracks": false,
+    electrons: true,
+    muons: true,
+    photons: false,
+    jets: false,
+    met: false,
+    minetjets: 1.0,
+    additional: false,
   };
 
-  const gui_elem = ispy.guiReduced;
+  const gui = ispy.gui;
 
-  const folder = gui_elem.__folders[group];
+  const folder = getGUIFolder(gui, group);
 
   const names = getSceneObjects();
 
-  if (group.includes("Momentum Cut (GeV)")) {
-    folder
-      .add(row_obj, "min_pt", 0, 100)
-      .name("min. p<sub>T, visible</sub>")
-      .onChange(() => {
-        ispy.views.forEach((v) => {
-          const physic_objs = [
-            ...ispy.scenes[v].getObjectByName("Physics")!.children,
-            ...ispy.scenes[v].getObjectByName("Tracking")!.children,
-          ].filter((o) => o.visible && hasProperty(o.children[0].userData, "pt"));
+  if (group.includes("momentumCut")) {
+    addController(folder, row_obj, "min_pt", 0, 100).onChange(() => {
+      ispy.views.forEach((v) => {
+        const physic_objs = [
+          ...ispy.scenes[v].getObjectByName("Physics")!.children,
+          ...ispy.scenes[v].getObjectByName("Tracking")!.children,
+        ].filter((o) => o.visible && hasProperty(o.children[0].userData, "pt"));
 
-          if (!physic_objs.length) return;
+        if (!physic_objs.length) return;
 
-          physic_objs.forEach((obj) => {
-            obj.children.forEach((o) => {
-              o.visible = o.userData.pt < row_obj.min_pt ? false : true;
-            });
+        physic_objs.forEach((obj) => {
+          obj.children.forEach((o) => {
+            o.visible = o.userData.pt < row_obj.min_pt ? false : true;
           });
         });
       });
+    });
 
-    folder
-      .add(row_obj, "Jet: min Et", 0, 200)
-      .name("min. E<sub>T, Jets</sub>")
-      .onChange(() => {
-        ispy.views.forEach((v) => {
-          const physic_objs = ispy.scenes[v].getObjectByName(names["Jets"])!.children;
+    addController(folder, row_obj, "minetjets", 0, 200).onChange(() => {
+      ispy.views.forEach((v) => {
+        const physic_objs = ispy.scenes[v].getObjectByName(names["Jets"])!.children;
 
-          if (!physic_objs.length) return;
+        if (!physic_objs.length) return;
 
-          physic_objs.forEach((o) => {
-            o.visible = o.userData.et < row_obj["Jet: min Et"] ? false : true;
-          });
+        physic_objs.forEach((o) => {
+          o.visible = o.userData.et < row_obj["minetjets"] ? false : true;
         });
       });
+    });
   }
 
-  if (group.includes("Show/Hide")) {
+  if (group.includes("showFolder")) {
     // Helper function to toggle physics objects
     const togglePhysicsObjects = (leptongroup: string[], visibility: boolean) => {
       ispy.views.forEach((v) => {
@@ -420,43 +625,43 @@ export function addControllers(group: string) {
       });
     };
 
-    const pt_controller = ispy.subfoldersReduced.Controllers.filter((o) => o.property === "min_pt")[0];
-    const jet_controller = ispy.subfoldersReduced.Controllers.filter((o) => o.property === "Jet: min Et")[0];
+    const pt_controller = ispy.subfolders.controllers.filter((o) => o.property === "min_pt")[0];
+    const jet_controller = ispy.subfolders.controllers.filter((o) => o.property === "minetjets")[0];
 
-    folder.add(row_obj, "Electrons").onChange(function (this: SelectionFieldController) {
+    addController(folder, row_obj, "electrons").onChange(function (this: SelectionFieldController) {
       togglePhysicsObjects(["GsfElectrons"], Boolean(this.getValue()));
       // retoggle the pt controller to update the visibility
       pt_controller.setValue(pt_controller.getValue());
     });
 
-    folder.add(row_obj, "Muons").onChange(function (this: SelectionFieldController) {
+    addController(folder, row_obj, "muons").onChange(function (this: SelectionFieldController) {
       togglePhysicsObjects(["GlobalMuons", "TrackerMuons"], Boolean(this.getValue()));
       // retoggle the pt controller to update the visibility
       pt_controller.setValue(pt_controller.getValue());
     });
 
-    folder.add(row_obj, "Photons").onChange(function (this: SelectionFieldController) {
+    addController(folder, row_obj, "photons").onChange(function (this: SelectionFieldController) {
       togglePhysicsObjects(["Photons"], Boolean(this.getValue()));
     });
 
-    folder.add(row_obj, "Jets").onChange(function (this: SelectionFieldController) {
+    addController(folder, row_obj, "jets").onChange(function (this: SelectionFieldController) {
       togglePhysicsObjects(["Jets"], Boolean(this.getValue()));
       // retoggle the jet controller to update the visibility
       jet_controller.setValue(jet_controller.getValue());
     });
 
-    folder.add(row_obj, "MET").onChange(function (this: SelectionFieldController) {
+    addController(folder, row_obj, "met").onChange(function (this: SelectionFieldController) {
       togglePhysicsObjects(["METs"], Boolean(this.getValue()));
     });
 
-    folder.add(row_obj, "Additional Tracks").onChange(function (this: SelectionFieldController) {
+    addController(folder, row_obj, "additional").onChange(function (this: SelectionFieldController) {
       togglePhysicsObjects(["Tracks"], Boolean(this.getValue()));
     });
   }
 
-  // add all controllers to the reduced subfolders for convenience
-  (folder.__controllers as SelectionFieldController[]).forEach((c) => {
-    ispy.subfoldersReduced["Controllers"].push(c);
+  // add all controllers to the subfolders for convenience
+  (folder.controllers as SelectionFieldController[]).forEach((c) => {
+    ispy.subfolders["controllers"].push(c);
   });
 }
 
@@ -465,9 +670,9 @@ export function addControllers(group: string) {
  * @param group The group name to add info controllers for.
  */
 export function addInfo(group: string) {
-  const gui_elem = ispy.guiReduced;
+  const gui = ispy.gui;
 
-  const folder = gui_elem.__folders[group];
+  const folder = getGUIFolder(gui, group);
 
   const names = getSceneObjects();
   // pt is element 1 in the collection object (inconvinient definition by design)
@@ -478,34 +683,28 @@ export function addInfo(group: string) {
   const met_pt = currentEvent.Collections[names["METs"]][0][1] as number;
 
   const row_obj = {
-    MET: `${met_pt.toFixed(2)} GeV`,
-    Sel: "0",
-    track: false,
+    met: `${met_pt.toFixed(2)} GeV`,
+    selectedTracks: "0",
+    trackInfo: false,
   };
 
-  folder.add(row_obj, "MET").onFinishChange(function (this: SelectionFieldController) {
+  addController(folder, row_obj, "met").onFinishChange(function (this: SelectionFieldController) {
     // reset to original value
     this.setValue(this.initialValue);
   });
 
-  folder
-    .add(row_obj, "Sel")
-    .name("Selected Tracks")
-    .onFinishChange(function (this: SelectionFieldController) {
-      // reset to original value
-      this.setValue(ispy.selected_objects.size);
-    });
+  addController(folder, row_obj, "selectedTracks").onFinishChange(function (this: SelectionFieldController) {
+    // reset to original value
+    this.setValue(ispy.selected_objects.size);
+  });
 
-  folder
-    .add(row_obj, "track")
-    .name("Track Info")
-    .onChange(function (this: SelectionFieldController) {
-      ispy.showTrackInfo = Boolean(this.getValue());
-      removeExistingBubble();
-    });
+  addController(folder, row_obj, "trackInfo").onChange(function (this: SelectionFieldController) {
+    ispy.showTrackInfo = Boolean(this.getValue());
+    removeExistingBubble();
+  });
 
-  // add all controllers to the reduced subfolders for convenience
-  (folder.__controllers as SelectionFieldController[]).forEach((c) => {
-    ispy.subfoldersReduced["Info"].push(c);
+  // add all controllers to the subfolders for convenience
+  (folder.controllers as SelectionFieldController[]).forEach((c) => {
+    ispy.subfolders["info"].push(c);
   });
 }

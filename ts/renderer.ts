@@ -1,10 +1,10 @@
 import { Camera, Color, WebGLRenderer } from "three";
-import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer";
+import { SVGRenderer } from "three/examples/jsm/renderers/SVGRenderer.js";
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-import { assertDefined, getHTMLObject } from "./utils";
-import { ispy } from "./config";
+import { assertDefined, getHTMLObject } from "./utils.js";
+import { ispy } from "./config.js";
 
 function updateControls(redererClass: string, camera: Camera, rendererDom: HTMLCanvasElement) {
   let controls: OrbitControls | TrackballControls;
@@ -46,7 +46,7 @@ export function updateRendererInfo() {
     }
   }
 
-  getHTMLObject("renderer-info").innerHTML = html;
+  getHTMLObject("js-renderer-info").innerHTML = html;
 }
 
 /**
@@ -67,11 +67,7 @@ export function updateClipping() {
  * @returns void
  */
 export function useRenderer(type: string) {
-  const display = document.getElementById("display");
-  if (!display) {
-    console.error("Display element not found");
-    return;
-  }
+  const display = getHTMLObject("js-display");
   const width = display.clientWidth;
   const height = display.clientHeight;
 
@@ -97,11 +93,8 @@ export function useRenderer(type: string) {
   ispy.inset_renderer = inset_renderer;
 
   display.appendChild(ispy.renderer.domElement);
-  const axes_html = getHTMLObject("axes");
+  const axes_html = getHTMLObject("js-axes");
   axes_html.appendChild(ispy.inset_renderer.domElement);
-
-  const settings = getHTMLObject("settings");
-  settings.style.display = "none";
 }
 
 /**
@@ -118,8 +111,8 @@ export function updateRenderer(type: string) {
   assertDefined(ispy.renderer, "Renderer is not defined");
   assertDefined(ispy.inset_renderer, "Inset renderer is not defined");
 
-  getHTMLObject("display").removeChild(ispy.renderer.domElement);
-  getHTMLObject("axes").removeChild(ispy.inset_renderer.domElement);
+  getHTMLObject("js-display").removeChild(ispy.renderer.domElement);
+  getHTMLObject("js-axes").removeChild(ispy.inset_renderer.domElement);
 
   useRenderer(type);
   updateControls(type, ispy.camera, ispy.renderer.domElement as HTMLCanvasElement);

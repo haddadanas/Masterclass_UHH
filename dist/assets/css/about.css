@@ -1,0 +1,149 @@
+.page {
+  overflow-y: scroll;
+  font-family: 'Montserrat';
+  top: 25px;
+}
+
+.clean-block {
+  padding: 0;
+}
+
+.clean-block.clean-services.dark {
+  padding: 0;
+  margin: 0;
+}
+
+.page .container {
+  padding: 5px;
+  margin-left: 10px;
+  margin-right: 10px;
+  max-width: 100%;
+}
+
+.clean-block .block-heading {
+  padding-top: 1em;
+  margin-top: 0px;
+}
+
+.block-heading img {
+  margin: 0.5em;
+}
+
+.clean-block .block-heading :is(p, h1, h2, h3, h4, h5) {
+  margin: 0 auto 1em auto;
+  width: fit-content;
+  max-width: 90%;
+  text-align: center;
+}
+
+.card {
+  margin-bottom: 5px;
+}
+
+.card div {
+  text-align: center;
+}
+
+.card p {
+  margin-bottom: inherit;
+}
+
+.page .btn {
+  background-color: var(--bs-primary);
+  height: 40px;
+  margin: 2px;
+  border-radius: 10px;
+  font-size: 90%;
+}
+
+.page .btn i {
+  margin: 0;
+}
+
+.img-remark {
+  display: block;
+  text-align: right;
+  font-size: xx-small;
+  margin: 0 0 0 auto;
+  padding-right: 5px;
+  text-wrap: nowrap;
+  white-space: nowrap;
+}
+
+html[data-bs-theme="light"] #uhh-dark {
+  display: none;
+}
+
+html[data-bs-theme="dark"] #uhh-light {
+  display: none;
+}
+
+.guide-container {
+  display: none;
+  padding: 1rem 2rem 2rem 2rem;
+  max-width: 900px;
+  margin: 0 auto 2rem auto;
+  background: var(--bs-body-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.guide-container i {
+    border: 2px solid;
+    padding: 2px;
+    margin: 0 1px 0 1px;
+    border-radius: 4px;
+}
+
+.guide-container img {
+    background-color: var(--bs-light);
+    border: 1px solid;
+    margin: 0 1px 0 1px;
+    border-radius: 4px;
+}
+
+.terminal {
+  background: #0b1220;
+  color: #cfe8ff;
+  border-radius: 8px;
+  padding: 0.5rem;
+  max-width: 800px;
+  font-family: Menlo, Monaco, "Courier New", monospace;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  margin-bottom: 1rem;
+}
+
+.terminal-header {
+  height: 12px;
+  display: flex;
+  gap: 6px;
+  padding: 6px 8px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot.red {
+  background: #ff5f56
+}
+
+.dot.yellow {
+  background: #ffbd2e
+}
+
+.dot.green {
+  background: #27c93f
+}
+
+.terminal pre {
+  margin: 0;
+  padding: 0.5rem 0;
+  overflow: auto;
+  background: transparent;
+  color: inherit;
+}
