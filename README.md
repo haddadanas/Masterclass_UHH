@@ -5,7 +5,7 @@ This repository contains a modified version of the iSpy WebGL Event Display, whi
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8043417.svg)](https://doi.org/10.5281/zenodo.8043417)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/cms-outreach/ispy-webgl)
 
-# Developer's Guide
+## Developer's Guide
 
 This guide provides instructions for developers who want to edit, expand functionalities, or contribute to the event display project. It covers the setup of the development environment, cloning the repository, installing dependencies, and running the application in development mode.
 
