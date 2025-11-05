@@ -1,13 +1,17 @@
 import path from "path";
 
 import HtmlWebpackPlugin from "html-webpack-plugin";
+import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer";
 import webpack from "webpack";
 
 export default async (env, options) => {
   const dev = options.mode === "development";
   const config = {
     optimization: {
-      minimize: false,
+      minimize: !dev,
+      splitChunks: {
+        chunks: "all",
+      },
     },
     devtool: dev ? "source-map" : false,
     entry: "./js/ispy.js",
@@ -47,6 +51,14 @@ export default async (env, options) => {
       }),
     ],
   };
-
+  if (env && env.analyze) {
+    config.plugins.push(
+      new BundleAnalyzerPlugin({
+        analyzerMode: "static", // generates a file
+        openAnalyzer: true,     // opens the report in browser
+        reportFilename: path.resolve("dist", "bundle-report.html"),
+      }),
+    );
+  }
   return config;
 };
