@@ -39,6 +39,7 @@
     "download": "Eventanzeige herunterladen",
     "download1": "Laden Sie eine Version der Eventanzeige aus dem offiziellen Repository (Link dazu oben) herunter. Die Version ist eine .zip-Datei, die alle notwendigen Dateien enthält und sofort gehostet werden kann.",
     "download2": "Entpacken Sie den Inhalt der .zip-Datei. Für die meisten aktuellen Betriebssysteme kann dies durch einen Rechtsklick auf die Datei und die Auswahl von 'Alle extrahieren...' durchgeführt werden.",
+    "git": "Alternativ können Sie die Dateien auch mit git klonen, wenn Sie mit Versionskontrollsystemen vertraut sind. Öffnen Sie ein Terminal und führen Sie den folgenden Befehl aus:",
     "setup": "Einrichten eines lokalen Servers",
     "setup1": "Öffnen Sie ein Terminal (Eingabeaufforderung, PowerShell oder Terminal) und folgen Sie folgende Befehle:",
     "access": "Zugriff auf die Eventanzeige",
