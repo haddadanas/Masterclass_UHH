@@ -157,8 +157,8 @@ function loadEvent() {
           ispy.event_list[ispy.event_index]
         } <strong>[${ievent} / ${ispy.event_list.length}]</strong>`;
 
-        console.log(ispy.current_event?.Types);
-        console.log(ispy.current_event?.Collections.Products_V1);
+        // console.log(ispy.current_event?.Types);
+        // console.log(ispy.current_event?.Collections.Products_V1);
       }
     },
     (err) => {

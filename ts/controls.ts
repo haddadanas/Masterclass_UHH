@@ -109,11 +109,6 @@ function toggleFullscreen() {
   fullscreenBtn.classList.toggle("pressed");
 }
 
-// document.addEventListener("webkitfullscreenchange", toggleFullscreen, false);
-// document.addEventListener("mozfullscreenchange", toggleFullscreen, false);
-// document.addEventListener("fullscreenchange", toggleFullscreen, false);
-// document.addEventListener("MSFullscreenChange", toggleFullscreen, false);
-
 /**
  * Reloads the page.
  * @returns void

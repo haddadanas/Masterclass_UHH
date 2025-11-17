@@ -50,6 +50,9 @@ main {
   max-height: calc(100vh - 60px);
 }
 
+:fullscreen, :-webkit-full-screen, ::backdrop {
+  background: var(--bs-body-bg);
+}
 /* toolbars and buttons */
 
 .primary-toolbar, .secondary-toolbar {
