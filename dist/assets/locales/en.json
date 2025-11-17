@@ -52,7 +52,8 @@
     "left": "Left",
     "right": "Right",
     "links": "Useful links and physics offers:",
-    "start": "Start Event Display"
+    "start": "Start Event Display",
+    "impressum": "Legal Notice"
   },
   "help": {
     "title": "Help",

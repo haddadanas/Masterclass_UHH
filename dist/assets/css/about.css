@@ -122,6 +122,13 @@ html[data-bs-theme="dark"] #uhh-light {
   width: 100%;
 }
 
+.impressum-footer {
+  text-align: center;
+  font-size: large;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
 .guide-container {
   display: none;
   padding: 1rem 2rem 2rem 2rem;
