@@ -1,7 +1,7 @@
 {
   "name": "masterclass-hamburg",
   "type": "module",
-  "version": "v3.1.0-HH",
+  "version": "v3.1.1-HH",
   "description": "A browser-based event display for the CMS experiment at the LHC, adjusted for the Masterclass in Hamburg.",
   "scripts": {
     "build": "tsc -p tsconfig.json && webpack  --config webpack.config.js --mode production",
