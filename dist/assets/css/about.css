@@ -78,6 +78,50 @@ html[data-bs-theme="dark"] #uhh-light {
   display: none;
 }
 
+.start-btn {
+  display: block; /* Makes it behave like a button */
+  font-size: 200%;
+  align-content: center;
+  padding: 10px 20px; /* Adjust padding for spacing */
+  background-image: url('/assets/img/ispy-webgl-screenshot-1.0.0.png'); /* Replace with your image path */
+  background-size: cover; /* Ensure the image covers the entire button */
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Prevent the image from repeating */
+  text-align: center; /* Center text inside the button */
+  color: white; /* Text color */
+  border: none; /* Remove default border */
+  border-radius: 8px; /* Add rounded corners */
+  cursor: pointer; /* Change cursor to pointer */
+  margin: 1em auto; /* Center the button horizontally */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Add a shadow for depth */
+  transition: transform 0.2s, box-shadow 0.2s; /* Smooth hover/click effects */
+  height: 300px;
+  width: 40%;
+}
+
+/* Center the button on the line */
+.start-btn-container {
+  text-align: center;
+}
+
+/* Hover effect */
+.start-btn:hover {
+  transform: scale(1.05); /* Slightly enlarge the button */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3); /* Enhance the shadow */
+}
+
+/* Click effect */
+.start-btn:active {
+  transform: scale(0.95); /* Slightly shrink the button */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduce the shadow */
+}
+
+.start-btn p {
+  font-weight: bold;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for readability */
+  width: 100%;
+}
+
 .guide-container {
   display: none;
   padding: 1rem 2rem 2rem 2rem;

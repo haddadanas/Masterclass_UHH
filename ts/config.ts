@@ -50,6 +50,7 @@ export const ispy: Ispy = {
   ig_data: null,
   ievent: 0,
   loaded_local: false,
+  initialized: false,
 
   // Detector and collections
   detector: { Collections: {} },

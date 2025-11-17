@@ -24,7 +24,7 @@
   <header class="bg-primary" id="js-titlebar"><span id="application-name">Masterclass @ Hamburg</span><span id="js-event-loaded" class="header-event"></span>
     <div class="btn-toolbar header-nav">
       <div class="btn-group btn-group-sm" id="tutorial-view" role="group">
-        <a class="btn btn-info" role="button" id="js-about-btn"><i class="fas fa-info-circle"></i></a><button class="btn btn-primary active" id="js-event-display" type="button"><i class="fas fa-cubes"></i></button><a class="btn btn-info" role="button" id="js-help-btn"><i class="fas fa-question-circle"></i></a>
+        <a class="btn btn-info active" role="button" id="js-about-btn"><i class="fas fa-info-circle"></i></a><button class="btn btn-primary" id="js-event-display" type="button"><i class="fas fa-cubes"></i></button><a class="btn btn-info" role="button" id="js-help-btn"><i class="fas fa-question-circle"></i></a>
       </div>
       <div class="btn-group btn-group-sm" id="tutorial-display" role="group">
         <button class="btn btn-primary display-mode" id="js-display-mode" type="button" title="Toggle Light/Dark Mode"><i class="fas fa-sun"></i><i class="fas fa-moon"></i></button>
@@ -34,7 +34,7 @@
       </div>
     </div>
   </header>
-  <div class="bg-secondary toolbar" id="js-toolbar" role="toolbar">
+  <div class="bg-secondary toolbar" id="js-toolbar" style="display: none;" role="toolbar">
     <div id="js-primary-toolbar" class="primary-toolbar">
       <div class="btn-group" id="tutorial-open" role="group">
         <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#open-files" title="Open Files"><i class="fas fa-folder-open"></i></button>
@@ -80,18 +80,21 @@
       </div>
     </div>
   </div>
-  <main id="js-display">
+  <main id="js-display" hidden>
     <div id="js-axes" class="axes-div"></div>
     <div id="js-event-info" class="event-info-div"><img class="img-fluid" width="128" height="128" id="js-cms-logo" src="assets/img/cms-color-medium.png" alt="CMS logo"><span id="js-event-text"></span></div>
     <div id="js-menu-container" class="menu-container"></div>
   </main>
-  <main id="js-about" class="page" hidden>
+  <main id="js-about" class="page">
     <section class="clean-block clean-services dark">
       <div class="container">
         <div class="block-heading">
           <h1 class="text-info">Masterclasses @ Hamburg</h1>
           <h2 data-i18n="about.title"></h2>
           <p data-i18n="about.description"></p>
+          <div id="js-start-event" class="start-btn">
+            <p  data-i18n="about.start"></p>
+          </div>
           <p><span data-i18n="about.github"></span><a class="btn btn-primary" role="button" href="https://github.com/haddadanas/Masterclass_UHH" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i>&nbsp;Masterclass_UHH @ stable</a></p>
           <p><span data-i18n="about.sponsors"></span><br><a href="https://www.uni-hamburg.de/" target="_blank" rel="noopener noreferrer"><img src="assets/img/up-uhh-logo-u-2010-u-png.png" loading="lazy" alt="UHH Logo" height="70px" id="uhh-light" title="Universität Hamburg" data-bs-toggle="tooltip"><img src="assets/img/uhh-logo-2010-farbnegativ-rgb.png" loading="lazy" alt="UHH Logo" height="70px" id="uhh-dark" title="Universität Hamburg" data-bs-toggle="tooltip"></a><a href="https://www.desy.de/" target="_blank" rel="noopener noreferrer"><img src="https://pr.desy.de/common/desy_logo_3c_web.svg" loading="lazy" title="Deutsches Elektronen-Synchrotron, Standort Hamburg" alt="DESY Logo" height="70" data-bs-toggle="tooltip"></a><br><span class="img-remark">Logos: (<span data-i18n="about.left"></span>) &copy; UHH (<span data-i18n="about.right"></span>) &copy; DESY</span></p>
 

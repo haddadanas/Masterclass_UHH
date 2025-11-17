@@ -25,12 +25,59 @@ import {
   prevEvent,
   prevSelectedEvent,
   showWebFiles,
+  loadWebFiles,
 } from "./files-load.js";
 import { toggleAnimation } from "./animate.js";
 import { resetView, showView, setXY, setYZ, setZX, setPerspective, setOrthographic } from "./display.js";
-import { setDisplayVerticalHeight, setFramerate } from "./setup.js";
+import { setDisplayVerticalHeight, setFramerate, init, initLight, initControlPanel, run } from "./setup.js";
 import { buildFileSummary, createCSV } from "./analysis.js";
 import { startTutorial } from "./tutorial.js";
+import { addGroups } from "./tree-view.js";
+
+// Initialization of display
+function setupKeyboardListeners() {
+  // Add keyboard listeners for shortcuts
+  document.addEventListener("keydown", (e: KeyboardEvent) => {
+    // Instead of a button, make output of 3D to JSON a "secret" key binding
+    if (e.key === "E") {
+      exportScene();
+    }
+    if (e.key === "ArrowUp" && e.shiftKey) {
+      zoomIn();
+    }
+    if (e.key === "ArrowDown" && e.shiftKey) {
+      zoomOut();
+    }
+    if (e.key === "ArrowRight") {
+      nextEvent();
+    }
+    if (e.key === "ArrowLeft") {
+      prevEvent();
+    }
+    if (e.key === "A") {
+      toggleAnimation();
+    }
+    if (e.key === "m") {
+      showMass();
+    }
+  });
+}
+
+function initEventDisplay() {
+  if (ispy.initialized) {
+    return;
+  }
+  setupKeyboardListeners();
+  init();
+  addGroups();
+  initLight();
+  initControlPanel();
+  loadWebFiles();
+  setLanguage(ispy.lang);
+  console.log("Initialization complete.");
+  run();
+  ispy.initialized = true;
+}
 
 // Display Controls
 /**
@@ -123,16 +170,10 @@ function reload() {
  */
 function invertColors() {
   const htmlEl = document.documentElement;
-  assertDefined(ispy.renderer, "Renderer is not defined");
   ispy.inverted_colors = !ispy.inverted_colors;
-
-  if (!ispy.inverted_colors) {
-    ispy.renderer.setClearColor(new Color(0x232323), 1);
-    htmlEl.setAttribute("data-bs-theme", "dark");
-  } else {
-    ispy.renderer.setClearColor(new Color(0xefefef), 1);
-    htmlEl.setAttribute("data-bs-theme", "light");
-  }
+  htmlEl.setAttribute("data-bs-theme", ispy.inverted_colors ? "light" : "dark");
+  if(!ispy.renderer) return;
+  ispy.renderer.setClearColor(ispy.inverted_colors ? new Color(0xefefef) : new Color(0x232323), 1);
 }
 
 /**
@@ -405,6 +446,7 @@ function switchMain(view: "about" | "display" | "help") {
   });
   if (view === "display") {
     showToolbarButtons();
+    initEventDisplay();
     showEventName();
   } else {
     hideToolbarButtons();
@@ -463,7 +505,8 @@ export function setupControls() {
   const jsBasicsTutorialBtn = getHTMLObject("js-basics-tutorial-btn");
   const jsControlsTutorialBtn = getHTMLObject("js-controls-tutorial-btn");
   const jsAnalysisTutorialBtn = getHTMLObject("js-analysis-tutorial-btn");
-
+  const jsStartBtn = getHTMLObject("js-start-event");
+  
   // Tutorial button
   jsBasicsTutorialBtn.addEventListener("click", () => {
     switchMain("display");
@@ -477,8 +520,9 @@ export function setupControls() {
     switchMain("display");
     startTutorial("analysis");
   });
-
+  
   // connect functions to the buttons
+  jsStartBtn.addEventListener("click", () => switchMain("display"));
   jsAboutBtn.addEventListener("click", () => switchMain("about"));
   jsHelpBtn.addEventListener("click", () => switchMain("help"));
   jsDisplayBtn.addEventListener("click", () => switchMain("display"));
@@ -559,32 +603,4 @@ export function setupControls() {
       guideContainer.style.setProperty("display", "block");
     });
   }
-}
-
-export function setupKeyboardListeners() {
-  // Add keyboard listeners for shortcuts
-  document.addEventListener("keydown", (e: KeyboardEvent) => {
-    // Instead of a button, make output of 3D to JSON a "secret" key binding
-    if (e.key === "E") {
-      exportScene();
-    }
-    if (e.key === "ArrowUp" && e.shiftKey) {
-      zoomIn();
-    }
-    if (e.key === "ArrowDown" && e.shiftKey) {
-      zoomOut();
-    }
-    if (e.key === "ArrowRight") {
-      nextEvent();
-    }
-    if (e.key === "ArrowLeft") {
-      prevEvent();
-    }
-    if (e.key === "A") {
-      toggleAnimation();
-    }
-    if (e.key === "m") {
-      showMass();
-    }
-  });
 }

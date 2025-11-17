@@ -51,7 +51,8 @@
     "photo": "Photo",
     "left": "Left",
     "right": "Right",
-    "links": "Useful links and physics offers:"
+    "links": "Useful links and physics offers:",
+    "start": "Start Event Display"
   },
   "help": {
     "title": "Help",

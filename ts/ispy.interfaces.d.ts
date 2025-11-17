@@ -70,6 +70,7 @@ interface Ispy {
   // File and Event Information
   file_name?: string;
   version: string;
+  initialized: boolean;
   lang: string;
   guiLangData: Record<string, string>;
   event_index: number;
