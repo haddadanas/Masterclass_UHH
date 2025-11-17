@@ -79,22 +79,22 @@ html[data-bs-theme="dark"] #uhh-light {
 }
 
 .start-btn {
-  display: block; /* Makes it behave like a button */
+  display: block;
   font-size: 200%;
   align-content: center;
-  padding: 10px 20px; /* Adjust padding for spacing */
-  background-image: url('/assets/img/ispy-webgl-screenshot-1.0.0.png'); /* Replace with your image path */
-  background-size: cover; /* Ensure the image covers the entire button */
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* Prevent the image from repeating */
-  text-align: center; /* Center text inside the button */
-  color: white; /* Text color */
-  border: none; /* Remove default border */
-  border-radius: 8px; /* Add rounded corners */
-  cursor: pointer; /* Change cursor to pointer */
-  margin: 1em auto; /* Center the button horizontally */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Add a shadow for depth */
-  transition: transform 0.2s, box-shadow 0.2s; /* Smooth hover/click effects */
+  padding: 10px 20px;
+  background-image: url('../img/ispy-webgl-screenshot-1.0.0.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-align: center;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 1em auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
   height: 300px;
   width: 40%;
 }
