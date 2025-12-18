@@ -22,7 +22,7 @@ Then, follow these commands:
 ```bash
 # Clone the repository using git clone.
 # (Adjust the URL if you're using a fork)
-$ git clone git@github.com:haddadanas/Masterclass_UHH.git masterclass
+$ git clone git@github.com:uhh-cms-tutorials/masterclasses.git
 $ cd masterclass/
 
 # Installing Dependencies
