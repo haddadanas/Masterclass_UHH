@@ -23,7 +23,7 @@ Then, follow these commands:
 # Clone the repository using git clone.
 # (Adjust the URL if you're using a fork)
 $ git clone git@github.com:uhh-cms-tutorials/masterclasses.git
-$ cd masterclass/
+$ cd masterclasses/
 
 # Installing Dependencies
 $ npm update
