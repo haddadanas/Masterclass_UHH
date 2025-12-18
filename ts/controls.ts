@@ -498,7 +498,7 @@ export function setupControls() {
   const jsCsvWp = getHTMLObject("js-csv-wp");
   const jsCsvWm = getHTMLObject("js-csv-wm");
   const jsAboutBtn = getHTMLObject("js-about-btn");
-  const jsHelpBtn = getHTMLObject("js-help-btn");
+  const jsHelpBtns = document.querySelectorAll<HTMLButtonElement>(".js-btn-help");
   const jsDisplayBtn = getHTMLObject("js-event-display");
   const jsLangEN = getHTMLObject<HTMLSelectElement>("js-lang-en");
   const jsLangDE = getHTMLObject<HTMLSelectElement>("js-lang-de");
@@ -524,7 +524,7 @@ export function setupControls() {
   // connect functions to the buttons
   jsStartBtn.addEventListener("click", () => switchMain("display"));
   jsAboutBtn.addEventListener("click", () => switchMain("about"));
-  jsHelpBtn.addEventListener("click", () => switchMain("help"));
+  jsHelpBtns.forEach(btn => btn.addEventListener("click", () => switchMain("help")));
   jsDisplayBtn.addEventListener("click", () => switchMain("display"));
 
   jsLangEN.addEventListener("click", () => setLanguage("en"));
