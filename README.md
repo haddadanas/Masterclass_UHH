@@ -22,8 +22,8 @@ Then, follow these commands:
 ```bash
 # Clone the repository using git clone.
 # (Adjust the URL if you're using a fork)
-$ git clone git@github.com:haddadanas/Masterclass_UHH.git masterclass
-$ cd masterclass/
+$ git clone git@github.com:uhh-cms-tutorials/masterclasses.git
+$ cd masterclasses/
 
 # Installing Dependencies
 $ npm update

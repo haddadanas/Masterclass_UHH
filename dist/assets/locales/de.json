@@ -38,7 +38,7 @@
     "title": "Über uns",
     "description": "Die Masterclasses sind eintägige Workshops entwickelt vom Netzwerk Teilchenwelt für Schülerinnen und Schüler, um Ihnen einen Überblick in die Welt der Teilchenphysik, Datenanalyse zu geben, sowie erste Einblicke von der Forschung zu ermöglichen. Diese Software basiert auf dem Event-Display-Programm des CMS-Experiments am CERN. Sie wird in den Masterclasses verwendet, um Detektoraufnahmen von Proton-Proton-Kollisionen zu visualisieren. Ziel der Masterclass am Ende ist eine Massenbestimmung des Z- und Higgs-Bosons.",
     "sponsors": "Dieses Event-Display sowie die Masterclasses in Hamburg wurden durch folgende Institutionen ermöglicht:",
-    "github": "Der Quellcode ist auf GitHub verfügbar:&nbsp;",
+    "github": "Der Quellcode ist auf GitHub verfügbar:",
     "origin": "Diese Software ist eine an Schüler und Schülerinnen angepasste Version des iSpy WebGL Event Displays für das CMS Experiment am CERN. Entwickelt wurde die Originalversion von F. Ali, L. Barnard, M. Hategan, S. Lee, C. Logrén, T. McCauley, P. Nguyen und M. Saunby.",
     "studyTitle": "Physikstudium an der Universität Hamburg",
     "studyText": "Interessierst du dich für ein Physikstudium? Warum nicht an der Universität Hamburg? 5 verschiedene Vertiefungsbereiche, große Vielfalt an Forschungsthemen, sowie das DESY-Forschungscampus in unmittelbarer Nähe. Hier findest du weitere Informationen dazu.",
@@ -54,7 +54,8 @@
     "links": "Nützliche Links und Physikangebote:",
     "start": "Event-Display starten",
     "impressum": "Impressum",
-    "contentresponsible": "Kontakt"  
+    "contentresponsible": "Kontakt",
+    "help": "Hilfe und Anleitung kannst du über diesen Button oder oben rechts aufrufen:"
   },
   "help": {
     "title": "Hilfe",
